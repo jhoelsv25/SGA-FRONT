@@ -1,0 +1,350 @@
+/* ===========================================
+   HEADER STYLES - SISAE - PRIMARY COLORS
+   =========================================== */
+
+/* Primary Color Variables */
+
+.text-primary {
+  color: var(--color-primary) !important;
+}
+
+/* Header Gradient */
+.header-gradient {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary),
+    var(--color-primary-600)
+  );
+}
+
+/* Dark mode header gradient - más suave y cálido */
+.dark .header-gradient {
+  background: linear-gradient(
+    135deg,
+    var(--color-base-300),
+    var(--color-base-400)
+  );
+  border-bottom: 1px solid var(--color-neutral-600);
+}
+
+/* Notification Badge Primary */
+.notification-badge-primary {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary),
+    var(--color-primary-600)
+  );
+  animation: pulse 2s infinite;
+}
+
+/* Dark mode notification badge - más brillante para mejor visibilidad */
+.dark .notification-badge-primary {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-300),
+    var(--color-primary-400)
+  );
+}
+
+/* Toggle Switch Primary */
+.toggle-switch-primary {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  background-color: var(--color-neutral-300);
+  border-radius: 34px;
+  transition: all 0.4s ease;
+  cursor: pointer;
+}
+
+/* Dark mode toggle switch */
+.dark .toggle-switch-primary {
+  background-color: var(--color-neutral-600);
+}
+
+.toggle-switch-primary::before {
+  content: "";
+  position: absolute;
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  border-radius: 50%;
+  transition: all 0.4s ease;
+}
+
+/* Dark mode toggle switch handle */
+.dark .toggle-switch-primary::before {
+  background-color: var(--color-neutral-100);
+}
+
+input:checked + .toggle-switch-primary {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary),
+    var(--color-primary-600)
+  );
+}
+
+input:checked + .toggle-switch-primary::before {
+  transform: translateX(16px);
+}
+
+input:focus + .toggle-switch-primary {
+  box-shadow: 0 0 4px var(--color-primary);
+}
+
+/* Logout Button Primary */
+.logout-button-primary {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary),
+    var(--color-primary-600)
+  );
+  transition: all 0.3s ease;
+}
+
+.logout-button-primary:hover {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-600),
+    var(--color-primary-700)
+  );
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(120, 53, 15, 0.4);
+}
+
+/* Dark mode logout button - más brillante y visible */
+.dark .logout-button-primary {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-400),
+    var(--color-primary-500)
+  );
+}
+
+.dark .logout-button-primary:hover {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-500),
+    var(--color-primary-600)
+  );
+  box-shadow: 0 4px 12px rgba(200, 120, 80, 0.3);
+}
+
+.user-menu-container {
+  position: relative;
+}
+
+/* Search Input Enhancements */
+.search-container {
+  position: relative;
+}
+
+.search-input {
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  width: 320px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* User Avatar with Status */
+.user-avatar {
+  position: relative;
+}
+
+.status-indicator {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  background-color: #10b981;
+  border: 2px solid white;
+  border-radius: 50%;
+}
+
+/* Button Hover Effects with Primary Color */
+.action-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.action-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(120, 53, 15, 0.1),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.action-button:hover::before {
+  left: 100%;
+}
+
+/* Notification Badge */
+.notification-badge {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Dropdown Menu Animations */
+.menu-dropdown {
+  transform-origin: top right;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* User Stats Grid */
+.stats-grid {
+  background: linear-gradient(
+    135deg,
+    var(--color-base-50),
+    var(--color-base-100)
+  );
+}
+
+/* Dark mode stats grid - usando base colors para modo oscuro */
+.dark .stats-grid {
+  background: linear-gradient(
+    135deg,
+    var(--color-base-300),
+    var(--color-base-400)
+  );
+}
+
+/* Menu Item Hover Effects */
+.menu-item {
+  position: relative;
+  overflow: hidden;
+}
+
+.menu-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--color-primary-100),
+    var(--color-primary-200)
+  );
+  transition: width 0.3s ease;
+  opacity: 0.3;
+}
+
+/* Dark mode menu item hover - usando colores complementarios */
+.dark .menu-item::before {
+  background: linear-gradient(
+    90deg,
+    var(--color-primary-800),
+    var(--color-primary-700)
+  );
+  opacity: 0.4;
+}
+
+.menu-item:hover::before {
+  width: 100%;
+}
+
+/* Primary Focus Styles for Accessibility */
+.action-button:focus,
+.menu-item:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .search-input {
+    width: 200px;
+  }
+
+  .search-input:focus {
+    width: 240px;
+  }
+
+  .menu-dropdown {
+    width: 280px;
+    right: -20px;
+  }
+
+  .user-info-desktop {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .action-buttons {
+    gap: 0.5rem;
+  }
+
+  .search-container {
+    display: none;
+  }
+
+  .menu-dropdown {
+    width: 260px;
+    right: -40px;
+  }
+}
+
+/* Dark Mode Specific Styles */
+.dark .menu-dropdown {
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.3),
+    0 10px 10px -5px rgba(0, 0, 0, 0.2);
+}
+
+.dark .notification-badge-primary {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary),
+    var(--color-primary-600)
+  );
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .menu-dropdown {
+    border: 2px solid var(--color-primary);
+  }
+
+  .logout-button-primary {
+    border: 2px solid var(--color-primary);
+  }
+}

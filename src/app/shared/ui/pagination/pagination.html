@@ -1,0 +1,85 @@
+<div
+  class="flex max-md:flex-col justify-between items-center gap-4 mt-4 p-3 w-full bg-base-200 dark:text-white rounded-lg shadow-sm"
+>
+  <!-- Texto rango -->
+  <div
+    class="text-sm text-neutral-600 dark:text-neutral-300 text-center max-md:w-full"
+  >
+    {{ getRange() }}
+  </div>
+  <!-- Controles -->
+  <nav class="flex flex-wrap items-center justify-center gap-2 max-md:w-full">
+    <button
+      sgaButton
+      color="white"
+      size="sm"
+      [shape]="'pill'"
+      [disabled]="currentPage() === 1"
+      (click)="firstPage()"
+      aria-label="Ir al primero"
+    >
+      <i class="fas fa-angle-double-left"></i>
+    </button>
+    <button
+      sgaButton
+      type="button"
+      color="white"
+      size="sm"
+      [shape]="'pill'"
+      [disabled]="currentPage() === 1"
+      (click)="prevPage()"
+      aria-label="Anterior"
+    >
+      <i class="fas fa-angle-left"></i>
+    </button>
+
+    @for (p of visiblePages(); track $index) {
+      <button
+        (click)="goToPage(p)"
+        class="min-w-8 px-3 py-1.5 text-sm rounded-full font-medium transition-all duration-200"
+        [class.bg-primary-500]="currentPage() === p"
+        [class.text-white]="currentPage() === p"
+        [class.shadow-sm]="currentPage() === p"
+        [class.border]="currentPage() !== p"
+        [class.bg-white]="currentPage() !== p"
+        [class.text-neutral-800]="currentPage() !== p"
+        [class.border-neutral-300]="currentPage() !== p"
+        [class.hover:bg-neutral-100]="currentPage() !== p"
+      >
+        {{ p }}
+      </button>
+    }
+    <button
+      sgaButton
+      color="white"
+      size="sm"
+      [shape]="'pill'"
+      [disabled]="currentPage() === totalPages()"
+      (click)="nextPage()"
+      aria-label="Siguiente"
+    >
+      <i class="fas fa-angle-right"></i>
+    </button>
+    <button
+      sgaButton
+      color="white"
+      size="xs"
+      [shape]="'pill'"
+      [disabled]="currentPage() === totalPages()"
+      (click)="lastPage()"
+      aria-label="Ir al último"
+    >
+      <i class="fas fa-angle-double-right"></i>
+    </button>
+    <select
+      id="pageSize"
+      class="border rounded px-5 py-1 text-sm bg-base dark:bg-base-100 dark:text-white"
+      [value]="currentSize()"
+      (change)="changeSize(+$any($event.target).value)"
+    >
+      @for (opt of sizeOptions(); track opt) {
+        <option [value]="opt">{{ opt }}</option>
+      }
+    </select>
+  </nav>
+</div>

@@ -1,0 +1,23 @@
+<section
+  class="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm shadow-lg bg-base"
+>
+  <div
+    class="relative mx-4 flex w-full max-w-4xl overflow-hidden rounded-xl shadow-2xl dark:bg-gray-800 max-h-[90vh] lg:max-w-5xl min-h-[70vh]"
+  >
+    <div class="relative hidden w-3/5 bg-primary dark:bg-quinary md:flex">
+      <sga-information />
+    </div>
+
+    <aside class="flex w-full flex-col md:w-2/5">
+      <main class="flex-1 overflow-y-auto px-6 py-4 bg-base">
+        <router-outlet />
+      </main>
+
+      <footer
+        class="border-t border-gray-200 px-6 py-4 dark:border-gray-600 flex justify-center"
+      >
+        <sga-copy-right />
+      </footer>
+    </aside>
+  </div>
+</section>

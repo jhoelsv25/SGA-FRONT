@@ -1,0 +1,52 @@
+<form class="flex flex-col">
+  <div class="form-group">
+    <label for="username" class="label-form">
+      <i class="fa-solid fa-user mr-2 text-primary"></i>
+      Código de Usuario
+    </label>
+    <input
+      id="username"
+      type="text"
+      name="username"
+      class="form-control"
+      required
+      autocomplete="username"
+      placeholder="Ingresa tu código de usuario"
+    />
+  </div>
+
+  <div class="form-group">
+    <label for="birthdate" class="label-form">
+      <i class="fa-solid fa-calendar mr-2 text-primary"></i>
+      Fecha de Nacimiento
+    </label>
+    <input
+      id="birthdate"
+      type="date"
+      name="birthdate"
+      class="form-control"
+      required
+      placeholder="Selecciona tu fecha de nacimiento"
+    />
+  </div>
+
+  <button
+    type="submit"
+    class="btn-primary mt-4 w-full rounded-lg px-6 py-3 text-base font-semibold transition-all duration-200 hover:shadow-lg hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+  >
+    <i class="fa-solid fa-paper-plane mr-2"></i>
+    Solicitar Recuperación
+  </button>
+
+  <div class="mt-6 flex justify-center">
+    <a
+      routerLink="/auth/login"
+      class="inline-flex items-center text-sm font-medium text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary-300 transition-colors duration-200 group"
+    >
+      <i
+        class="fa-solid fa-arrow-left mr-2 transition-transform duration-200 group-hover:-translate-x-1"
+      ></i>
+      Volver al inicio de sesión
+    </a>
+  </div>
+</form>

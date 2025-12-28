@@ -1,0 +1,137 @@
+<form [formGroup]="institutionForm" class="grid gap-4" (ngSubmit)="onSubmit()">
+  <header class="flex items-center justify-between mb-4">
+    <div>
+      <h2 class="text-lg font-semibold text-neutral-800 dark:text-white mb-0">{{ title() }}</h2>
+      <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
+        {{ subTitle() }}
+      </p>
+    </div>
+    <button
+      type="button"
+      sgaButton
+      color="secondary"
+      variant="ghost"
+      shape="pill"
+      (click)="onClose()"
+    >
+      <i class="fas fa-times"></i>
+    </button>
+  </header>
+  @if (errror()) {
+    <div
+      class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+      role="alert"
+    >
+      <i class="fas fa-exclamation-triangle mr-2"></i>
+      {{ errror() }}
+    </div>
+  }
+  <div></div>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <label class="label-form" for="name">Nombre</label>
+      <sga-input
+        id="name"
+        type="text"
+        formControlName="name"
+        placeholder="Nombre de la institución"
+      />
+    </div>
+    <div>
+      <label class="label-form" for="modularCode">Código Modular</label>
+      <sga-input
+        id="modularCode"
+        type="text"
+        formControlName="modularCode"
+        placeholder="Código modular"
+      />
+    </div>
+    <div>
+      <label class="label-form" for="managementType">Tipo de Gestión</label>
+      <sga-select
+        id="managementType"
+        [options]="managementTypes"
+        formControlName="managementType"
+        placeholder="Seleccionar tipo de gestión"
+      ></sga-select>
+    </div>
+    <div>
+      <label class="label-form" for="ugel">UGEL</label>
+      <sga-input id="ugel" type="text" formControlName="ugel" placeholder="UGEL" />
+    </div>
+    <div>
+      <label class="label-form" for="dre">DRE</label>
+      <sga-input id="dre" type="text" formControlName="dre" placeholder="DRE" />
+    </div>
+    <div>
+      <label class="label-form" for="principal">Director</label>
+      <sga-input
+        id="principal"
+        type="text"
+        formControlName="principal"
+        placeholder="Nombre del director"
+      />
+    </div>
+    <div>
+      <label class="label-form" for="address">Dirección</label>
+      <sga-input id="address" type="text" formControlName="address" placeholder="Dirección" />
+    </div>
+    <div>
+      <label class="label-form" for="district">Distrito</label>
+      <sga-input id="district" type="text" formControlName="district" placeholder="Distrito" />
+    </div>
+    <div>
+      <label class="label-form" for="province">Provincia</label>
+      <sga-input id="province" type="text" formControlName="province" placeholder="Provincia" />
+    </div>
+    <div>
+      <label class="label-form" for="department">Departamento</label>
+      <sga-input
+        id="department"
+        type="text"
+        formControlName="department"
+        placeholder="Departamento"
+      />
+    </div>
+    <div>
+      <label class="label-form" for="phone">Teléfono</label>
+      <sga-input id="phone" type="text" formControlName="phone" placeholder="Teléfono" />
+    </div>
+    <div>
+      <label class="label-form" for="email">Email</label>
+      <sga-input id="email" type="text" formControlName="email" placeholder="Correo electrónico" />
+    </div>
+    <div>
+      <label class="label-form" for="status">Estado</label>
+      <sga-select
+        id="status"
+        [options]="statuses"
+        formControlName="status"
+        placeholder="Seleccionar estado"
+      ></sga-select>
+    </div>
+    <div>
+      <label class="label-form" for="logoUrl">Logo (URL)</label>
+      <sga-input id="logoUrl" type="text" formControlName="logoUrl" placeholder="URL del logo" />
+    </div>
+    <div class="md:col-span-2">
+      <label class="label-form" for="description">Descripción</label>
+      <sga-input
+        id="description"
+        type="text"
+        formControlName="description"
+        placeholder="Descripción"
+      />
+    </div>
+  </div>
+  <footer class="flex items-center justify-end gap-2 mt-6">
+    <button type="button" sgaButton color="secondary" variant="outline" (click)="onClose()">
+      <i class="fas fa-times"></i>
+      Cancelar
+    </button>
+    <button type="submit" sgaButton color="primary" [disabled]="institutionForm.invalid">
+      <i class="fas fa-check"></i>
+      Guardar
+    </button>
+  </footer>
+</form>

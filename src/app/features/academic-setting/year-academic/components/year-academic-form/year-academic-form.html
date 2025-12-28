@@ -1,0 +1,126 @@
+<form [formGroup]="form" class="grid gap-4">
+  <header class="flex items-center justify-between mb-4">
+    <div>
+      <h2 class="text-lg font-semibold text-neutral-800 dark:text-white mb-0">{{ title() }}</h2>
+      <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
+        {{ subTitle() }}
+      </p>
+    </div>
+    <button
+      type="button"
+      sgaButton
+      color="secondary"
+      variant="ghost"
+      shape="pill"
+      (click)="onClose()"
+    >
+      <i class="fas fa-times"></i>
+    </button>
+  </header>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="col-span-2 md:col-span-2">
+      <label class="label-form" for="institution">Institución Educativa</label>
+      <sga-select
+        id="institution"
+        [options]="institutions()"
+        formControlName="institution"
+        placeholder="Seleccionar institución"
+      ></sga-select>
+    </div>
+    <div>
+      <label class="label-form" for="year">Año</label>
+      <sga-input
+        id="year"
+        type="number"
+        formControlName="year"
+        placeholder="Año"
+        class="flex border-none p-o m-o"
+      />
+    </div>
+    <div>
+      <label class="label-form" for="name">Nombre</label>
+      <sga-input id="name" type="text" formControlName="name" placeholder="Nombre" />
+    </div>
+    <div>
+      <label class="label-form" for="startDate">Fecha de inicio</label>
+      <sga-date-picker
+        id="startDate"
+        formControlName="startDate"
+        [placeholder]="'Seleccionar fecha de inicio'"
+      ></sga-date-picker>
+    </div>
+    <div>
+      <label class="label-form" for="endDate">Fecha de fin</label>
+      <sga-date-picker
+        id="endDate"
+        formControlName="endDate"
+        [placeholder]="'Seleccionar fecha de fin'"
+      ></sga-date-picker>
+    </div>
+    <div>
+      <label class="label-form" for="modality">Modalidad</label>
+      <sga-select
+        id="modality"
+        [options]="modalities"
+        formControlName="modality"
+        placeholder="Seleccionar modalidad"
+      ></sga-select>
+    </div>
+    <div>
+      <label class="label-form" for="gradingSystem">Sistema de calificación</label>
+      <sga-select
+        id="gradingSystem"
+        [options]="gradingSystems"
+        formControlName="gradingSystem"
+        placeholder="Seleccionar sistema"
+      ></sga-select>
+    </div>
+    <div>
+      <label class="label-form" for="passingDate">Fecha de cierre de actas</label>
+      <sga-date-picker
+        id="passingDate"
+        formControlName="passingDate"
+        [placeholder]="'Seleccionar fecha de cierre'"
+      ></sga-date-picker>
+    </div>
+    <div>
+      <label class="label-form" for="passingGrade">Nota mínima aprobatoria</label>
+      <div>
+        <sga-input
+          id="passingGrade"
+          type="number"
+          formControlName="passingGrade"
+          placeholder="Nota mínima"
+        />
+      </div>
+    </div>
+    <div>
+      <label class="label-form" for="academicCalendarUrl">Calendario académico (URL)</label>
+      <sga-input
+        id="academicCalendarUrl"
+        type="text"
+        formControlName="academicCalendarUrl"
+        placeholder="URL del calendario"
+      />
+    </div>
+    <div>
+      <label class="label-form" for="status">Estado</label>
+      <sga-select
+        id="status"
+        [options]="statuses"
+        formControlName="status"
+        placeholder="Seleccionar estado"
+      ></sga-select>
+    </div>
+  </div>
+  <footer class="flex items-center justify-end gap-2 mt-6">
+    <button type="button" sgaButton color="secondary" variant="outline" (click)="onClose()">
+      <i class="fas fa-times"></i>
+      Cancelar
+    </button>
+    <button type="submit" sgaButton color="primary" [disabled]="form.invalid">
+      <i class="fas fa-check"></i>
+      Guardar
+    </button>
+  </footer>
+</form>

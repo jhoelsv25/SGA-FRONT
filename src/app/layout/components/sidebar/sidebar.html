@@ -1,0 +1,171 @@
+<!-- Backdrop para móvil -->
+@if (isMobile() && !isCollapsed()) {
+  <div
+    class="fixed inset-0 bg-black/50 z-20 md:hidden"
+    (click)="closeMobileSidebar()"
+    (keydown.escape)="closeMobileSidebar()"
+    tabindex="0"
+    role="button"
+    aria-label="Cerrar menú"
+  ></div>
+}
+
+<!-- Sidebar Container -->
+<div
+  class="sidebar flex flex-col h-screen bg-white dark:bg-gray-800 shadow-lg relative"
+  [class.collapsed]="isCollapsed()"
+  [class.mobile-open]="isMobile() && !isCollapsed()"
+>
+  <!-- Header Section -->
+  <div
+    class="sidebar-header flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700"
+  >
+    <div class="logo-container flex items-center">
+      <div class="logo flex items-center space-x-2">
+        <img
+          src="/logo.jpeg"
+          alt="SISAE"
+          class="logo-img w-8 h-8 rounded-full"
+        />
+        <span
+          class="logo-text font-semibold text-gray-800 dark:text-white"
+          [class.hidden]="isCollapsed()"
+        >
+          SISAE
+        </span>
+      </div>
+    </div>
+
+    <!-- Collapse Toggle Button -->
+    <button
+      class="collapse-btn flex items-center justify-center w-8 h-8 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+      (click)="toggleCollapse()"
+      type="button"
+      [attr.aria-label]="
+        isCollapsed() ? 'Expandir sidebar' : 'Contraer sidebar'
+      "
+    >
+      <i
+        class="fa-solid text-gray-500 dark:text-gray-400"
+        [class.fa-chevron-right]="isCollapsed()"
+        [class.fa-chevron-left]="!isCollapsed()"
+      ></i>
+    </button>
+  </div>
+
+  <!-- Navigation Menu -->
+  <nav class="sidebar-nav flex-1 overflow-y-auto">
+    <ul class="nav-list py-2">
+      @for (item of getVisibleMenuItems(); track item.id) {
+        <li
+          class="nav-item"
+          [class.expanded]="isSubmenuExpanded(item.id)"
+          (mouseenter)="onMouseEnter(item)"
+          (mouseleave)="onMouseLeave()"
+        >
+          <!-- Main Menu Link -->
+          <a
+            class="nav-link flex items-center px-4 py-2"
+            (click)="navigateToItem(item)"
+            [routerLink]="!item.hasChildren ? item.route : null"
+            [class.active]="item.active"
+            [attr.title]="isCollapsed() ? item.label : null"
+          >
+            <i class="fa-solid" [class]="item.icon"></i>
+            <span class="nav-label" [class.hidden]="isCollapsed()">
+              {{ item.label }}
+            </span>
+            @if (item.hasChildren && !isCollapsed()) {
+              <i
+                class="fa-solid ml-auto submenu-arrow"
+                [class.fa-chevron-down]="!isSubmenuExpanded(item.id)"
+                [class.fa-chevron-up]="isSubmenuExpanded(item.id)"
+              ></i>
+            }
+          </a>
+
+          <!-- Submenu recursivo (cuando sidebar NO está colapsado) -->
+          @if (item.hasChildren && !isCollapsed()) {
+            <ul class="submenu" [class.expanded]="isSubmenuExpanded(item.id)">
+              @for (child of item.children; track child.id) {
+                <ng-container
+                  *ngTemplateOutlet="
+                    recursiveMenu;
+                    context: { $implicit: child }
+                  "
+                ></ng-container>
+              }
+            </ul>
+          }
+        </li>
+      }
+    </ul>
+  </nav>
+
+  <!-- Recursividad para submenús -->
+  <ng-template #recursiveMenu let-item>
+    <li class="submenu-item">
+      <a
+        class="submenu-link"
+        [routerLink]="!item.hasChildren ? item.route : null"
+        (click)="navigateToItem(item)"
+        [class.active]="item.active"
+      >
+        <i class="fa-solid submenu-icon" [class]="item.icon"></i>
+        <span class="submenu-label">{{ item.label }}</span>
+        @if (item.hasChildren) {
+          <i
+            class="fa-solid ml-auto submenu-arrow"
+            [class.fa-chevron-down]="!isSubmenuExpanded(item.id)"
+            [class.fa-chevron-up]="isSubmenuExpanded(item.id)"
+          ></i>
+        }
+      </a>
+      @if (item.hasChildren) {
+        <ul class="submenu" [class.expanded]="isSubmenuExpanded(item.id)">
+          @for (child of item.children; track child.id) {
+            <ng-container
+              *ngTemplateOutlet="recursiveMenu; context: { $implicit: child }"
+            ></ng-container>
+          }
+        </ul>
+      }
+    </li>
+  </ng-template>
+
+  <!-- Footer Section -->
+  <div
+    class="sidebar-footer p-4 border-t border-gray-200 dark:border-gray-700"
+    [class.hidden]="isCollapsed()"
+  >
+    <div class="text-xs text-gray-500 text-center space-x-2 dark:text-gray-400">
+      <small class="copyright font-medium">© 2025 SISAE</small>
+      <small class="version">v1.0.0</small>
+    </div>
+  </div>
+
+  <!-- Flyout Menu (cuando sidebar está colapsado y hay hover) -->
+  @if (isCollapsed() && hoveredItem()) {
+    <div
+      class="sidebar-flyout absolute top-0 left-16 bg-white dark:bg-gray-800 shadow-lg rounded-md p-2 z-50"
+    >
+      <div class="font-semibold text-gray-800 dark:text-white px-2 py-1">
+        {{ hoveredItem()?.label }}
+      </div>
+      <ul class="space-y-1">
+        @for (child of hoveredItem()?.children; track child.id) {
+          <li>
+            <a
+              class="submenu-link block px-3 py-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+              [routerLink]="child.route"
+              (click)="navigateToItem(child)"
+            >
+              <i class="fa-solid submenu-icon" [class]="child.icon"></i>
+              <span class="ml-2">{{ child.label }}</span>
+            </a>
+          </li>
+        }
+      </ul>
+    </div>
+  }
+</div>

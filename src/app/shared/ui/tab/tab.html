@@ -1,0 +1,28 @@
+<div class="border-b border-gray-200 mb-8">
+  <nav class="flex space-x-8">
+    @for (tab of tabs(); track tab.id) {
+      <button
+        (click)="onTabClick(tab)"
+        [disabled]="tab.disabled"
+        [class]="getTabClasses(tab)"
+        class="py-2 px-1 border-b-2 font-medium text-sm transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <div class="flex items-center gap-2">
+          @if (getIconType(tab) === 'fontawesome') {
+            <i [class]="tab.icon + ' w-4 h-4'"></i>
+          } @else {
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                [attr.d]="tab.icon"
+              />
+            </svg>
+          }
+          {{ tab.label }}
+        </div>
+      </button>
+    }
+  </nav>
+</div>

@@ -1,0 +1,15 @@
+<sga-header-detail
+  [config]="headerConfig()"
+  [actions]="headerActions()"
+  (actionClick)="onHeaderAction($event)"
+  (refresh)="onRefresh()"
+/>
+
+<sga-data-source
+  [columns]="columns()"
+  [data]="data()"
+  [actions]="rowActions()"
+  [loading]="loading()"
+  [pagination]="pagination()"
+  (actionClick)="onRowAction($event)"
+></sga-data-source>

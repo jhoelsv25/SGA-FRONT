@@ -1,0 +1,293 @@
+/* ===================================
+   FORM STYLES - TAILWIND CSS
+   =================================== */
+
+/* Patrón decorativo para panel de información */
+.bg-dots-pattern {
+  background-image: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.1) 1px,
+    transparent 1px
+  );
+  background-size: 20px 20px;
+}
+
+/* Form Group Container */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+/* Form Labels */
+.label-form {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #828385;
+}
+
+.label-form.required::after {
+  content: " *";
+  color: var(--color-error-500, #ef4444);
+}
+
+/* Form Controls - Input Base */
+.form-control {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  background-color: var(--color-base, #f9fafb);
+  border: 0.1px solid var(--color-neutral-300, #d1d5db);
+  border-radius: 0.5rem;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.form-control:focus {
+  outline: none;
+  background-color: var(--color-base-100, #ffffff);
+  border-color: var(--color-primary-500);
+  box-shadow: 0 0 0 3px rgba(103, 41, 51, 0.1);
+}
+
+.form-control::placeholder {
+  color: #9ca3af;
+}
+
+.form-control:disabled {
+  background-color: #f3f4f6;
+  color: #6b7280;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Input Variants */
+.form-control-sm {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.form-control-lg {
+  padding: 1rem 1.25rem;
+  font-size: 1.125rem;
+}
+
+/* Textarea */
+.form-control.textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Select Dropdown */
+.form-control.select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+}
+
+/* Checkbox and Radio */
+.form-check {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.form-check-input {
+  width: 1.3rem;
+  height: 1.3rem;
+  margin-right: 0.5rem;
+  background-color: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 0.25rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.form-check-input[type="radio"] {
+  border-radius: 50%;
+}
+
+.form-check-input:checked {
+  background-color: var(--color-primary-500);
+  border-color: var(--color-primary-500);
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='m13.854 3.646-8 8a.5.5 0 0 1-.708 0l-4-4a.5.5 0 1 1 .708-.708L5.5 10.293l7.646-7.647a.5.5 0 0 1 .708.708z'/%3e%3c/svg%3e");
+}
+
+.form-check-input[type="radio"]:checked {
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='3'/%3e%3c/svg%3e");
+}
+
+.form-check-input:focus {
+  border-color: var(--color-primary-500);
+  box-shadow: 0 0 0 3px rgba(103, 41, 51, 0.1);
+  outline: none;
+}
+
+.form-check-label {
+  font-size: 0.875rem;
+  color: #374151;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Input Groups */
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-group-icon {
+  position: absolute;
+  left: 0.75rem;
+  color: #6b7280;
+  z-index: 10;
+}
+
+.input-group .form-control {
+  padding-left: 2.5rem;
+}
+
+/* Form Buttons */
+.btn-form {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  text-decoration: none;
+  min-height: 2.75rem;
+}
+
+.btn-primary {
+  background-color: var(--color-primary-500);
+  color: var(--color-base-100, #ffffff);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-600);
+}
+
+.btn-primary:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(103, 41, 51, 0.3);
+}
+
+.btn-secondary {
+  background-color: var(--color-secondary-500);
+  color: var(--color-primary-700);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-secondary-600);
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--color-primary-500);
+  border: 1px solid var(--color-primary-500);
+}
+
+.btn-outline:hover {
+  background-color: var(--color-primary-500);
+  color: var(--color-base-100, #ffffff);
+}
+
+.btn-form:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Button Sizes */
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  min-height: 2.25rem;
+}
+
+.btn-lg {
+  padding: 1rem 2rem;
+  font-size: 1.125rem;
+  min-height: 3.25rem;
+}
+
+/* Form Container */
+.form-container {
+  background-color: var(--color-base-100, #ffffff);
+  border-radius: 0.75rem;
+  padding: 2rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--color-secondary-200, #e5e7eb);
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.form-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--color-primary-800, #111827);
+  margin-bottom: 0.5rem;
+}
+
+.form-subtitle {
+  font-size: 1rem;
+  color: var(--color-neutral-600, #6b7280);
+}
+
+/* Form Row for Multiple Columns */
+.form-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-col {
+  flex: 1;
+}
+
+.form-col-6 {
+  flex: 0 0 50%;
+}
+
+.form-col-4 {
+  flex: 0 0 33.333333%;
+}
+
+.form-col-3 {
+  flex: 0 0 25%;
+}
+
+/* Help Text */
+.form-help {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .form-col,
+  .form-col-6,
+  .form-col-4,
+  .form-col-3 {
+    flex: 1;
+  }
+
+  .form-container {
+    padding: 1.5rem;
+  }
+}

@@ -1,0 +1,44 @@
+<div class="relative inline-block text-left">
+  <!-- Trigger -->
+  <div
+    (click)="toggle()"
+    (keydown.enter)="toggle()"
+    (keydown.space)="toggle()"
+    class="cursor-pointer inline-flex items-center"
+    tabindex="0"
+    role="button"
+    [attr.aria-expanded]="showOpen()"
+    aria-label="Toggle dropdown"
+  >
+    <ng-content select="[dropdown-trigger]"></ng-content>
+  </div>
+
+  <!-- Menu con animación -->
+  @if (showOpen()) {
+    <div
+      [ngClass]="'dropdown-anim open'"
+      class="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg ring-0 ring-black ring-opacity-5 focus:outline-none z-50"
+    >
+      <ng-content></ng-content>
+
+      <!-- Items dinámicos -->
+      @if (items().length > 0) {
+        <div class="py-1">
+          @for (item of items(); track $index) {
+            <button
+              type="button"
+              (click)="handleItemClick(item)"
+              [disabled]="item.disabled"
+              class="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              @if (item.icon) {
+                <i [ngClass]="item.icon"></i>
+              }
+              {{ item.label }}
+            </button>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

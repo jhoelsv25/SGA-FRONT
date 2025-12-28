@@ -1,0 +1,17 @@
+export const COLUMN_CONFIG_INSTITUTION = [
+  { key: 'name', label: 'Nombre', sortable: true },
+  { key: 'modularCode', label: 'Código Modular', sortable: true },
+  { key: 'managementType', label: 'Tipo de Gestión', sortable: true },
+  { key: 'ugel', label: 'UGEL', sortable: true },
+  { key: 'dre', label: 'DRE', sortable: true },
+  { key: 'principal', label: 'Director', sortable: true },
+  { key: 'address', label: 'Dirección', sortable: true },
+  { key: 'district', label: 'Distrito', sortable: true },
+  { key: 'province', label: 'Provincia', sortable: true },
+  { key: 'department', label: 'Departamento', sortable: true },
+  { key: 'phone', label: 'Teléfono', sortable: true },
+  { key: 'email', label: 'Email', sortable: true },
+  { key: 'status', label: 'Estado', sortable: true },
+  { key: 'logoUrl', label: 'Logo', sortable: false },
+  { key: 'description', label: 'Descripción', sortable: false },
+];

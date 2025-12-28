@@ -1,0 +1,76 @@
+<form [formGroup]="form" class="grid gap-4" (ngSubmit)="onSubmit()">
+  <header class="flex items-center justify-between mb-4">
+    <div>
+      <h2 class="text-lg font-semibold text-neutral-800 dark:text-white mb-0">{{ title() }}</h2>
+      <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
+        {{ subTitle() }}
+      </p>
+    </div>
+    <button
+      type="button"
+      sgaButton
+      color="secondary"
+      variant="ghost"
+      shape="pill"
+      (click)="onClose()"
+    >
+      <i class="fas fa-times"></i>
+    </button>
+  </header>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <label class="label-form" for="code">Código</label>
+      <sga-input id="code" type="text" formControlName="code" placeholder="Código de competencia" />
+    </div>
+    <div>
+      <label class="label-form" for="name">Nombre</label>
+      <sga-input id="name" type="text" formControlName="name" placeholder="Nombre de competencia" />
+    </div>
+    <div class="md:col-span-2">
+      <label class="label-form" for="description">Descripción</label>
+      <sga-input
+        id="description"
+        type="text"
+        formControlName="description"
+        placeholder="Descripción"
+      />
+    </div>
+    <div class="md:col-span-2">
+      <label class="label-form" for="expectedAchievement">Nivel esperado</label>
+      <sga-input
+        id="expectedAchievement"
+        type="text"
+        formControlName="expectedAchievement"
+        placeholder="Nivel esperado"
+      />
+    </div>
+    <div class="md:col-span-2">
+      <label class="label-form" for="course">Curso</label>
+      <sga-select
+        id="course"
+        [options]="courses()"
+        formControlName="course"
+        placeholder="Seleccionar curso"
+      ></sga-select>
+    </div>
+    <div>
+      <label class="label-form" for="active">Estado</label>
+      <sga-select
+        id="active"
+        [options]="statuses"
+        formControlName="active"
+        placeholder="Seleccionar estado"
+      ></sga-select>
+    </div>
+  </div>
+  <footer class="flex items-center justify-end gap-2 mt-6">
+    <button type="button" sgaButton color="secondary" variant="outline" (click)="onClose()">
+      <i class="fas fa-times"></i>
+      Cancelar
+    </button>
+    <button type="submit" sgaButton color="primary" [disabled]="form.invalid">
+      <i class="fas fa-check"></i>
+      Guardar
+    </button>
+  </footer>
+</form>

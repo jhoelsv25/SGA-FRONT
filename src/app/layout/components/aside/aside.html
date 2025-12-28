@@ -1,0 +1,51 @@
+<section class="h-full flex flex-col bg-base dark:bg-base" id="scrollbar">
+  <header
+    class="sticky top-0 z-20 flex items-center justify-between border-b border-base-300 dark:border-base-200 bg-base px-5 py-4 shadow-sm"
+  >
+    <div class="flex items-center gap-3">
+      @if (asideType() === "notifications") {
+        <div class="p-2 bg-primary-500/10 rounded-lg">
+          <i class="fas fa-bell text-primary-500 text-lg"></i>
+        </div>
+        <div>
+          <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
+            Notificaciones
+          </h2>
+          <p class="text-xs text-gray-500 dark:text-gray-400">
+            Mantente al día con tus actividades
+          </p>
+        </div>
+      } @else {
+        <div class="p-2 bg-primary-500/10 rounded-lg">
+          <i class="fas fa-calendar text-primary-500 text-lg"></i>
+        </div>
+        <div>
+          <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
+            Calendario
+          </h2>
+          <p class="text-xs text-gray-500 dark:text-gray-400">
+            Tus eventos y actividades
+          </p>
+        </div>
+      }
+    </div>
+    <button
+      class="p-2 hover:bg-base-200 dark:hover:bg-base-300 rounded-lg transition-colors group"
+      (click)="toggleAside()"
+      aria-label="Cerrar panel"
+    >
+      <i
+        class="fas fa-times text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-200 text-lg"
+      ></i>
+    </button>
+  </header>
+  <main class="flex-1 overflow-y-auto">
+    @if (asideType() === "notifications") {
+      <!-- <app-notifications /> -->
+    CALENDAR
+    } @else {
+    <!--   <app-calendar /> -->
+    NOTIFICATIONS
+    }
+  </main>
+</section>

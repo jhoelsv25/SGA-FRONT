@@ -1,0 +1,59 @@
+<!-- header-minimal-dashboard.html -->
+<div class="w-full mb-6">
+  <div class="flex items-center justify-between px-2 md:px-4">
+    <div>
+      <h1 class="text-lg md:text-xl font-semibold text-neutral-900 dark:text-white">
+        {{ headerConfig().title }}
+      </h1>
+      @if (headerConfig().subtitle) {
+        <p class="text-sm text-neutral-500 dark:text-neutral-400">
+          {{ headerConfig().subtitle }}
+        </p>
+      }
+    </div>
+
+    <!-- Acciones -->
+    <div class="flex items-center gap-2">
+      <!-- Filtros -->
+      @if (headerConfig().showFilters) {
+        <button
+          type="button"
+          class="flex items-center gap-2 px-3 py-2 text-sm bg-base-100 dark:bg-base-200 border border-base-300 rounded-lg text-neutral-700 dark:text-neutral-300 hover:bg-base-200 dark:hover:bg-base-300 transition"
+        >
+          <i class="fas fa-sliders-h text-neutral-500"></i>
+          <span>Filtros</span>
+
+          <!-- @if (activeFiltersCount() > 0) {
+            <span
+              class="ml-1 px-1.5 py-0.5 text-xs font-medium bg-primary-600 text-white rounded-full"
+            >
+              {{ activeFiltersCount() }}
+            </span>
+          } -->
+        </button>
+      }
+
+      <!-- Botón de refresh -->
+      <button
+        type="button"
+        (click)="onRefresh()"
+        class="flex items-center gap-2 px-3 py-2 text-sm bg-base-100 dark:bg-base-200 border border-base-300 rounded-lg text-neutral-700 dark:text-neutral-300 hover:bg-base-200 dark:hover:bg-base-300 transition"
+      >
+        <i class="fas fa-sync-alt text-neutral-500"></i>
+      </button>
+
+      @if (headerConfig().showActions) {
+        <sga-dropdown [items]="actionDropdownItems()">
+          <button
+            dropdown-trigger
+            class="flex items-center justify-center px-3 py-2 bg-base-100 dark:bg-base-200 border border-base-300 rounded-lg text-neutral-600 dark:text-neutral-300 hover:bg-base-200 dark:hover:bg-base-300 transition"
+            aria-label="Más acciones"
+            type="button"
+          >
+            <i class="fas fa-ellipsis-h"></i>
+          </button>
+        </sga-dropdown>
+      }
+    </div>
+  </div>
+</div>

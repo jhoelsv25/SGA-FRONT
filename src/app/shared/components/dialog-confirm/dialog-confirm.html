@@ -1,0 +1,92 @@
+<div
+  class="dialog-confirm-card relative bg-white dark:bg-base-100 rounded-2xl shadow-2xl max-w-lg w-full mx-auto border border-gray-200 dark:border-base-300 overflow-hidden transform transition-all animate-fade-in scale-95"
+>
+  <!-- Header -->
+  <div class="flex items-center gap-3 px-4 pt-5 pb-2">
+    <!-- Icon -->
+    <div
+      class="flex items-center justify-center w-12 h-12 rounded-full border-0 shrink-0"
+      [class]="
+        options().type === 'danger'
+          ? 'bg-red-500'
+          : options().type === 'warning'
+            ? 'bg-yellow-400'
+            : options().type === 'success'
+              ? 'bg-green-500'
+              : 'bg-blue-500'
+      "
+    >
+      @if (options().icon) {
+        <i class="text-2xl text-white" [class]="options().icon"></i>
+      } @else {
+        <i
+          class="text-2xl text-white"
+          [class]="
+            options().type === 'danger'
+              ? 'fa-solid fa-triangle-exclamation'
+              : options().type === 'warning'
+                ? 'fa-solid fa-circle-exclamation'
+                : options().type === 'success'
+                  ? 'fa-solid fa-circle-check'
+                  : 'fa-solid fa-circle-info'
+          "
+        ></i>
+      }
+    </div>
+
+    <!-- Title + Message -->
+    <div class="flex-1 min-w-0">
+      <h2 class="font-bold text-base mb-0.5 dark:text-white leading-tight tracking-tight">
+        {{ options().title || '¿Estás seguro?' }}
+      </h2>
+      <p class="text-gray-600 dark:text-gray-300 text-xs leading-normal">
+        {{ options().message || 'Esta acción no se puede deshacer.' }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Input -->
+  @if (options().showInput) {
+    <div class="px-6 pt-4">
+      <label
+        for="confirm-input"
+        class="block mb-2 text-sm font-semibold text-gray-800 dark:text-gray-200"
+      >
+        {{ options().inputLabel || 'Confirmación' }}
+      </label>
+      <textarea
+        id="confirm-input"
+        [(ngModel)]="userInput"
+        rows="1"
+        class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-base-200 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary transition"
+        placeholder="{{ options().inputPlaceholder || 'Escribe aquí...' }}"
+      ></textarea>
+    </div>
+  }
+
+  <!-- Footer -->
+  <div
+    class="flex flex-row-reverse gap-3 px-6 py-4 mt-4 bg-gray-50 dark:bg-base-200 border-t border-gray-200 dark:border-base-300"
+  >
+    <button
+      sgaButton
+      [color]="options().acceptButtonProps?.color || 'primary'"
+      [variant]="options().acceptButtonProps?.variant || 'solid'"
+      [size]="options().acceptButtonProps?.size || 'md'"
+      [disabled]="!!options().showInput && !userInput().trim()"
+      (click)="onAccept()"
+    >
+      {{ options().acceptButtonProps?.label || 'Aceptar' }}
+    </button>
+
+    <button
+      sgaButton
+      [color]="options().rejectButtonProps?.color || 'secondary'"
+      [variant]="options().rejectButtonProps?.variant || 'outline'"
+      [size]="options().rejectButtonProps?.size || 'md'"
+      (click)="onReject()"
+    >
+      {{ options().rejectButtonProps?.label || 'Cancelar' }}
+    </button>
+  </div>
+</div>

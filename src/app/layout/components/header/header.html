@@ -1,0 +1,160 @@
+<div class="flex h-full items-center justify-between gap-2 px-2 sm:px-4">
+  <!-- Botón hamburguesa para móvil -->
+  <div class="flex items-center gap-2">
+    <button
+      class="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+      (click)="toggleSidebar()"
+      aria-label="Toggle sidebar"
+    >
+      <i class="fas fa-bars text-lg text-gray-700 dark:text-gray-300"></i>
+    </button>
+
+    <!-- Search Section - Modal Trigger -->
+    <div class="flex items-center">
+      <button
+        type="button"
+        (click)="onSearch()"
+        class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-base-100 dark:bg-base-300 border border-base-300 dark:border-base-200 hover:border-primary-400 dark:hover:border-primary-500 transition-all duration-200 group"
+        aria-label="Abrir buscador global"
+      >
+        <i
+          class="fas fa-search text-gray-500 dark:text-gray-400 text-sm group-hover:text-primary-500"
+        ></i>
+        <span
+          class="text-xs text-gray-400 dark:text-gray-500 font-mono hidden sm:inline"
+        >
+          ⌘K
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Action Buttons and User Menu -->
+  <div class="flex items-center gap-1 sm:gap-2 md:gap-4">
+    <!-- Theme Toggle -->
+    <button
+      class="p-2 rounded-lg text-gray-600 dark:text-gray-400 hover:text-primary-500 dark:hover:text-primary-400 hover:bg-base-100 dark:hover:bg-base-300 transition-all duration-200 flex items-center gap-2"
+      (click)="toggleTheme()"
+      [attr.aria-label]="'Cambiar tema'"
+    >
+      <div class="flex items-center justify-center w-5 h-5">
+        @switch (currentTheme()) {
+          @case ("light") {
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="size-5 text-primary-500"
+            >
+              <circle cx="12" cy="12" r="4"></circle>
+              <path d="M12 2v2"></path>
+              <path d="M12 20v2"></path>
+              <path d="M4.93 4.93l1.41 1.41"></path>
+              <path d="M17.66 17.66l1.41 1.41"></path>
+              <path d="M2 12h2"></path>
+              <path d="M20 12h2"></path>
+              <path d="M6.34 17.66l-1.41 1.41"></path>
+              <path d="M19.07 4.93l-1.41 1.41"></path>
+            </svg>
+          }
+          @case ("dark") {
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="size-5 text-primary-500"
+            >
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          }
+          @case ("system") {
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="size-5 text-primary-500"
+            >
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21"></line>
+              <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+          }
+        }
+      </div>
+    </button>
+
+    <!-- Notifications -->
+    <button
+      class="relative p-2 rounded-lg text-gray-600 dark:text-gray-400 hover:text-primary-500 dark:hover:text-primary-400 hover:bg-base-100 dark:hover:bg-base-300 transition-all duration-200 sm:flex items-center justify-center"
+      (click)="toggleAside('notifications')"
+      aria-label="Ver notificaciones"
+    >
+      <i class="fas fa-bell text-lg"></i>
+      <span
+        class="bg-primary-500 absolute -top-1 -right-1 text-white text-xs rounded-full px-1.5 py-0.5 min-w-5 h-5 flex items-center justify-center font-semibold"
+        >3</span
+      >
+    </button>
+
+    <!-- Calendar -->
+    <button
+      class="p-2 rounded-lg text-gray-600 dark:text-gray-400 hover:text-primary-500 dark:hover:text-primary-400 hover:bg-base-100 dark:hover:bg-base-300 transition-all duration-200 md:flex items-center justify-center"
+      (click)="toggleAside('calendar')"
+      aria-label="Ver calendario"
+    >
+      <i class="fas fa-calendar text-lg"></i>
+    </button>
+
+    <!-- User Menu -->
+    <sga-user-menu
+      [name]="currentUser()?.firstName + ' ' + currentUser()?.lastName"
+      [role]="currentUser()?.role?.name || 'Usuario'"
+      code="A-123"
+      initials="CS"
+      [stats]="{ courses: 12, students: 240, average: '4.7' }"
+      [actions]="[
+        {
+          label: 'Mi Perfil',
+          icon: 'fas fa-user',
+          action: goProfile,
+          type: 'profile',
+        },
+        {
+          label: 'Configuración',
+          icon: 'fas fa-cog',
+          action: goSettings,
+          type: 'settings',
+        },
+        {
+          label: 'Cambiar contraseña',
+          icon: 'fas fa-key',
+          action: goChangePass,
+          type: 'change-password',
+        },
+        {
+          label:
+            currentTheme() === 'light'
+              ? 'Tema Claro'
+              : currentTheme() === 'dark'
+                ? 'Tema Oscuro'
+                : 'Tema del Sistema',
+          icon: 'theme-' + currentTheme(),
+          type: 'theme',
+        },
+      ]"
+      (actionSelected)="onAction($event)"
+    />
+  </div>
+</div>

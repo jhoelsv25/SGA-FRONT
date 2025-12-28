@@ -1,0 +1,32 @@
+<section id="admin" class="overflow-hidden">
+  <header class="sticky top-0 z-40 bg-base px-5 h-[72px]">
+    <sga-header />
+  </header>
+  <nav class="nav z-50 h-full overflow-hidden bg-base-300 max-md:fixed max-md:left-0">
+    <sga-sidebar />
+  </nav>
+  <main class="overflow-y-auto bg-base-100 p-3 mt-5">
+    <!--   <sga-breadcrumb /> -->
+    <router-outlet />
+  </main>
+
+  <!-- Backdrop con blur para el aside -->
+  @if (isShowAside()) {
+    <div
+      class="aside-backdrop"
+      (click)="closeAside()"
+      (keydown.escape)="closeAside()"
+      tabindex="0"
+      role="button"
+      aria-label="Cerrar panel lateral"
+    ></div>
+  }
+
+  <aside
+    class="aside z-60 h-full overflow-y-auto bg-base max-lg:absolute max-lg:right-0 border-l border-base-300 dark:border-base-200"
+    [class.sidebar-open]="isShowAside()"
+    [class.sidebar-closed]="!isShowAside()"
+  >
+    <sga-aside />
+  </aside>
+</section>

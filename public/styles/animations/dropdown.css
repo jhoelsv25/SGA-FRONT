@@ -1,0 +1,14 @@
+/* Dropdown menu open/close animation (pure CSS) */
+.dropdown-anim {
+  opacity: 0;
+  transform: scale(0.95) translateY(-5px);
+  pointer-events: none;
+  transition:
+    opacity 150ms ease,
+    transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.dropdown-anim.open {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  pointer-events: auto;
+}

@@ -1,0 +1,100 @@
+#admin {
+  display: relative;
+  display: grid;
+  height: 100vh;
+  grid-template-areas: "nav header header" "nav main aside";
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: 50px 1fr;
+  transition: all 0.3s ease-in-out;
+}
+
+.nav {
+  grid-area: nav;
+}
+
+main {
+  grid-area: main;
+  position: relative;
+  z-index: 1;
+}
+
+header {
+  grid-area: header;
+  position: relative;
+  z-index: 40;
+}
+
+.aside {
+  grid-area: aside;
+  width: 0;
+  transition: width 0.3s ease-in-out;
+  overflow: hidden;
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Backdrop con animación */
+.aside-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 45;
+  animation: backdrop-fade-in 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+@keyframes backdrop-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes backdrop-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Animación equivalente en CSS puro */
+@keyframes sidebar-toggle-open {
+  from {
+    width: 0;
+  }
+  to {
+    width: 380px;
+  }
+}
+@keyframes sidebar-toggle-close {
+  from {
+    width: 380px;
+  }
+  to {
+    width: 0;
+  }
+}
+
+/* Estado abierto */
+.sidebar-open {
+  width: 380px;
+  animation: sidebar-toggle-open 0.3s ease-in-out;
+  overflow: hidden;
+  transition: width 0.3s ease-in-out;
+}
+
+/* Estado cerrado */
+.sidebar-closed {
+  width: 0;
+  animation: sidebar-toggle-close 0.3s ease-in-out;
+  overflow: hidden;
+  transition: width 0.3s ease-in-out;
+}

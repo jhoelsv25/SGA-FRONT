@@ -1,0 +1,26 @@
+<div class="flex items-center space-x-4">
+  @for (step of steps(); track $index) {
+    <div class="flex items-center">
+      <div
+        class="flex items-center justify-center w-8 h-8 rounded-full border"
+        [class.bg-blue-600]="currentStep() === $index"
+        [class.text-white]="currentStep() === $index"
+      >
+        {{ $index + 1 }}
+      </div>
+      <span class="ml-2 text-sm" [class.font-bold]="currentStep() === $index">
+        {{ step.label }}
+      </span>
+    </div>
+    @if ($index < steps().length - 1) {
+      <div class="flex-1 h-px bg-gray-300 mx-2"></div>
+    }
+  }
+</div>
+
+<div class="mt-4 flex justify-between">
+  <button (click)="prev()" [disabled]="isFirst()" class="px-4 py-2 border rounded">Anterior</button>
+  <button (click)="next()" class="px-4 py-2 bg-blue-600 text-white rounded">
+    {{ isLast() ? 'Finalizar' : 'Siguiente' }}
+  </button>
+</div>
