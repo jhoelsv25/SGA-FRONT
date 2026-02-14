@@ -1,32 +1,235 @@
-<section id="admin" class="overflow-hidden">
-  <header class="sticky top-0 z-40 bg-base px-5 h-[72px]">
-    <sga-header />
-  </header>
-  <nav class="nav z-50 h-full overflow-hidden bg-base-300 max-md:fixed max-md:left-0">
+<section id="admin" class="flex h-screen w-full overflow-hidden bg-base-50 dark:bg-base-900 text-base-content">
+  <!-- Sidebar Container -->
+  <aside class="flex-shrink-0 z-50 h-full border-r border-base-200 dark:border-base-800 bg-base-100 dark:bg-base-950 transition-all duration-300">
     <sga-sidebar />
-  </nav>
-  <main class="overflow-y-auto bg-base-100 p-3 mt-5">
-    <!--   <sga-breadcrumb /> -->
-    <router-outlet />
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="flex-1 flex flex-col min-w-0 overflow-y-auto relative scroll-smooth">
+    <!-- Floating Action Button (Top Right) -->
+    <div class="fixed top-4 right-4 z-40 flex items-center gap-2">
+      <button
+        (click)="toggleRightSidebar()"
+        class="w-10 h-10 rounded-full bg-primary text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 flex items-center justify-center"
+        title="Notificaciones y Acciones"
+      >
+        <i class="fa-solid fa-bell text-sm"></i>
+        @if (hasNotifications()) {
+          <span class="absolute -top-1 -right-1 w-5 h-5 bg-error text-white text-[10px] font-bold rounded-full flex items-center justify-center">3</span>
+        }
+      </button>
+    </div>
+
+    <div class="flex-1 w-full max-w-[1920px] mx-auto p-4 md:p-6 lg:p-8">
+      <!-- Breadcrumb placeholder (optional) -->
+      <!-- <sga-breadcrumb class="mb-6 block" /> -->
+      
+      <router-outlet />
+    </div>
   </main>
 
-  <!-- Backdrop con blur para el aside -->
-  @if (isShowAside()) {
-    <div
-      class="aside-backdrop"
-      (click)="closeAside()"
-      (keydown.escape)="closeAside()"
-      tabindex="0"
-      role="button"
-      aria-label="Cerrar panel lateral"
+  <!-- Right Sidebar (Sheet) -->
+  <aside 
+    class="fixed top-0 right-0 h-full w-80 bg-base-100 dark:bg-base-950 border-l border-base-200 dark:border-base-800 shadow-2xl z-50 transition-transform duration-300 overflow-hidden flex flex-col"
+    [class.translate-x-0]="isRightSidebarOpen()"
+    [class.translate-x-full]="!isRightSidebarOpen()"
+  >
+    <!-- Header -->
+    <div class="flex items-center justify-between p-4 border-b border-base-200 dark:border-base-800">
+      <h2 class="text-lg font-bold text-base-content">Centro de Actividades</h2>
+      <button 
+        (click)="toggleRightSidebar()"
+        class="w-8 h-8 rounded-lg hover:bg-base-200 dark:hover:bg-base-800 transition-colors flex items-center justify-center"
+      >
+        <i class="fa-solid fa-xmark text-base-content/60"></i>
+      </button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex border-b border-base-200 dark:border-base-800">
+      <button
+        (click)="setRightSidebarTab('notifications')"
+        class="flex-1 px-4 py-3 text-sm font-medium transition-colors relative"
+        [class.text-primary]="rightSidebarTab() === 'notifications'"
+        [class.text-base-content/60]="rightSidebarTab() !== 'notifications'"
+      >
+        <i class="fa-solid fa-bell mr-2"></i>
+        Notificaciones
+        @if (rightSidebarTab() === 'notifications') {
+          <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"></div>
+        }
+      </button>
+      <button
+        (click)="setRightSidebarTab('calendar')"
+        class="flex-1 px-4 py-3 text-sm font-medium transition-colors relative"
+        [class.text-primary]="rightSidebarTab() === 'calendar'"
+        [class.text-base-content/60]="rightSidebarTab() !== 'calendar'"
+      >
+        <i class="fa-solid fa-calendar mr-2"></i>
+        Calendario
+        @if (rightSidebarTab() === 'calendar') {
+          <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"></div>
+        }
+      </button>
+    </div>
+
+    <!-- Content -->
+    <div class="flex-1 overflow-y-auto p-4">
+      @if (rightSidebarTab() === 'notifications') {
+        <!-- Notifications Tab -->
+        <div class="space-y-3">
+          <h3 class="text-xs font-semibold uppercase tracking-wide text-base-content/50 mb-3">Recientes</h3>
+          
+          <!-- Notification Item -->
+          <div class="p-3 bg-base-50 dark:bg-base-900 rounded-lg border border-base-200 dark:border-base-800 hover:border-primary/50 transition-colors cursor-pointer">
+            <div class="flex gap-3">
+              <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-user-plus text-primary text-sm"></i>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-base-content">Nuevo estudiante registrado</p>
+                <p class="text-xs text-base-content/60 mt-1">Juan Pérez se ha inscrito en Matemáticas I</p>
+                <p class="text-[10px] text-base-content/40 mt-2">Hace 5 minutos</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-3 bg-base-50 dark:bg-base-900 rounded-lg border border-base-200 dark:border-base-800 hover:border-primary/50 transition-colors cursor-pointer">
+            <div class="flex gap-3">
+              <div class="w-10 h-10 rounded-full bg-warning/10 flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-clock text-warning text-sm"></i>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-base-content">Recordatorio de clase</p>
+                <p class="text-xs text-base-content/60 mt-1">Física II comienza en 30 minutos</p>
+                <p class="text-[10px] text-base-content/40 mt-2">Hace 10 minutos</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-3 bg-base-50 dark:bg-base-900 rounded-lg border border-base-200 dark:border-base-800 hover:border-primary/50 transition-colors cursor-pointer">
+            <div class="flex gap-3">
+              <div class="w-10 h-10 rounded-full bg-success/10 flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-check-circle text-success text-sm"></i>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-base-content">Tarea calificada</p>
+                <p class="text-xs text-base-content/60 mt-1">Has calificado 15 tareas de Química</p>
+                <p class="text-[10px] text-base-content/40 mt-2">Hace 1 hora</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+
+      @if (rightSidebarTab() === 'calendar') {
+        <!-- Calendar Tab -->
+        <div class="space-y-4">
+          <h3 class="text-xs font-semibold uppercase tracking-wide text-base-content/50">Próximos Eventos</h3>
+          
+          <!-- Event Item -->
+          <div class="p-3 bg-base-50 dark:bg-base-900 rounded-lg border-l-4 border-primary">
+            <div class="flex items-start gap-3">
+              <div class="text-center shrink-0">
+                <div class="text-2xl font-bold text-primary">14</div>
+                <div class="text-[10px] uppercase text-base-content/50">Feb</div>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-base-content">Reunión de Profesores</p>
+                <p class="text-xs text-base-content/60 mt-1">
+                  <i class="fa-solid fa-clock mr-1"></i>
+                  10:00 AM - 12:00 PM
+                </p>
+                <p class="text-xs text-base-content/60">
+                  <i class="fa-solid fa-location-dot mr-1"></i>
+                  Sala de Conferencias
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-3 bg-base-50 dark:bg-base-900 rounded-lg border-l-4 border-warning">
+            <div class="flex items-start gap-3">
+              <div class="text-center shrink-0">
+                <div class="text-2xl font-bold text-warning">15</div>
+                <div class="text-[10px] uppercase text-base-content/50">Feb</div>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-base-content">Examen Final - Matemáticas</p>
+                <p class="text-xs text-base-content/60 mt-1">
+                  <i class="fa-solid fa-clock mr-1"></i>
+                  2:00 PM - 4:00 PM
+                </p>
+                <p class="text-xs text-base-content/60">
+                  <i class="fa-solid fa-users mr-1"></i>
+                  Grupo A - 30 estudiantes
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-3 bg-base-50 dark:bg-base-900 rounded-lg border-l-4 border-success">
+            <div class="flex items-start gap-3">
+              <div class="text-center shrink-0">
+                <div class="text-2xl font-bold text-success">18</div>
+                <div class="text-[10px] uppercase text-base-content/50">Feb</div>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-base-content">Entrega de Notas</p>
+                <p class="text-xs text-base-content/60 mt-1">
+                  <i class="fa-solid fa-clock mr-1"></i>
+                  Todo el día
+                </p>
+                <p class="text-xs text-base-content/60">
+                  <i class="fa-solid fa-file-lines mr-1"></i>
+                  Periodo Académico 2024-I
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Quick Actions Footer -->
+    <div class="p-4 border-t border-base-200 dark:border-base-800 bg-base-50 dark:bg-base-900">
+      <h3 class="text-xs font-semibold uppercase tracking-wide text-base-content/50 mb-3">Acciones Rápidas</h3>
+      <div class="grid grid-cols-2 gap-2">
+        <button class="p-3 bg-base-100 dark:bg-base-950 rounded-lg border border-base-200 dark:border-base-800 hover:border-primary hover:bg-primary/5 transition-all text-center">
+          <i class="fa-solid fa-plus text-primary text-lg mb-1"></i>
+          <p class="text-xs font-medium text-base-content">Nueva Tarea</p>
+        </button>
+        <button class="p-3 bg-base-100 dark:bg-base-950 rounded-lg border border-base-200 dark:border-base-800 hover:border-primary hover:bg-primary/5 transition-all text-center">
+          <i class="fa-solid fa-calendar-plus text-primary text-lg mb-1"></i>
+          <p class="text-xs font-medium text-base-content">Nuevo Evento</p>
+        </button>
+        <button class="p-3 bg-base-100 dark:bg-base-950 rounded-lg border border-base-200 dark:border-base-800 hover:border-primary hover:bg-primary/5 transition-all text-center">
+          <i class="fa-solid fa-user-plus text-primary text-lg mb-1"></i>
+          <p class="text-xs font-medium text-base-content">Añadir Estudiante</p>
+        </button>
+        <button class="p-3 bg-base-100 dark:bg-base-950 rounded-lg border border-base-200 dark:border-base-800 hover:border-primary hover:bg-primary/5 transition-all text-center">
+          <i class="fa-solid fa-file-export text-primary text-lg mb-1"></i>
+          <p class="text-xs font-medium text-base-content">Exportar Datos</p>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Right Sidebar Backdrop -->
+  @if (isRightSidebarOpen()) {
+    <div 
+      class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 transition-opacity duration-300"
+      (click)="toggleRightSidebar()"
+      aria-hidden="true"
     ></div>
   }
 
-  <aside
-    class="aside z-60 h-full overflow-y-auto bg-base max-lg:absolute max-lg:right-0 border-l border-base-300 dark:border-base-200"
-    [class.sidebar-open]="isShowAside()"
-    [class.sidebar-closed]="!isShowAside()"
-  >
-    <sga-aside />
-  </aside>
+  <!-- Mobile Overlay Backdrop (Left Sidebar) -->
+  @if (isMobileOpen()) {
+    <div 
+      class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 transition-opacity duration-300 md:hidden"
+      (click)="closeMobileSidebar()"
+      aria-hidden="true"
+    ></div>
+  }
 </section>

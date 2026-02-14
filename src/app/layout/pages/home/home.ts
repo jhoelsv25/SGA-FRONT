@@ -1,13 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { LayoutStore } from '@core/stores/layout.store';
-import { Aside } from 'app/layout/components/aside/aside';
-import { Header } from 'app/layout/components/header/header';
 import { Sidebar } from 'app/layout/components/sidebar/sidebar';
 
 @Component({
   selector: 'sga-home',
-  imports: [Aside, Header, Sidebar, RouterOutlet],
+  standalone: true,
+  imports: [CommonModule, Sidebar, RouterOutlet],
   templateUrl: './home.html',
   styleUrls: ['./home.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -15,15 +15,25 @@ import { Sidebar } from 'app/layout/components/sidebar/sidebar';
 export default class Home {
   private layout = inject(LayoutStore);
 
-  public isDarkMode = computed(() => this.layout.isDark());
-  public isShowAside = computed(() => this.layout.isShowAside());
-  public isShowNav = computed(() => this.layout.isShowNav());
+  // Left Sidebar States
+  public isSidebarCollapsed = computed(() => this.layout.isSidebarCollapsed());
+  public isMobile = computed(() => window.innerWidth < 768); 
+  public isMobileOpen = computed(() => !this.isSidebarCollapsed() && this.isMobile());
 
-  public closeAside(): void {
-    this.layout.closeAside();
+  // Right Sidebar States
+  public isRightSidebarOpen = signal(false);
+  public rightSidebarTab = signal<'notifications' | 'calendar'>('notifications');
+  public hasNotifications = signal(true); // TODO: Connect to real notification service
+
+  public closeMobileSidebar() {
+    this.layout.toggleSidebar();
   }
 
-  constructor() {
-    console.log('Home component initialized');
+  public toggleRightSidebar() {
+    this.isRightSidebarOpen.update(v => !v);
+  }
+
+  public setRightSidebarTab(tab: 'notifications' | 'calendar') {
+    this.rightSidebarTab.set(tab);
   }
 }

@@ -33,7 +33,7 @@ export class HeaderDetail {
   viewModeInput = input<'table' | 'kanban'>('table');
 
   // ================= OUTPUTS =================
-  actionClick = output<{ action: ActionConfig; context: ActionContext }>();
+  action = output<{ action: ActionConfig; context: ActionContext }>();
   viewModeChange = output<'table' | 'kanban'>();
   refresh = output<void>();
 
@@ -65,7 +65,7 @@ export class HeaderDetail {
   private emitAction(action: ActionConfig): void {
     if (this.isDisabled(action)) return;
 
-    this.actionClick.emit({
+    this.action.emit({
       action,
       context: {},
     });

@@ -43,8 +43,7 @@ export default class Institution {
     const row = e.context.row as InstitutionType;
     switch (e.action.key) {
       case 'edit':
-        //this.store.setCurrent(row);
-        this.openForm();
+        this.openForm(undefined, row);
         break;
 
       case 'delete':
@@ -63,12 +62,12 @@ export default class Institution {
   // =========================
   // UI ONLY
   // =========================
-  private openForm(title?: string, data: InstitutionType | null = null) {
+  private openForm(title?: string, current: InstitutionType | null = null) {
     this.dialog.open(InstitutionForm, {
       data: {
-        title,
+        title: title ?? (current ? 'Editar institución' : 'Nueva institución'),
         subTitle: 'Administrar información de la institución',
-        current: data,
+        current,
       },
       panelClass: 'dialog-top',
       height: '90%',

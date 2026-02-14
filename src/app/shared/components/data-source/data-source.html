@@ -351,12 +351,23 @@
 <!-- Pagination -->
 @if (config().pagination) {
   <div class="sticky bottom-0 left-0 w-full">
-    <sga-pagination
-      [total]="totalCount()"
-      [size]="getSize()"
-      [page]="getPage()"
-      [useParams]="true"
-      [sizeOptions]="[10, 20, 50, 100]"
-    />
+    @if (isCursorPagination() && cursorPagination()) {
+      <sga-load-more-pagination
+        [loadedCount]="cursorPagination()!.loadedCount"
+        [hasNext]="cursorPagination()!.hasNext"
+        [nextCursor]="cursorPagination()!.nextCursor"
+        [loading]="loading()"
+        (loadMore)="onLoadMoreCursor($event)"
+      />
+    } @else {
+      <sga-pagination
+        [total]="totalCount()"
+        [size]="getSize()"
+        [page]="getPage()"
+        [useParams]="true"
+        [sizeOptions]="[10, 20, 50, 100]"
+        (pageChange)="pageChange.emit($event)"
+      />
+    }
   </div>
 }

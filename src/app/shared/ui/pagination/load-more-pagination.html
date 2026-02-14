@@ -1,0 +1,29 @@
+<div
+  class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-4 p-3 w-full bg-base-200 dark:text-white rounded-lg shadow-sm"
+>
+  <div class="text-sm text-neutral-600 dark:text-neutral-300 text-center sm:text-left">
+    Mostrando <strong>{{ loadedCount() }}</strong> elemento(s)
+    @if (hasNext()) {
+      <span class="text-neutral-500"> · Hay más resultados</span>
+    }
+  </div>
+  @if (hasNext()) {
+    <button
+      type="button"
+      sgaButton
+      color="primary"
+      variant="outline"
+      size="sm"
+      [disabled]="loading()"
+      (click)="onLoadMore()"
+      aria-label="Cargar más"
+    >
+      @if (loading()) {
+        <i class="fas fa-spinner fa-spin mr-2"></i>
+      } @else {
+        <i class="fas fa-chevron-down mr-2"></i>
+      }
+      Cargar más
+    </button>
+  }
+</div>

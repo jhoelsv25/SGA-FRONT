@@ -1,0 +1,42 @@
+<div class="space-y-6">
+  <div class="flex items-center justify-between mb-8">
+    <h2 class="text-2xl font-black text-slate-800 tracking-tight">Trabajos y Tareas</h2>
+    <div class="flex gap-2">
+      <div class="bg-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-slate-400 border border-slate-100 italic">Filtrar por unidad</div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 gap-4">
+    @for (task of tasks; track task.id) {
+      <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 transition-all group flex items-center justify-between">
+        <div class="flex items-center gap-5">
+           <div class="w-14 h-14 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 transition-colors group-hover:bg-indigo-600 group-hover:text-white duration-500">
+             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
+           </div>
+           <div>
+             <h3 class="text-lg font-black text-slate-800 group-hover:text-indigo-600 transition-colors">{{ task.title }}</h3>
+             <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">Vence el {{ task.date | date:'mediumDate' }}</p>
+           </div>
+        </div>
+
+        <div class="flex items-center gap-8">
+           <div class="text-right hidden sm:block">
+              <p class="text-[10px] font-black uppercase tracking-widest text-slate-300">Puntaje Máximo</p>
+              <p class="text-lg font-black text-slate-700">{{ task.points }} pts</p>
+           </div>
+           
+           <div class="flex flex-col items-end gap-1">
+              @if (task.status === 'pending') {
+                <span class="px-4 py-1.5 rounded-full bg-amber-50 text-amber-600 text-[10px] font-black uppercase tracking-widest border border-amber-100 shadow-sm">Pendiente</span>
+              } @else if (task.status === 'delivered') {
+                <span class="px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest border border-blue-100 shadow-sm">Entregado</span>
+              } @else if (task.status === 'graded') {
+                <span class="px-4 py-1.5 rounded-full bg-green-50 text-green-600 text-[10px] font-black uppercase tracking-widest border border-green-100 shadow-sm">Calificado: {{ task.grade }}</span>
+              }
+              <button class="text-[10px] font-black uppercase tracking-widest text-indigo-400 hover:text-indigo-700 transition-colors mt-1">Ver detalles</button>
+           </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

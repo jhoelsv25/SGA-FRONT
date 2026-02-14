@@ -38,6 +38,12 @@ export type CurrentUser = {
   lastLogin: null;
   profilePicture: string;
   role: RoleAuth;
+  code?: string; // Optional user code (e.g., "A-123")
+  stats?: {
+    courses?: number;
+    students?: number;
+    average?: string;
+  };
 };
 export interface RoleResponse {
   role: RoleAuth;

@@ -1,0 +1,68 @@
+<div class="p-8 max-w-7xl mx-auto">
+  <div class="flex justify-between items-end mb-10">
+    <div>
+      <h1 class="text-4xl font-black text-slate-900 tracking-tighter">Gestión de Evaluaciones</h1>
+      <p class="text-slate-500 font-medium">Configura exámenes, trabajos y proyectos por periodo.</p>
+    </div>
+    <button class="px-6 py-3 bg-slate-900 text-white rounded-2xl font-bold shadow-xl hover:bg-black transition-all hover:-translate-y-1 active:scale-95 flex items-center gap-2">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+      Nueva Evaluación
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    @if (store.loading()) {
+      @for (i of [1,2,3]; track i) {
+        <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm animate-pulse">
+          <div class="h-4 bg-slate-100 rounded-full w-2/3 mb-4"></div>
+          <div class="h-3 bg-slate-50 rounded-full w-full mb-2"></div>
+          <div class="h-3 bg-slate-50 rounded-full w-5/6 mb-6"></div>
+          <div class="flex justify-between items-center">
+            <div class="h-8 bg-slate-50 rounded-lg w-20"></div>
+            <div class="h-8 bg-slate-50 rounded-lg w-12"></div>
+          </div>
+        </div>
+      }
+    } @else {
+      @for (assessment of store.assessments(); track assessment.id) {
+        <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition-all group relative overflow-hidden">
+          <div class="absolute top-0 right-0 p-4">
+             <span class="px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-slate-100 text-slate-500">
+               {{ assessment.type }}
+             </span>
+          </div>
+          
+          <h3 class="text-xl font-black text-slate-800 mb-2 group-hover:text-blue-600 transition-colors uppercase tracking-tight">
+            {{ assessment.name }}
+          </h3>
+          <p class="text-slate-500 text-sm mb-6 line-clamp-2">{{ assessment.description }}</p>
+          
+          <div class="flex flex-col gap-4">
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-slate-400 font-bold">Peso:</span>
+              <span class="text-blue-600 font-black">{{ assessment.weightPercentage }}%</span>
+            </div>
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-slate-400 font-bold">Fecha:</span>
+              <span class="text-slate-700 font-semibold italic">{{ assessment.assessmentDate | date:'mediumDate' }}</span>
+            </div>
+          </div>
+          
+          <div class="mt-8 pt-6 border-t border-slate-50 flex justify-between items-center">
+            <div class="flex -space-x-2">
+              <div class="w-8 h-8 rounded-full bg-blue-100 border-2 border-white flex items-center justify-center text-[10px] font-bold text-blue-600">P</div>
+              <div class="w-8 h-8 rounded-full bg-indigo-100 border-2 border-white flex items-center justify-center text-[10px] font-bold text-indigo-600">S</div>
+            </div>
+            <button class="text-xs font-black text-slate-400 hover:text-slate-900 transition-colors uppercase tracking-widest">
+              Configurar
+            </button>
+          </div>
+        </div>
+      } @empty {
+        <div class="col-span-full py-20 text-center bg-slate-50/50 rounded-3xl border-2 border-dashed border-slate-200">
+          <p class="text-slate-400 font-bold italic">No hay evaluaciones configuradas para este curso.</p>
+        </div>
+      }
+    }
+  </div>
+</div>

@@ -7,7 +7,18 @@ export default [
     title: 'Años Académicos',
     data: { permissions: ['view_academic_year', 'manage_academic_year'] },
   },
-
+  {
+    path: 'periods',
+    loadComponent: () => import('./periods/pages/periods/periods'),
+    title: 'Períodos Académicos',
+    data: { permissions: ['view_academic_period', 'manage_academic_period'] },
+  },
+  {
+    path: 'grade-levels',
+    loadComponent: () => import('./grade-levels/pages/grade-levels/grade-levels'),
+    title: 'Niveles de grado',
+    data: { permissions: ['view_grade_level', 'manage_grade_level'] },
+  },
   {
     path: 'subject-areas',
     loadComponent: () => import('./subject-areas/pages/subject-areas/subject-areas'),
@@ -26,4 +37,9 @@ export default [
     title: 'Competencias',
     data: { permissions: ['view_competency', 'manage_competency'] },
   },
+  {
+    path: '',
+    redirectTo: 'years',
+    pathMatch: 'full'
+  }
 ] as Routes;

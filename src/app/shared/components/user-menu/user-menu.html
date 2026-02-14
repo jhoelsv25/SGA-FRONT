@@ -1,16 +1,10 @@
-<div class="relative user-menu-container">
+<div class="relative user-menu-container w-full">
   <!-- Trigger -->
   <button
     (click)="toggleMenu()"
-    class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200"
+    class="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200"
   >
-    <div class="text-right hidden sm:block">
-      <div class="text-sm font-semibold text-gray-800 dark:text-white">
-        {{ name() }}
-      </div>
-      <div class="text-xs text-gray-500 dark:text-gray-400">{{ role() }}</div>
-    </div>
-    <div class="relative">
+    <div class="relative shrink-0">
       @if (avatar(); as img) {
         <img
           [src]="img"
@@ -25,17 +19,23 @@
         </div>
       }
     </div>
+    <div class="flex-1 text-left min-w-0">
+      <div class="text-sm font-semibold text-gray-800 dark:text-white truncate">
+        {{ name() }}
+      </div>
+      <div class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ role() }}</div>
+    </div>
     <i
-      class="fas fa-chevron-down text-xs text-gray-500 transition-transform duration-200"
+      class="fas fa-chevron-up text-xs text-gray-500 transition-transform duration-200 shrink-0"
       [class.rotate-180]="open()"
     ></i>
   </button>
 
-  <!-- Dropdown -->
+  <!-- Dropdown (Opens Upward) -->
 
   <div
     [ngClass]="open() ? 'menu-anim-enter' : 'menu-anim-leave'"
-    class="absolute right-0 top-14 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden origin-top-right"
+    class="absolute left-0 right-0 bottom-full mb-2 w-full bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden origin-bottom"
   >
     <!-- Header -->
     <div class="bg-primary-500 p-4 text-white">

@@ -54,5 +54,7 @@ export type DataSourceConfig = {
   sortable?: boolean | ((permission?: unknown) => boolean); // Permitir ordenamiento (puede depender de permisos)
   localSort?: boolean; // Si true, el sort se aplica localmente en la tabla
   pagination?: boolean; // Habilitar paginación
+  /** 'offset' = páginas (page/size/total), 'cursor' = Cargar más (nextCursor/hasNext) para listas muy grandes */
+  paginationMode?: 'offset' | 'cursor';
   rowDraggable?: boolean | ((permission?: unknown) => boolean); // Permitir reordenar filas con drag & drop (puede depender de permisos)
 };

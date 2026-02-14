@@ -1,0 +1,42 @@
+<form [formGroup]="form" class="grid gap-4" (ngSubmit)="submit()">
+  <header class="flex items-center justify-between mb-4">
+    <h2 class="text-lg font-semibold">{{ current ? 'Editar horario' : 'Nuevo horario' }}</h2>
+    <button type="button" sgaButton color="secondary" variant="ghost" shape="pill" (click)="close()">
+      <i class="fas fa-times"></i>
+    </button>
+  </header>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <label class="label-form" for="title">Título</label>
+      <sga-input id="title" formControlName="title" placeholder="Ej: Matemáticas" />
+    </div>
+    <div>
+      <label class="label-form" for="dayOfWeek">Día</label>
+      <sga-select id="dayOfWeek" [options]="dayOptions" formControlName="dayOfWeek" />
+    </div>
+    <div>
+      <label class="label-form" for="startAt">Hora inicio</label>
+      <sga-input id="startAt" type="time" formControlName="startAt" />
+    </div>
+    <div>
+      <label class="label-form" for="endAt">Hora fin</label>
+      <sga-input id="endAt" type="time" formControlName="endAt" />
+    </div>
+    <div>
+      <label class="label-form" for="classroom">Aula</label>
+      <sga-input id="classroom" formControlName="classroom" placeholder="Ej: Aula 101" />
+    </div>
+    <div>
+      <label class="label-form" for="sectionCourse">Sección-Curso</label>
+      <sga-select id="sectionCourse" [options]="sectionCourseOptions" formControlName="sectionCourse" placeholder="Seleccionar" />
+    </div>
+    <div class="md:col-span-2">
+      <label class="label-form" for="description">Descripción</label>
+      <sga-input id="description" formControlName="description" placeholder="Opcional" />
+    </div>
+  </div>
+  <footer class="flex justify-end gap-2 mt-4">
+    <button type="button" sgaButton color="secondary" variant="outline" (click)="close()">Cancelar</button>
+    <button type="submit" sgaButton color="primary" [disabled]="form.invalid">Guardar</button>
+  </footer>
+</form>

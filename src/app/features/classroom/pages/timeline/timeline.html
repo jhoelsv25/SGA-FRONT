@@ -1,0 +1,154 @@
+<div class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+  
+  <!-- Publishing Area -->
+  <div class="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 p-6">
+    <div class="flex items-start gap-4">
+      <div class="w-10 h-10 rounded-full bg-blue-100 border-2 border-white shadow-sm flex-shrink-0 flex items-center justify-center font-bold text-blue-600">JP</div>
+      <div class="flex-1 space-y-4">
+        <textarea 
+          [(ngModel)]="postContent"
+          placeholder="Comparte algo con tu clase..."
+          class="w-full bg-slate-50 border-none rounded-2xl p-4 text-slate-700 font-medium focus:ring-2 focus:ring-blue-100 min-h-[100px] transition-all resize-none"
+        ></textarea>
+        
+        <!-- Attachments Preview -->
+        @if (attachments().length > 0) {
+          <div class="flex flex-wrap gap-2 px-2">
+            @for (file of attachments(); track $index) {
+              <div class="flex items-center gap-2 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100 text-[11px] font-bold text-blue-700 group">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
+                <span class="max-w-[150px] truncate">{{ file.name }}</span>
+                <button (click)="removeAttachment($index)" class="text-blue-300 hover:text-red-500 transition-colors">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+              </div>
+            }
+          </div>
+        }
+
+        <div class="flex justify-between items-center">
+          <div class="flex items-center gap-2">
+            <!-- Hidden File Input -->
+            <input type="file" #fileInput class="hidden" (change)="onFileSelected($event)">
+            <button (click)="fileInput.click()" class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all" title="Adjuntar archivo">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
+            </button>
+            
+            <!-- Assignment Toggle -->
+            <button 
+              (click)="isAssignment.set(!isAssignment())"
+              class="flex items-center gap-2 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+              [ngClass]="isAssignment() ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:bg-slate-100'"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
+              Tarea
+            </button>
+          </div>
+          <button 
+            (click)="publish()"
+            [disabled]="!postContent() && attachments().length === 0"
+            class="px-8 py-2.5 bg-blue-600 text-white rounded-xl font-black shadow-lg shadow-blue-200 hover:bg-blue-700 disabled:bg-slate-200 transition-all hover:-translate-y-0.5"
+          >
+            Publicar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feed Area -->
+  <div class="space-y-6">
+    @for (item of (store.feed().length ? store.feed() : mockFeed); track item.id) {
+      <div class="bg-white rounded-3xl shadow-md border border-slate-100 overflow-hidden hover:shadow-xl hover:shadow-slate-200/40 transition-all group">
+        
+        <!-- Post Header -->
+        <div class="p-6">
+          <div class="flex justify-between items-start mb-6">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 font-bold group-hover:bg-blue-600 group-hover:text-white transition-all duration-500">
+                {{ item.author.avatar || item.author.name[0] }}
+              </div>
+              <div>
+                <h4 class="font-black text-slate-800 tracking-tight">{{ item.author.name }}</h4>
+                <div class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                  <span>{{ item.author.role }}</span>
+                  <span>•</span>
+                  <span>{{ item.date | date:'short' }}</span>
+                </div>
+              </div>
+            </div>
+            
+            @if (item.type === 'assignment') {
+              <span class="px-3 py-1 bg-red-50 text-red-600 text-[10px] font-black uppercase tracking-widest rounded-lg border border-red-100">Tarea</span>
+            } @else if (item.type === 'material') {
+              <span class="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest rounded-lg border border-blue-100">Material</span>
+            }
+          </div>
+
+          <div class="space-y-4 px-0 md:px-2">
+            @if (item.title) {
+              <h3 class="text-xl font-black text-slate-900 leading-tight">{{ item.title }}</h3>
+            }
+            <p class="text-slate-600 font-medium leading-relaxed whitespace-pre-wrap">{{ item.content }}</p>
+            
+            <!-- Post Attachments -->
+            @if (item.metadata.attachments && item.metadata.attachments.length > 0) {
+              <div class="flex flex-wrap gap-3 mt-4">
+                @for (file of item.metadata.attachments; track $index) {
+                  <a [href]="file.url" target="_blank" class="flex items-center gap-3 bg-slate-50 p-3 rounded-2xl border border-slate-100 hover:border-blue-200 hover:bg-blue-50/30 transition-all">
+                    <div class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-blue-600">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                    </div>
+                    <div class="flex flex-col">
+                      <span class="text-xs font-bold text-slate-700 truncate max-w-[200px]">{{ file.name }}</span>
+                      <span class="text-[9px] font-black uppercase tracking-widest text-slate-400">Descargar</span>
+                    </div>
+                  </a>
+                }
+              </div>
+            }
+          </div>
+
+          <div class="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
+            <div class="flex items-center gap-6">
+              <button class="flex items-center gap-2 text-slate-400 hover:text-blue-600 font-bold text-sm transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+                <span>{{ item.commentsCount }} Comentarios</span>
+              </button>
+            </div>
+            <button class="px-4 py-2 text-blue-600 font-black text-[11px] uppercase tracking-widest hover:bg-blue-50 rounded-xl transition-all">Ver detalle</button>
+          </div>
+        </div>
+
+        <!-- Responses / Comments Section -->
+        <div class="bg-slate-50/50 p-6 space-y-4">
+           @if (item.commentsCount > 0) {
+             <div class="space-y-4 mb-6 ml-4 border-l-2 border-slate-100 pl-4">
+               <div class="flex gap-3">
+                 <div class="w-8 h-8 rounded-lg bg-blue-50 text-[9px] font-bold text-blue-600 flex items-center justify-center">MG</div>
+                 <div class="flex-1 bg-white p-3 rounded-2xl shadow-sm border border-slate-100">
+                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Maria Garcia</p>
+                    <p class="text-xs font-medium text-slate-600">¡Muchas gracias profesor por el material!</p>
+                 </div>
+               </div>
+             </div>
+           }
+
+           <div class="flex gap-3 items-center">
+              <div class="w-10 h-10 rounded-full bg-blue-100 border-2 border-white shadow-sm flex-shrink-0 flex items-center justify-center font-bold text-blue-600">JP</div>
+              <div class="flex-1 relative">
+                <input 
+                  type="text" 
+                  placeholder="Escribe una respuesta pública..." 
+                  class="w-full bg-white border border-slate-100 rounded-2xl px-5 py-3 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all shadow-sm"
+                >
+                <button class="absolute right-3 top-2 text-blue-600 hover:text-blue-800 transition-colors">
+                  <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" /></svg>
+                </button>
+              </div>
+           </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

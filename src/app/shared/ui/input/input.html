@@ -1,19 +1,31 @@
 <div class="relative w-full">
   <div
-    class="flex items-center justify-between w-full min-h-9 px-2 text-sm border border-base-300 rounded-md cursor-pointer transition-all duration-200"
+    class="flex items-center justify-between w-full min-h-10 px-3 py-2 text-sm border rounded-lg cursor-pointer transition-all duration-200 font-['Inter',sans-serif]"
     [class]="
       disabled()
-        ? 'pointer-events-none opacity-50 bg-base-100 border-base-200'
-        : 'bg-base border-base-300 text-neutral-800 dark:bg-base dark:border-base-200 dark:text-white hover:border-primary-300 focus-within:border-primary-500 focus-within:ring-2 focus-within:ring-primary-300'
+        ? 'pointer-events-none opacity-50 bg-base-100/50 border-base-200 cursor-not-allowed'
+        : 'bg-base-100 border-base-300 text-base-content hover:border-base-400 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm hover:shadow-md'
     "
     tabindex="0"
     [attr.aria-disabled]="disabled()"
   >
     @if (type() === 'number') {
-      <i class="fas fa-hashtag text-primary-400 mr-1"></i>
+      <i class="fas fa-hashtag text-base-content/40 mr-2 text-xs"></i>
     }
     @if (type() === 'text') {
-      <i class="fas fa-font text-primary-400 mr-1"></i>
+      <i class="fas fa-font text-base-content/40 mr-2 text-xs"></i>
+    }
+    @if (type() === 'email') {
+      <i class="fas fa-envelope text-base-content/40 mr-2 text-xs"></i>
+    }
+    @if (type() === 'password') {
+      <i class="fas fa-lock text-base-content/40 mr-2 text-xs"></i>
+    }
+    @if (type() === 'date') {
+      <i class="fas fa-calendar text-base-content/40 mr-2 text-xs"></i>
+    }
+    @if (type() === 'tel') {
+      <i class="fas fa-phone text-base-content/40 mr-2 text-xs"></i>
     }
     <input
       [type]="type()"
@@ -21,23 +33,23 @@
       [disabled]="disabled()"
       [value]="localValue"
       (input)="onInput($event)"
-      class="flex-1 bg-transparent outline-none border-none text-sm px-0 focus:ring-0 text-left truncate"
+      class="flex-1 bg-transparent outline-none border-none text-sm px-0 focus:ring-0 text-left truncate placeholder:text-base-content/40 font-medium"
       style="min-width: 0"
     />
     @if (localValue && !disabled()) {
       <button
         type="button"
-        class="flex items-center justify-center w-5 h-5 text-neutral-400 hover:text-neutral-600 hover:bg-base-200 rounded transition-colors duration-200 dark:text-neutral-300 dark:hover:text-white ml-1"
+        class="flex items-center justify-center w-6 h-6 text-base-content/40 hover:text-base-content hover:bg-base-200 rounded-md transition-all duration-200 ml-2 shrink-0"
         (click)="clearInput()"
         tabindex="-1"
       >
-        <i class="fas fa-times text-xs"></i>
+        <i class="fas fa-xmark text-sm"></i>
       </button>
     }
   </div>
   <small>
     @if (required()) {
-      <span class="text-xs text-red-600">* Campo requerido</span>
+      <span class="text-xs text-error font-medium mt-1 block">* Campo requerido</span>
     }
   </small>
 </div>

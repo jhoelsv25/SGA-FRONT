@@ -1,0 +1,46 @@
+<form [formGroup]="form" class="grid gap-4" (ngSubmit)="submit()">
+  <header class="flex items-center justify-between mb-4">
+    <h2 class="text-lg font-semibold">{{ current ? 'Editar sección' : 'Nueva sección' }}</h2>
+    <button type="button" sgaButton color="secondary" variant="ghost" shape="pill" (click)="close()">
+      <i class="fas fa-times"></i>
+    </button>
+  </header>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <label class="label-form" for="name">Nombre</label>
+      <sga-input id="name" formControlName="name" placeholder="Ej: A, B, C" />
+    </div>
+    <div>
+      <label class="label-form" for="capacity">Capacidad</label>
+      <sga-input id="capacity" type="number" formControlName="capacity" placeholder="Ej: 30" />
+    </div>
+    <div>
+      <label class="label-form" for="shift">Turno</label>
+      <sga-select id="shift" [options]="shiftOptions" formControlName="shift" />
+    </div>
+    <div>
+      <label class="label-form" for="grade">Grado</label>
+      <sga-select id="grade" [options]="gradeOptions" formControlName="grade" placeholder="Seleccionar grado" />
+    </div>
+    <div>
+      <label class="label-form" for="yearAcademic">Año académico</label>
+      <sga-select id="yearAcademic" [options]="yearOptions" formControlName="yearAcademic" placeholder="Seleccionar año" />
+    </div>
+    <div>
+      <label class="label-form" for="tutor">Tutor</label>
+      <sga-input id="tutor" formControlName="tutor" placeholder="Nombre del tutor" />
+    </div>
+    <div>
+      <label class="label-form" for="classroom">Aula</label>
+      <sga-input id="classroom" formControlName="classroom" placeholder="Ej: Aula 101" />
+    </div>
+    <div>
+      <label class="label-form" for="availableSlots">Cupos disponibles</label>
+      <sga-input id="availableSlots" type="number" formControlName="availableSlots" />
+    </div>
+  </div>
+  <footer class="flex justify-end gap-2 mt-4">
+    <button type="button" sgaButton color="secondary" variant="outline" (click)="close()">Cancelar</button>
+    <button type="submit" sgaButton color="primary" [disabled]="form.invalid">Guardar</button>
+  </footer>
+</form>

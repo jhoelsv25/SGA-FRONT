@@ -22,8 +22,10 @@ import { ActionConfig, ActionContext } from '@core/types/action-types';
 
 import { CellFormatter } from '@core/services/cell-formated';
 
+import { CursorPagination } from '@core/types/pagination-types';
 import { Button } from '@shared/directives';
 import { Checkbox } from '@shared/ui/checkbox/checkbox';
+import { LoadMorePagination } from '@shared/ui/pagination/load-more-pagination';
 import { Pagination } from '@shared/ui/pagination/pagination';
 import { Search } from '@shared/ui/search/search';
 
@@ -36,7 +38,7 @@ import {
 @Component({
   selector: 'sga-data-source',
   standalone: true,
-  imports: [CommonModule, FormsModule, Pagination, Checkbox, Button, Search],
+  imports: [CommonModule, FormsModule, Pagination, LoadMorePagination, Checkbox, Button, Search],
   templateUrl: './data-source.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -63,7 +65,11 @@ export class DataSource implements OnInit, OnDestroy {
   loading = input(false);
   selectedItems = input<unknown[]>([]);
   currentSort = input<DataSourceSorting | null>(null);
-  pagination = input<{ page: number; size: number; total: number } | undefined>();
+  pagination = input<
+    | { page: number; size: number; total: number }
+    | { nextCursor?: string | null; hasNext: boolean; limit: number; loadedCount: number }
+    | undefined
+  >();
   searchTerm = input('');
 
   // =========================
@@ -76,6 +82,8 @@ export class DataSource implements OnInit, OnDestroy {
   sortChange = output<DataSourceSorting>();
   rowOrderChange = output<{ from: number; to: number }>();
   searchOutput = output<string>();
+  pageChange = output<{ page: number; size: number }>();
+  loadMore = output<string>();
 
   // =========================
   // STATE
@@ -117,7 +125,18 @@ export class DataSource implements OnInit, OnDestroy {
     return this.sortData(this.displayData(), sort);
   });
 
-  totalCount = computed(() => this.pagination()?.total ?? this.data().length);
+  totalCount = computed(() => {
+    const p = this.pagination();
+    if (!p) return this.data().length;
+    return 'total' in p ? p.total : (p as CursorPagination).loadedCount;
+  });
+
+  isCursorPagination = computed(() => {
+    const p = this.pagination();
+    return p != null && 'hasNext' in p && 'nextCursor' in p;
+  });
+
+  cursorPagination = computed(() => this.pagination() as CursorPagination | undefined);
 
   // =========================
   // LIFECYCLE
@@ -355,11 +374,20 @@ export class DataSource implements OnInit, OnDestroy {
   // PAGINATION
   // =========================
   getPage(): number {
-    return this.pagination()?.page ?? 1;
+    const p = this.pagination();
+    if (!p || 'hasNext' in p) return 1;
+    return p.page ?? 1;
   }
 
   getSize(): number {
-    return this.pagination()?.size ?? 10;
+    const p = this.pagination();
+    if (!p) return 10;
+    if ('limit' in p) return p.limit;
+    return p.size ?? 10;
+  }
+
+  onLoadMoreCursor(cursor: string): void {
+    this.loadMore.emit(cursor);
   }
 
   // =========================

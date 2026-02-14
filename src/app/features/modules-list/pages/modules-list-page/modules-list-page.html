@@ -1,0 +1,9 @@
+<sga-header-detail [config]="headerConfig()" [actions]="headerActions()" (action)="onHeaderAction($event)" />
+<sga-data-source
+  [data]="data()"
+  [columns]="columns()"
+  [loading]="loading()"
+  [config]="{ pagination: true, paginationMode: 'cursor' }"
+  [pagination]="cursorPagination() ?? { nextCursor: null, hasNext: false, limit: 20, loadedCount: data().length }"
+  (loadMore)="onLoadMore($event)"
+/>

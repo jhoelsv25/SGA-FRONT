@@ -1,0 +1,30 @@
+<form [formGroup]="form" class="grid gap-4" (ngSubmit)="submit()">
+  <header class="flex items-center justify-between mb-4">
+    <h2 class="text-lg font-semibold">{{ current ? 'Editar estudiante' : 'Nuevo estudiante' }}</h2>
+    <button type="button" sgaButton color="secondary" variant="ghost" shape="pill" (click)="close()">
+      <i class="fas fa-times"></i>
+    </button>
+  </header>
+  <div class="grid gap-4">
+    <div>
+      <label class="label-form" for="name">Nombre</label>
+      <sga-input id="name" formControlName="name" placeholder="Nombre completo" />
+    </div>
+    <div>
+      <label class="label-form" for="email">Email</label>
+      <sga-input id="email" type="email" formControlName="email" placeholder="correo@ejemplo.com" />
+    </div>
+    <div>
+      <label class="label-form" for="age">Edad</label>
+      <sga-input id="age" type="number" formControlName="age" placeholder="Edad" />
+    </div>
+    <div>
+      <label class="label-form" for="grade">Grado</label>
+      <sga-input id="grade" formControlName="grade" placeholder="Grado" />
+    </div>
+  </div>
+  <footer class="flex justify-end gap-2 mt-4">
+    <button type="button" sgaButton color="secondary" variant="outline" (click)="close()">Cancelar</button>
+    <button type="submit" sgaButton color="primary" [disabled]="form.invalid">Guardar</button>
+  </footer>
+</form>

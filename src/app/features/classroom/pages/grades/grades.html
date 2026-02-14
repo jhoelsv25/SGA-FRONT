@@ -1,0 +1,58 @@
+<div class="space-y-10 animate-in fade-in duration-500">
+  
+  <!-- Average Card -->
+  <div class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl p-8 text-white shadow-2xl shadow-blue-200 flex flex-col md:flex-row justify-between items-center gap-8 overflow-hidden relative">
+    <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
+    <div class="absolute -left-10 -top-10 w-48 h-48 bg-blue-400/20 rounded-full blur-3xl"></div>
+    
+    <div class="relative z-10">
+      <h3 class="text-3xl font-black tracking-tight mb-2">Resumen de Calificaciones</h3>
+      <p class="text-blue-100 font-medium italic opacity-80">Seguimiento de tu rendimiento académico en este curso.</p>
+    </div>
+    
+    <div class="bg-white/10 backdrop-blur-md rounded-2xl p-6 text-center border border-white/20 min-w-[200px] relative z-10">
+      <p class="text-[10px] font-black uppercase tracking-widest text-blue-200 mb-1">Tu Promedio Actual</p>
+      <div class="text-5xl font-black text-white tracking-tighter">{{ average | number:'1.1-1' }}</div>
+    </div>
+  </div>
+
+  <!-- Detailed Table -->
+  <div class="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+    <table class="w-full text-left border-collapse">
+       <thead>
+         <tr class="bg-slate-50 border-b border-slate-100">
+            <th class="px-8 py-5 text-xs font-black text-slate-400 uppercase tracking-widest">Actividad Evaluada</th>
+            <th class="px-8 py-5 text-xs font-black text-slate-400 uppercase tracking-widest text-center">Fecha</th>
+            <th class="px-8 py-5 text-xs font-black text-slate-400 uppercase tracking-widest text-right">Calificación</th>
+         </tr>
+       </thead>
+       <tbody class="divide-y divide-slate-50">
+         @for (record of records; track $index) {
+           <tr class="hover:bg-slate-50/50 transition-colors">
+              <td class="px-8 py-6">
+                <div class="font-bold text-slate-800 text-lg tracking-tight">{{ record.name }}</div>
+              </td>
+              <td class="px-8 py-6 text-center">
+                <span class="text-slate-400 font-mono text-xs italic">{{ record.date | date:'mediumDate' }}</span>
+              </td>
+              <td class="px-8 py-6 text-right">
+                <div class="inline-flex items-center gap-2">
+                   <div 
+                     class="w-12 h-12 flex items-center justify-center rounded-2xl font-black text-xl shadow-sm border border-slate-100 transition-all hover:scale-110"
+                     [ngClass]="{
+                       'bg-green-50 text-green-600': record.score >= 17,
+                       'bg-blue-50 text-blue-600': record.score >= 13 && record.score < 17,
+                       'bg-red-50 text-red-600': record.score < 13
+                     }"
+                    >
+                    {{ record.score }}
+                   </div>
+                   <span class="text-[10px] font-black italic text-slate-300">/ {{ record.total }}</span>
+                </div>
+              </td>
+           </tr>
+         }
+       </tbody>
+    </table>
+  </div>
+</div>

@@ -38,8 +38,12 @@ export const StudentStore = signalStore(
             tap({
               next: (response) => {
                 patchState(store, {
-                  students: response.data,
-                  pagination: { page: 1, size: 10, total: response.total },
+                  students: response.data ?? [],
+                  pagination: {
+                    page: response.page ?? 1,
+                    size: response.size ?? 10,
+                    total: response.total ?? 0,
+                  },
                   loading: false,
                 });
               },

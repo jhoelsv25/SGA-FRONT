@@ -1,0 +1,98 @@
+<div class="p-8 max-w-6xl mx-auto">
+  <header class="flex flex-col md:flex-row justify-between items-center mb-10 bg-white p-6 rounded-2xl shadow-sm border border-slate-100 gap-6">
+    <div class="flex items-center gap-4">
+      <div class="w-12 h-12 rounded-2xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-100">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
+      </div>
+      <h1 class="text-2xl font-black text-slate-800 tracking-tight">Registro de Calificaciones</h1>
+    </div>
+    
+    <div class="w-full md:w-96">
+      <div class="flex flex-col gap-1.5">
+        <label for="grades-assessment-select" class="text-xs font-black text-slate-400 uppercase tracking-widest px-1">Evaluación</label>
+        <sga-select
+          id="grades-assessment-select"
+          [options]="assessmentOptions()"
+          [value]="selectedAssessmentId()"
+          (valueChange)="onAssessmentChange($event)"
+          placeholder="Seleccione una evaluación..."
+          [searchable]="true"
+        />
+      </div>
+    </div>
+  </header>
+
+  <div class="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden mb-10 transition-all">
+    @if (!selectedAssessmentId()) {
+      <div class="py-32 text-center">
+        <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-300">
+          <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+        </div>
+        <p class="text-slate-500 font-bold text-lg italic tracking-tight">Seleccione una evaluación para cargar el registro de notas.</p>
+      </div>
+    } @else {
+      <div class="overflow-x-auto">
+        <table class="w-full text-left">
+          <thead>
+            <tr class="bg-slate-50 border-b border-slate-100">
+              <th class="px-8 py-5 text-xs font-black text-slate-400 uppercase tracking-widest w-1/2">Estudiante</th>
+              <th class="px-8 py-5 text-xs font-black text-slate-400 uppercase tracking-widest text-center">Nota (0-20)</th>
+              <th class="px-8 py-5 text-xs font-black text-slate-400 uppercase tracking-widest">Observación</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-50">
+            @for (score of localScores(); track score.enrollmentId) {
+              <tr class="hover:bg-blue-50/30 transition-colors group">
+                <td class="px-8 py-5">
+                  <span class="text-slate-700 font-bold group-hover:text-blue-700 transition-colors">{{ score.studentName }}</span>
+                </td>
+                <td class="px-8 py-5 text-center">
+                  <div class="relative inline-block w-24">
+                    <input 
+                      type="number" 
+                      min="0" 
+                      max="20" 
+                      step="0.5"
+                      class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-center font-black text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white focus:border-transparent transition-all"
+                      [ngModel]="score.score"
+                      (ngModelChange)="updateScore(score.enrollmentId, $event)"
+                    >
+                  </div>
+                </td>
+                <td class="px-8 py-5">
+                  <input 
+                    type="text" 
+                    class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-600 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all"
+                    placeholder="Escriba una nota opcional..."
+                    [ngModel]="score.observation"
+                    (ngModelChange)="updateObservation(score.enrollmentId, $event)"
+                  >
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+
+  <footer 
+    class="fixed bottom-8 right-8 transition-all duration-500 transform scale-0 invisible"
+    [class.scale-100]="selectedAssessmentId()"
+    [class.visible]="selectedAssessmentId()"
+  >
+    <button 
+      class="px-10 py-4 bg-blue-600 text-white rounded-2xl font-black shadow-2xl shadow-blue-200 hover:bg-blue-700 transition-all hover:-translate-y-1 active:scale-95 flex items-center gap-3"
+      (click)="saveGrades()" 
+      [disabled]="assessmentStore.loading()"
+    >
+      @if (assessmentStore.loading()) {
+        <div class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+        Guardando notas...
+      } @else {
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
+        Guardar Calificaciones
+      }
+    </button>
+  </footer>
+</div>

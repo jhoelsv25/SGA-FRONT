@@ -26,7 +26,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Input implements ControlValueAccessor, Validator {
-  public type = input<'text' | 'number'>('text');
+  public type = input<'text' | 'number' | 'email' | 'password' | 'date' | 'tel' | 'url' | 'time'>('text');
   public placeholder = input<string>('');
   public disabled = input<boolean>(false);
   public value = input<string | number | null>(null);

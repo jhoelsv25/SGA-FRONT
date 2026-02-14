@@ -41,8 +41,12 @@ export const TeacherStore = signalStore(
             tap({
               next: (response) => {
                 patchState(store, {
-                  teachers: response.data,
-                  pagination: { page: 1, size: 10, total: response.total },
+                  teachers: response.data ?? [],
+                  pagination: {
+                    page: response.page ?? 1,
+                    size: response.size ?? 10,
+                    total: response.total ?? 0,
+                  },
                   loading: false,
                   filterParams: params || {},
                 });
