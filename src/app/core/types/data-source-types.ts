@@ -36,7 +36,8 @@ export type DataSourceColumn = {
   valueLabels?: { [key: string]: string }; // Etiquetas personalizadas para chips de valores múltiples
   valueColors?: { [key: string]: string }; // Clases de color personalizadas para chips de valores múltiples
   arrayMaxItems?: number; // Número máximo de items a mostrar en array (resto se muestra como "+N")
-  editable?: boolean; // Permite editar el valor booleano con checkbox
+  editable?: boolean; // Permite editar (checkbox para boolean; texto/número con doble clic si hay onSave)
+  onSave?: (newValue: unknown, row: unknown, key: string) => void; // Al guardar celda editable (text/number)
   onToggle?: (newValue: boolean, row?: unknown) => void; // Función al cambiar el valor del checkbox
   visible?: boolean | ((row?: unknown) => boolean); // Control de visibilidad de la columna
   cssClass?: string; // Clases CSS adicionales para la columna

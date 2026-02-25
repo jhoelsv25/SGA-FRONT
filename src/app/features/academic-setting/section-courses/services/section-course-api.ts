@@ -17,4 +17,8 @@ export class SectionCourseApi {
   getAll(): Observable<SectionCourse[]> {
     return this.http.get<SectionCourse[]>(this.baseUrl);
   }
+
+  getById(id: string): Observable<SectionCourse> {
+    return this.http.get<SectionCourse>(`${this.baseUrl}/${id}`);
+  }
 }

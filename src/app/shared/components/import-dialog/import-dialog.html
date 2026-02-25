@@ -1,0 +1,91 @@
+<div class="p-6 max-w-4xl">
+  <header class="flex items-center justify-between mb-4">
+    <h2 class="text-lg font-semibold">{{ title }}</h2>
+    <button type="button" sgaButton color="secondary" variant="ghost" shape="pill" (click)="close()">
+      <i class="fas fa-times"></i>
+    </button>
+  </header>
+
+  <p class="text-sm text-slate-600 mb-4">
+    Descargue la plantilla, complétela y suba el archivo. Ejecute los tests del proyecto antes de importar en producción.
+  </p>
+
+  <div class="flex flex-wrap gap-3 mb-4">
+    <button type="button" sgaButton variant="outline" color="primary" size="sm" (click)="downloadTemplate()">
+      <i class="fas fa-download mr-2"></i>
+      Descargar plantilla
+    </button>
+    <label class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-200 bg-slate-50 text-sm font-medium cursor-pointer hover:bg-slate-100">
+      <i class="fas fa-file-excel text-green-600"></i>
+      <span>Seleccionar archivo Excel</span>
+      <input type="file" accept=".xlsx,.xls,.csv" class="hidden" (change)="onFileSelected($event)" />
+    </label>
+    @if (file()) {
+      <span class="text-sm text-slate-500">{{ file()?.name }}</span>
+    }
+  </div>
+
+  @if (errorMessage()) {
+    <div class="mb-4 p-3 rounded-lg bg-red-50 text-red-700 text-sm">{{ errorMessage() }}</div>
+  }
+
+  @if (result(); as res) {
+    <div class="mb-4 p-4 rounded-lg bg-green-50 text-green-800">
+      <p class="font-semibold">Importación completada: {{ res.created }} registro(s) creado(s).</p>
+      @if (res.errors && res.errors.length > 0) {
+        <p class="text-sm mt-2">Algunas filas tuvieron errores:</p>
+        <ul class="list-disc list-inside text-sm mt-1">
+          @for (e of res.errors; track e.row) {
+            <li>Fila {{ e.row + 1 }}: {{ e.message }}</li>
+          }
+        </ul>
+      }
+    </div>
+  }
+
+  @if (parsed().length > 0 && !result()) {
+    <div class="border border-slate-200 rounded-xl overflow-hidden mb-4">
+      <p class="px-4 py-2 bg-slate-50 text-sm font-medium">Vista previa ({{ parsed().length }} fila(s))</p>
+      <div class="overflow-x-auto max-h-64 overflow-y-auto">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-slate-100 sticky top-0">
+            <tr>
+              @for (col of columns; track col.key) {
+                <th class="px-3 py-2 font-semibold">{{ col.label }}</th>
+              }
+              <th class="px-3 py-2 font-semibold text-amber-600">Error</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of parsed().slice(0, 20); track $index; let i = $index) {
+              <tr [class.bg-amber-50]="getError(i)" class="border-t border-slate-100">
+                @for (col of columns; track col.key) {
+                  <td class="px-3 py-1.5">{{ row[col.key] ?? '' }}</td>
+                }
+                <td class="px-3 py-1.5 text-amber-700 text-xs">{{ getError(i) ?? '—' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      @if (parsed().length > 20) {
+        <p class="px-4 py-2 text-slate-500 text-xs">Mostrando 20 de {{ parsed().length }} filas.</p>
+      }
+    </div>
+    <div class="flex justify-end gap-2">
+      <button type="button" sgaButton variant="outline" (click)="close()">Cancelar</button>
+      <button
+        type="button"
+        sgaButton
+        color="primary"
+        [disabled]="loading() || hasValidationErrors()"
+        (click)="confirm()"
+      >
+        @if (loading()) {
+          <i class="fas fa-spinner fa-spin mr-2"></i>
+        }
+        Importar {{ parsed().length }} fila(s)
+      </button>
+    </div>
+  }
+</div>

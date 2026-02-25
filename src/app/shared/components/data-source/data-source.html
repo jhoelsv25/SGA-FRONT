@@ -149,7 +149,7 @@
 
         <!-- Body -->
         <tbody>
-          @if (displayData().length === 0) {
+          @if (sortedData().length === 0) {
             <tr>
               <td
                 [attr.colspan]="
@@ -164,7 +164,7 @@
               </td>
             </tr>
           } @else {
-            @for (row of sortedData(); track $index; let i = $index) {
+            @for (row of paginatedData(); track $index; let i = $index) {
               <tr
                 [class]="getRowClasses(row)"
                 class="border-b border-neutral-200 dark:border-base-200 transition-colors"
@@ -213,7 +213,7 @@
                       [class.truncate]="col.truncate"
                       [title]="col.showTooltip ? formatCell(row, col) : ''"
                       (click)="col.onClick?.(getRowProperty(row, col.key), row)"
-                      (dblclick)="col.onDblClick?.(getRowProperty(row, col.key), row)"
+                      (dblclick)="col.editable && col.onSave ? startCellEdit(row, col, i) : col.onDblClick?.(getRowProperty(row, col.key), row)"
                     >
                       @switch (col.type) {
                         @case ('boolean') {
@@ -290,9 +290,21 @@
                         }
 
                         @default {
-                          <span [class.truncate]="col.truncate">
-                            {{ formatCell(row, col) }}
-                          </span>
+                          @if (col.editable && col.onSave && isCellEditing(row, col, i)) {
+                            <input
+                              type="{{ col.type === 'number' ? 'number' : 'text' }}"
+                              class="w-full min-w-0 px-2 py-1 text-sm border border-primary-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-base-200 dark:border-base-400"
+                              [value]="editValue()"
+                              (input)="setCellEditValue($any($event.target).value)"
+                              (blur)="saveCellEdit(row, col)"
+                              (keydown.enter)="saveCellEdit(row, col); $event.preventDefault()"
+                              (keydown.escape)="cancelCellEdit(); $event.preventDefault()"
+                            />
+                          } @else {
+                            <span [class.truncate]="col.truncate" [title]="col.editable && col.onSave ? 'Doble clic para editar' : ''">
+                              {{ formatCell(row, col) }}
+                            </span>
+                          }
                         }
                       }
                     </td>

@@ -6,7 +6,7 @@ import { NgxSonnerToaster } from 'ngx-sonner';
   imports: [NgxSonnerToaster],
   template: `
     <ngx-sonner-toaster
-      position="top-right"§
+      position="top-right"
       [richColors]="true"
       [closeButton]="true"
       [expand]="true"

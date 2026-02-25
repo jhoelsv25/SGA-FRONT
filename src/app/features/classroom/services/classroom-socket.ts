@@ -1,6 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
 import { Subject } from 'rxjs';
+import { environment } from '../../../../environments/environment.development';
 
 export interface SocketMessage {
   id: string;
@@ -28,11 +29,13 @@ export class ClassroomSocketService implements OnDestroy {
   private socket: Socket | null = null;
   public message$ = new Subject<SocketMessage>();
   public feedUpdate$ = new Subject<FeedPost>();
+  /** Notificaciones en tiempo real (nuevo mensaje, nuevo post, etc.) */
+  public notification$ = new Subject<{ type: string; title: string; body?: string }>();
 
   connect(room: string): void {
     if (this.socket) this.socket.disconnect();
-
-    this.socket = io(`http://localhost:3000/classroom`, {
+    const wsBase = (environment as { wsUrl?: string }).wsUrl ?? 'http://localhost:3000';
+    this.socket = io(`${wsBase}/classroom`, {
       transports: ['websocket'],
     });
 
@@ -42,11 +45,26 @@ export class ClassroomSocketService implements OnDestroy {
 
     this.socket.on('newMessage', (msg: SocketMessage) => {
       this.message$.next(msg);
+      this.notification$.next({ type: 'message', title: msg.senderName, body: msg.content });
     });
 
     this.socket.on('feedUpdate', (post: FeedPost) => {
       this.feedUpdate$.next(post);
+      this.notification$.next({
+        type: 'feed',
+        title: 'Nueva publicación',
+        body: post.author?.name ? `${post.author.name} publicó en el muro` : undefined,
+      });
     });
+
+    this.socket.on('connect_error', () => {
+      this.notification$.next({ type: 'error', title: 'Conexión perdida', body: 'Reconectando...' });
+    });
+  }
+
+  disconnect(): void {
+    this.socket?.disconnect();
+    this.socket = null;
   }
 
   sendMessage(room: string, message: Record<string, unknown>): void {
@@ -57,7 +75,7 @@ export class ClassroomSocketService implements OnDestroy {
     this.socket?.emit('newPost', { room, post });
   }
 
-  ngOnDestroy() {
-    this.socket?.disconnect();
+  ngOnDestroy(): void {
+    this.disconnect();
   }
 }

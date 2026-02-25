@@ -1,0 +1,30 @@
+<form [formGroup]="form" class="grid gap-4" (ngSubmit)="submit()">
+  <header class="flex items-center justify-between mb-4">
+    <h2 class="text-lg font-semibold">{{ current ? 'Editar período' : 'Nuevo período' }}</h2>
+    <button type="button" sgaButton color="secondary" variant="ghost" shape="pill" (click)="close()">
+      <i class="fas fa-times"></i>
+    </button>
+  </header>
+  <div class="grid grid-cols-1 gap-4">
+    <div>
+      <label class="label-form" for="name">Nombre</label>
+      <sga-input id="name" formControlName="name" placeholder="Ej: Primer trimestre" />
+    </div>
+    <div>
+      <label class="label-form" for="startDate">Fecha inicio</label>
+      <sga-date-picker id="startDate" formControlName="startDate" [rangeMode]="false" />
+    </div>
+    <div>
+      <label class="label-form" for="endDate">Fecha fin</label>
+      <sga-date-picker id="endDate" formControlName="endDate" [rangeMode]="false" />
+    </div>
+    <div>
+      <label class="label-form" for="order">Orden</label>
+      <sga-input id="order" type="number" formControlName="order" />
+    </div>
+  </div>
+  <footer class="flex justify-end gap-2 mt-4">
+    <button type="button" sgaButton color="secondary" variant="outline" (click)="close()">Cancelar</button>
+    <button type="submit" sgaButton color="primary" [disabled]="form.invalid">Guardar</button>
+  </footer>
+</form>

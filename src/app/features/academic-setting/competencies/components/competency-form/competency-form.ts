@@ -12,6 +12,7 @@ import { Input } from '@shared/ui/input/input';
 import { Select } from '@shared/ui/select/select';
 import { Button } from '@shared/directives';
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { CourseApi } from '@features/academic-setting/courses/services/course-api';
 
 @Component({
   selector: 'sga-competency-form',
@@ -24,7 +25,7 @@ export class CompetencyForm implements OnInit {
   private data = inject(DIALOG_DATA);
   private ref = inject(DialogRef);
   private fb = inject(FormBuilder);
-  // TODO: inyectar CourseApi para cargar cursos reales
+  private courseApi = inject(CourseApi);
 
   public title = computed(() => this.data?.title || 'Crear Competencia');
   public subTitle = computed(() => this.data?.subtitle || 'Complete el formulario para continuar');
@@ -45,11 +46,12 @@ export class CompetencyForm implements OnInit {
   ];
 
   ngOnInit() {
-    // TODO: cargar cursos reales desde API
-    this.courses.set([
-      { value: '1', label: 'Matemática' },
-      { value: '2', label: 'Comunicación' },
-    ]);
+    this.courseApi.getAll({}).subscribe({
+      next: (res) => {
+        const list = (res.data ?? []) as { id: string; name?: string }[];
+        this.courses.set(list.map((c) => ({ value: c.id, label: c.name ?? c.id })));
+      },
+    });
   }
 
   onClose() {

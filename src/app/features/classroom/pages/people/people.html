@@ -1,0 +1,72 @@
+<div class="space-y-8 animate-in fade-in duration-300">
+  <div>
+    <h2 class="text-xl font-bold text-slate-800">Personas de la clase</h2>
+    <p class="text-sm text-slate-500 mt-1">Docentes y estudiantes de este curso.</p>
+  </div>
+
+  <!-- Teachers -->
+  <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+    <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50">
+      <h3 class="font-bold text-slate-700 flex items-center gap-2">
+        <i class="fas fa-chalkboard-teacher text-primary"></i>
+        Docentes
+      </h3>
+    </div>
+    <div class="p-6">
+      @if (loadingTeachers()) {
+        <p class="text-sm text-slate-400 py-4">Cargando...</p>
+      } @else if (teachers().length === 0) {
+        <p class="text-sm text-slate-400 py-4">No hay docentes asignados a este curso.</p>
+      } @else {
+        <ul class="grid gap-3 sm:grid-cols-2">
+          @for (t of teachers(); track t.id) {
+            <li class="flex items-center gap-4 p-4 rounded-xl bg-slate-50/50 border border-slate-100 hover:bg-slate-50 transition-colors">
+              <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold shrink-0">
+                {{ t.firstName[0] || '' }}{{ t.lastName[0] || '' }}
+              </div>
+              <div class="min-w-0">
+                <p class="font-semibold text-slate-800 truncate">{{ t.firstName }} {{ t.lastName }}</p>
+                @if (t.email) {
+                  <p class="text-xs text-slate-500 truncate">{{ t.email }}</p>
+                }
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+  </div>
+
+  <!-- Students -->
+  <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+    <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50">
+      <h3 class="font-bold text-slate-700 flex items-center gap-2">
+        <i class="fas fa-user-graduate text-primary"></i>
+        Estudiantes
+      </h3>
+    </div>
+    <div class="p-6">
+      @if (loadingStudents()) {
+        <p class="text-sm text-slate-400 py-4">Cargando...</p>
+      } @else if (students().length === 0) {
+        <p class="text-sm text-slate-400 py-4">No hay estudiantes matriculados en este curso.</p>
+      } @else {
+        <ul class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          @for (s of students(); track s.id) {
+            <li class="flex items-center gap-4 p-4 rounded-xl bg-slate-50/50 border border-slate-100 hover:bg-slate-50 transition-colors">
+              <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold shrink-0">
+                {{ s.name[0] || '?' }}
+              </div>
+              <div class="min-w-0">
+                <p class="font-semibold text-slate-800 truncate">{{ s.name }}</p>
+                @if (s.code) {
+                  <p class="text-xs text-slate-500">{{ s.code }}</p>
+                }
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+  </div>
+</div>

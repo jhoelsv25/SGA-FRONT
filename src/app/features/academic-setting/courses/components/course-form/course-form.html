@@ -1,1 +1,67 @@
-<p>course-form works!</p>,
+<form [formGroup]="form" class="grid gap-4" (ngSubmit)="submit()">
+  <header class="flex items-center justify-between mb-4">
+    <h2 class="text-lg font-semibold">{{ current ? 'Editar curso' : 'Nuevo curso' }}</h2>
+    <button type="button" sgaButton color="secondary" variant="ghost" shape="pill" (click)="close()">
+      <i class="fas fa-times"></i>
+    </button>
+  </header>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <label class="label-form" for="code">Código</label>
+      <sga-input id="code" formControlName="code" placeholder="Ej: MAT-101" />
+    </div>
+    <div>
+      <label class="label-form" for="name">Nombre</label>
+      <sga-input id="name" formControlName="name" placeholder="Nombre del curso" />
+    </div>
+    <div class="md:col-span-2">
+      <label class="label-form" for="description">Descripción</label>
+      <sga-input id="description" formControlName="description" placeholder="Descripción opcional" />
+    </div>
+    <div>
+      <label class="label-form" for="weeklyHours">Horas semanales</label>
+      <sga-input id="weeklyHours" type="number" formControlName="weeklyHours" />
+    </div>
+    <div>
+      <label class="label-form" for="totalHours">Horas totales</label>
+      <sga-input id="totalHours" type="number" formControlName="totalHours" />
+    </div>
+    <div>
+      <label class="label-form" for="credits">Créditos</label>
+      <sga-input id="credits" type="number" formControlName="credits" />
+    </div>
+    <div>
+      <label class="label-form" for="isMandatory">Obligatorio</label>
+      <sga-select id="isMandatory" [options]="mandatoryOptions" formControlName="isMandatory" [searchable]="false" />
+    </div>
+    <div class="md:col-span-2">
+      <label class="label-form" for="syllabusUrl">URL del sílabo</label>
+      <sga-input id="syllabusUrl" formControlName="syllabusUrl" placeholder="https://..." />
+    </div>
+    <div>
+      <label class="label-form" for="subjectArea">Área curricular</label>
+      <sga-select
+        id="subjectArea"
+        [options]="subjectAreaOptions()"
+        formControlName="subjectArea"
+        placeholder="Seleccionar área"
+      />
+    </div>
+    <div>
+      <label class="label-form" for="grade">Grado / Nivel</label>
+      <sga-select
+        id="grade"
+        [options]="gradeOptions()"
+        formControlName="grade"
+        placeholder="Seleccionar grado"
+      />
+    </div>
+    <div class="md:col-span-2 flex items-center gap-2">
+      <sga-checkbox formControlName="active" label="Activo" />
+    </div>
+  </div>
+  <footer class="flex justify-end gap-2 mt-4">
+    <button type="button" sgaButton color="secondary" variant="outline" (click)="close()">Cancelar</button>
+    <button type="submit" sgaButton color="primary" [disabled]="form.invalid">Guardar</button>
+  </footer>
+</form>

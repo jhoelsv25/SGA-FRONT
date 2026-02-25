@@ -119,9 +119,7 @@ export class Sidebar implements OnInit, OnDestroy {
 
   private hasPermission(permissions?: string[]): boolean {
     if (!permissions || permissions.length === 0) return true;
-    // TODO: Implement actual permission logic provided by AuthFacade or PermissionService
-    // For now assuming existing logic or true
-    return true; 
+    return permissions.some((p) => this.authFacade.hasPermission(p));
   }
 
   // --- Interaction & Navigation ---

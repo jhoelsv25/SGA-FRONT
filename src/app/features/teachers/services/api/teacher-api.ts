@@ -31,4 +31,12 @@ export class TeacherApi {
   delete(id: string): Observable<TeacherResponse> {
     return this.http.delete<TeacherResponse>(`${this.baseUrl}/${id}`);
   }
+
+  /** Importación masiva. Backend recibe JSON array. */
+  import(rows: Partial<Teacher>[]): Observable<{ created: number; errors?: { row: number; message: string }[] }> {
+    return this.http.post<{ created: number; errors?: { row: number; message: string }[] }>(
+      `${this.baseUrl}/import`,
+      { rows },
+    );
+  }
 }

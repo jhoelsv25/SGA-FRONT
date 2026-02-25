@@ -1,13 +1,15 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Button } from '@shared/directives';
+import { Input } from '@shared/ui/input/input';
 import { ClassroomStore } from '../../services/store/classroom.store';
 import { ClassroomSocketService } from '../../services/classroom-socket';
 
 @Component({
   selector: 'sga-classroom-timeline',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, Button, Input],
   templateUrl: './timeline.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -52,7 +54,8 @@ export default class Timeline {
     if (!sectionId) return;
 
     if (this.postContent() || this.attachments().length > 0) {
-      this.store.publishPost(this.postContent())?.subscribe({
+      const urls = this.attachments().map((a) => a.url);
+      this.store.publishPost(this.postContent(), urls.length ? urls : undefined)?.subscribe({
         next: (res: { id: string }) => {
           this.socket.notifyNewPost(sectionId, {
             ...res,

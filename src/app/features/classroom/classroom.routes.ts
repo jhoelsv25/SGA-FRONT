@@ -22,6 +22,10 @@ export default [
         loadComponent: () => import('./pages/chat/chat'),
       },
       {
+        path: 'people',
+        loadComponent: () => import('./pages/people/people'),
+      },
+      {
         path: '',
         redirectTo: 'timeline',
         pathMatch: 'full',

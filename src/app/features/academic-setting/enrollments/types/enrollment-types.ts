@@ -15,7 +15,11 @@ export interface CreateEnrollmentDto {
   student: string;
   section: string;
   academicYear: string;
-  enrollmentType: string;
-  status: string;
-  // ...other fields
+  enrollmentType: 'new' | 'returning' | 'transfer';
+  status: 'enrolled' | 'completed' | 'dropped' | 'graduated';
+  enrollmentDate?: string;
+  code?: string;
+  observations?: string;
 }
+
+export type EnrollmentUpdateDto = Partial<CreateEnrollmentDto>;

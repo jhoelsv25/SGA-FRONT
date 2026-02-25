@@ -20,11 +20,7 @@ export default class GradeLevelsPage {
 
   headerConfig = computed(() => this.store.headerConfig());
   columns = computed(() => this.store.columns());
-  data = computed(() => {
-    const all = this.store.data();
-    const p = this.store.pagination();
-    return all.slice((p.page - 1) * p.size, p.page * p.size);
-  });
+  data = computed(() => this.store.data());
   loading = computed(() => this.store.loading());
   pagination = computed(() => ({
     ...this.store.pagination(),

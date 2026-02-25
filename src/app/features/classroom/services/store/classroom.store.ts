@@ -55,15 +55,18 @@ export const ClassroomStore = signalStore(
         }),
       ),
     ),
-    publishPost: (content: string) => {
+    publishPost: (content: string, attachmentUrls?: string[]) => {
       const id = store.selectedSectionId();
       if (!id) return;
-      return api.publishPost({ sectionCourseId: id, content }).pipe(
+      return api.publishPost({
+        sectionCourseId: id,
+        content,
+        attachmentUrl: attachmentUrls?.[0],
+        attachments: attachmentUrls,
+      }).pipe(
         tap({
-          next: () => {
-            toast.success('Publicado correctamente');
-            // Re-load feed or manual patch
-          }
+          next: () => toast.success('Publicado correctamente'),
+          error: (err) => toast.error('Error al publicar: ' + (err?.message ?? '')),
         })
       );
     },

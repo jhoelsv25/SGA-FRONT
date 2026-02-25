@@ -9,7 +9,7 @@ export default [
   },
   {
     path: 'section-courses',
-    loadComponent: () => import('../academic-setting/sections/pages/sections/sections'), // TODO: create section-courses component
+    loadComponent: () => import('../academic-setting/section-courses/pages/section-courses/section-courses'),
     title: 'Cursos por Sección',
     data: { permissions: ['view_section_course', 'manage_section_course'] },
   },

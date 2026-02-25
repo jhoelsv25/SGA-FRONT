@@ -20,12 +20,7 @@ export default class SectionsPage {
 
   headerConfig = computed(() => this.store.headerConfig());
   columns = computed(() => this.store.columns());
-  data = computed(() => {
-    const all = this.store.data();
-    const p = this.store.pagination();
-    const start = (p.page - 1) * p.size;
-    return all.slice(start, start + p.size);
-  });
+  data = computed(() => this.store.data());
   loading = computed(() => this.store.loading());
   pagination = computed(() => ({
     ...this.store.pagination(),

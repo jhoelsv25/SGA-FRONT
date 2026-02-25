@@ -92,6 +92,9 @@ export class DataSource implements OnInit, OnDestroy {
   openMenuId = signal<string | null>(null);
   dragIndex = signal(-1);
   localSearch = signal('');
+  /** Celda en edición inline: { rowId, colKey } */
+  editingCell = signal<{ rowId: string; colKey: string } | null>(null);
+  editValue = signal<string>('');
 
   // =========================
   // COMPUTED – ACTIONS
@@ -125,9 +128,21 @@ export class DataSource implements OnInit, OnDestroy {
     return this.sortData(this.displayData(), sort);
   });
 
+  /** Filas a mostrar: con paginación offset se corta por página; con búsqueda activa el total es el filtrado. */
+  paginatedData = computed(() => {
+    const list = this.sortedData();
+    const p = this.pagination();
+    if (!p || 'hasNext' in p) return list;
+    const page = p.page ?? 1;
+    const size = p.size ?? 10;
+    const start = (page - 1) * size;
+    return list.slice(start, start + size);
+  });
+
   totalCount = computed(() => {
     const p = this.pagination();
     if (!p) return this.data().length;
+    if (this.localSearch().trim()) return this.sortedData().length;
     return 'total' in p ? p.total : (p as CursorPagination).loadedCount;
   });
 
@@ -293,6 +308,40 @@ export class DataSource implements OnInit, OnDestroy {
   onLocalSearch(term: string): void {
     this.localSearch.set(term);
     this.searchOutput.emit(term);
+  }
+
+  // =========================
+  // INLINE EDIT (text/number)
+  // =========================
+  isCellEditing(row: unknown, col: DataSourceColumn, index: number): boolean {
+    const ec = this.editingCell();
+    if (!ec) return false;
+    return ec.rowId === this.getRowId(row, index) && ec.colKey === col.key;
+  }
+
+  startCellEdit(row: unknown, col: DataSourceColumn, index: number): void {
+    if (!col.onSave) return;
+    this.editingCell.set({ rowId: this.getRowId(row, index), colKey: col.key });
+    const val = this.getRowProperty(row, col.key);
+    this.editValue.set(val != null ? String(val) : '');
+  }
+
+  setCellEditValue(value: string): void {
+    this.editValue.set(value);
+  }
+
+  saveCellEdit(row: unknown, col: DataSourceColumn): void {
+    const val = this.editValue();
+    const colDef = this.columns().find((c) => c.key === col.key);
+    if (colDef?.onSave) {
+      const out = col.type === 'number' ? (Number(val) || 0) : val;
+      colDef.onSave(out, row, col.key);
+    }
+    this.editingCell.set(null);
+  }
+
+  cancelCellEdit(): void {
+    this.editingCell.set(null);
   }
 
   // =========================
