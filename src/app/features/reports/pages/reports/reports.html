@@ -1,0 +1,16 @@
+<div class="p-6 max-w-7xl mx-auto">
+  <sga-header-detail
+    [config]="headerConfig()"
+    [actions]="headerActions()"
+    (action)="onHeaderAction($event)"
+  />
+  <sga-data-source
+    [data]="data()"
+    [columns]="columns()"
+    [loading]="loading()"
+    [pagination]="pagination()"
+    [actions]="rowActions()"
+    (actionClick)="onRowAction($event)"
+    (pageChange)="onPageChange($event)"
+  />
+</div>

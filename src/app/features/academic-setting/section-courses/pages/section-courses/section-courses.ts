@@ -55,7 +55,9 @@ export default class SectionCoursesPage implements OnInit {
     if (e.action.key === 'refresh') this.load();
   }
 
-  onPageChange(_p: { page: number; size: number }): void {}
+  // Parameter required by (pageChange) binding; not used when pagination is client-side only
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onPageChange(_: { page: number; size: number }): void {}
 
   private load(): void {
     this.loading.set(true);

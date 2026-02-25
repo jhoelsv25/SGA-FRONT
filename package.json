@@ -9,7 +9,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "lint:fix": "ng lint --fix",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "prettier": {
     "printWidth": 100,

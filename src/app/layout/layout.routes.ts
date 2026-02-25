@@ -57,6 +57,26 @@ export default [
         title: 'Administración',
       },
       {
+        path: 'behavior',
+        loadChildren: () => import('@features/behavior/behavior.routes'),
+        title: 'Conducta e incidencias',
+      },
+      {
+        path: 'communications',
+        loadChildren: () => import('@features/communications/communications.routes'),
+        title: 'Comunicaciones',
+      },
+      {
+        path: 'payments',
+        loadChildren: () => import('@features/payments/payments.routes'),
+        title: 'Pagos',
+      },
+      {
+        path: 'reports',
+        loadChildren: () => import('@features/reports/reports.routes'),
+        title: 'Reportes',
+      },
+      {
         path: '',
         pathMatch: 'full',
         redirectTo: 'dashboard',
