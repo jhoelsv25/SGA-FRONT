@@ -2,8 +2,7 @@
 <div class="relative w-full">
   <!-- Trigger Input -->
   <div
-    class="flex items-center justify-between w-full min-h-10 px-3 py-2 text-sm border rounded-lg cursor-pointer transition-all duration-200 outline-none"
-    [class]="getTriggerClasses()"
+    [class]="'flex items-center justify-between w-full h-10 px-3 py-2 text-sm border rounded-xl cursor-pointer transition-all duration-200 outline-none ' + getTriggerClasses()"
     (click)="toggleCalendar()"
     tabindex="0"
     role="button"
@@ -12,13 +11,13 @@
   >
     <!-- Display Text -->
     <div class="flex items-center gap-2 flex-1">
-      <i class="fas fa-calendar text-primary-500"></i>
+      <i class="fas fa-calendar text-primary/60 text-sm"></i>
       <span
-        class="truncate"
+        class="truncate font-medium tracking-tight"
         [class]="
           hasSelection()
-            ? 'text-neutral-800 dark:text-white font-medium'
-            : 'text-neutral-400 dark:text-neutral-300'
+            ? 'text-base-content'
+            : 'text-base-content/50 font-normal'
         "
       >
         {{ displayText() }}

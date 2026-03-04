@@ -12,7 +12,7 @@ export default [
       },
       {
         path: 'academic-setup',
-        loadChildren: () => import('@features/academic-setting/academic-setting.routes'),
+        loadChildren: () => import('@features/academic-setup/academic-setup.routes'),
         title: 'Configuración Académica',
       },
       {

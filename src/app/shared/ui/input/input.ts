@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, output, forwardRef, ElementRef, ViewChild, signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, output, forwardRef, ElementRef, ViewChild, signal, inject } from '@angular/core';
 import {
   NG_VALUE_ACCESSOR,
   ControlValueAccessor,
@@ -27,6 +27,8 @@ import {
   standalone: true
 })
 export class Input implements ControlValueAccessor, Validator {
+  private cdr = inject(ChangeDetectorRef);
+
   @ViewChild('inputElement') inputRef!: ElementRef<HTMLInputElement>;
 
   public type = input<'text' | 'number' | 'email' | 'password' | 'date' | 'tel' | 'url' | 'time'>('text');
@@ -41,10 +43,10 @@ export class Input implements ControlValueAccessor, Validator {
   public localValue: string | number | null = null;
   public touched = signal(false);
 
-  // Determine if it needs left padding for an icon
+  // Determine if it needs left padding for an icon (number sin icono para no tapar placeholder)
   hasIconPrefix(): boolean {
     const t = this.type();
-    return ['number', 'email', 'password', 'date', 'tel'].includes(t);
+    return ['email', 'password', 'date', 'tel'].includes(t);
   }
 
   onInput(event: Event) {
@@ -73,6 +75,7 @@ export class Input implements ControlValueAccessor, Validator {
 
   writeValue(value: string | number | null): void {
     this.localValue = value;
+    this.cdr.markForCheck();
   }
   registerOnChange(fn: (value: string | number | null) => void): void {
     this._onChange = fn;

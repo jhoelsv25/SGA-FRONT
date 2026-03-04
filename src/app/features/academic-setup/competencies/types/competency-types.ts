@@ -1,8 +1,8 @@
 export interface Competency {
-  id: string;
-  code: string;
-  name: string;
-  description: string;
-  expectedAchievement: string;
-  courseId: string;
+  readonly id: string;
+  readonly code: string;
+  readonly name: string;
+  readonly description?: string;
+  readonly expectedAchievement?: string;
+  readonly course?: { id: string; name?: string };
 }

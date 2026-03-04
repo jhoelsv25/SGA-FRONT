@@ -1,0 +1,123 @@
+<form [formGroup]="form" class="grid gap-4" (ngSubmit)="onSubmit()">
+  <header class="flex items-center justify-between mb-4">
+    <div>
+      <h2 class="text-lg font-semibold text-base-content mb-0">{{ title() }}</h2>
+      <p class="text-sm text-base-content/60 mt-1">
+        {{ subTitle() }}
+      </p>
+    </div>
+    <button
+      type="button"
+      sgaButton
+      color="secondary"
+      variant="ghost"
+      shape="pill"
+      (click)="onClose()"
+    >
+      <i class="fas fa-times"></i>
+    </button>
+  </header>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="col-span-full flex flex-col gap-1">
+      <label class="label-form text-base-content/70 font-medium text-sm" for="institution">Institución Educativa</label>
+      <sga-select
+        id="institution"
+        [options]="institutions()"
+        formControlName="institution"
+        placeholder="Seleccionar institución"
+      />
+    </div>
+    <div class="flex flex-col gap-1">
+      <label class="label-form text-base-content/70 font-medium text-sm" for="year">Año</label>
+      <sga-input
+        id="year"
+        type="number"
+        formControlName="year"
+        placeholder="Ej: 2025"
+      />
+    </div>
+    <div class="flex flex-col gap-1">
+      <label class="label-form text-base-content/70 font-medium text-sm" for="name">Nombre</label>
+      <sga-input id="name" type="text" formControlName="name" placeholder="Nombre del año académico" />
+    </div>
+    <div class="flex flex-col gap-1">
+      <label class="label-form text-base-content/70 font-medium text-sm" for="startDate">Fecha de inicio</label>
+      <sga-date-picker
+        id="startDate"
+        formControlName="startDate"
+        [placeholder]="'Seleccionar fecha de inicio'"
+      />
+    </div>
+    <div class="flex flex-col gap-1">
+      <label class="label-form text-base-content/70 font-medium text-sm" for="endDate">Fecha de fin</label>
+      <sga-date-picker
+        id="endDate"
+        formControlName="endDate"
+        [placeholder]="'Seleccionar fecha de fin'"
+      />
+    </div>
+    <div class="flex flex-col gap-1">
+      <label class="label-form text-base-content/70 font-medium text-sm" for="modality">Modalidad</label>
+      <sga-select
+        id="modality"
+        [options]="modalities"
+        formControlName="modality"
+        placeholder="Seleccionar modalidad"
+      />
+    </div>
+    <div class="flex flex-col gap-1">
+      <label class="label-form text-base-content/70 font-medium text-sm" for="gradingSystem">Sistema de calificación</label>
+      <sga-select
+        id="gradingSystem"
+        [options]="gradingSystems"
+        formControlName="gradingSystem"
+        placeholder="Seleccionar sistema"
+      />
+    </div>
+    <div class="flex flex-col gap-1">
+      <label class="label-form text-base-content/70 font-medium text-sm" for="passingDate">Fecha de cierre de actas</label>
+      <sga-date-picker
+        id="passingDate"
+        formControlName="passingDate"
+        [placeholder]="'Seleccionar fecha de cierre'"
+      />
+    </div>
+    <div class="flex flex-col gap-1">
+      <label class="label-form text-base-content/70 font-medium text-sm" for="passingGrade">Nota mínima aprobatoria</label>
+      <sga-input
+        id="passingGrade"
+        type="number"
+        formControlName="passingGrade"
+        placeholder="Nota mínima"
+      />
+    </div>
+    <div class="flex flex-col gap-1">
+      <label class="label-form text-base-content/70 font-medium text-sm" for="academicCalendarUrl">Calendario académico (URL)</label>
+      <sga-input
+        id="academicCalendarUrl"
+        type="text"
+        formControlName="academicCalendarUrl"
+        placeholder="https://..."
+      />
+    </div>
+    <div class="flex flex-col gap-1">
+      <label class="label-form text-base-content/70 font-medium text-sm" for="status">Estado</label>
+      <sga-select
+        id="status"
+        [options]="statuses"
+        formControlName="status"
+        placeholder="Seleccionar estado"
+      />
+    </div>
+  </div>
+  <footer class="flex items-center justify-end gap-2 mt-6 pt-4 border-t border-base-200">
+    <button type="button" sgaButton color="secondary" variant="outline" (click)="onClose()">
+      <i class="fas fa-times"></i>
+      Cancelar
+    </button>
+    <button type="submit" sgaButton color="primary" [disabled]="form.invalid || saving()">
+      <i class="fas fa-check"></i>
+      {{ saving() ? 'Guardando...' : 'Guardar' }}
+    </button>
+  </footer>
+</form>

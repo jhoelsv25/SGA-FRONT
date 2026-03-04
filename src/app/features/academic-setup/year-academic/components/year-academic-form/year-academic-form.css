@@ -1,0 +1,23 @@
+:host {
+  display: block;
+}
+
+/* Sin margen extra en los controles */
+:host ::ng-deep sga-input,
+:host ::ng-deep sga-select,
+:host ::ng-deep sga-date-picker {
+  margin: 0;
+  display: block;
+}
+
+/* Unificar radio con el resto de la app (rounded-xl) */
+:host ::ng-deep sga-input input {
+  border-radius: 0.75rem;
+}
+
+:host ::ng-deep sga-select > div:first-child,
+:host ::ng-deep sga-date-picker > div:first-child {
+  border-radius: 0.75rem;
+  height: 2.5rem;
+  min-height: 2.5rem;
+}

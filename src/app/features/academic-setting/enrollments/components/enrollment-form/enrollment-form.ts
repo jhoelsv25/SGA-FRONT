@@ -7,8 +7,8 @@ import { Select } from '@shared/ui/select/select';
 import { EnrollmentStore } from '../../services/store/enrollment.store';
 import { Enrollment } from '../../types/enrollment-types';
 import { StudentApi } from '@features/students/services/api/student-api';
-import { SectionApi } from '@features/academic-setting/sections/services/api/section-api';
-import { YearAcademicApi } from '@features/academic-setting/year-academic/services/api/year-academic-api';
+import { SectionApi } from '@features/organization/sections/services/api/section-api';
+import { YearAcademicApi } from '@features/academic-setup/year-academic/services/api/year-academic-api';
 import type { SelectOption } from '@shared/ui/select/select';
 
 @Component({

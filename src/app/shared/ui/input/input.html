@@ -1,22 +1,26 @@
 <div class="relative w-full">
   <div class="relative flex items-center w-full">
-    <!-- Icon Prefix Placeholder (Optional) -->
-    @if (type() === 'number') {
-      <i class="fas fa-hashtag absolute left-3 text-base-content/40 text-xs pointer-events-none"></i>
-    }
     @if (type() === 'email') {
-      <i class="fas fa-envelope absolute left-3 text-base-content/40 text-xs pointer-events-none"></i>
+      <i
+        class="fas fa-envelope absolute left-2.5 top-1/2 -translate-y-1/2 text-base-content/40 text-xs pointer-events-none w-4"
+      ></i>
     }
     @if (type() === 'password') {
-      <i class="fas fa-lock absolute left-3 text-base-content/40 text-xs pointer-events-none"></i>
+      <i
+        class="fas fa-lock absolute left-2.5 top-1/2 -translate-y-1/2 text-base-content/40 text-xs pointer-events-none w-4"
+      ></i>
     }
     @if (type() === 'date') {
-      <i class="fas fa-calendar absolute left-3 text-base-content/40 text-xs pointer-events-none"></i>
+      <i
+        class="fas fa-calendar absolute left-2.5 top-1/2 -translate-y-1/2 text-base-content/40 text-xs pointer-events-none w-4"
+      ></i>
     }
     @if (type() === 'tel') {
-      <i class="fas fa-phone absolute left-3 text-base-content/40 text-xs pointer-events-none"></i>
+      <i
+        class="fas fa-phone absolute left-2.5 top-1/2 -translate-y-1/2 text-base-content/40 text-xs pointer-events-none w-4"
+      ></i>
     }
-    
+
     <!-- Input Element -->
     <input
       #inputElement
@@ -28,11 +32,11 @@
       (input)="onInput($event)"
       (blur)="onBlur()"
       [class]="
-        'flex h-10 w-full rounded-md border border-base-300 bg-transparent px-3 py-2 text-sm text-base-content ' +
-        'ring-offset-base-100 placeholder:text-base-content/40 ' +
+        'flex h-10 w-full rounded-xl border border-base-300 bg-transparent px-3 py-2 text-sm text-base-content font-medium ' +
+        'ring-offset-base-100 placeholder:text-base-content/50 placeholder:font-normal ' +
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary ' +
         'disabled:cursor-not-allowed disabled:opacity-50 transition-colors duration-200 ' +
-        (hasIconPrefix() ? 'pl-8 ' : '') + 
+        (hasIconPrefix() ? 'pl-8 ' : '') +
         customClass()
       "
     />

@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
-@plugin "@tailwindcss/forms";
+/* @plugin "@tailwindcss/forms" desactivado: aplicaba fondo/padding a todos los input
+   y generaba el recuadro blanco. Usamos sga-input, sga-select, sga-date-picker con estilo propio. */
 
 @custom-variant dark (&:where(.dark, .dark *));
 

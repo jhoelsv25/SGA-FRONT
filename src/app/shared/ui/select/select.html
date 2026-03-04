@@ -2,8 +2,7 @@
 <div class="relative w-full" [class]="isDisabled() ? 'pointer-events-none opacity-50' : ''">
   <!-- Select Trigger -->
   <div
-    class="flex items-center justify-between w-full min-h-10 px-3 py-2 text-sm border rounded-lg cursor-pointer transition-all duration-200 outline-none"
-    [class]="getTriggerClasses()"
+    [class]="'flex items-center justify-between w-full h-10 px-3 py-2 text-sm border rounded-xl cursor-pointer transition-all duration-200 outline-none ' + getTriggerClasses()"
     (click)="toggleDropdown()"
     (keydown)="onKeyDown($event)"
     tabindex="0"
@@ -15,11 +14,11 @@
   >
     <!-- Display Text -->
     <span
-      class="flex-1 text-left truncate"
+      class="flex-1 text-left truncate font-medium tracking-tight"
       [class]="
         hasSelection()
           ? 'text-base-content'
-          : 'text-base-content/40'
+          : 'text-base-content/50 font-normal'
       "
     >
       {{ displayText() }}
@@ -58,7 +57,7 @@
   <!-- Dropdown Content -->
   @if (isOpen()) {
     <div
-      class="absolute top-12 left-0 right-0 z-50 bg-base-100 border border-base-200 rounded-lg shadow-lg max-h-72 overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+      class="absolute top-[2.75rem] left-0 right-0 z-50 bg-base-100 border border-base-200 rounded-xl shadow-lg max-h-72 overflow-hidden animate-in fade-in zoom-in-95 duration-200"
     >
       <!-- Search Input -->
       @if (searchable()) {
@@ -111,7 +110,7 @@
           <!-- Option Items -->
           @for (option of filteredOptions(); track getOptionValue()(option); let i = $index) {
             <div
-              class="flex items-center px-3 py-2 text-sm cursor-pointer transition-colors duration-150"
+              class="flex items-center px-3 py-2.5 text-sm cursor-pointer transition-colors duration-150 font-medium tracking-tight text-base-content"
               [class]="getOptionClasses(option, i)"
               (click)="selectOption(option)"
               (keydown.enter)="selectOption(option)"

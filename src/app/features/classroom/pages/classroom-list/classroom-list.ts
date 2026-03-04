@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { SectionCourseApi } from '@features/academic-setting/section-courses/services/section-course-api';
+import { SectionCourseApi } from '@features/organization/section-courses/services/section-course-api';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@shared/ui/card/card';
-import { SectionCourse } from '@features/academic-setting/section-courses/services/section-course-api';
+import type { SectionCourse } from '@features/organization/section-courses/types/section-course-types';
 
 @Component({
   selector: 'sga-classroom-list',
@@ -89,7 +89,7 @@ import { SectionCourse } from '@features/academic-setting/section-courses/servic
 })
 export default class ClassroomList implements OnInit {
   private readonly sectionCourseApi = inject(SectionCourseApi);
-  
+
   public courses = signal<SectionCourse[]>([]);
   public loading = signal(true);
 
@@ -97,8 +97,8 @@ export default class ClassroomList implements OnInit {
     // In a real application, this would filter by the current user's enrolled/teaching courses.
     // For now, we load all section-courses from the API for the demo.
     this.sectionCourseApi.getAll().subscribe({
-      next: (data) => {
-        this.courses.set(data || []);
+      next: (res) => {
+        this.courses.set(res?.data ?? []);
         this.loading.set(false);
       },
       error: () => {

@@ -1,0 +1,57 @@
+<sga-card
+  class="group flex flex-col h-full hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 border-base-200 overflow-hidden bg-base-100"
+>
+  <sga-card-header class="pb-3 border-b border-base-200 bg-base-200/10">
+    <div class="flex justify-between items-start">
+      <div
+        class="p-2.5 rounded-xl bg-primary/10 text-primary border border-primary/20 shadow-sm transition-colors"
+      >
+        <i class="fas fa-bullseye text-lg"></i>
+      </div>
+      <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <button
+          sgaButton
+          variant="ghost"
+          size="sm"
+          class="rounded-lg h-8 w-8 p-0"
+          (click)="edit.emit(competency())"
+        >
+          <i class="fas fa-edit text-xs"></i>
+        </button>
+        <button
+          sgaButton
+          variant="ghost"
+          size="sm"
+          class="rounded-lg h-8 w-8 p-0 text-error hover:bg-error/10"
+          (click)="delete.emit(competency())"
+        >
+          <i class="fas fa-trash text-xs"></i>
+        </button>
+      </div>
+    </div>
+    <sga-card-title
+      class="mt-4 text-xl font-bold tracking-tight text-base-content group-hover:text-primary transition-colors"
+    >
+      {{ competency().name }}
+    </sga-card-title>
+    <p class="text-sm font-mono text-base-content/60 mt-0.5">{{ competency().code }}</p>
+    @if (competency().course?.name) {
+      <p class="text-xs text-base-content/50 mt-1">{{ competency().course?.name ?? '-' }}</p>
+    }
+  </sga-card-header>
+
+  <sga-card-content class="pt-5 grow">
+    <div class="space-y-3">
+      @if (competency().description) {
+        <p class="text-sm text-base-content/60 leading-relaxed line-clamp-2">
+          {{ competency().description }}
+        </p>
+      }
+      @if (competency().expectedAchievement) {
+        <p class="text-xs text-base-content/50 line-clamp-2">
+          <span class="font-semibold">Nivel esperado:</span> {{ competency().expectedAchievement }}
+        </p>
+      }
+    </div>
+  </sga-card-content>
+</sga-card>

@@ -8,7 +8,8 @@ import type { SelectOption } from '@shared/ui/select/select';
 import { AttendanceApi } from '../../services/attendance-api';
 import { AttendanceStore } from '../../services/store/attendance.store';
 import { AttendanceStatus } from '../../types/attendance-types';
-import { SectionCourseApi } from '../../../section-courses/services/section-course-api';
+import { SectionCourseApi } from '@features/organization/section-courses/services/section-course-api';
+import type { SectionCourse } from '@features/organization/section-courses/types/section-course-types';
 import { EnrollmentApi } from '../../../enrollments/services/enrollment-api';
 
 type StudentRow = { id: string; name: string; studentCode: string; status: AttendanceStatus };
@@ -34,10 +35,11 @@ export default class Attendances implements OnInit {
 
   ngOnInit(): void {
     this.sectionCourseApi.getAll().subscribe({
-      next: (list) => {
+      next: (res) => {
+        const list = res?.data ?? [];
         this.sectionCourseOptions.set([
           { value: '', label: 'Seleccione...' },
-          ...list.map((sc) => ({
+          ...list.map((sc: SectionCourse) => ({
             value: sc.id,
             label: sc.course?.name && sc.section?.name
               ? `${sc.course.name} - ${sc.section.name}`
@@ -59,7 +61,7 @@ export default class Attendances implements OnInit {
         checkInTime: '08:00:00'
       }))
     };
-    
+
     this.store.saveBulk(request).subscribe();
   }
 

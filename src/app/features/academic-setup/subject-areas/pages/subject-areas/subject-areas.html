@@ -1,0 +1,34 @@
+<sga-header-detail
+  [config]="headerConfig()"
+  [actions]="headerActions()"
+  (action)="onHeaderAction($event)"
+  (refresh)="onRefresh()"
+/>
+
+<div class="p-6">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    @if (loading() && !data().length) {
+      @for (i of skeletonItems; track i) {
+        <sga-skeleton [customClass]="'h-[200px] w-full rounded-2xl border border-base-200'" />
+      }
+    } @else {
+      @for (area of data(); track area.id) {
+        <sga-subject-area-card
+          [subjectArea]="area"
+          (edit)="editSubjectArea(area)"
+          (delete)="deleteSubjectArea(area)"
+        />
+      } @empty {
+        <div class="col-span-full">
+          <sga-empty-state
+            iconClass="fas fa-book-open"
+            title="Sin áreas curriculares"
+            description="Aún no hay áreas curriculares. Crea troncal, electiva u opcional para organizar las materias."
+            actionLabel="Crear primera área"
+            (action)="createFromEmpty()"
+          />
+        </div>
+      }
+    }
+  </div>
+</div>

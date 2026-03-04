@@ -1,0 +1,28 @@
+/* ===================================
+   Reset para sga-input (debe cargarse DESPUÉS de tailwind para ganar al plugin @tailwindcss/forms)
+   El plugin aplica a todos los input: background #fff, padding, border-radius 0, etc.
+   Este archivo anula eso solo en inputs dentro de sga-input.
+   =================================== */
+sga-input,
+sga-select,
+sga-date-picker {
+  display: block;
+}
+
+sga-input input {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  padding: 0.5rem 0.75rem !important; /* py-2 px-3 = h-10 */
+  font-size: 0.875rem !important;
+  line-height: 1.25rem !important;
+  border-radius: 0.75rem !important;
+  height: 2.5rem !important; /* h-10 */
+  min-height: 2.5rem !important;
+  margin: 0 !important;
+  appearance: none !important;
+}
+
+sga-input input:focus {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}

@@ -1,0 +1,59 @@
+<form [formGroup]="form" class="grid gap-4" (ngSubmit)="onSubmit()">
+  <header class="flex items-center justify-between mb-4">
+    <h2 class="text-lg font-semibold">{{ title() }}</h2>
+    <button type="button" sgaButton color="secondary" variant="ghost" shape="pill" (click)="onClose()">
+      <i class="fas fa-times"></i>
+    </button>
+  </header>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <label class="label-form" for="section">Sección</label>
+      <sga-select
+        id="section"
+        [options]="sectionOptions()"
+        formControlName="section"
+        placeholder="Seleccionar sección"
+      />
+    </div>
+    <div>
+      <label class="label-form" for="course">Curso</label>
+      <sga-select
+        id="course"
+        [options]="courseOptions()"
+        formControlName="course"
+        placeholder="Seleccionar curso"
+      />
+    </div>
+    <div>
+      <label class="label-form" for="academicYear">Año académico</label>
+      <sga-select
+        id="academicYear"
+        [options]="yearOptions()"
+        formControlName="academicYear"
+        placeholder="Seleccionar año"
+      />
+    </div>
+    <div>
+      <label class="label-form" for="modality">Modalidad</label>
+      <sga-select id="modality" [options]="modalityOptions" formControlName="modality" [searchable]="false" />
+    </div>
+    <div>
+      <label class="label-form" for="maxStudents">Máx. estudiantes</label>
+      <sga-input id="maxStudents" type="number" formControlName="maxStudents" />
+    </div>
+    <div>
+      <label class="label-form" for="enrolledStudents">Matriculados</label>
+      <sga-input id="enrolledStudents" type="number" formControlName="enrolledStudents" />
+    </div>
+    <div>
+      <label class="label-form" for="status">Estado</label>
+      <sga-select id="status" [options]="statusOptions" formControlName="status" [searchable]="false" />
+    </div>
+  </div>
+  <footer class="flex justify-end gap-2 mt-4">
+    <button type="button" sgaButton color="secondary" variant="outline" (click)="onClose()">Cancelar</button>
+    <button type="submit" sgaButton color="primary" [disabled]="form.invalid || saving()">
+      {{ saving() ? 'Guardando...' : 'Guardar' }}
+    </button>
+  </footer>
+</form>
