@@ -3,12 +3,21 @@
   [actions]="headerActions()"
   (action)="onHeaderAction($event)"
 />
-<sga-data-source
-  [data]="data()"
-  [columns]="columns()"
-  [loading]="loading()"
-  [pagination]="pagination()"
-  [actions]="rowActions()"
-  (actionClick)="onRowAction($event)"
-  (pageChange)="onPageChange($event)"
-/>
+
+<div class="p-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        @if (loading() && !data().length) {
+            @for (i of [1,2,3,4]; track i) {
+                <div class="h-[220px] w-full rounded-2xl bg-base-200/50 animate-pulse border border-base-200"></div>
+            }
+        } @else {
+            @for (gradeLevel of data(); track gradeLevel.id) {
+                <sga-grade-level-card 
+                    [gradeLevel]="gradeLevel"
+                    (edit)="openForm($event)"
+                    (delete)="store.delete($event.id)"
+                ></sga-grade-level-card>
+            }
+        }
+    </div>
+</div>

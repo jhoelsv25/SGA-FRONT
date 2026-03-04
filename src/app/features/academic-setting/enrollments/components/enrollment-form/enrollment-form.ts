@@ -31,8 +31,8 @@ export class EnrollmentForm implements OnInit {
     student: [null as string | null, [Validators.required]],
     section: [null as string | null, [Validators.required]],
     academicYear: [null as string | null, [Validators.required]],
-    enrollmentType: ['new' as const, [Validators.required]],
-    status: ['enrolled' as const, [Validators.required]],
+    enrollmentType: ['new' as 'new' | 'returning' | 'transfer', [Validators.required]],
+    status: ['enrolled' as 'enrolled' | 'completed' | 'dropped' | 'graduated', [Validators.required]],
     enrollmentDate: [new Date().toISOString().slice(0, 10)],
     observations: [''],
   });
@@ -73,7 +73,7 @@ export class EnrollmentForm implements OnInit {
       next: (res) => {
         this.studentOptions = (res.data ?? []).map((s) => ({
           value: s.id,
-          label: (s as { name?: string }).name ?? `${(s as { firstName?: string }).firstName ?? ''} ${(s as { lastName?: string }).lastName ?? ''}`.trim() || s.id,
+          label: (s as { name?: string }).name ?? (`${(s as { firstName?: string }).firstName ?? ''} ${(s as { lastName?: string }).lastName ?? ''}`.trim() || s.id),
         }));
       },
     });

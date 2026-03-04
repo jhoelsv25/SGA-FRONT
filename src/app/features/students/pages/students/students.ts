@@ -89,14 +89,14 @@ export default class StudentsPage {
         columns: EXCEL_COLUMNS,
         exampleRow: { name: 'Ejemplo', email: 'correo@ejemplo.com', age: 15, grade: '1ro' },
         templateSheetName: 'Estudiantes',
-        validateRow: (row) => {
+        validateRow: (row: Record<string, unknown>) => {
           if (!String(row['name'] ?? '').trim()) return 'Nombre requerido';
           if (!String(row['email'] ?? '').trim()) return 'Email requerido';
           const age = Number(row['age']);
           if (Number.isNaN(age) || age < 1 || age > 120) return 'Edad inválida (1-120)';
           return null;
         },
-        importRows: (rows) =>
+        importRows: (rows: Record<string, unknown>[]) =>
           this.studentApi.import(
             rows.map((r) => ({
               name: String(r['name'] ?? '').trim(),

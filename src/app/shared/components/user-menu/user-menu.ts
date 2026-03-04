@@ -29,6 +29,7 @@ export class UserMenu {
   name = input<string>('Usuario');
   role = input<string>('Rol');
   code = input<string>('0000');
+  isCollapsed = input<boolean>(false);
 
   stats = input<{ courses?: number; students?: number; average?: string }>({
     courses: 0,

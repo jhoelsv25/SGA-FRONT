@@ -18,8 +18,8 @@
       class="flex-1 text-left truncate"
       [class]="
         hasSelection()
-          ? 'text-neutral-800 dark:text-white'
-          : 'text-neutral-400 dark:text-neutral-300'
+          ? 'text-base-content'
+          : 'text-base-content/40'
       "
     >
       {{ displayText() }}
@@ -30,7 +30,7 @@
       @if (clearable() && hasSelection() && !isDisabled()) {
         <button
           type="button"
-          class="flex items-center justify-center w-5 h-5 text-neutral-400 hover:text-neutral-600 hover:bg-base-200 rounded transition-colors duration-200 dark:text-neutral-300 dark:hover:text-white"
+          class="flex items-center justify-center w-5 h-5 text-base-content/40 hover:text-base-content hover:bg-base-200 rounded transition-colors duration-200"
           (click)="clearSelection(); $event.stopPropagation()"
           tabindex="-1"
         >
@@ -40,13 +40,13 @@
 
       <!-- Loading Spinner -->
       @if (loading()) {
-        <div class="flex items-center justify-center w-5 h-5 text-primary-500">
+        <div class="flex items-center justify-center w-5 h-5 text-primary">
           <i class="fas fa-spinner fa-spin text-sm"></i>
         </div>
       } @else {
         <!-- Dropdown Arrow -->
         <div
-          class="flex items-center justify-center w-5 h-5 text-neutral-400 transition-transform duration-200 dark:text-neutral-300"
+          class="flex items-center justify-center w-5 h-5 text-base-content/40 transition-transform duration-200"
           [class.rotate-180]="isOpen()"
         >
           <i class="fas fa-chevron-down text-xs"></i>
@@ -58,7 +58,7 @@
   <!-- Dropdown Content -->
   @if (isOpen()) {
     <div
-      class="absolute top-full left-0 right-0 z-50 mt-1 bg-base border border-base-300 rounded-lg shadow-lg max-h-72 overflow-hidden animate-in slide-in-from-top-2 duration-200 dark:bg-base dark:border-base-200"
+      class="absolute top-12 left-0 right-0 z-50 bg-base-100 border border-base-200 rounded-lg shadow-lg max-h-72 overflow-hidden animate-in fade-in zoom-in-95 duration-200"
     >
       <!-- Search Input -->
       @if (searchable()) {
@@ -67,14 +67,14 @@
             <input
               #searchInput
               type="text"
-              class="w-full pl-9 pr-3 py-2 text-sm border border-base-300 rounded-md bg-base text-neutral-800 placeholder-neutral-400 outline-none transition-colors duration-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-300 dark:bg-base dark:border-base-200 dark:text-white dark:placeholder-neutral-300"
+              class="w-full pl-9 pr-3 py-2 text-sm border-0 border-b border-base-200 bg-transparent text-base-content placeholder:text-base-content/40 outline-none transition-colors duration-200 focus:ring-0"
               [placeholder]="searchPlaceholder()"
               [value]="searchTerm()"
               (input)="onSearchInput($event)"
               (keydown)="onKeyDown($event)"
             />
             <i
-              class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 text-sm pointer-events-none dark:text-neutral-300"
+              class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-base-content/40 text-xs pointer-events-none"
             ></i>
           </div>
         </div>
@@ -85,7 +85,7 @@
         @if (filteredOptions().length === 0) {
           <!-- No Options Message -->
           <div
-            class="px-3 py-4 text-center text-neutral-500 text-sm italic dark:text-neutral-400 flex flex-col items-center gap-2"
+            class="px-3 py-4 text-center text-base-content/50 text-sm italic flex flex-col items-center gap-2"
           >
             @if (searchTerm()) {
               @if (loading()) {
@@ -96,7 +96,7 @@
                 @if (showAddButtonFn()) {
                   <button
                     type="button"
-                    class="mt-2 px-4 py-1.5 text-sm font-semibold rounded-md bg-primary-500 text-white hover:bg-primary-600 transition-colors duration-200 shadow"
+                    class="mt-2 px-4 py-1.5 text-sm font-semibold rounded-md bg-primary text-white hover:bg-primary-600 transition-colors duration-200 shadow"
                     (click)="emitAddRequested(searchTerm())"
                   >
                     Agregar "{{ searchTerm() }}"
@@ -142,7 +142,7 @@
               <div class="flex-1 flex flex-col">
                 <span class="font-medium">{{ getOptionLabel()(option) }}</span>
                 @if (option['subtitle']) {
-                  <small class="text-neutral-500 text-xs mt-0.5 dark:text-neutral-400">{{
+                  <small class="text-base-content/50 text-xs mt-0.5">{{
                     option['subtitle']
                   }}</small>
                 }
@@ -150,7 +150,7 @@
 
               <!-- Selected Check (for single selection) -->
               @if (!multiple() && isSelected(option)) {
-                <div class="ml-2 text-primary-500">
+                <div class="ml-2 text-primary">
                   <i class="fas fa-check text-base"></i>
                 </div>
               }
@@ -161,12 +161,10 @@
 
       <!-- Multiple Selection Footer -->
       @if (multiple() && hasSelection()) {
-        <div
-          class="p-2 border-t border-base-200 bg-base-50 dark:bg-base-100 flex items-center justify-center"
-        >
+        <div class="p-2 border-t border-base-200 bg-base-200/50 flex items-center justify-center">
           <button
             type="button"
-            class="w-full px-3 py-1.5 text-sm bg-transparent border border-base-300 rounded-md text-neutral-600 hover:bg-base-100 hover:border-base-400 transition-colors duration-200 dark:border-base-200 dark:text-neutral-300 dark:hover:bg-base-200"
+            class="w-full px-3 py-1.5 text-sm bg-transparent border border-base-300 rounded-md text-base-content/70 hover:bg-base-100 hover:text-base-content transition-colors duration-200"
             (click)="clearSelection()"
           >
             Limpiar selección

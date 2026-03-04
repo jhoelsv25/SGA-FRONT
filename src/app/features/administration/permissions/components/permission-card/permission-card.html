@@ -1,0 +1,35 @@
+<div class="group flex items-center gap-3 p-2.5 rounded-2xl bg-base-200/40 border border-transparent hover:bg-base-100 hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300">
+  <!-- Status/Icon Indicator -->
+  <div class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-content transition-all duration-500 shadow-sm border border-primary/5">
+    <i class="fas fa-fingerprint text-xs"></i>
+  </div>
+
+  <!-- Content -->
+  <div class="flex-1 min-w-0">
+    <div class="flex items-center gap-2">
+      <span class="text-sm font-bold text-base-content tracking-tight truncate group-hover:text-primary transition-colors">
+        {{ permission.name }}
+      </span>
+      <span class="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded bg-primary/5 text-primary/60 border border-primary/10 shrink-0">
+        {{ permission.scope }}
+      </span>
+    </div>
+    
+    <div class="flex items-center gap-1.5 mt-0.5">
+       <i class="fas fa-code text-[9px] text-base-content/20"></i>
+       <code class="text-[10px] font-mono text-base-content/40 truncate tracking-tighter">{{ permission.slug }}</code>
+    </div>
+  </div>
+
+  <!-- Subtle Actions -->
+  <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 pr-1">
+    <button sgaButton variant="ghost" size="sm" class="h-8 w-8 p-0 rounded-lg hover:bg-primary/10 hover:text-primary transition-colors" 
+            (click)="$event.stopPropagation(); edit.emit(permission)">
+      <i class="fas fa-edit text-[10px]"></i>
+    </button>
+    <button sgaButton variant="ghost" size="sm" class="h-8 w-8 p-0 rounded-lg text-error hover:bg-error/10 transition-colors" 
+            (click)="$event.stopPropagation(); delete.emit(permission)">
+      <i class="fas fa-trash-can text-[10px]"></i>
+    </button>
+  </div>
+</div>

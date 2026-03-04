@@ -1,0 +1,26 @@
+<form [formGroup]="form" class="grid gap-4" (ngSubmit)="submit()">
+  <header class="flex items-center justify-between mb-4">
+    <h2 class="text-lg font-semibold">{{ current ? 'Editar reporte' : 'Generar reporte' }}</h2>
+    <button type="button" sgaButton color="secondary" variant="ghost" shape="pill" (click)="close()">
+      <i class="fas fa-times"></i>
+    </button>
+  </header>
+  <div class="grid gap-4">
+    <div>
+      <label class="label-form" for="name">Nombre del reporte</label>
+      <sga-input id="name" formControlName="name" placeholder="Nombre del reporte" />
+    </div>
+    <div>
+      <label class="label-form" for="type">Tipo</label>
+      <sga-select id="type" formControlName="type" [options]="typeOptions" placeholder="Tipo de reporte" />
+    </div>
+    <div>
+      <label class="label-form" for="format">Formato</label>
+      <sga-select id="format" formControlName="format" [options]="formatOptions" placeholder="Formato de salida" />
+    </div>
+  </div>
+  <footer class="flex justify-end gap-2 mt-4">
+    <button type="button" sgaButton color="secondary" variant="outline" (click)="close()">Cancelar</button>
+    <button type="submit" sgaButton color="primary" [disabled]="form.invalid">Generar</button>
+  </footer>
+</form>

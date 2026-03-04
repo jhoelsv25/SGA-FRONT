@@ -1,0 +1,67 @@
+<div class="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+  <!-- Header with SEARCH BAR -->
+  <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-base-100 p-6 rounded-4xl border border-base-200 shadow-xl overflow-hidden relative">
+    <div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl"></div>
+    
+    <div class="relative z-10">
+      <h1 class="text-3xl font-extrabold text-base-content tracking-tighter">Gestión de Permisos</h1>
+      <p class="text-base-content/50 text-sm font-medium">Controla el acceso granular a nivel de módulo y acción.</p>
+    </div>
+
+    <div class="flex flex-1 max-w-xl gap-3 relative z-10">
+      <div class="relative flex-1">
+        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-base-content/30"></i>
+        <input 
+          type="text" 
+          [(ngModel)]="searchTerm" 
+          (ngModelChange)="searchTerm.set($event)"
+          placeholder="Buscar permisos..."
+          class="w-full pl-11 pr-4 py-2.5 rounded-2xl bg-base-200/50 border-none focus:ring-2 focus:ring-primary/20 text-sm transition-all"
+        >
+      </div>
+      <button sgaButton (click)="openCreateDialog()" class="rounded-2xl px-5">
+        <i class="fas fa-plus mr-2"></i> Nuevo
+      </button>
+    </div>
+  </div>
+
+  <!-- GROUPED BY MODULE -->
+  <div class="space-y-8">
+    @if (loading() && !groupedPermissions().length) {
+      <div class="grid grid-cols-1 gap-6">
+        @for (i of [1,2,3]; track i) {
+          <div class="h-64 w-full rounded-4xl bg-base-200/50 animate-pulse border border-base-200"></div>
+        }
+      </div>
+    } @else {
+      @for (group of groupedPermissions(); track group.name) {
+        <div class="module-section">
+          <div class="flex items-center gap-3 mb-4">
+            <h2 class="text-lg font-bold text-base-content tracking-tight uppercase">{{ group.name }}</h2>
+            <div class="flex-1 h-px bg-base-200/60"></div>
+            <span class="px-2.5 py-0.5 bg-base-200 text-base-content/40 rounded-full text-[9px] font-black tracking-widest">{{ group.permissions.length }} PERMISOS</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            @for (permission of group.permissions; track permission.id) {
+              <sga-permission-card 
+                [permission]="permission"
+                (edit)="editPermission($event)"
+                (delete)="deletePermission($event)"
+              ></sga-permission-card>
+            }
+          </div>
+        </div>
+      } @empty {
+        <sga-empty-state
+          class="col-span-full"
+          title="No se encontraron resultados"
+          description="Ajusta tu búsqueda o crea un nuevo permiso."
+          iconClass="fas fa-search"
+          [actionLabel]="searchTerm() ? 'Limpiar' : 'Crear'"
+          (action)="searchTerm() ? searchTerm.set('') : openCreateDialog()"
+        />
+      }
+    }
+  </div>
+</div>

@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 
-import { DataSource } from '@shared/components/data-source/data-source';
 import { HeaderDetail } from '@shared/components/header-detail/header-detail';
 
 import { ActionConfig, ActionContext } from '@core/types/action-types';
@@ -8,10 +7,12 @@ import { Dialog } from '@angular/cdk/dialog';
 import { YearAcademicStore } from '../../services/store/year-academic.store';
 import { YearAcademic } from '../../types/year-academi-types';
 import { YearAcademicForm } from '../../components/year-academic-form/year-academic-form';
+import { CommonModule } from '@angular/common';
+import { YearAcademicCardComponent } from '../../components/year-academic-card/year-academic-card';
 @Component({
   selector: 'sga-year-academic',
   standalone: true,
-  imports: [HeaderDetail, DataSource],
+  imports: [CommonModule, HeaderDetail, YearAcademicCardComponent],
   templateUrl: './year-academic.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -69,17 +70,28 @@ export default class YearAcademicComponent {
     this.store.setSelected(rows as YearAcademic[]);
   }
 
-  onRefresh() {
+  public onRefresh() {
     this.store.load({
       page: this.pagination().page,
       size: this.pagination().size,
     });
   }
 
+  public editYear(year: YearAcademic) {
+    this.store.setCurrent(year);
+    this.openForm();
+  }
+
+  public deleteYear(year: YearAcademic) {
+    if (confirm(`¿Estás seguro de eliminar el año académico ${year.name}?`)) {
+      this.store.delete(year.id);
+    }
+  }
+
   // =========================
   // UI ONLY
   // =========================
-  private openForm() {
+  public openForm() {
     this.dialog.open(YearAcademicForm, {
       data: {
         current: this.store.current(),

@@ -130,13 +130,13 @@ export default class TeachersPage {
           isActive: 'Sí',
         },
         templateSheetName: 'Docentes',
-        validateRow: (row) => {
+        validateRow: (row: Record<string, unknown>) => {
           if (!String(row['firstName'] ?? '').trim()) return 'Nombre requerido';
           if (!String(row['lastName'] ?? '').trim()) return 'Apellido requerido';
           if (!String(row['email'] ?? '').trim()) return 'Email requerido';
           return null;
         },
-        importRows: (rows) =>
+        importRows: (rows: Record<string, unknown>[]) =>
           this.teacherApi.import(
             rows.map((r) => ({
               firstName: String(r['firstName'] ?? '').trim(),

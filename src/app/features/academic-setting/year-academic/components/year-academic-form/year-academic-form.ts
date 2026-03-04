@@ -15,7 +15,7 @@ import { Button } from '@shared/directives';
 import { DatePicker } from '@shared/ui/date-picker/date-picker';
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { Input } from '@shared/ui/input/input';
-import { InstitutionApi } from '@features/academic-setting/institution/services/api/institution-api';
+import { InstitutionApi } from '@features/administration/services/api/institution-api';
 
 @Component({
   selector: 'sga-year-academic-form',

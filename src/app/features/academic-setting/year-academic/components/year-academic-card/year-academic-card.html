@@ -1,0 +1,58 @@
+<sga-card class="group flex flex-col h-full hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 border-base-200 overflow-hidden bg-base-100">
+  <sga-card-header class="pb-3 border-b border-base-200 bg-base-200/10">
+    <div class="flex justify-between items-start">
+      <div class="flex flex-col items-center justify-center w-14 h-14 rounded-2xl bg-primary/10 text-primary border border-primary/20 shadow-sm group-hover:bg-primary group-hover:text-primary-content transition-colors">
+        <span class="text-[10px] font-black uppercase tracking-tighter leading-none mb-1">Año</span>
+        <span class="text-xl font-bold leading-none">{{ year.year }}</span>
+      </div>
+      <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <button sgaButton variant="ghost" size="sm" class="rounded-lg h-8 w-8 p-0" (click)="edit.emit(year)">
+          <i class="fas fa-edit text-xs"></i>
+        </button>
+        <button sgaButton variant="ghost" size="sm" class="rounded-lg h-8 w-8 p-0 text-error hover:bg-error/10" (click)="delete.emit(year)">
+          <i class="fas fa-trash text-xs"></i>
+        </button>
+      </div>
+    </div>
+    <sga-card-title class="mt-4 text-xl font-bold tracking-tight text-base-content group-hover:text-primary transition-colors">
+      {{ year.name }}
+    </sga-card-title>
+    <div class="flex items-center gap-2 mt-1">
+        <span class="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded border" [ngClass]="getStatusColor(year.status)">
+            {{ getStatusLabel(year.status) }}
+        </span>
+        <span class="text-[10px] font-black uppercase tracking-widest text-primary/60 bg-primary/5 px-2 py-0.5 rounded border border-primary/10">
+            {{ getModalityLabel(year.modality) }}
+        </span>
+    </div>
+  </sga-card-header>
+
+  <sga-card-content class="pt-5 flex-grow">
+    <div class="space-y-4">
+        <div class="grid grid-cols-2 gap-4">
+            <div class="p-3 bg-base-200/30 rounded-xl border border-base-200">
+                <p class="text-[9px] font-black uppercase tracking-widest text-base-content/30 mb-1">Inicio</p>
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-calendar-alt text-primary/40 text-xs"></i>
+                    <span class="text-xs font-bold">{{ year.startDate | date:'shortDate' }}</span>
+                </div>
+            </div>
+            <div class="p-3 bg-base-200/30 rounded-xl border border-base-200">
+                <p class="text-[9px] font-black uppercase tracking-widest text-base-content/30 mb-1">Fin</p>
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-calendar-check text-primary/40 text-xs"></i>
+                    <span class="text-xs font-bold">{{ year.endDate | date:'shortDate' }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs px-1">
+            <div class="flex items-center gap-2 text-base-content/50">
+                <i class="fas fa-award"></i>
+                <span>Min. Aprobación:</span>
+            </div>
+            <span class="font-bold text-primary">{{ year.passingGrade }}</span>
+        </div>
+    </div>
+  </sga-card-content>
+</sga-card>

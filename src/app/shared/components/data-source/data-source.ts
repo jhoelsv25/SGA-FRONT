@@ -28,6 +28,7 @@ import { Checkbox } from '@shared/ui/checkbox/checkbox';
 import { LoadMorePagination } from '@shared/ui/pagination/load-more-pagination';
 import { Pagination } from '@shared/ui/pagination/pagination';
 import { Search } from '@shared/ui/search/search';
+import { EmptyState } from '@shared/ui/empty-state/empty-state';
 
 import {
   getActionMenuItemClasses,
@@ -38,7 +39,7 @@ import {
 @Component({
   selector: 'sga-data-source',
   standalone: true,
-  imports: [CommonModule, FormsModule, Pagination, LoadMorePagination, Checkbox, Button, Search],
+  imports: [CommonModule, FormsModule, Pagination, LoadMorePagination, Checkbox, Button, Search, EmptyState],
   templateUrl: './data-source.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -71,6 +72,9 @@ export class DataSource implements OnInit, OnDestroy {
     | undefined
   >();
   searchTerm = input('');
+  emptyStateTitle = input('Sin datos disponibles');
+  emptyStateDescription = input('No se encontraron registros para mostrar en esta tabla.');
+  emptyStateIcon = input('fas fa-folder-open');
 
   // =========================
   // OUTPUTS

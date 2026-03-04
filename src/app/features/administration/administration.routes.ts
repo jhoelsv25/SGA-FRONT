@@ -3,37 +3,43 @@ import { Routes } from '@angular/router';
 export default [
   {
     path: 'institution',
-    loadComponent: () => import('../academic-setting/institution/pages/institution/institution'),
+    loadComponent: () => import('./institution/pages/institution/institution'),
     title: 'Institución Educativa',
     data: { permissions: ['manage_institution'] },
   },
   {
     path: 'users',
-    loadComponent: () => import('../users/pages/users/users'), // Need to check users component path
+    loadComponent: () => import('./users/pages/users'),
     title: 'Usuarios',
     data: { permissions: ['view_user', 'manage_user'] },
   },
   {
     path: 'roles',
-    loadComponent: () => import('../users/roles/pages/roles/roles'), // Placeholder path
+    loadComponent: () => import('./roles/pages/roles/roles'),
     title: 'Roles',
     data: { permissions: ['view_role', 'manage_role'] },
   },
   {
+    path: 'roles/:id',
+    loadComponent: () => import('./roles/pages/role-permissions/role-permissions'),
+    title: 'Permisos de Rol',
+    data: { permissions: ['manage_role'] },
+  },
+  {
     path: 'permissions',
-    loadComponent: () => import('../users/permissions/pages/permissions/permissions'), // Placeholder path
+    loadComponent: () => import('./permissions/pages/permissions/permissions'),
     title: 'Permisos',
     data: { permissions: ['view_permission', 'manage_permission'] },
   },
   {
     path: 'sessions',
-    loadComponent: () => import('../users/sessions/pages/sessions/sessions'), // Placeholder path
+    loadComponent: () => import('./sessions/pages/sessions/sessions'),
     title: 'Sesiones Activas',
     data: { permissions: ['view_sessions', 'manage_sessions'] },
   },
   {
     path: 'audit-logs',
-    loadComponent: () => import('../users/audit-logs/pages/audit-logs/audit-logs'), // Placeholder path
+    loadComponent: () => import('./audit-logs/pages/audit-logs'),
     title: 'Auditoría',
     data: { permissions: ['view_audit_log'] },
   },

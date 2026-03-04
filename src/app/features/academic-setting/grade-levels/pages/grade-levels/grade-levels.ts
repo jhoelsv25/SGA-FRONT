@@ -1,22 +1,24 @@
 import { Dialog } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
-import { DataSource } from '@shared/components/data-source/data-source';
 import { HeaderDetail } from '@shared/components/header-detail/header-detail';
 import { GradeLevelStore } from '../../services/store/grade-level.store';
 import { GradeLevel } from '../../types/grade-level-types';
 import { GradeLevelForm } from '../../components/grade-level-form/grade-level-form';
 
+import { CommonModule } from '@angular/common';
+import { GradeLevelCardComponent } from '../../components/grade-level-card/grade-level-card';
+
 @Component({
   selector: 'sga-grade-levels',
   standalone: true,
-  imports: [HeaderDetail, DataSource],
+  imports: [CommonModule, HeaderDetail, GradeLevelCardComponent],
   templateUrl: './grade-levels.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class GradeLevelsPage {
-  private dialog = inject(Dialog);
-  private store = inject(GradeLevelStore);
+  public dialog = inject(Dialog);
+  public store = inject(GradeLevelStore);
 
   headerConfig = computed(() => this.store.headerConfig());
   columns = computed(() => this.store.columns());
@@ -44,7 +46,7 @@ export default class GradeLevelsPage {
     this.store.setPagination(p.page, p.size);
   }
 
-  private openForm(current?: GradeLevel | null) {
+  public openForm(current?: GradeLevel | null) {
     this.dialog.open(GradeLevelForm, {
       data: { current: current ?? null },
       panelClass: 'dialog-top',

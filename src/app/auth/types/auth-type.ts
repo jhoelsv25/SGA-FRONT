@@ -20,6 +20,7 @@ export interface RoleAuth {
   id: string;
   name: string;
 }
+
 export type RefreshTokenResponse = {
   message: string;
   data: {
@@ -27,6 +28,7 @@ export type RefreshTokenResponse = {
     accessToken: string;
   };
 };
+
 export type CurrentUser = {
   id: string;
   username: string;
@@ -45,6 +47,7 @@ export type CurrentUser = {
     average?: string;
   };
 };
+
 export interface RoleResponse {
   role: RoleAuth;
   modules: Module[];
@@ -53,14 +56,13 @@ export interface RoleResponse {
 export interface Module {
   id: string;
   name: string;
-  description: string;
-  path: string;
-  icon: string;
-  key: string;
-  order: number;
-  visibility: 'public' | 'private';
-  isActive: boolean;
-  isSystem: boolean;
+  description?: string;
+  path?: string;
+  icon?: string;
+  order?: number;
+  visibility?: 'public' | 'private';
+  isActive?: boolean;
+  isSystem?: boolean;
   permissions: string[];
   children?: Module[];
 }

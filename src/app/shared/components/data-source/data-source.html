@@ -155,12 +155,13 @@
                 [attr.colspan]="
                   columns().length + (config().selectable ? 1 : 0) + (hasActions() ? 1 : 0)
                 "
-                class="px-4 py-8 text-center text-neutral-500"
+                class="px-4 py-8"
               >
-                <div class="flex flex-col items-center gap-2">
-                  <i class="fas fa-table text-2xl text-neutral-300"></i>
-                  <span>No hay datos disponibles</span>
-                </div>
+                <sga-empty-state
+                  [title]="emptyStateTitle()"
+                  [description]="emptyStateDescription()"
+                  [iconClass]="emptyStateIcon()"
+                />
               </td>
             </tr>
           } @else {

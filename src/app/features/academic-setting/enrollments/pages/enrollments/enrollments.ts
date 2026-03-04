@@ -26,7 +26,7 @@ export default class Enrollments {
     this.store.enrollments().map((e) => ({
       id: e.id,
       enrollment: e,
-      studentName: `${e.student?.firstName ?? ''} ${e.student?.lastName ?? ''}`.trim() || e.student?.studentCode ?? '',
+      studentName: `${e.student?.firstName ?? ''} ${e.student?.lastName ?? ''}`.trim() || (e.student?.studentCode ?? ''),
       sectionName: e.section?.name ?? '',
       enrollmentType: e.enrollmentType,
       status: e.status,

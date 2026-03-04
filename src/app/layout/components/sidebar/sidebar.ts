@@ -58,48 +58,38 @@ export class Sidebar implements OnInit, OnDestroy {
 
   // Computed final de menú
   public menuItems = computed(() => {
-    const modules = this.modules();
-    if (!modules || modules.length === 0) {
-      return [];
-    }
-    // 1. Filtrar públicos y ordenar padres
-    const publicModules = modules
-      .filter((m: Module) => m.visibility === 'public')
-      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    const backendModules = this.modules() || [];
 
-    // 2. Función recursiva para ordenar hijos
-    const processModule = (mod: Module): Module => ({
-      ...mod,
-      children: mod.children
-        ?.sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-        .map(processModule) || [],
-    });
-
-    // 3. Construir items
-    return publicModules.map((m: Module) => this.buildMenuItem(processModule(m)));
-  });
-
-  private buildMenuItem(module: Module): MenuItem {
-    const hasChildren = Boolean(module.children?.length);
-    const route = module.path || '';
-
-    return {
-      id: module.id,
-      icon: this.normalizeIcon(module.icon),
-      label: module.name,
-      route,
-      permissions: module.permissions,
-      active: this.isRouteActive(route, this.activeRoute()),
-      children: module.children?.map((child: Module) => this.buildMenuItem(child)) || [],
-      hasChildren,
+    // Función recursiva para mapear Module (backend) a MenuItem (sidebar)
+    const mapToMenuItem = (mod: Module): MenuItem => {
+      const route = mod.path || '';
+      return {
+        id: mod.id,
+        icon: this.normalizeIcon(mod.icon || ''),
+        label: mod.name,
+        route,
+        permissions: mod.permissions || [],
+        active: this.isRouteActive(route, this.activeRoute()),
+        children: mod.children?.map(mapToMenuItem) || [],
+        hasChildren: Boolean(mod.children?.length),
+      };
     };
-  }
+
+    return backendModules.map(mapToMenuItem);
+  });
 
   private normalizeIcon(icon: string): string {
     if (!icon) return 'fa-circle';
-    if (icon.startsWith('fa-')) return icon;
-    // Map common material icons if needed, or default
-    return `fa-${icon}`;
+    
+    const clean = icon.trim();
+    
+    // Si ya empieza con fa- o lo que sea, devolverlo
+    if (clean.startsWith('fa-') || clean.startsWith('fas ') || clean.startsWith('fab ')) {
+       return clean;
+    }
+
+    // Caso: "home" -> "fa-home"
+    return `fa-${clean}`;
   }
 
   // --- Permissions ---

@@ -6,7 +6,7 @@ import { Input } from '@shared/ui/input/input';
 import { Select } from '@shared/ui/select/select';
 import { GradeLevelStore } from '../../services/store/grade-level.store';
 import { GradeLevel, GradeLevelCreate } from '../../types/grade-level-types';
-import { InstitutionApi } from '@features/academic-setting/institution/services/api/institution-api';
+import { InstitutionApi } from '@features/administration/services/api/institution-api';
 
 @Component({
   selector: 'sga-grade-level-form',

@@ -1,0 +1,52 @@
+<sga-card class="flex flex-col h-full border-none shadow-none bg-transparent animate-in zoom-in-95 duration-200">
+  <!-- Modal Header -->
+  <sga-card-header class="pb-6 border-b border-base-200 bg-base-200/20 flex flex-row justify-between items-center space-y-0">
+    <div>
+      <sga-card-title class="text-2xl font-bold text-base-content tracking-tight">{{ title }}</sga-card-title>
+      <sga-card-description class="text-sm text-base-content/60">Define los detalles básicos para este rol.</sga-card-description>
+    </div>
+    <button class="btn btn-ghost btn-circle btn-sm" (click)="close()">
+      <i class="fas fa-times"></i>
+    </button>
+  </sga-card-header>
+
+  <!-- Modal Body -->
+  <sga-card-content class="p-8 overflow-y-auto max-h-[70vh]">
+    <form [formGroup]="form" (ngSubmit)="submit()" id="role-form" class="space-y-6">
+      <div class="space-y-2">
+        <label for="role-name" class="text-xs font-bold uppercase tracking-wider text-base-content/50 ml-1">Nombre del Rol</label>
+        <sga-input 
+          formControlName="name" 
+          placeholder="Ej: Administrador de Académico"
+        ></sga-input>
+      </div>
+
+      <div class="space-y-2">
+        <label for="role-description" class="text-xs font-bold uppercase tracking-wider text-base-content/50 ml-1">Descripción</label>
+        <textarea 
+          id="role-description"
+          formControlName="description" 
+          class="textarea textarea-bordered w-full h-32 focus:textarea-primary transition-all bg-base-100" 
+          placeholder="Describe las responsabilidades de este rol..."></textarea>
+      </div>
+
+      <div class="flex items-center justify-between p-4 bg-base-200/30 rounded-xl border border-base-200">
+        <div>
+          <span class="block font-bold text-sm">Estado del Rol</span>
+          <span class="text-xs text-base-content/50">Define si el rol puede ser asignado a usuarios.</span>
+        </div>
+        <input type="checkbox" formControlName="isActive" class="toggle toggle-primary toggle-lg">
+      </div>
+    </form>
+  </sga-card-content>
+
+  <!-- Modal Footer -->
+  <sga-card-footer class="p-6 bg-base-200/50 border-t border-base-200 flex justify-end gap-3">
+    <button sgaButton variant="ghost" (click)="close()" type="button">
+      Cancelar
+    </button>
+    <button sgaButton color="primary" type="submit" form="role-form" [disabled]="form.invalid">
+      <i class="fas fa-save mr-2"></i> {{ current ? 'Actualizar' : 'Crear' }} Rol
+    </button>
+  </sga-card-footer>
+</sga-card>

@@ -37,7 +37,7 @@ export class ExcelService {
     const keys = columns.map((c) => c.key);
     const aoa = [headers];
     if (exampleRow) {
-      aoa.push(keys.map((k) => exampleRow[k] ?? ''));
+      aoa.push(keys.map((k) => String(exampleRow[k] ?? '')));
     }
     const ws = XLSX.utils.aoa_to_sheet(aoa);
     const wb = XLSX.utils.book_new();
@@ -62,7 +62,7 @@ export class ExcelService {
           }
           const wb = XLSX.read(data, { type: 'array' });
           const firstSheet = wb.Sheets[wb.SheetNames[0]];
-          const raw = XLSX.utils.sheet_to_json<Record<string, unknown>>(firstSheet, { header: 1 }) as unknown[][];
+          const raw = XLSX.utils.sheet_to_json(firstSheet, { header: 1 }) as unknown[][];
           if (raw.length < 2) {
             resolve([]);
             return;

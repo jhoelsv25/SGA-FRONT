@@ -54,7 +54,7 @@ export const PermissionCheckStore = signalStore(
         .find(
           (m) =>
             m.name.toLowerCase() === resource.toLowerCase() ||
-            m.path.toLowerCase().includes(resource.toLowerCase()),
+            (m.path?.toLowerCase() || '').includes(resource.toLowerCase()),
         );
     },
 

@@ -1,6 +1,6 @@
-<div class="min-h-screen bg-linear-to-b from-slate-50 to-white">
+<div class="min-h-screen bg-base-200/50">
   <!-- Classroom Header: amigable y claro -->
-  <header class="bg-white/95 backdrop-blur border-b border-slate-200/80 sticky top-0 z-30 shadow-sm">
+  <header class="bg-base-100/95 backdrop-blur border-b border-base-200/80 sticky top-0 z-30 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6">
       <div class="flex items-center justify-between h-16 sm:h-20">
         <div class="flex items-center gap-3 sm:gap-4 min-w-0">
@@ -8,17 +8,17 @@
             <i class="fas fa-chalkboard-teacher text-lg sm:text-xl"></i>
           </div>
           <div class="min-w-0">
-            <h1 class="text-lg sm:text-xl font-bold text-slate-800 truncate">{{ sectionName() }}</h1>
-            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Aula Virtual</p>
+            <h1 class="text-lg sm:text-xl font-bold truncate text-base-content">{{ sectionName() }}</h1>
+            <p class="text-xs font-semibold text-base-content/50 uppercase tracking-wider">Aula Virtual</p>
           </div>
         </div>
 
         <nav class="hidden md:flex items-center gap-1">
-          <a routerLink="timeline" routerLinkActive="bg-primary/10 text-primary border-primary/20" class="px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all border border-transparent">Muro</a>
-          <a routerLink="tasks" routerLinkActive="bg-primary/10 text-primary border-primary/20" class="px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all border border-transparent">Tareas</a>
-          <a routerLink="people" routerLinkActive="bg-primary/10 text-primary border-primary/20" class="px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all border border-transparent">Personas</a>
-          <a routerLink="grades" routerLinkActive="bg-primary/10 text-primary border-primary/20" class="px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all border border-transparent">Notas</a>
-          <a routerLink="chat" routerLinkActive="bg-primary/10 text-primary border-primary/20" class="px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all border border-transparent">Chat</a>
+          <a routerLink="timeline" routerLinkActive="bg-primary/10 text-primary border-primary/20" class="px-4 py-2 rounded-xl text-sm font-semibold text-base-content/70 hover:text-base-content hover:bg-base-200/50 transition-all border border-transparent">Muro</a>
+          <a routerLink="tasks" routerLinkActive="bg-primary/10 text-primary border-primary/20" class="px-4 py-2 rounded-xl text-sm font-semibold text-base-content/70 hover:text-base-content hover:bg-base-200/50 transition-all border border-transparent">Tareas</a>
+          <a routerLink="people" routerLinkActive="bg-primary/10 text-primary border-primary/20" class="px-4 py-2 rounded-xl text-sm font-semibold text-base-content/70 hover:text-base-content hover:bg-base-200/50 transition-all border border-transparent">Personas</a>
+          <a routerLink="grades" routerLinkActive="bg-primary/10 text-primary border-primary/20" class="px-4 py-2 rounded-xl text-sm font-semibold text-base-content/70 hover:text-base-content hover:bg-base-200/50 transition-all border border-transparent">Notas</a>
+          <a routerLink="chat" routerLinkActive="bg-primary/10 text-primary border-primary/20" class="px-4 py-2 rounded-xl text-sm font-semibold text-base-content/70 hover:text-base-content hover:bg-base-200/50 transition-all border border-transparent">Chat</a>
         </nav>
 
         <div class="flex items-center gap-2 sm:gap-3">
@@ -42,27 +42,27 @@
               }
             </button>
             @if (showNotificationPanel()) {
-              <div class="absolute right-0 top-full mt-2 w-80 max-h-96 overflow-auto rounded-2xl bg-white border border-slate-200 shadow-xl z-50 py-2">
-                <div class="flex items-center justify-between px-4 py-2 border-b border-slate-100">
-                  <span class="text-sm font-bold text-slate-700">Notificaciones</span>
+              <div class="absolute right-0 top-full mt-2 w-80 max-h-96 overflow-auto rounded-2xl bg-base-100 border border-base-200 shadow-xl z-50 py-2">
+                <div class="flex items-center justify-between px-4 py-2 border-b border-base-200">
+                  <span class="text-sm font-bold text-base-content">Notificaciones</span>
                   <button type="button" sgaButton variant="ghost" size="xs" (click)="clearNotifications()">
                     <i class="fas fa-times"></i>
                   </button>
                 </div>
                 @for (n of notifications(); track n.title + n.body) {
-                  <div class="px-4 py-3 hover:bg-slate-50 border-b border-slate-50 last:border-0">
-                    <p class="text-sm font-semibold text-slate-800">{{ n.title }}</p>
+                  <div class="px-4 py-3 hover:bg-base-200/50 border-b border-base-200/50 last:border-0">
+                    <p class="text-sm font-semibold text-base-content">{{ n.title }}</p>
                     @if (n.body) {
-                      <p class="text-xs text-slate-500 mt-0.5">{{ n.body }}</p>
+                      <p class="text-xs text-base-content/60 mt-0.5">{{ n.body }}</p>
                     }
                   </div>
                 } @empty {
-                  <p class="px-4 py-6 text-sm text-slate-400 text-center">Sin notificaciones nuevas</p>
+                  <p class="px-4 py-6 text-sm text-base-content/50 text-center">Sin notificaciones nuevas</p>
                 }
               </div>
             }
           </div>
-          <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-primary/10 border-2 border-white flex items-center justify-center font-bold text-primary text-sm shrink-0">
+          <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-primary/10 border-2 border-base-100 flex items-center justify-center font-bold text-primary text-sm shrink-0">
             <i class="fas fa-user"></i>
           </div>
         </div>

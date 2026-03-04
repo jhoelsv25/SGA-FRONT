@@ -2,156 +2,113 @@
   <!-- Trigger -->
   <button
     (click)="toggleMenu()"
-    class="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200"
+    class="w-full flex items-center gap-3 p-1 rounded-md transition-all duration-200"
+    [class.justify-center]="isCollapsed()"
   >
-    <div class="relative shrink-0">
+    <div class="relative shrink-0 flex items-center justify-center">
       @if (avatar(); as img) {
         <img
           [src]="img"
           alt="Avatar"
-          class="w-10 h-10 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600"
+          class="w-8 h-8 rounded-full object-cover border border-base-300 shadow-sm"
         />
       } @else {
         <div
-          class="w-10 h-10 flex items-center justify-center rounded-full bg-primary-600 text-white font-bold border-2 border-gray-200 dark:border-gray-600"
+          class="w-8 h-8 flex items-center justify-center rounded-full bg-primary text-primary-50 text-xs font-bold border border-primary/20"
         >
           {{ initials() }}
         </div>
       }
+      <!-- Status dot -->
+      <div class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-success rounded-full border-2 border-base-100"></div>
     </div>
-    <div class="flex-1 text-left min-w-0">
-      <div class="text-sm font-semibold text-gray-800 dark:text-white truncate">
-        {{ name() }}
+
+    @if (!isCollapsed()) {
+      <div class="flex-1 text-left min-w-0 transition-all duration-200">
+        <p class="text-xs font-bold text-base-content truncate leading-tight">
+          {{ name() }}
+        </p>
+        <p class="text-[10px] text-base-content/50 truncate font-medium uppercase tracking-wider">{{ role() }}</p>
       </div>
-      <div class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ role() }}</div>
-    </div>
-    <i
-      class="fas fa-chevron-up text-xs text-gray-500 transition-transform duration-200 shrink-0"
-      [class.rotate-180]="open()"
-    ></i>
+      <i
+        class="fa-solid fa-chevron-up text-[10px] text-base-content/30 transition-transform duration-300 shrink-0"
+        [class.rotate-180]="open()"
+      ></i>
+    }
   </button>
 
-  <!-- Dropdown (Opens Upward) -->
-
+  <!-- Dropdown (Opens Upward/Sideways) -->
   <div
     [ngClass]="open() ? 'menu-anim-enter' : 'menu-anim-leave'"
-    class="absolute left-0 right-0 bottom-full mb-2 w-full bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden origin-bottom"
+    class="absolute z-50 overflow-hidden bg-base-100 rounded-xl shadow-2xl border border-base-200 shadow-primary/5 origin-bottom"
+    [class.bottom-full]="!isCollapsed()"
+    [class.mb-4]="!isCollapsed()"
+    [class.left-0]="!isCollapsed()"
+    [class.w-64]="!isCollapsed()"
+    [class.left-[calc(100%+0.5rem)]]="isCollapsed()"
+    [class.bottom-0]="isCollapsed()"
+    [class.w-56]="isCollapsed()"
+    [class.origin-bottom-left]="isCollapsed()"
   >
     <!-- Header -->
-    <div class="bg-primary-500 p-4 text-white">
-      <h3 class="font-semibold truncate">{{ name() }}</h3>
-      <p class="text-white/80 text-sm">{{ role() }}</p>
-      <p class="text-white/60 text-xs">Código: {{ code() }}</p>
+    <div class="p-4 border-b border-base-200/60 bg-base-50/50">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+           {{ initials() }}
+        </div>
+        <div class="min-w-0">
+          <h3 class="font-bold text-sm text-base-content leading-tight truncate">{{ name() }}</h3>
+          <p class="text-xs text-base-content/40 font-medium truncate uppercase tracking-wide">{{ role() }}</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-1.5 text-[10px] text-base-content/40 bg-base-100 border border-base-200 py-1 px-2 rounded-md w-fit font-mono">
+        <i class="fa-solid fa-id-badge"></i>
+        <span>{{ code() }}</span>
+      </div>
     </div>
 
     <!-- Stats -->
-    <div class="grid grid-cols-3 gap-4 p-4 bg-gray-50 dark:bg-gray-700/50">
-      <div class="text-center">
-        <div class="text-lg font-bold">{{ stats().courses }}</div>
-        <div class="text-xs text-gray-500">Cursos</div>
+    <div class="grid grid-cols-3 divide-x divide-base-200/50 border-b border-base-200/60 bg-base-100">
+      <div class="p-3 text-center">
+        <p class="text-xs font-bold text-base-content">{{ stats().courses }}</p>
+        <p class="text-[10px] text-base-content/40 font-medium uppercase">Cursos</p>
       </div>
-      <div class="text-center">
-        <div class="text-lg font-bold">{{ stats().students }}</div>
-        <div class="text-xs text-gray-500">Estudiantes</div>
+      <div class="p-3 text-center">
+        <p class="text-xs font-bold text-base-content">{{ stats().students }}</p>
+        <p class="text-[10px] text-base-content/40 font-medium uppercase">Alumnos</p>
       </div>
-      <div class="text-center">
-        <div class="text-lg font-bold">{{ stats().average }}</div>
-        <div class="text-xs text-gray-500">Promedio</div>
+      <div class="p-3 text-center">
+        <p class="text-xs font-bold text-base-content">{{ stats().average }}</p>
+        <p class="text-[10px] text-base-content/40 font-medium uppercase">Prom.</p>
       </div>
     </div>
 
-    <!-- Acciones dinámicas -->
-    <div class="py-2">
+    <!-- Actions -->
+    <div class="p-1.5 space-y-0.5">
       @for (item of actions(); track $index) {
         <button
-          (click)="
-            item.type === 'theme'
-              ? handleThemeAction(item, $event)
-              : handleAction(item)
-          "
-          class="w-full flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
+          (click)="handleAction(item)"
+          class="w-full flex items-center gap-3 px-3 py-2 text-sm text-base-content/70 hover:text-base-content hover:bg-base-200/60 rounded-md transition-all group"
         >
-          @if (item.type === "theme") {
-            <div class="w-5 flex justify-center">
-              @switch (item.icon) {
-                @case ("theme-light") {
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="w-4 h-4 text-primary"
-                  >
-                    <circle cx="12" cy="12" r="4"></circle>
-                    <path d="M12 2v2"></path>
-                    <path d="M12 20v2"></path>
-                    <path d="M4.93 4.93l1.41 1.41"></path>
-                    <path d="M17.66 17.66l1.41 1.41"></path>
-                    <path d="M2 12h2"></path>
-                    <path d="M20 12h2"></path>
-                    <path d="M6.34 17.66l-1.41 1.41"></path>
-                    <path d="M19.07 4.93l-1.41 1.41"></path>
-                  </svg>
-                }
-                @case ("theme-dark") {
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="w-4 h-4 text-primary"
-                  >
-                    <path
-                      d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
-                    ></path>
-                  </svg>
-                }
-                @case ("theme-system") {
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="w-4 h-4 text-primary"
-                  >
-                    <rect
-                      x="2"
-                      y="3"
-                      width="20"
-                      height="14"
-                      rx="2"
-                      ry="2"
-                    ></rect>
-                    <line x1="8" y1="21" x2="16" y2="21"></line>
-                    <line x1="12" y1="17" x2="12" y2="21"></line>
-                  </svg>
-                }
-              }
-            </div>
-          } @else {
-            <i [class]="item.icon + ' w-5 text-primary'"></i>
-          }
-          <span class="flex-1 text-left">{{ item.label }}</span>
+          <div class="w-4 flex justify-center text-primary/60 group-hover:text-primary transition-colors">
+            @if (item.type === 'theme') {
+               <i class="fa-solid" [class]="item.icon === 'theme-light' ? 'fa-sun' : item.icon === 'theme-dark' ? 'fa-moon' : 'fa-laptop'"></i>
+            } @else {
+              <i [class]="item.icon"></i>
+            }
+          </div>
+          <span class="font-medium text-xs">{{ item.label }}</span>
         </button>
       }
     </div>
 
-    <!-- Logout fijo -->
-    <div class="p-4 border-t border-gray-200 dark:border-gray-600">
+    <!-- Logout button -->
+    <div class="p-1.5 border-t border-base-200/60 bg-base-50/10">
       <button
         (click)="handleAction({ label: 'Cerrar Sesión', type: 'logout' })"
-        class="bg-primary-600 w-full flex items-center justify-center gap-2 text-white py-2.5 px-4 rounded-lg font-semibold transition-all duration-200 transform hover:scale-[1.02]"
+        class="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs font-bold text-error hover:bg-error/10 rounded-md transition-all active:scale-95"
       >
-        <i class="fas fa-sign-out-alt"></i>
+        <i class="fa-solid fa-right-from-bracket"></i>
         <span>Cerrar Sesión</span>
       </button>
     </div>

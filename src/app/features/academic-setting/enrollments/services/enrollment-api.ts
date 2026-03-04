@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiParams, ApiEntityResponse, DataResponse } from '@core/types/pagination-types';
-import { Enrollment } from '../types/enrollment-types';
+import type { CreateEnrollmentDto, Enrollment, EnrollmentUpdateDto } from '../types/enrollment-types';
 
 @Injectable({ providedIn: 'root' })
 export class EnrollmentApi {
@@ -21,11 +21,11 @@ export class EnrollmentApi {
     return this.http.get<Enrollment>(`${this.baseUrl}/${id}`);
   }
 
-  create(data: Partial<Enrollment>): Observable<ApiEntityResponse<Enrollment>> {
+  create(data: CreateEnrollmentDto): Observable<ApiEntityResponse<Enrollment>> {
     return this.http.post<ApiEntityResponse<Enrollment>>(this.baseUrl, data);
   }
 
-  update(id: string, data: Partial<Enrollment>): Observable<ApiEntityResponse<Enrollment>> {
+  update(id: string, data: EnrollmentUpdateDto): Observable<ApiEntityResponse<Enrollment>> {
     return this.http.patch<ApiEntityResponse<Enrollment>>(`${this.baseUrl}/${id}`, data);
   }
 

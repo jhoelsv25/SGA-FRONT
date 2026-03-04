@@ -41,7 +41,7 @@ export default [
         title: 'Evaluaciones',
       },
       {
-        path: 'classroom',
+        path: 'virtual-classroom',
         loadChildren: () => import('@features/classroom/classroom.routes'),
         title: 'Aula Virtual',
       },

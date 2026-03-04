@@ -1,0 +1,48 @@
+<sga-card class="group flex flex-col h-full hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 border-base-200 overflow-hidden bg-base-100">
+  <sga-card-header class="pb-3 border-b border-base-200 bg-base-200/10">
+    <div class="flex justify-between items-start">
+      <div class="p-2.5 rounded-xl shadow-sm transition-colors" [ngClass]="getLevelColor(gradeLevel.level)">
+        <i class="fas fa-graduation-cap text-lg"></i>
+      </div>
+      <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <button sgaButton variant="ghost" size="sm" class="rounded-lg h-8 w-8 p-0" (click)="edit.emit(gradeLevel)">
+          <i class="fas fa-edit text-xs"></i>
+        </button>
+        <button sgaButton variant="ghost" size="sm" class="rounded-lg h-8 w-8 p-0 text-error hover:bg-error/10" (click)="delete.emit(gradeLevel)">
+          <i class="fas fa-trash text-xs"></i>
+        </button>
+      </div>
+    </div>
+    <sga-card-title class="mt-4 text-xl font-bold tracking-tight text-base-content group-hover:text-primary transition-colors">
+      {{ gradeLevel.name }}
+    </sga-card-title>
+    <div class="flex items-center gap-2 mt-1">
+        <span class="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded border" [ngClass]="getLevelColor(gradeLevel.level)">
+            {{ getLevelLabel(gradeLevel.level) }}
+        </span>
+        <span class="text-[10px] font-black uppercase tracking-widest text-base-content/40 bg-base-200 px-2 py-0.5 rounded">
+            {{ gradeLevel.gradeNumber }}° Grado
+        </span>
+    </div>
+  </sga-card-header>
+
+  <sga-card-content class="pt-5 flex-grow">
+    <div class="space-y-4">
+        <div class="flex items-center gap-3 text-sm text-base-content/70">
+            <div class="w-8 h-8 rounded-full bg-base-200 flex items-center justify-center text-base-content/40">
+                <i class="fas fa-users text-xs"></i>
+            </div>
+            <div>
+                <p class="text-[10px] font-bold uppercase tracking-tight text-base-content/30 leading-none mb-1">Capacidad Máxima</p>
+                <p class="font-bold text-base-content">{{ gradeLevel.maxCapacity }} Estudiantes</p>
+            </div>
+        </div>
+        
+        @if (gradeLevel.description) {
+          <p class="text-sm text-base-content/60 leading-relaxed italic">
+            "{{ gradeLevel.description }}"
+          </p>
+        }
+    </div>
+  </sga-card-content>
+</sga-card>

@@ -3,13 +3,16 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Button } from '@shared/directives';
 import { Input } from '@shared/ui/input/input';
+import { Textarea } from '@shared/ui/textarea/textarea';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@shared/ui/card/card';
+import { Skeleton } from '@shared/ui/skeleton/skeleton';
 import { ClassroomStore } from '../../services/store/classroom.store';
 import { ClassroomSocketService } from '../../services/classroom-socket';
 
 @Component({
   selector: 'sga-classroom-timeline',
   standalone: true,
-  imports: [CommonModule, FormsModule, Button, Input],
+  imports: [CommonModule, FormsModule, Button, Input, Textarea, Card, CardHeader, CardTitle, CardContent, CardFooter, Skeleton],
   templateUrl: './timeline.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -20,19 +23,6 @@ export default class Timeline {
   public postContent = signal('');
   public attachments = signal<{ url: string; name: string }[]>([]);
   public isAssignment = signal(false);
-
-  public mockFeed = [
-    {
-      id: '1',
-      type: 'post',
-      title: 'Bienvenidos al curso',
-      content: 'Hola a todos, este es el muro de nuestra clase. Aquí publicaré novedades y materiales.',
-      date: new Date().toISOString(),
-      author: { name: 'Prof. Juan Lopez', role: 'Docente', avatar: 'JL' },
-      metadata: { attachments: [] },
-      commentsCount: 3
-    }
-  ];
 
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;

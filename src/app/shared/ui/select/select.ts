@@ -59,6 +59,7 @@ export class Select implements OnInit, OnDestroy, ControlValueAccessor, Validato
   // Inputs con signals
   options = input<SelectOption[]>([]); // Changed to SelectOption[]
   config = input<SelectConfig>({}); // Configuración de campos
+  customClass = input<string>('');
   placeholder = input<string>('Seleccionar...');
   searchPlaceholder = input<string>('Buscar...');
   disabled = input<boolean>(false);
@@ -353,27 +354,27 @@ export class Select implements OnInit, OnDestroy, ControlValueAccessor, Validato
   // Métodos para las clases CSS dinámicas
   getTriggerClasses(): string {
     const baseClasses =
-      'bg-base border-base-300 text-neutral-800 dark:bg-base dark:border-base-200 dark:text-white';
-    const hoverClasses = 'hover:border-base-400 hover:shadow-sm';
-    const focusClasses = 'focus:border-primary-500 focus:ring-2 focus:ring-primary-300';
-    const openClasses = this.isOpen() ? 'border-primary-500 ring-2 ring-primary-300' : '';
+      'bg-transparent border-base-300 text-base-content';
+    const hoverClasses = 'hover:border-base-400 hover:bg-base-100/50 hover:shadow-sm';
+    const focusClasses = 'focus:border-primary focus:ring-2 focus:ring-primary/20';
+    const openClasses = this.isOpen() ? 'border-primary ring-2 ring-primary/20' : '';
     const disabledClasses = this.isDisabled()
-      ? 'bg-base-100 cursor-not-allowed dark:bg-base-100'
+      ? 'bg-base-200/50 cursor-not-allowed opacity-50'
       : '';
 
-    return `${baseClasses} ${this.isDisabled() ? disabledClasses : `${hoverClasses} ${focusClasses}`} ${openClasses}`.trim();
+    return `${baseClasses} ${this.isDisabled() ? disabledClasses : `${hoverClasses} ${focusClasses}`} ${openClasses} ${this.customClass()}`.trim();
   }
 
   getOptionClasses(option: SelectOption, index: number): string {
-    const baseClasses = 'text-neutral-800 dark:text-white';
-    const hoverClasses = 'hover:bg-base-100 dark:hover:bg-base-100';
+    const baseClasses = 'text-base-content rounded-md mx-1';
+    const hoverClasses = 'hover:bg-base-200';
     const highlightedClasses =
-      this.highlightedIndex() === index ? 'bg-base-200 dark:bg-base-200' : '';
+      this.highlightedIndex() === index ? 'bg-base-200' : '';
     const selectedClasses = this.isSelected(option)
-      ? 'bg-primary-50 text-primary-600 font-medium dark:bg-primary-500 dark:text-white'
+      ? 'bg-primary/10 text-primary font-medium'
       : '';
     const disabledClasses = this.getOptionDisabled()(option)
-      ? 'opacity-50 cursor-not-allowed text-neutral-400'
+      ? 'opacity-50 cursor-not-allowed text-base-content/40'
       : '';
 
     return `${baseClasses} ${disabledClasses || `${hoverClasses} ${highlightedClasses} ${selectedClasses}`}`.trim();

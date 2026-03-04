@@ -1,18 +1,20 @@
+import { Dialog } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 import { DataSource } from '@shared/components/data-source/data-source';
 import { HeaderDetail } from '@shared/components/header-detail/header-detail';
 import { ReportStore } from '../../services/store/report.store';
 import { Report } from '../../types/report-types';
+import { ReportForm } from '../../components/report-form/report-form';
 
 @Component({
   selector: 'sga-reports',
-  standalone: true,
   imports: [HeaderDetail, DataSource],
   templateUrl: './reports.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ReportsPage {
+  private dialog = inject(Dialog);
   private store = inject(ReportStore);
 
   headerConfig = computed(() => this.store.headerConfig());
@@ -27,9 +29,7 @@ export default class ReportsPage {
   rowActions = computed(() => this.store.actions().filter((a) => a.typeAction === 'row'));
 
   onHeaderAction(e: { action: ActionConfig; context: ActionContext }) {
-    if (e.action.key === 'generate') {
-      // TODO: open generate report dialog
-    }
+    if (e.action.key === 'generate') this.openForm();
     if (e.action.key === 'refresh') this.store.loadAll();
   }
 
@@ -43,5 +43,13 @@ export default class ReportsPage {
 
   onPageChange(p: { page: number; size: number }) {
     this.store.setPagination(p.page, p.size);
+  }
+
+  private openForm(current?: Report | null) {
+    this.dialog.open(ReportForm, {
+      data: { current: current ?? null },
+      panelClass: 'dialog-top',
+      width: '480px',
+    });
   }
 }

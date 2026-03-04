@@ -1,0 +1,25 @@
+:host {
+  display: block;
+}
+
+.role-card {
+  cursor: pointer;
+  position: relative;
+  border-width: 1px;
+}
+
+.role-card.selected {
+  border-color: var(--color-primary, #800000);
+  border-width: 2px;
+  background: var(--color-primary-light, rgba(128, 0, 0, 0.05));
+}
+
+.role-card.selected::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 100%;
+  background: var(--color-primary, #800000);
+}

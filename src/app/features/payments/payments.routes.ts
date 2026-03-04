@@ -2,9 +2,26 @@ import { Routes } from '@angular/router';
 
 export default [
   {
-    path: '',
+    path: 'register',
     loadComponent: () => import('./pages/payments/payments'),
-    title: 'Pagos',
-    data: { permissions: ['view_payment', 'manage_payment'] },
+    title: 'Registro de Pagos',
+    data: { permissions: ['manage_payment'] },
   },
+  {
+    path: 'pending',
+    loadComponent: () => import('./pages/payments/payments'), // Placeholder
+    title: 'Pendientes',
+    data: { permissions: ['view_payment'] },
+  },
+  {
+    path: 'history',
+    loadComponent: () => import('./pages/payments/payments'), // Placeholder
+    title: 'Historial',
+    data: { permissions: ['view_payment'] },
+  },
+  {
+    path: '',
+    redirectTo: 'register',
+    pathMatch: 'full'
+  }
 ] as Routes;

@@ -1,1 +1,87 @@
-<p>home works!</p>,
+<div class="dashboard-container">
+  <!-- Header de bienvenida -->
+  <section class="mb-8">
+    <h1 class="text-2xl font-bold text-neutral-800 dark:text-neutral-100">
+      {{ greeting() }}, <span class="text-primary">{{ userName() }}</span>
+    </h1>
+    <p class="mt-1 text-neutral-500 dark:text-neutral-400">
+      Aquí tienes un resumen general del sistema de gestión académica.
+    </p>
+  </section>
+
+  <!-- Tarjetas de resumen -->
+  <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+    <sga-card>
+      <div class="p-5 flex items-center gap-4">
+        <div class="w-12 h-12 rounded-lg bg-primary-100 dark:bg-primary-900 flex items-center justify-center">
+          <i class="fas fa-user-graduate text-xl text-primary-600 dark:text-primary-400"></i>
+        </div>
+        <div>
+          <p class="text-sm text-neutral-500 dark:text-neutral-400">Estudiantes</p>
+          @if (studentLoading()) {
+            <div class="h-7 w-16 bg-neutral-200 dark:bg-neutral-700 rounded animate-pulse"></div>
+          } @else {
+            <p class="text-2xl font-bold text-neutral-800 dark:text-neutral-100">{{ studentCount() }}</p>
+          }
+        </div>
+      </div>
+    </sga-card>
+
+    <sga-card>
+      <div class="p-5 flex items-center gap-4">
+        <div class="w-12 h-12 rounded-lg bg-info-100 dark:bg-info-900 flex items-center justify-center">
+          <i class="fas fa-chalkboard-teacher text-xl text-info-600 dark:text-info-400"></i>
+        </div>
+        <div>
+          <p class="text-sm text-neutral-500 dark:text-neutral-400">Docentes</p>
+          @if (teacherLoading()) {
+            <div class="h-7 w-16 bg-neutral-200 dark:bg-neutral-700 rounded animate-pulse"></div>
+          } @else {
+            <p class="text-2xl font-bold text-neutral-800 dark:text-neutral-100">{{ teacherCount() }}</p>
+          }
+        </div>
+      </div>
+    </sga-card>
+
+    <sga-card>
+      <div class="p-5 flex items-center gap-4">
+        <div class="w-12 h-12 rounded-lg bg-success-100 dark:bg-success-900 flex items-center justify-center">
+          <i class="fas fa-calendar-check text-xl text-success-600 dark:text-success-400"></i>
+        </div>
+        <div>
+          <p class="text-sm text-neutral-500 dark:text-neutral-400">Período Actual</p>
+          <p class="text-2xl font-bold text-neutral-800 dark:text-neutral-100">2026</p>
+        </div>
+      </div>
+    </sga-card>
+
+    <sga-card>
+      <div class="p-5 flex items-center gap-4">
+        <div class="w-12 h-12 rounded-lg bg-warning-100 dark:bg-warning-900 flex items-center justify-center">
+          <i class="fas fa-school text-xl text-warning-600 dark:text-warning-400"></i>
+        </div>
+        <div>
+          <p class="text-sm text-neutral-500 dark:text-neutral-400">Estado</p>
+          <p class="text-lg font-bold text-success-600 dark:text-success-400">Activo</p>
+        </div>
+      </div>
+    </sga-card>
+  </section>
+
+  <!-- Accesos rápidos -->
+  <section>
+    <h2 class="text-lg font-semibold text-neutral-800 dark:text-neutral-100 mb-4">Accesos Rápidos</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+      @for (link of quickLinks(); track link.route) {
+        <a [routerLink]="link.route"
+           class="group flex flex-col items-center gap-3 p-5 rounded-xl border border-base-200 dark:border-base-300 bg-base-100 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer">
+          <div class="w-11 h-11 rounded-lg flex items-center justify-center transition-transform group-hover:scale-110"
+               [class]="link.color">
+            <i [class]="link.icon" class="text-lg"></i>
+          </div>
+          <span class="text-sm font-medium text-neutral-700 dark:text-neutral-300">{{ link.label }}</span>
+        </a>
+      }
+    </div>
+  </section>
+</div>

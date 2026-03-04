@@ -2,9 +2,20 @@ import { Routes } from '@angular/router';
 
 export default [
   {
-    path: '',
+    path: 'records',
     loadComponent: () => import('./pages/behaviors/behaviors'),
-    title: 'Conducta e incidencias',
+    title: 'Registro de Conducta',
     data: { permissions: ['view_behavior', 'manage_behavior'] },
   },
+  {
+    path: 'reports',
+    loadComponent: () => import('./pages/behaviors/behaviors'), // Placeholder
+    title: 'Reportes',
+    data: { permissions: ['view_behavior'] },
+  },
+  {
+    path: '',
+    redirectTo: 'records',
+    pathMatch: 'full'
+  }
 ] as Routes;

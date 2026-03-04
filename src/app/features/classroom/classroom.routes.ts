@@ -2,6 +2,15 @@ import { Routes } from '@angular/router';
 
 export default [
   {
+    path: 'list',
+    loadComponent: () => import('./pages/classroom-list/classroom-list'),
+  },
+  {
+    path: '', // Fallback to list
+    redirectTo: 'list',
+    pathMatch: 'full'
+  },
+  {
     path: ':id',
     loadComponent: () => import('./pages/classroom/classroom'),
     children: [

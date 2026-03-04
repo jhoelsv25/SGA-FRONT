@@ -1,213 +1,185 @@
 <!-- Mobile Backdrop -->
 @if (isMobileOpen()) {
   <div
-    class="fixed inset-0 bg-black/60 z-40 md:hidden backdrop-blur-sm transition-opacity"
+    class="fixed inset-0 bg-black/40 z-40 md:hidden backdrop-blur-sm transition-opacity animate-in fade-in duration-300"
     (click)="closeMobileSidebar()"
     (keydown.enter)="closeMobileSidebar()"
-    (keydown.space)="closeMobileSidebar(); $event.preventDefault()"
     tabindex="0"
     role="button"
+    aria-label="Close sidebar"
   ></div>
 }
 
 <div
-  class="sidebar flex flex-col h-full relative transition-all duration-300"
+  class="sidebar flex flex-col h-full relative transition-all duration-300 border-r border-base-200"
   [class.collapsed]="isSidebarCollapsed()"
   [class.mobile-open]="isMobileOpen()"
 >
-  <!-- Background Ambient Effect -->
-  <div
-    class="absolute inset-0 bg-linear-to-b from-primary/5 via-transparent to-transparent pointer-events-none"
-  ></div>
-
   <!-- 1. Header: Logo & Toggle -->
-  <div class="sidebar-header flex flex-col gap-4 p-4 pb-2">
-    <!-- Logo Row -->
-    <div class="flex items-center justify-between">
-      <div class="flex items-center gap-3 overflow-hidden">
-        <div
-          class="w-10 h-10 rounded-xl bg-linear-to-br from-primary to-primary-600 flex items-center justify-center shadow-lg shadow-primary/20 text-white shrink-0"
+  <div class="flex items-center h-16 px-4 shrink-0 border-b border-base-200/50">
+    <div class="flex items-center gap-3 overflow-hidden w-full">
+      <div
+        class="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-primary-50 shrink-0 shadow-sm"
+      >
+        <i class="fa-solid fa-graduation-cap text-lg"></i>
+      </div>
+      <div
+        class="flex flex-col leading-tight min-w-0 transition-opacity duration-200"
+        [class.opacity-0]="isSidebarCollapsed()"
+      >
+        <span class="font-bold text-base tracking-tight text-base-content truncate">SISAE</span>
+        <span class="text-[10px] text-base-content/50 font-medium uppercase tracking-wider truncate"
+          >Gestión Educativa</span
         >
-          <i class="fa-solid fa-graduation-cap text-lg"></i>
-        </div>
-        <span
-          class="font-bold text-lg tracking-tight text-base-content whitespace-nowrap"
+      </div>
+    </div>
+
+    <!-- Collapse Toggle (Only desktop) -->
+    <button
+      class="ml-auto w-7 h-7 items-center justify-center rounded-md text-base-content/40 hover:text-base-content hover:bg-base-200 transition-all md:flex hidden"
+      (click)="toggleCollapse()"
+    >
+      <i
+        class="fa-solid fa-chevron-left text-[10px] transition-transform duration-300"
+        [class.rotate-180]="isSidebarCollapsed()"
+      ></i>
+    </button>
+  </div>
+
+  <!-- 2. Navigation Menu -->
+  <nav class="flex-1 px-3 py-4 overflow-y-auto overflow-x-hidden custom-scrollbar">
+    <div class="space-y-6">
+      <!-- Main Group -->
+      <div>
+        <h3
+          class="px-3 text-[10px] font-semibold uppercase tracking-[0.15em] text-base-content/40 mb-3 truncate"
           [class.hidden]="isSidebarCollapsed()"
         >
-          SISAE
-        </span>
-      </div>
+          Plataforma
+        </h3>
 
-      <!-- Collapse Toggle (Only visible desktop) -->
-      <button
-        class="w-6 h-6 flex items-center justify-center rounded-lg text-base-content/40 hover:text-primary hover:bg-primary/5 transition-all md:flex hidden"
-        (click)="toggleCollapse()"
-        title="Colapsar menú"
-      >
-        <i
-          class="fa-solid fa-chevron-left text-xs transition-transform duration-300"
-          [class.rotate-180]="isSidebarCollapsed()"
-        ></i>
-      </button>
-    </div>
-  </div>
-
-  <!-- 2. Search Box -->
-  <div class="px-4 py-2" [class.hidden]="isSidebarCollapsed()">
-    <div class="relative group">
-      <i
-        class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40 text-xs group-focus-within:text-primary transition-colors"
-      ></i>
-      <input
-        type="text"
-        placeholder="Buscar..."
-        class="w-full bg-base-100/50 backdrop-blur-md border border-base-200 focus:border-primary/50 focus:bg-base-100 focus:ring-2 focus:ring-primary/10 rounded-xl py-2 pl-9 pr-3 text-sm transition-all outline-none placeholder:text-base-content/30"
-      />
-      <div class="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1">
-        <kbd
-          class="hidden group-focus-within:inline-flex h-5 items-center gap-1 rounded border border-base-300 bg-base-200 px-1.5 font-mono text-[10px] font-medium text-base-content/50 opacity-100"
-        >
-          <span class="text-xs">⌘</span>K
-        </kbd>
-      </div>
-    </div>
-  </div>
-
-  <!-- 3. Navigation Menu -->
-  <nav class="sidebar-nav flex-1 px-3 py-4 overflow-y-auto overflow-x-hidden space-y-6">
-    <!-- Group: Plataforma (Simplified) -->
-    <div>
-      <h3
-        class="px-2 text-[10px] font-bold uppercase tracking-widest text-base-content/40 mb-2 truncate"
-        [class.hidden]="isSidebarCollapsed()"
-      >
-        Plataforma
-      </h3>
-
-      <ul class="space-y-1">
-        @for (item of getVisibleMenuItems(); track item.id) {
-          <li
-            class="nav-item group/item"
-            [class.expanded]="isSubmenuExpanded(item.id)"
-            (mouseenter)="onMouseEnter(item)"
-            (mouseleave)="onMouseLeave()"
-          >
-            <!-- Main Link -->
-            <a
-              class="nav-link relative flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group-hover/item:bg-base-200/60 cursor-pointer"
-              (click)="navigateToItem(item)"
-              (keydown.enter)="navigateToItem(item); $event.preventDefault()"
-              (keydown.space)="navigateToItem(item); $event.preventDefault()"
-              tabindex="0"
-              role="button"
-              [class.active]="item.active"
-              [class.justify-center]="isSidebarCollapsed()"
-              [title]="isSidebarCollapsed() ? item.label : ''"
-            >
-              <!-- Active Indicator -->
-              @if (item.active) {
-                <div
-                  class="absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 bg-primary rounded-r-full"
-                ></div>
-              }
-
-              <!-- Icon -->
-              <i
-                class="fa-solid text-lg transition-colors duration-200 shrink-0"
-                [class]="item.icon"
+        <ul class="space-y-1">
+          @for (item of getVisibleMenuItems(); track item.id) {
+            <li class="relative" (mouseenter)="onMouseEnter(item)" (mouseleave)="onMouseLeave()">
+              <!-- Main Link -->
+              <a
+                class="flex items-center gap-3 px-3 py-2 rounded-md transition-all duration-200 cursor-pointer text-base-content/70 hover:text-base-content hover:bg-base-200/50 group"
+                (click)="navigateToItem(item)"
+                (keydown.enter)="navigateToItem(item)"
+                tabindex="0"
+                role="button"
+                [class.bg-primary/5]="item.active"
                 [class.text-primary]="item.active"
-                [class.text-base-content-60]="!item.active"
-              ></i>
-
-              <!-- Label -->
-              <span
-                class="nav-label text-sm font-medium tracking-tight text-base-content/80 group-hover/item:text-base-content transition-colors whitespace-nowrap overflow-hidden text-ellipsis"
-                [class.hidden]="isSidebarCollapsed()"
+                [class.justify-center]="isSidebarCollapsed()"
+                [class.px-2]="isSidebarCollapsed()"
+                [title]="isSidebarCollapsed() ? item.label : ''"
               >
-                {{ item.label }}
-              </span>
-
-              <!-- Arrow -->
-              @if (item.hasChildren && !isSidebarCollapsed()) {
+                <!-- Icon -->
                 <i
-                  class="fa-solid fa-chevron-down ml-auto text-[10px] text-base-content/40 transition-transform duration-200 shrink-0"
-                  [class.rotate-180]="isSubmenuExpanded(item.id)"
+                  class="fa-solid fa-fw text-lg transition-colors duration-200 shrink-0 flex justify-center"
+                  [ngClass]="item.icon"
+                  [class.text-primary]="item.active"
                 ></i>
-              }
-            </a>
 
-            <!-- Submenu -->
-            @if (item.hasChildren && !isSidebarCollapsed()) {
-              <div
-                class="submenu-wrapper grid transition-all duration-300 ease-in-out"
-                [class.grid-rows-[1fr]]="isSubmenuExpanded(item.id)"
-                [class.grid-rows-[0fr]]="!isSubmenuExpanded(item.id)"
-              >
-                <ul class="overflow-hidden">
-                  <div class="pl-4 ml-3 border-l border-base-200 py-1 space-y-0.5 mt-1">
-                    @for (child of item.children; track child.id) {
-                      <li>
-                        <a
-                          class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-base-content/60 hover:text-primary hover:bg-primary/5 transition-all cursor-pointer whitespace-nowrap overflow-hidden text-ellipsis"
-                          (click)="navigateToItem(child)"
-                          (keydown.enter)="navigateToItem(child); $event.preventDefault()"
-                          (keydown.space)="navigateToItem(child); $event.preventDefault()"
-                          tabindex="0"
-                          role="button"
-                          [class.font-semibold]="child.active"
-                          [class.text-primary]="child.active"
-                          [class.bg-primary-5]="child.active"
-                        >
-                          {{ child.label }}
-                        </a>
-                      </li>
-                    }
-                  </div>
+                <!-- Label -->
+                <span
+                  class="text-sm font-medium tracking-tight whitespace-nowrap overflow-hidden text-ellipsis transition-all duration-200"
+                  [class.opacity-0]="isSidebarCollapsed()"
+                  [class.w-0]="isSidebarCollapsed()"
+                >
+                  {{ item.label }}
+                </span>
+
+                <!-- Arrow -->
+                @if (item.hasChildren && !isSidebarCollapsed()) {
+                  <i
+                    class="fa-solid fa-chevron-down ml-auto text-[10px] opacity-40 transition-transform duration-200 shrink-0"
+                    [class.rotate-180]="isSubmenuExpanded(item.id)"
+                  ></i>
+                }
+
+                <!-- Active Indicator (bar) -->
+                @if (item.active && !isSidebarCollapsed()) {
+                  <div
+                    class="absolute right-0 top-2 bottom-2 w-0.5 bg-primary rounded-l-full"
+                  ></div>
+                }
+              </a>
+
+              <!-- Submenu -->
+              @if (item.hasChildren && !isSidebarCollapsed() && isSubmenuExpanded(item.id)) {
+                <ul
+                  class="mt-1 ml-4 pl-4 border-l border-base-200 space-y-1 animate-in slide-in-from-top-1 duration-200"
+                >
+                  @for (child of item.children; track child.id) {
+                    <li>
+                      <a
+                        class="flex items-center gap-2.5 px-3 py-2 rounded-md text-xs font-medium text-base-content/60 hover:text-primary hover:bg-primary/5 transition-all cursor-pointer truncate"
+                        (click)="navigateToItem(child)"
+                        (keydown.enter)="navigateToItem(child)"
+                        tabindex="0"
+                        role="button"
+                        [class.text-primary]="child.active"
+                        [class.bg-primary/5]="child.active"
+                      >
+                        <i class="fa-solid fa-fw text-[10px] opacity-50" [ngClass]="child.icon"></i>
+                        {{ child.label }}
+                      </a>
+                    </li>
+                  }
                 </ul>
-              </div>
-            }
-          </li>
-        }
-      </ul>
+              }
+            </li>
+          }
+        </ul>
+      </div>
     </div>
   </nav>
 
-  <!-- 4. Footer: User Menu Component -->
-  <div
-    class="p-2 border-t border-base-200/50 mt-auto bg-base-50/50"
-    [class.hidden]="isSidebarCollapsed()"
-  >
-    <sga-user-menu
-      [name]="getUserDisplayName()"
-      [role]="getUserRole()"
-      [code]="currentUser()?.code || 'N/A'"
-      [initials]="getUserInitials()"
-      [stats]="currentUser()?.stats || { courses: 0, students: 0, average: '0.0' }"
-      [actions]="userMenuActions()"
-      (actionSelected)="onUserMenuAction($event)"
-    />
+  <!-- 3. Footer: User & Settings -->
+  <div class="p-4 border-t border-base-200/50 mt-auto">
+    <div class="flex flex-col gap-2">
+      <!-- User Menu -->
+      <div
+        class="rounded-lg border border-base-200 p-2 bg-base-50/50 hover:bg-base-100 transition-colors shadow-sm"
+        [class.items-center]="isSidebarCollapsed()"
+      >
+        <sga-user-menu
+          [name]="getUserDisplayName()"
+          [role]="getUserRole()"
+          [code]="currentUser()?.code || 'N/A'"
+          [initials]="getUserInitials()"
+          [stats]="currentUser()?.stats || { courses: 0, students: 0, average: '0.0' }"
+          [actions]="userMenuActions()"
+          [isCollapsed]="isSidebarCollapsed()"
+          (actionSelected)="onUserMenuAction($event)"
+        />
+      </div>
+    </div>
   </div>
 
   <!-- Flyout for Collapsed State -->
   @if (isSidebarCollapsed() && hoveredItem()) {
     <div
-      class="fixed left-[76px] top-0 z-50 bg-base-100/95 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl p-2 min-w-[220px] animate-in fade-in slide-in-from-left-2 duration-150"
+      class="fixed left-[70px] top-0 z-50 bg-base-100 border border-base-200 shadow-xl rounded-lg p-2 min-w-[200px] animate-in fade-in slide-in-from-left-2 duration-150"
       [style.top.px]="30"
     >
-      <div class="px-3 py-2 border-b border-base-200/50 mb-1">
-        <span class="font-bold text-sm text-base-content">{{ hoveredItem()?.label }}</span>
+      <div class="px-3 py-2 border-b border-base-200 mb-1">
+        <span class="font-semibold text-xs text-base-content/50 uppercase tracking-widest">{{
+          hoveredItem()?.label
+        }}</span>
       </div>
-      <ul class="space-y-0.5">
+      <ul class="space-y-1">
         @for (child of hoveredItem()?.children; track child.id) {
           <li>
             <a
               (click)="navigateToItem(child)"
-              (keydown.enter)="navigateToItem(child); $event.preventDefault()"
-              (keydown.space)="navigateToItem(child); $event.preventDefault()"
+              (keydown.enter)="navigateToItem(child)"
               tabindex="0"
               role="button"
-              class="block px-3 py-2 rounded-lg text-sm text-base-content/80 hover:bg-primary/10 hover:text-primary cursor-pointer transition-colors"
+              class="flex items-center gap-2.5 px-3 py-2 rounded-md text-sm font-medium text-base-content/70 hover:bg-base-200 hover:text-base-content cursor-pointer transition-colors"
             >
+              <i [ngClass]="child.icon || 'fa-solid fa-circle'" class="text-[10px] opacity-50"></i>
               {{ child.label }}
             </a>
           </li>

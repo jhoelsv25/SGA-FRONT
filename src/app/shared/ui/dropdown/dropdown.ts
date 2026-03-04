@@ -7,14 +7,18 @@ import {
   output,
   signal,
 } from '@angular/core';
+
 export interface DropdownItem {
   label: string;
   icon?: string;
   disabled?: boolean;
+  separator?: boolean; // New flag for Shadcn visual dividers
   action?: () => void;
 }
+
 @Component({
   selector: 'sga-dropdown',
+  standalone: true,
   imports: [CommonModule],
   templateUrl: './dropdown.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,7 +37,7 @@ export class Dropdown {
   }
 
   handleItemClick(item: DropdownItem) {
-    if (item.disabled) return;
+    if (item.disabled || item.separator) return;
     item.action?.();
     this.itemSelected.emit(item);
     this.close();

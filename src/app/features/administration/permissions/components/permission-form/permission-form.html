@@ -1,0 +1,76 @@
+<sga-card class="flex flex-col h-full border-none shadow-none bg-transparent animate-in zoom-in-95 duration-200">
+  <sga-card-header class="pb-6 border-b border-base-200 bg-base-200/20 flex flex-row justify-between items-center space-y-0">
+    <div>
+      <sga-card-title class="text-2xl font-bold text-base-content tracking-tight">{{ title }}</sga-card-title>
+      <sga-card-description class="text-sm text-base-content/60">Configura los detalles técnicos de este permiso.</sga-card-description>
+    </div>
+    <button class="btn btn-ghost btn-circle btn-sm" (click)="close()">
+      <i class="fas fa-times"></i>
+    </button>
+  </sga-card-header>
+
+  <sga-card-content class="p-8 overflow-y-auto max-h-[75vh]">
+    <form [formGroup]="form" (ngSubmit)="submit()" id="permission-form" class="space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-2">
+            <label for="permission-name" class="text-[10px] font-black uppercase tracking-widest text-base-content/40 ml-1 block">Nombre Descriptivo</label>
+            <sga-input 
+              id="permission-name"
+              formControlName="name" 
+              placeholder="Ej: Crear Usuarios"
+              customClass="mt-1 block"
+            ></sga-input>
+        </div>
+        
+        <div class="space-y-2">
+            <label for="permission-slug" class="text-[10px] font-black uppercase tracking-widest text-base-content/40 ml-1 block">Slug (Identificador)</label>
+            <sga-input 
+              id="permission-slug"
+              formControlName="slug" 
+              placeholder="Ej: users:create"
+              customClass="mt-1 block"
+            ></sga-input>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-2">
+            <label for="permission-module" class="text-[10px] font-black uppercase tracking-widest text-base-content/40 ml-1 block">Módulo Asociado</label>
+            <sga-input 
+              id="permission-module"
+              formControlName="module" 
+              placeholder="Ej: users"
+              customClass="mt-1 block"
+            ></sga-input>
+        </div>
+        
+        <div class="space-y-2">
+            <label for="permission-scope" class="text-[10px] font-black uppercase tracking-widest text-base-content/40 ml-1 block">Alcance (Scope)</label>
+            <select id="permission-scope" formControlName="scope" class="select select-bordered w-full bg-base-100 focus:select-primary transition-all mt-1 block">
+                <option value="global">Global</option>
+                <option value="institution">Institución</option>
+                <option value="department">Departamento</option>
+            </select>
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        <label for="permission-description" class="text-[10px] font-black uppercase tracking-widest text-base-content/40 ml-1 block">Descripción de Funcionalidad</label>
+        <textarea 
+          id="permission-description"
+          formControlName="description" 
+          class="textarea textarea-bordered w-full h-24 focus:textarea-primary transition-all bg-base-100 mt-1 block" 
+          placeholder="Explica qué permite hacer este permiso..."></textarea>
+      </div>
+    </form>
+  </sga-card-content>
+
+  <sga-card-footer class="p-6 bg-base-200/50 border-t border-base-200 flex justify-end gap-3">
+    <button sgaButton variant="ghost" (click)="close()" type="button">
+      Cancelar
+    </button>
+    <button sgaButton color="primary" type="submit" form="permission-form" [disabled]="form.invalid">
+      <i class="fas fa-save mr-2"></i> {{ current ? 'Actualizar' : 'Crear' }} Permiso
+    </button>
+  </sga-card-footer>
+</sga-card>

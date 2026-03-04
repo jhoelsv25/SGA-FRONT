@@ -1,0 +1,81 @@
+<sga-card class="group flex flex-col h-full hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 border-base-200 overflow-hidden bg-base-100">
+  <sga-card-header class="pb-3 border-b border-base-200 bg-base-200/10">
+    <div class="flex justify-between items-start">
+      <div class="w-16 h-16 rounded-2xl bg-base-100 border border-base-200 shadow-sm flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105">
+        @if (institution.logoUrl) {
+          <img [src]="institution.logoUrl" [alt]="institution.name" class="w-full h-full object-cover">
+        } @else {
+          <div class="text-primary/20 text-3xl font-black italic">
+            {{ institution.name.substring(0, 2).toUpperCase() }}
+          </div>
+        }
+      </div>
+      <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <button sgaButton variant="ghost" size="sm" class="rounded-lg h-8 w-8 p-0" (click)="edit.emit(institution)">
+          <i class="fas fa-edit text-xs"></i>
+        </button>
+        <button sgaButton variant="ghost" size="sm" class="rounded-lg h-8 w-8 p-0 text-error hover:bg-error/10" (click)="delete.emit(institution)">
+          <i class="fas fa-trash text-xs"></i>
+        </button>
+      </div>
+    </div>
+    
+    <sga-card-title class="mt-4 text-xl font-bold tracking-tight text-base-content group-hover:text-primary transition-colors line-clamp-2 min-h-[3.5rem] flex items-center">
+      {{ institution.name }}
+    </sga-card-title>
+    
+    <div class="flex items-center gap-2 mt-1">
+        <span class="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded border" [ngClass]="getStatusColor(institution.status)">
+            {{ getStatusLabel(institution.status) }}
+        </span>
+        <span class="text-[10px] font-black uppercase tracking-widest text-base-content/40 bg-base-200 px-2 py-0.5 rounded">
+            Cod. Modular: {{ institution.modularCode }}
+        </span>
+    </div>
+  </sga-card-header>
+
+  <sga-card-content class="pt-5 flex-grow">
+    <div class="space-y-4">
+        <!-- Address -->
+        <div class="flex items-start gap-3">
+            <div class="mt-0.5 text-primary/40"><i class="fas fa-map-marker-alt text-xs"></i></div>
+            <div class="flex-grow">
+                <p class="text-[9px] font-black uppercase tracking-tighter text-base-content/30 leading-none mb-1">Dirección</p>
+                <p class="text-xs text-base-content/70 line-clamp-2 leading-relaxed">
+                    {{ institution.address }}
+                    @if (institution.district) {
+                      <span>, {{ institution.district }}</span>
+                    }
+                </p>
+            </div>
+        </div>
+
+        <!-- Principal & Contact -->
+        <div class="grid grid-cols-2 gap-4 pt-2">
+            <div>
+                <p class="text-[9px] font-black uppercase tracking-tighter text-base-content/30 mb-1">Director</p>
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-user-tie text-primary/30 text-[10px]"></i>
+                    <span class="text-[11px] font-bold text-base-content/80 truncate">{{ institution.principal || 'No asignado' }}</span>
+                </div>
+            </div>
+            <div>
+                <p class="text-[9px] font-black uppercase tracking-tighter text-base-content/30 mb-1">Contacto</p>
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-phone text-primary/30 text-[10px]"></i>
+                    <span class="text-[11px] font-bold text-base-content/80 truncate">{{ institution.phone || 'N/A' }}</span>
+                </div>
+            </div>
+        </div>
+
+        @if (institution.email) {
+            <div class="pt-2">
+                <div class="flex items-center gap-2 px-3 py-2 bg-base-200/50 rounded-xl border border-base-300/50 text-xs">
+                    <i class="fas fa-envelope text-primary/40"></i>
+                    <span class="truncate text-base-content/60">{{ institution.email }}</span>
+                </div>
+            </div>
+        }
+    </div>
+  </sga-card-content>
+</sga-card>

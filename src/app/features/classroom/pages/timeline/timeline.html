@@ -1,157 +1,193 @@
-<div class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+<div class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-12">
   
   <!-- Publishing Area -->
-  <div class="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 p-6">
-    <div class="flex items-start gap-4">
-      <div class="w-10 h-10 rounded-full bg-blue-100 border-2 border-white shadow-sm shrink-0 flex items-center justify-center font-bold text-blue-600">JP</div>
-      <div class="flex-1 space-y-4">
-        <sga-input
-          type="text"
-          [ngModel]="postContent()"
-          (ngModelChange)="postContent.set($event)"
-          placeholder="Comparte algo con tu clase..."
-        />
-        
-        <!-- Attachments Preview -->
-        @if (attachments().length > 0) {
-          <div class="flex flex-wrap gap-2 px-2">
-            @for (file of attachments(); track $index) {
-              <div class="flex items-center gap-2 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100 text-[11px] font-bold text-blue-700 group">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
-                <span class="max-w-[150px] truncate">{{ file.name }}</span>
-                <button (click)="removeAttachment($index)" class="text-blue-300 hover:text-red-500 transition-colors">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                </button>
-              </div>
-            }
-          </div>
-        }
+  <sga-card class="shadow-sm">
+    <sga-card-content class="pt-6">
+      <div class="flex items-start gap-4">
+        <div class="w-10 h-10 rounded-full bg-primary/10 border-2 border-base-100 shadow-sm shrink-0 flex items-center justify-center font-bold text-primary">JP</div>
+        <div class="flex-1 space-y-4">
+          <sga-textarea
+            [ngModel]="postContent()"
+            (ngModelChange)="postContent.set($event)"
+            placeholder="Anuncia algo a tu clase..."
+            class="resize-none"
+            [rows]="3"
+          ></sga-textarea>
+          
+          <!-- Attachments Preview -->
+          @if (attachments().length > 0) {
+            <div class="flex flex-wrap gap-2 px-2">
+              @for (file of attachments(); track $index) {
+                <div class="flex items-center gap-2 bg-primary/5 px-3 py-1.5 rounded-lg border border-primary/20 text-[11px] font-bold text-primary group">
+                  <i class="fa-solid fa-paperclip"></i>
+                  <span class="max-w-[150px] truncate">{{ file.name }}</span>
+                  <button (click)="removeAttachment($index)" class="text-primary/50 hover:text-red-500 transition-colors">
+                    <i class="fa-solid fa-xmark"></i>
+                  </button>
+                </div>
+              }
+            </div>
+          }
 
-        <div class="flex justify-between items-center">
-          <div class="flex items-center gap-2">
-            <!-- Hidden File Input -->
-            <input type="file" #fileInput class="hidden" (change)="onFileSelected($event)">
-            <button type="button" sgaButton variant="ghost" color="secondary" size="sm" (click)="fileInput.click()" title="Adjuntar archivo">
-              <i class="fas fa-paperclip"></i>
-            </button>
+          <div class="flex justify-between items-center">
+            <div class="flex items-center gap-2">
+              <!-- Hidden File Input -->
+              <input type="file" #fileInput class="hidden" (change)="onFileSelected($event)">
+              <button type="button" sgaButton variant="ghost" color="secondary" size="sm" (click)="fileInput.click()" title="Adjuntar archivo">
+                <i class="fa-solid fa-paperclip"></i>
+              </button>
+              <button
+                type="button"
+                sgaButton
+                [color]="isAssignment() ? 'primary' : 'secondary'"
+                [variant]="isAssignment() ? 'solid' : 'ghost'"
+                size="sm"
+                (click)="isAssignment.set(!isAssignment())"
+              >
+                <i class="fa-solid fa-list-check mr-2"></i> Tarea
+              </button>
+            </div>
             <button
               type="button"
               sgaButton
-              [color]="isAssignment() ? 'primary' : 'secondary'"
-              [variant]="isAssignment() ? 'solid' : 'ghost'"
-              size="sm"
-              (click)="isAssignment.set(!isAssignment())"
+              color="primary"
+              [disabled]="!postContent() && attachments().length === 0"
+              (click)="publish()"
             >
-              <i class="fas fa-tasks mr-1"></i> Tarea
+              Publicar
             </button>
           </div>
-          <button
-            type="button"
-            sgaButton
-            color="primary"
-            [disabled]="!postContent() && attachments().length === 0"
-            (click)="publish()"
-          >
-            Publicar
-          </button>
         </div>
       </div>
-    </div>
-  </div>
+    </sga-card-content>
+  </sga-card>
 
   <!-- Feed Area -->
   <div class="space-y-6">
-    @for (item of (store.feed().length ? store.feed() : mockFeed); track item.id) {
-      <div class="bg-white rounded-3xl shadow-md border border-slate-100 overflow-hidden hover:shadow-xl hover:shadow-slate-200/40 transition-all group">
-        
-        <!-- Post Header -->
-        <div class="p-6">
-          <div class="flex justify-between items-start mb-6">
-            <div class="flex items-center gap-4">
-              <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 font-bold group-hover:bg-blue-600 group-hover:text-white transition-all duration-500">
-                {{ item.author.avatar || item.author.name[0] }}
-              </div>
-              <div>
-                <h4 class="font-black text-slate-800 tracking-tight">{{ item.author.name }}</h4>
-                <div class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
-                  <span>{{ item.author.role }}</span>
-                  <span>•</span>
-                  <span>{{ item.date | date:'short' }}</span>
+    @if (store.loading()) {
+      <sga-card>
+        <sga-card-content class="pt-6">
+          <div class="flex items-start gap-4 mb-4">
+            <sga-skeleton class="h-12 w-12 rounded-full" />
+            <div class="space-y-2 flex-1">
+              <sga-skeleton class="h-4 w-1/4" />
+              <sga-skeleton class="h-3 w-1/6" />
+            </div>
+          </div>
+          <sga-skeleton class="h-16 w-full" />
+        </sga-card-content>
+      </sga-card>
+      <sga-card>
+        <sga-card-content class="pt-6">
+           <sga-skeleton class="h-16 w-full" />
+        </sga-card-content>
+      </sga-card>
+    } @else {
+      @for (item of store.feed(); track item.id) {
+        <sga-card class="group hover:shadow-md transition-all">
+          
+          <!-- Post Header -->
+          <sga-card-header>
+            <div class="flex justify-between items-start">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold transition-all duration-500 shadow-sm"
+                     [ngClass]="item.type === 'assignment' ? 'bg-primary' : (item.type === 'material' ? 'bg-indigo-500' : 'bg-base-300 text-base-content')">
+                  @if (item.type === 'assignment') {
+                    <i class="fa-solid fa-clipboard-list text-xl"></i>
+                  } @else if(item.type === 'material') {
+                    <i class="fa-solid fa-book-bookmark text-xl"></i>
+                  } @else {
+                    {{ item.author.avatar || item.author.name[0] }}
+                  }
+                </div>
+                <div>
+                  <h4 class="font-black tracking-tight" [ngClass]="item.type !== 'post' ? 'text-primary' : 'text-base-content'">
+                    @if(item.type !== 'post') {
+                      {{ item.author.name }} ha publicado una nueva {{ item.type === 'assignment' ? 'tarea' : 'sesión material' }}: 
+                    } @else {
+                      {{ item.author.name }}
+                    }
+                  </h4>
+                  <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-base-content/50">
+                    <span>{{ item.author.role }}</span>
+                    <span>•</span>
+                    <span>{{ item.date | date:'short' }}</span>
+                  </div>
                 </div>
               </div>
+              
+              @if (item.type === 'assignment') {
+                <!-- Icon options context could be placed here -->
+                <button sgaButton variant="ghost" color="secondary" size="sm" shape="square"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+              }
             </div>
-            
-            @if (item.type === 'assignment') {
-              <span class="px-3 py-1 bg-red-50 text-red-600 text-[10px] font-black uppercase tracking-widest rounded-lg border border-red-100">Tarea</span>
-            } @else if (item.type === 'material') {
-              <span class="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest rounded-lg border border-blue-100">Material</span>
-            }
-          </div>
-
-          <div class="space-y-4 px-0 md:px-2">
-            @if (item.title) {
-              <h3 class="text-xl font-black text-slate-900 leading-tight">{{ item.title }}</h3>
-            }
-            <p class="text-slate-600 font-medium leading-relaxed whitespace-pre-wrap">{{ item.content }}</p>
-            
-            <!-- Post Attachments -->
-            @if (item.metadata.attachments && item.metadata.attachments.length > 0) {
-              <div class="flex flex-wrap gap-3 mt-4">
-                @for (file of item.metadata.attachments; track $index) {
-                  <a [href]="file.url" target="_blank" class="flex items-center gap-3 bg-slate-50 p-3 rounded-2xl border border-slate-100 hover:border-blue-200 hover:bg-blue-50/30 transition-all">
-                    <div class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-blue-600">
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
-                    </div>
-                    <div class="flex flex-col">
-                      <span class="text-xs font-bold text-slate-700 truncate max-w-[200px]">{{ file.name }}</span>
-                      <span class="text-[9px] font-black uppercase tracking-widest text-slate-400">Descargar</span>
-                    </div>
-                  </a>
-                }
+          </sga-card-header>
+  
+          <sga-card-content>
+            <div class="space-y-4 px-0 md:px-2 md:pl-16">
+              @if (item.title) {
+                <sga-card-title class="leading-tight text-lg">{{ item.title }}</sga-card-title>
+              }
+              <p class="text-base-content/80 font-medium leading-relaxed whitespace-pre-wrap">{{ item.content }}</p>
+              
+              <!-- Post Attachments -->
+              @if (item.metadata.attachments && item.metadata.attachments.length > 0) {
+                <div class="flex flex-wrap gap-3 mt-4">
+                  @for (file of item.metadata.attachments; track $index) {
+                    <a [href]="file.url" target="_blank" class="flex items-center gap-3 bg-base-200/50 p-3 rounded-2xl border border-base-200 hover:border-primary/30 hover:bg-primary/5 transition-all">
+                      <div class="w-10 h-10 bg-base-100 rounded-xl shadow-sm flex items-center justify-center text-primary">
+                        <i class="fa-solid fa-file-arrow-down"></i>
+                      </div>
+                      <div class="flex flex-col">
+                        <span class="text-xs font-bold text-base-content truncate max-w-[200px]">{{ file.name }}</span>
+                        <span class="text-[9px] font-black uppercase tracking-widest text-base-content/50">Descargar</span>
+                      </div>
+                    </a>
+                  }
+                </div>
+              }
+            </div>
+          </sga-card-content>
+  
+          @if (item.type === 'post') {
+            <sga-card-footer class="border-t border-base-200/50 flex flex-col items-stretch gap-0 p-0">
+              <div class="p-4 w-full flex items-center justify-between">
+                <div class="flex items-center gap-6">
+                  <button class="flex items-center gap-2 text-base-content/50 hover:text-primary font-bold text-sm transition-colors">
+                    <i class="fa-regular fa-comment"></i>
+                    <span>{{ item.commentsCount || 0 }} Comentarios de clase</span>
+                  </button>
+                </div>
               </div>
-            }
-          </div>
-
-          <div class="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
-            <div class="flex items-center gap-6">
-              <button class="flex items-center gap-2 text-slate-400 hover:text-blue-600 font-bold text-sm transition-colors">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
-                <span>{{ item.commentsCount }} Comentarios</span>
-              </button>
-            </div>
-            <button class="px-4 py-2 text-blue-600 font-black text-[11px] uppercase tracking-widest hover:bg-blue-50 rounded-xl transition-all">Ver detalle</button>
-          </div>
-        </div>
-
-        <!-- Responses / Comments Section -->
-        <div class="bg-slate-50/50 p-6 space-y-4">
-           @if (item.commentsCount > 0) {
-             <div class="space-y-4 mb-6 ml-4 border-l-2 border-slate-100 pl-4">
-               <div class="flex gap-3">
-                 <div class="w-8 h-8 rounded-lg bg-blue-50 text-[9px] font-bold text-blue-600 flex items-center justify-center">MG</div>
-                 <div class="flex-1 bg-white p-3 rounded-2xl shadow-sm border border-slate-100">
-                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Maria Garcia</p>
-                    <p class="text-xs font-medium text-slate-600">¡Muchas gracias profesor por el material!</p>
+    
+              <!-- Responses / Comments Section -->
+              <div class="bg-base-200/30 p-6 space-y-4 w-full border-t border-base-200/50">
+                 <div class="flex gap-3 items-center">
+                    <div class="w-10 h-10 rounded-full bg-primary/10 border-2 border-base-100 shadow-sm shrink-0 flex items-center justify-center font-bold text-primary">
+                       <i class="fa-solid fa-user"></i>
+                    </div>
+                    <div class="flex-1 flex items-center gap-2 bg-base-100 rounded-2xl border border-base-200 px-3 py-2 shadow-sm">
+                      <sga-input
+                        type="text"
+                        placeholder="Añadir un comentario de clase..."
+                        [class]="'border-0 shadow-none !bg-transparent w-full'"
+                      />
+                      <button type="button" sgaButton variant="ghost" color="primary" size="sm" shape="square" title="Enviar comentario">
+                        <i class="fas fa-paper-plane"></i>
+                      </button>
+                    </div>
                  </div>
-               </div>
-             </div>
-           }
-
-           <div class="flex gap-3 items-center">
-              <div class="w-10 h-10 rounded-full bg-primary/10 border-2 border-white shadow-sm shrink-0 flex items-center justify-center font-bold text-primary">JP</div>
-              <div class="flex-1 flex items-center gap-2 bg-white rounded-2xl border border-slate-100 px-3 py-2 shadow-sm">
-                <sga-input
-                  type="text"
-                  placeholder="Escribe una respuesta pública..."
-                  class="border-0 shadow-none"
-                />
-                <button type="button" sgaButton variant="ghost" color="primary" size="sm" shape="square" title="Enviar comentario">
-                  <i class="fas fa-paper-plane"></i>
-                </button>
               </div>
-           </div>
+            </sga-card-footer>
+          }
+        </sga-card>
+      } @empty {
+        <div class="flex flex-col items-center justify-center py-20 bg-base-100 rounded-3xl border border-base-200 text-center">
+          <i class="fa-solid fa-scroll text-5xl text-base-content/20 mb-4"></i>
+          <p class="text-base-content/50 font-bold mb-1">El muro está vacío</p>
+          <p class="text-sm text-base-content/40 font-medium">Aquí es donde puedes comunicarte con tu clase.</p>
         </div>
-      </div>
+      }
     }
   </div>
 </div>

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import * as XLSX from 'xlsx';
 import { CommonModule, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Input } from '@shared/ui/input/input';
@@ -10,7 +11,7 @@ import { AttendanceStatus } from '../../types/attendance-types';
 import { SectionCourseApi } from '../../../section-courses/services/section-course-api';
 import { EnrollmentApi } from '../../../enrollments/services/enrollment-api';
 
-type StudentRow = { id: string; name: string; status: AttendanceStatus };
+type StudentRow = { id: string; name: string; studentCode: string; status: AttendanceStatus };
 
 @Component({
   selector: 'sga-attendances',
@@ -84,6 +85,7 @@ export default class Attendances implements OnInit {
       next: (enrollmentRes) => {
         const rows: StudentRow[] = enrollmentRes.data.map((e) => ({
           id: e.id,
+          studentCode: e.student.studentCode,
           name: `${e.student.firstName} ${e.student.lastName}`,
           status: 'present' as AttendanceStatus,
         }));
@@ -108,5 +110,43 @@ export default class Attendances implements OnInit {
     this.students.update(prev =>
       prev.map(s => (s.id === studentId ? { ...s, status: status as AttendanceStatus } : s))
     );
+  }
+
+  onFileUpload(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e: ProgressEvent<FileReader>) => {
+      const target = e.target;
+      if (!target?.result) return;
+      const data = new Uint8Array(target.result as ArrayBuffer);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const firstSheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[firstSheetName];
+      const json = XLSX.utils.sheet_to_json<Record<string, unknown>>(worksheet);
+
+      this.students.update(prev => {
+        const newState = [...prev];
+        json.forEach(row => {
+          const code = String(row['DNI'] || row['Matricula_ID'] || row['studentCode'] || row['Codigo'] || '').trim();
+          const rawStatus = String(row['Estado'] || row['status'] || '').toLowerCase().trim();
+          if (code && rawStatus) {
+            let status: AttendanceStatus = 'present';
+            if (['f', 'falta', 'absent'].includes(rawStatus)) status = 'absent';
+            else if (['t', 'tardanza', 'late'].includes(rawStatus)) status = 'late';
+            else if (['j', 'justificado', 'excused'].includes(rawStatus)) status = 'excused';
+
+            const index = newState.findIndex(s => s.studentCode === code);
+            if (index !== -1) {
+              newState[index] = { ...newState[index], status };
+            }
+          }
+        });
+        return newState;
+      });
+      if (event.target) (event.target as HTMLInputElement).value = ''; // reset
+    };
+    reader.readAsArrayBuffer(file);
   }
 }
