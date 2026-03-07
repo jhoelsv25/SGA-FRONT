@@ -5,14 +5,34 @@
   (refresh)="onRefresh()"
 />
 
-<div class="p-6">
+<div class="p-6 space-y-4">
+  <sga-list-toolbar
+    [searchPlaceholder]="'Buscar áreas por nombre o código...'"
+    [filterCount]="filterCount()"
+    (searchChange)="onSearch($event)"
+  >
+    <div list-toolbar-filter class="space-y-3 p-1">
+      <p class="text-sm font-semibold text-base-content">Filtrar por tipo</p>
+      <select
+        class="w-full px-3 py-2 rounded-xl border border-base-200 bg-base-100 text-sm"
+        [value]="filterType()"
+        (change)="onFilterType($event)"
+      >
+        <option value="">Todos</option>
+        <option value="core">Básica</option>
+        <option value="elective">Electiva</option>
+        <option value="optional">Opcional</option>
+      </select>
+    </div>
+  </sga-list-toolbar>
+
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
     @if (loading() && !data().length) {
       @for (i of skeletonItems; track i) {
-        <sga-skeleton [customClass]="'h-[200px] w-full rounded-2xl border border-base-200'" />
+        <sga-skeleton [customClass]="'h-[200px] w-full rounded-4xl border border-base-200'" />
       }
     } @else {
-      @for (area of data(); track area.id) {
+      @for (area of filteredData(); track area.id) {
         <sga-subject-area-card
           [subjectArea]="area"
           (edit)="editSubjectArea(area)"

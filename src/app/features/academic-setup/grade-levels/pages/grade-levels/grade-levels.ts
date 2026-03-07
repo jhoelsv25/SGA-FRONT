@@ -1,5 +1,5 @@
 import { Dialog } from '@angular/cdk/dialog';
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 import { HeaderDetail } from '@shared/components/header-detail/header-detail';
 import { GradeLevelStore } from '../../services/store/grade-level.store';
@@ -9,11 +9,12 @@ import { CommonModule } from '@angular/common';
 import { GradeLevelCardComponent } from '../../components/grade-level-card/grade-level-card';
 import { EmptyState } from '@shared/ui/empty-state/empty-state';
 import { Skeleton } from '@shared/ui/skeleton/skeleton';
+import { ListToolbar } from '@shared/ui/list-toolbar';
 
 @Component({
   selector: 'sga-grade-levels',
   standalone: true,
-  imports: [CommonModule, HeaderDetail, GradeLevelCardComponent, EmptyState, Skeleton],
+  imports: [CommonModule, HeaderDetail, GradeLevelCardComponent, EmptyState, Skeleton, ListToolbar],
   templateUrl: './grade-levels.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -22,10 +23,33 @@ export default class GradeLevelsPage {
   private store = inject(GradeLevelStore);
 
   readonly skeletonItems = [1, 2, 3, 4];
+  searchTerm = signal('');
+  filterLevel = signal<string>('');
 
   headerConfig = computed(() => this.store.headerConfig());
   columns = computed(() => this.store.columns());
   data = computed(() => this.store.data());
+
+  filteredData = computed(() => {
+    const list = this.data();
+    const search = this.searchTerm().toLowerCase().trim();
+    const level = this.filterLevel();
+    return list.filter((g) => {
+      const matchSearch = !search || g.name.toLowerCase().includes(search);
+      const matchLevel = !level || g.level === level;
+      return matchSearch && matchLevel;
+    });
+  });
+
+  filterCount = computed(() => (this.filterLevel() ? 1 : 0));
+
+  onSearch(value: string) {
+    this.searchTerm.set(value);
+  }
+
+  onFilterLevel(event: Event) {
+    this.filterLevel.set((event.target as HTMLSelectElement).value);
+  }
   loading = computed(() => this.store.loading());
   pagination = computed(() => ({
     ...this.store.pagination(),

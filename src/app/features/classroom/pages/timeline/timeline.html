@@ -2,7 +2,7 @@
   
   <!-- Publishing Area -->
   <sga-card class="shadow-sm">
-    <sga-card-content class="pt-6">
+    <div class="p-6 pt-0 pt-6">
       <div class="flex items-start gap-4">
         <div class="w-10 h-10 rounded-full bg-primary/10 border-2 border-base-100 shadow-sm shrink-0 flex items-center justify-center font-bold text-primary">JP</div>
         <div class="flex-1 space-y-4">
@@ -59,14 +59,14 @@
           </div>
         </div>
       </div>
-    </sga-card-content>
+    </div>
   </sga-card>
 
   <!-- Feed Area -->
   <div class="space-y-6">
     @if (store.loading()) {
       <sga-card>
-        <sga-card-content class="pt-6">
+        <div class="p-6 pt-0 pt-6">
           <div class="flex items-start gap-4 mb-4">
             <sga-skeleton class="h-12 w-12 rounded-full" />
             <div class="space-y-2 flex-1">
@@ -75,19 +75,19 @@
             </div>
           </div>
           <sga-skeleton class="h-16 w-full" />
-        </sga-card-content>
+        </div>
       </sga-card>
       <sga-card>
-        <sga-card-content class="pt-6">
+        <div class="p-6 pt-0 pt-6">
            <sga-skeleton class="h-16 w-full" />
-        </sga-card-content>
+        </div>
       </sga-card>
     } @else {
       @for (item of store.feed(); track item.id) {
         <sga-card class="group hover:shadow-md transition-all">
           
           <!-- Post Header -->
-          <sga-card-header>
+          <div class="flex flex-col space-y-1.5 p-6">
             <div class="flex justify-between items-start">
               <div class="flex items-center gap-4">
                 <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold transition-all duration-500 shadow-sm"
@@ -121,12 +121,12 @@
                 <button sgaButton variant="ghost" color="secondary" size="sm" shape="square"><i class="fa-solid fa-ellipsis-vertical"></i></button>
               }
             </div>
-          </sga-card-header>
+          </div>
   
-          <sga-card-content>
+          <div class="p-6 pt-0">
             <div class="space-y-4 px-0 md:px-2 md:pl-16">
               @if (item.title) {
-                <sga-card-title class="leading-tight text-lg">{{ item.title }}</sga-card-title>
+                <h2 class="text-2xl font-semibold leading-none tracking-tight leading-tight text-lg">{{ item.title }}</h2>
               }
               <p class="text-base-content/80 font-medium leading-relaxed whitespace-pre-wrap">{{ item.content }}</p>
               
@@ -147,10 +147,10 @@
                 </div>
               }
             </div>
-          </sga-card-content>
+          </div>
   
           @if (item.type === 'post') {
-            <sga-card-footer class="border-t border-base-200/50 flex flex-col items-stretch gap-0 p-0">
+            <div class="flex items-center p-6 pt-0 border-t border-base-200/50 flex flex-col items-stretch gap-0 p-0">
               <div class="p-4 w-full flex items-center justify-between">
                 <div class="flex items-center gap-6">
                   <button class="flex items-center gap-2 text-base-content/50 hover:text-primary font-bold text-sm transition-colors">
@@ -178,7 +178,7 @@
                     </div>
                  </div>
               </div>
-            </sga-card-footer>
+            </div>
           }
         </sga-card>
       } @empty {

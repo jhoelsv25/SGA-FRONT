@@ -26,21 +26,21 @@
     </div>
   </div>
 
-  <sga-card-header class="pt-8 pb-3">
+  <div class="flex flex-col space-y-1.5 p-6 pt-8 pb-3">
     <div class="flex items-center gap-3">
       <div class="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center text-xl shadow-sm group-hover:bg-primary group-hover:text-primary-content transition-all duration-500">
         <i class="fas fa-shield-halved"></i>
       </div>
       <div class="min-w-0">
-        <sga-card-title class="text-lg font-bold tracking-tight text-base-content group-hover:text-primary transition-colors truncate">
+        <h2 class="text-2xl font-semibold leading-none tracking-tight text-lg font-bold text-base-content group-hover:text-primary transition-colors truncate">
           {{role.name}}
-        </sga-card-title>
+        </h2>
         <p class="text-[10px] text-base-content/40 font-medium uppercase tracking-widest mt-0.5">Rol de Usuario</p>
       </div>
     </div>
-  </sga-card-header>
+  </div>
   
-  <sga-card-content class="pb-5">
+  <div class="p-6 pt-0 pb-5">
     <p class="text-sm text-base-content/60 leading-relaxed line-clamp-2 min-h-[40px] mb-5">
       {{role.description || 'Sin descripción detallada para este perfil de acceso.'}}
     </p>
@@ -67,9 +67,9 @@
         </div>
       </div>
     </div>
-  </sga-card-content>
+  </div>
 
-  <sga-card-footer class="border-t border-base-200/50 pt-3 flex items-center justify-between">
+  <div class="flex items-center p-6 pt-0 border-t border-base-200/50 pt-3 justify-between">
     <div class="flex items-center gap-1.5">
       <div class="w-5 h-5 rounded bg-base-200 flex items-center justify-center">
          <i class="fas fa-fingerprint text-[9px] text-base-content/30"></i>
@@ -92,5 +92,5 @@
         </button>
       }
     </div>
-  </sga-card-footer>
+  </div>
 </sga-card>

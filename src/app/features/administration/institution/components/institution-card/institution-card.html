@@ -1,5 +1,5 @@
 <sga-card class="group flex flex-col h-full hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 border-base-200 overflow-hidden bg-base-100">
-  <sga-card-header class="pb-3 border-b border-base-200 bg-base-200/10">
+  <div class="flex flex-col space-y-1.5 p-6 pb-3 border-b border-base-200 bg-base-200/10">
     <div class="flex justify-between items-start">
       <div class="w-16 h-16 rounded-2xl bg-base-100 border border-base-200 shadow-sm flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105">
         @if (institution.logoUrl) {
@@ -20,9 +20,9 @@
       </div>
     </div>
     
-    <sga-card-title class="mt-4 text-xl font-bold tracking-tight text-base-content group-hover:text-primary transition-colors line-clamp-2 min-h-[3.5rem] flex items-center">
+    <h2 class="text-2xl font-semibold leading-none tracking-tight mt-4 text-xl font-bold text-base-content group-hover:text-primary transition-colors line-clamp-2 min-h-[3.5rem] flex items-center">
       {{ institution.name }}
-    </sga-card-title>
+    </h2>
     
     <div class="flex items-center gap-2 mt-1">
         <span class="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded border" [ngClass]="getStatusColor(institution.status)">
@@ -32,9 +32,9 @@
             Cod. Modular: {{ institution.modularCode }}
         </span>
     </div>
-  </sga-card-header>
+  </div>
 
-  <sga-card-content class="pt-5 flex-grow">
+  <div class="p-6 pt-0 pt-5 flex-grow">
     <div class="space-y-4">
         <!-- Address -->
         <div class="flex items-start gap-3">
@@ -77,5 +77,5 @@
             </div>
         }
     </div>
-  </sga-card-content>
+  </div>
 </sga-card>

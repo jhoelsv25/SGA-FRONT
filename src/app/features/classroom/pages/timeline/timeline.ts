@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Button } from '@shared/directives';
 import { Input } from '@shared/ui/input/input';
 import { Textarea } from '@shared/ui/textarea/textarea';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@shared/ui/card/card';
+import { Card } from '@shared/ui/card/card';
 import { Skeleton } from '@shared/ui/skeleton/skeleton';
 import { ClassroomStore } from '../../services/store/classroom.store';
 import { ClassroomSocketService } from '../../services/classroom-socket';
@@ -12,7 +12,7 @@ import { ClassroomSocketService } from '../../services/classroom-socket';
 @Component({
   selector: 'sga-classroom-timeline',
   standalone: true,
-  imports: [CommonModule, FormsModule, Button, Input, Textarea, Card, CardHeader, CardTitle, CardContent, CardFooter, Skeleton],
+  imports: [CommonModule, FormsModule, Button, Input, Textarea, Card, Skeleton],
   templateUrl: './timeline.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

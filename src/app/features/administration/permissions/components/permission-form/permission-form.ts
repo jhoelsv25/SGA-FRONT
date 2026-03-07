@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { Button } from '@shared/directives';
 import { Input } from '@shared/ui/input/input';
 import { Permission } from '../../../services/api/permission-api';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@shared/ui/card/card';
+import { Card } from '@shared/ui/card/card';
 
 interface PermissionFormData {
   current: Permission | null;
@@ -15,7 +15,7 @@ interface PermissionFormData {
 @Component({
   selector: 'sga-permission-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, Button, Input, Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter],
+  imports: [CommonModule, ReactiveFormsModule, Button, Input, Card],
   templateUrl: './permission-form.html',
   styleUrls: ['./permission-form.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

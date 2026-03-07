@@ -1,6 +1,7 @@
 export {
   Button,
   type ButtonVariant,
+  type ButtonColor,
   type ButtonSize,
   type ButtonShape,
 } from './button';

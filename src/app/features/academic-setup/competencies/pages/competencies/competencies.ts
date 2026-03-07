@@ -1,5 +1,5 @@
 import { Dialog } from '@angular/cdk/dialog';
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 import { HeaderDetail } from '@shared/components/header-detail/header-detail';
 import { CompetencyStore } from '../../services/store/competency.store';
@@ -9,11 +9,12 @@ import { CommonModule } from '@angular/common';
 import { CompetencyCardComponent } from '../../components/competency-card/competency-card';
 import { EmptyState } from '@shared/ui/empty-state/empty-state';
 import { Skeleton } from '@shared/ui/skeleton/skeleton';
+import { ListToolbar } from '@shared/ui/list-toolbar';
 
 @Component({
   selector: 'sga-competencies',
   standalone: true,
-  imports: [CommonModule, HeaderDetail, CompetencyCardComponent, EmptyState, Skeleton],
+  imports: [CommonModule, HeaderDetail, CompetencyCardComponent, EmptyState, Skeleton, ListToolbar],
   templateUrl: './competencies.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -22,9 +23,25 @@ export default class CompetenciesPage {
   private store = inject(CompetencyStore);
 
   readonly skeletonItems = [1, 2, 3, 4];
+  searchTerm = signal('');
 
   headerConfig = computed(() => this.store.headerConfig());
   data = computed(() => this.store.data());
+
+  filteredData = computed(() => {
+    const list = this.data();
+    const search = this.searchTerm().toLowerCase().trim();
+    return list.filter(
+      (c) =>
+        !search ||
+        c.name.toLowerCase().includes(search) ||
+        (c.code?.toLowerCase().includes(search) ?? false),
+    );
+  });
+
+  onSearch(value: string) {
+    this.searchTerm.set(value);
+  }
   loading = computed(() => this.store.loading());
   headerActions = computed(() => this.store.actions().filter((a) => a.typeAction === 'header'));
 

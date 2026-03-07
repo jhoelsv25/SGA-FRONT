@@ -5,16 +5,36 @@
   (refresh)="onRefresh()"
 />
 
-<div class="p-6">
+<div class="p-6 space-y-4">
+  <sga-list-toolbar
+    [searchPlaceholder]="'Buscar niveles por nombre...'"
+    [filterCount]="filterCount()"
+    (searchChange)="onSearch($event)"
+  >
+    <div list-toolbar-filter class="space-y-3 p-1">
+      <p class="text-sm font-semibold text-base-content">Filtrar por nivel</p>
+      <select
+        class="w-full px-3 py-2 rounded-xl border border-base-200 bg-base-100 text-sm"
+        [value]="filterLevel()"
+        (change)="onFilterLevel($event)"
+      >
+        <option value="">Todos</option>
+        <option value="primary">Primaria</option>
+        <option value="secondary">Secundaria</option>
+        <option value="higher">Superior</option>
+      </select>
+    </div>
+  </sga-list-toolbar>
+
   <div
     class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500"
   >
     @if (loading() && !data().length) {
       @for (i of skeletonItems; track i) {
-        <sga-skeleton [customClass]="'h-[220px] w-full rounded-2xl border border-base-200'" />
+        <sga-skeleton [customClass]="'h-[220px] w-full rounded-4xl border border-base-200'" />
       }
     } @else {
-      @for (gradeLevel of data(); track gradeLevel.id) {
+      @for (gradeLevel of filteredData(); track gradeLevel.id) {
         <sga-grade-level-card
           [gradeLevel]="gradeLevel"
           (edit)="editGradeLevel(gradeLevel)"

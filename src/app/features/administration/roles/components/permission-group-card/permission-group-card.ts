@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Card, CardHeader, CardContent } from '@shared/ui/card/card';
+import { Card } from '@shared/ui/card/card';
 import { Checkbox } from '@shared/ui/checkbox/checkbox';
 import { SelectablePermissionComponent } from '../selectable-permission/selectable-permission';
 import { Permission } from '../../../services/api/permission-api';
@@ -14,11 +14,11 @@ interface PermissionGroup {
 @Component({
   selector: 'sga-permission-group-card',
   standalone: true,
-  imports: [CommonModule, Card, CardHeader, CardContent, Checkbox, SelectablePermissionComponent],
+  imports: [CommonModule, Card, Checkbox, SelectablePermissionComponent],
   template: `
     <sga-card class="module-card rounded-4xl border border-base-200 shadow-sm hover:shadow-xl hover:shadow-primary/5 hover:border-primary/20 transition-all duration-500 overflow-hidden bg-base-100 flex flex-col h-full">
       <!-- Module Header -->
-      <sga-card-header class="bg-base-200/5 border-b border-base-200 py-6 px-8 flex flex-row items-center justify-between">
+      <div class="flex flex-col space-y-1.5 p-6 bg-base-200/5 border-b border-base-200 py-6 px-8 flex flex-row items-center justify-between">
         <div class="flex items-center gap-5">
           <div class="w-14 h-14 rounded-2xl bg-primary text-primary-content shadow-lg shadow-primary/20 flex items-center justify-center text-2xl">
             <i [class]="'fa-solid fa-' + group().icon"></i>
@@ -38,9 +38,9 @@ interface PermissionGroup {
           </sga-checkbox>
           <span class="text-xs font-bold text-base-content/50 group-hover:text-primary transition-colors">Seleccionar Todo el Módulo</span>
         </label>
-      </sga-card-header>
+      </div>
 
-      <sga-card-content class="p-8">
+      <div class="p-6 pt-0 p-8">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           @for (perm of group().permissions; track perm.id) {
             <sga-selectable-permission
@@ -51,7 +51,7 @@ interface PermissionGroup {
             </sga-selectable-permission>
           }
         </div>
-      </sga-card-content>
+      </div>
     </sga-card>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

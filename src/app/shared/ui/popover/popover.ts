@@ -13,7 +13,8 @@ import { Component, ChangeDetectionStrategy, signal, input, HostListener } from 
       <!-- Popover Content -->
       @if (isOpen()) {
         <div
-          class="absolute z-50 w-72 rounded-md border border-base-200 bg-base-100 p-4 text-base-content shadow-md outline-none animate-in fade-in zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 mt-2 right-0"
+          class="absolute z-50 w-72 rounded-xl shadow-lg outline-none animate-in fade-in zoom-in-95 p-4 right-0"
+          [class]="(side() === 'top' ? 'bottom-full mb-2' : 'mt-2') + (contentClass() ? ' ' + contentClass() : '')"
         >
           <ng-content select="[sga-popover-content]"></ng-content>
         </div>
@@ -25,6 +26,7 @@ import { Component, ChangeDetectionStrategy, signal, input, HostListener } from 
 export class Popover {
   public align = input<'start' | 'center' | 'end'>('center');
   public side = input<'top' | 'bottom' | 'left' | 'right'>('bottom');
+  public contentClass = input<string>('');
 
   public isOpen = signal(false);
 

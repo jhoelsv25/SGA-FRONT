@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card/card';
+import { Card } from '@shared/ui/card/card';
 import { Button } from '@shared/directives';
 import { YearAcademic, AcademicYearStatus, Modality } from '../../types/year-academi-types';
 
 @Component({
   selector: 'sga-year-academic-card',
   standalone: true,
-  imports: [CommonModule, Card, CardHeader, CardTitle, CardContent, Button],
+  imports: [CommonModule, Card, Button],
   templateUrl: './year-academic-card.html',
   styleUrls: ['./year-academic-card.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

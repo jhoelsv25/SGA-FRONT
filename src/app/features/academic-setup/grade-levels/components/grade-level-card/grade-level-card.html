@@ -1,7 +1,7 @@
 <sga-card
   class="group flex flex-col h-full hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 border-base-200 overflow-hidden bg-base-100"
 >
-  <sga-card-header class="pb-3 border-b border-base-200 bg-base-200/10">
+  <div class="flex flex-col space-y-1.5 p-6 pb-3 border-b border-base-200 bg-base-200/10">
     <div class="flex justify-between items-start">
       <div
         class="p-2.5 rounded-xl shadow-sm transition-colors"
@@ -30,11 +30,11 @@
         </button>
       </div>
     </div>
-    <sga-card-title
-      class="mt-4 text-xl font-bold tracking-tight text-base-content group-hover:text-primary transition-colors"
+    <h2
+      class="text-2xl font-semibold leading-none tracking-tight mt-4 text-xl font-bold text-base-content group-hover:text-primary transition-colors"
     >
       {{ gradeLevel().name }}
-    </sga-card-title>
+    </h2>
     <div class="flex items-center gap-2 mt-1">
       <span
         class="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded border"
@@ -48,9 +48,9 @@
         {{ gradeLevel().gradeNumber }}° Grado
       </span>
     </div>
-  </sga-card-header>
+  </div>
 
-  <sga-card-content class="pt-5 grow">
+  <div class="p-6 pt-5 grow">
     <div class="space-y-4">
       <div class="flex items-center gap-3 text-sm text-base-content/70">
         <div
@@ -74,5 +74,5 @@
         </p>
       }
     </div>
-  </sga-card-content>
+  </div>
 </sga-card>

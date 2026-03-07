@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { Button } from '@shared/directives';
 import { Input } from '@shared/ui/input/input';
 import { Role } from '../../../services/api/role-api';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@shared/ui/card/card';
+import { Card } from '@shared/ui/card/card';
 
 interface RoleFormData {
   current: Role | null;
@@ -15,7 +15,7 @@ interface RoleFormData {
 @Component({
   selector: 'sga-role-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, Button, Input, Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter],
+  imports: [CommonModule, ReactiveFormsModule, Button, Input, Card],
   templateUrl: './role-form.html',
   styleUrls: ['./role-form.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

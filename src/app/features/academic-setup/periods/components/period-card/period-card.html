@@ -1,7 +1,7 @@
 <sga-card
   class="group flex flex-col h-full hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 border-base-200 overflow-hidden bg-base-100"
 >
-  <sga-card-header class="pb-3 border-b border-base-200 bg-base-200/10">
+  <div class="flex flex-col space-y-1.5 p-6 pb-3 border-b border-base-200 bg-base-200/10">
     <div class="flex justify-between items-start">
       <div
         class="flex flex-col items-center justify-center w-14 h-14 rounded-2xl bg-primary/10 text-primary border border-primary/20 shadow-sm group-hover:bg-primary group-hover:text-primary-content transition-colors"
@@ -30,11 +30,11 @@
         </button>
       </div>
     </div>
-    <sga-card-title
-      class="mt-4 text-xl font-bold tracking-tight text-base-content group-hover:text-primary transition-colors"
+    <h2
+      class="text-2xl font-semibold leading-none tracking-tight mt-4 text-xl font-bold text-base-content group-hover:text-primary transition-colors"
     >
       {{ period().name }}
-    </sga-card-title>
+    </h2>
     <div class="flex flex-wrap items-center gap-2 mt-1">
       @if (period().status) {
         <span
@@ -52,9 +52,9 @@
         </span>
       }
     </div>
-  </sga-card-header>
+  </div>
 
-  <sga-card-content class="pt-5 grow">
+  <div class="p-6 pt-5 grow">
     <div class="space-y-4">
       <div class="grid grid-cols-2 gap-4">
         <div class="p-3 bg-base-200/30 rounded-xl border border-base-200">
@@ -77,5 +77,5 @@
         </div>
       </div>
     </div>
-  </sga-card-content>
+  </div>
 </sga-card>

@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card/card';
+import { Card } from '@shared/ui/card/card';
 import { Button } from '@shared/directives';
 import { Institution } from '../../types/institution-types';
 
 @Component({
   selector: 'sga-institution-card',
   standalone: true,
-  imports: [CommonModule, Card, CardHeader, CardTitle, CardContent, Button],
+  imports: [CommonModule, Card, Button],
   templateUrl: './institution-card.html',
   styleUrls: ['./institution-card.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

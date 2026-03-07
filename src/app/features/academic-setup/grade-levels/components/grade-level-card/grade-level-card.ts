@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui/card/card';
+import { Card } from '@shared/ui/card/card';
 import { Button } from '@shared/directives';
 import { GradeLevel } from '../../types/grade-level-types';
 
 @Component({
   selector: 'sga-grade-level-card',
   standalone: true,
-  imports: [CommonModule, Card, CardHeader, CardTitle, CardContent, Button],
+  imports: [CommonModule, Card, Button],
   templateUrl: './grade-level-card.html',
   styleUrls: ['./grade-level-card.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

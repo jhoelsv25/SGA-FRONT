@@ -1,7 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-
-import { HeaderDetail } from '@shared/components/header-detail/header-detail';
 
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 import { Dialog } from '@angular/cdk/dialog';
@@ -13,11 +11,23 @@ import { YearAcademicCardComponent } from '../../components/year-academic-card/y
 import { EmptyState } from '@shared/ui/empty-state/empty-state';
 import { Skeleton } from '@shared/ui/skeleton/skeleton';
 import { PeriodForm } from '@features/academic-setup/periods/components/period-form/period-form';
+import { ListToolbar } from '@shared/ui/list-toolbar';
+import { Dropdown } from '@shared/ui/dropdown/dropdown';
+import { Select } from '@shared/ui/select/select';
+import { PermissionCheckStore } from '@core/stores/permission-check.store';
+
+const STATUS_OPTIONS = [
+  { value: '', label: 'Todos' },
+  { value: 'planned', label: 'Planificado' },
+  { value: 'ongoing', label: 'En curso' },
+  { value: 'completed', label: 'Cerrado' },
+  { value: 'cancelled', label: 'Cancelado' },
+];
 
 @Component({
   selector: 'sga-year-academic',
   standalone: true,
-  imports: [CommonModule, HeaderDetail, YearAcademicCardComponent, EmptyState, Skeleton],
+  imports: [CommonModule, YearAcademicCardComponent, EmptyState, Skeleton, ListToolbar, Dropdown, Select],
   templateUrl: './year-academic.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -25,9 +35,11 @@ export default class YearAcademicComponent {
   private dialog = inject(Dialog);
   private store = inject(YearAcademicStore);
   private router = inject(Router);
+  private permissionStore = inject(PermissionCheckStore);
 
   readonly skeletonItems = [1, 2, 3, 4];
-
+  searchTerm = signal('');
+  filterStatus = signal<string>('');
 
   headerConfig = computed(() => this.store.headerConfig());
   columns = computed(() => this.store.columns());
@@ -35,7 +47,44 @@ export default class YearAcademicComponent {
   loading = computed(() => this.store.loading());
   pagination = computed(() => this.store.pagination());
 
-  headerActions = computed(() => this.store.actions().filter((a) => a.typeAction === 'header'));
+  filteredData = computed(() => {
+    const list = this.data();
+    const search = this.searchTerm().toLowerCase().trim();
+    const status = this.filterStatus();
+    return list.filter((y) => {
+      const matchSearch =
+        !search ||
+        y.name.toLowerCase().includes(search) ||
+        String(y.year).includes(search);
+      const matchStatus = !status || y.status === status;
+      return matchSearch && matchStatus;
+    });
+  });
+
+  filterCount = computed(() => (this.filterStatus() ? 1 : 0));
+
+  onSearch(value: string) {
+    this.searchTerm.set(value);
+  }
+
+  readonly statusOptions = STATUS_OPTIONS;
+
+  onFilterStatus(value: unknown) {
+    this.filterStatus.set(value != null ? String(value) : '');
+  }
+
+  headerActions = computed(() =>
+    this.permissionStore.filterActions(this.store.actions().filter((a) => a.typeAction === 'header')),
+  );
+
+  actionDropdownItems = computed(() =>
+    this.headerActions().map((action) => ({
+      label: action.label,
+      icon: action.icon,
+      disabled: typeof action.disabled === 'function' ? action.disabled({}) : !!action.disabled,
+      action: () => this.onHeaderAction({ action, context: {} }),
+    })),
+  );
 
   rowActions = computed(() => this.store.actions().filter((a) => a.typeAction === 'row'));
 
@@ -111,7 +160,7 @@ export default class YearAcademicComponent {
   }
 
   public openForm() {
-    this.dialog.open(YearAcademicForm, {
+    const ref = this.dialog.open(YearAcademicForm, {
       data: {
         current: this.store.current(),
       },
@@ -119,5 +168,6 @@ export default class YearAcademicComponent {
       width: '700px',
       maxHeight: '700px'
     });
+    ref.closed.subscribe(() => this.onRefresh());
   }
 }
