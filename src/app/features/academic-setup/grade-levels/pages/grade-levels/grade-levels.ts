@@ -1,7 +1,7 @@
 import { Dialog } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
-import { HeaderDetail } from '@shared/components/header-detail/header-detail';
+import { ConfirmDialog } from '@core/services/confirm-dialog';
 import { GradeLevelStore } from '../../services/store/grade-level.store';
 import { GradeLevel } from '../../types/grade-level-types';
 import { GradeLevelForm } from '../../components/grade-level-form/grade-level-form';
@@ -10,24 +10,48 @@ import { GradeLevelCardComponent } from '../../components/grade-level-card/grade
 import { EmptyState } from '@shared/ui/empty-state/empty-state';
 import { Skeleton } from '@shared/ui/skeleton/skeleton';
 import { ListToolbar } from '@shared/ui/list-toolbar';
+import { Dropdown } from '@shared/ui/dropdown/dropdown';
+import { Select } from '@shared/ui/select/select';
+import { PermissionCheckStore } from '@core/stores/permission-check.store';
+
+const LEVEL_OPTIONS = [
+  { value: '', label: 'Todos' },
+  { value: 'primary', label: 'Primaria' },
+  { value: 'secondary', label: 'Secundaria' },
+  { value: 'higher', label: 'Superior' },
+];
 
 @Component({
   selector: 'sga-grade-levels',
   standalone: true,
-  imports: [CommonModule, HeaderDetail, GradeLevelCardComponent, EmptyState, Skeleton, ListToolbar],
+  imports: [CommonModule, GradeLevelCardComponent, EmptyState, Skeleton, ListToolbar, Dropdown, Select],
   templateUrl: './grade-levels.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class GradeLevelsPage {
   private dialog = inject(Dialog);
+  private confirmDialog = inject(ConfirmDialog);
   private store = inject(GradeLevelStore);
+  private permissionStore = inject(PermissionCheckStore);
 
   readonly skeletonItems = [1, 2, 3, 4];
+  readonly levelOptions = LEVEL_OPTIONS;
   searchTerm = signal('');
   filterLevel = signal<string>('');
 
-  headerConfig = computed(() => this.store.headerConfig());
-  columns = computed(() => this.store.columns());
+  headerActions = computed(() =>
+    this.permissionStore.filterActions(this.store.actions().filter((a) => a.typeAction === 'header')),
+  );
+
+  actionDropdownItems = computed(() =>
+    this.headerActions().map((action) => ({
+      label: action.label,
+      icon: action.icon,
+      disabled: typeof action.disabled === 'function' ? action.disabled({}) : !!action.disabled,
+      action: () => this.onHeaderAction({ action, context: {} }),
+    })),
+  );
+
   data = computed(() => this.store.data());
 
   filteredData = computed(() => {
@@ -47,17 +71,14 @@ export default class GradeLevelsPage {
     this.searchTerm.set(value);
   }
 
-  onFilterLevel(event: Event) {
-    this.filterLevel.set((event.target as HTMLSelectElement).value);
+  onFilterLevel(value: unknown) {
+    this.filterLevel.set(value != null ? String(value) : '');
   }
   loading = computed(() => this.store.loading());
   pagination = computed(() => ({
     ...this.store.pagination(),
     total: this.store.data().length,
   }));
-  headerActions = computed(() => this.store.actions().filter((a) => a.typeAction === 'header'));
-  rowActions = computed(() => this.store.actions().filter((a) => a.typeAction === 'row'));
-
   onHeaderAction(e: { action: ActionConfig; context: ActionContext }) {
     if (e.action.key === 'create') this.openForm();
     if (e.action.key === 'refresh') this.onRefresh();
@@ -70,7 +91,7 @@ export default class GradeLevelsPage {
   onRowAction(e: { action: ActionConfig; context: ActionContext<unknown> }) {
     const row = e.context.row as GradeLevel;
     if (e.action.key === 'edit') this.openForm(row);
-    if (e.action.key === 'delete') this.store.delete(row.id);
+    if (e.action.key === 'delete') this.deleteGradeLevel(row);
   }
 
   onPageChange(p: { page: number; size: number }) {
@@ -82,9 +103,20 @@ export default class GradeLevelsPage {
   }
 
   deleteGradeLevel(gradeLevel: GradeLevel) {
-    if (confirm(`¿Eliminar el nivel "${gradeLevel.name}"?`)) {
-      this.store.delete(gradeLevel.id);
-    }
+    this.confirmDialog
+      .open({
+        type: 'danger',
+        title: 'Eliminar nivel de grado',
+        icon: 'fa-solid fa-trash',
+        message: `¿Estás seguro de eliminar "${gradeLevel.name}"? Esta acción no se puede deshacer.`,
+        acceptButtonProps: { label: 'Eliminar', color: 'danger', variant: 'solid' },
+        rejectButtonProps: { label: 'Cancelar', variant: 'outline' },
+      })
+      .then((confirmed) => {
+        if (confirmed) {
+          this.store.delete(gradeLevel.id);
+        }
+      });
   }
 
   createFromEmpty() {

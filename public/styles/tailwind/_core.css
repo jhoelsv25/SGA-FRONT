@@ -5,9 +5,9 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Light mode - Texto base negro */
+/* Light mode - Texto base */
 body {
-  color: var(--color-gray-500);
+  color: var(--color-neutral-600);
 }
 
 /* Dark mode - Texto base blanco */
@@ -68,18 +68,22 @@ body {
   --color-neutral-800: oklch(0.35 0.026 45);
   --color-neutral-900: oklch(0.25 0.028 45);
 
-  /* Base - Blanco puro que crece gradualmente */
-  --color-base: oklch(1 0 0);
-  --color-base-50: oklch(1 0 0);
-  --color-base-100: oklch(1 0 0);
-  --color-base-200: oklch(0.98 0.005 75);
-  --color-base-300: oklch(0.96 0.01 75);
+  /* Base - Fondos cálidos que complementan guindo/crema (primary intacto) */
+  --color-base: oklch(0.985 0.008 75);
+  --color-base-50: oklch(0.99 0.006 75);
+  --color-base-100: oklch(1 0.002 75);
+  --color-base-200: oklch(0.98 0.01 75);
+  --color-base-300: oklch(0.96 0.012 75);
   --color-base-400: oklch(0.94 0.015 75);
-  --color-base-500: oklch(0.92 0.02 75);
-  --color-base-600: oklch(0.88 0.025 75);
-  --color-base-700: oklch(0.84 0.03 75);
-  --color-base-800: oklch(0.8 0.035 75);
-  --color-base-900: oklch(0.75 0.04 75);
+  --color-base-500: oklch(0.92 0.018 75);
+  --color-base-600: oklch(0.88 0.02 75);
+  --color-base-700: oklch(0.84 0.022 75);
+  --color-base-800: oklch(0.8 0.025 75);
+  --color-base-900: oklch(0.75 0.03 75);
+
+  /* Fondos semánticos (page = fondo general, surface = cards/modales) */
+  --color-bg-page: var(--color-base-50);
+  --color-bg-surface: var(--color-base-100);
 
   /* Info - Azul suave que no choque */
   --color-info: oklch(0.6 0.12 240);
@@ -194,7 +198,7 @@ h1, h2, h3, h4, h5, h6 {
   --color-secondary-800: oklch(0.65 0.05 75);
   --color-secondary-900: oklch(0.8 0.06 75);
 
-  /* Base - Fondos grises como gray-600/gray-700 para dark mode */
+  /* Base - Fondos grises para dark mode */
   --color-base: oklch(0.278 0.033 256.848);
   --color-base-50: oklch(0.208 0.042 265.755);
   --color-base-100: oklch(0.279 0.041 260.031);
@@ -206,6 +210,10 @@ h1, h2, h3, h4, h5, h6 {
   --color-base-700: oklch(0.8 0.036 257.257);
   --color-base-800: oklch(0.9 0.034 257.251);
   --color-base-900: oklch(0.95 0.032 257.245);
+
+  /* Fondos semánticos - dark mode */
+  --color-bg-page: oklch(0.18 0.02 265);
+  --color-bg-surface: oklch(0.28 0.035 260);
 
   /* Neutral - Grises para dark mode */
   --color-neutral: oklch(0.7 0.015 45);

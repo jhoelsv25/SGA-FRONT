@@ -16,6 +16,7 @@ export class PeriodCardComponent {
   period = input.required<Period>();
   edit = output<Period>();
   delete = output<Period>();
+  updateStatus = output<Period>();
 
   getStatusLabel(status: PeriodStatus | string | undefined): string {
     const labels: Record<string, string> = {

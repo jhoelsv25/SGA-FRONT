@@ -9,8 +9,11 @@
       <div
         class="flex flex-col items-center justify-center w-16 h-16 rounded-[1.25rem] bg-primary/10 text-primary border border-primary/20 shadow-sm group-hover:bg-primary group-hover:text-primary-content transition-colors"
       >
-        <span class="text-[10px] font-black uppercase tracking-tighter leading-none mb-1">Año</span>
-        <span class="text-xl font-bold leading-none">{{ year().year }}</span>
+        <span
+          class="text-[10px] font-black uppercase tracking-tighter leading-none mb-1 group-hover:text-white"
+          >Año</span
+        >
+        <span class="text-xl font-bold leading-none group-hover:text-white">{{ year().year }}</span>
       </div>
       <div
         class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity"

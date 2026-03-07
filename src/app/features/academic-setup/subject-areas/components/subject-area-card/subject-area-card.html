@@ -1,20 +1,31 @@
 <sga-card
-  class="group flex flex-col h-full hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 border-base-200 overflow-hidden bg-base-100"
+  class="group flex flex-col h-full transition-all duration-300 border border-base-200/80 overflow-hidden bg-base-100 rounded-4xl shadow-sm"
 >
-  <div class="flex flex-col space-y-1.5 p-6 pb-3 border-b border-base-200 bg-base-200/10">
+  <div
+    class="flex flex-col space-y-1.5 p-6 pb-5 border-b border-base-200/50 bg-linear-to-br from-base-200/5 to-transparent rounded-t-4xl"
+  >
     <div class="flex justify-between items-start">
       <div
-        class="p-2.5 rounded-xl bg-primary/10 text-primary border border-primary/20 shadow-sm transition-colors"
+        class="flex flex-col items-center justify-center w-14 h-14 rounded-2xl shadow-sm border"
+        [ngClass]="getTypeColor(subjectArea().type)"
       >
-        <i class="fas fa-book-open text-lg"></i>
+        <i class="fas fa-book-open text-xl"></i>
       </div>
-      <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div
+        class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
+        role="group"
+        tabindex="0"
+        (click)="$event.stopPropagation()"
+        (keydown.enter)="$event.preventDefault(); $event.stopPropagation()"
+        (keydown.space)="$event.preventDefault(); $event.stopPropagation()"
+      >
         <button
           sgaButton
           variant="ghost"
           size="sm"
-          class="rounded-lg h-8 w-8 p-0"
-          (click)="edit.emit(subjectArea())"
+          class="rounded-full h-9 w-9 p-0 hover:bg-base-200/60"
+          (click)="edit.emit(subjectArea()); $event.stopPropagation()"
+          title="Editar"
         >
           <i class="fas fa-edit text-xs"></i>
         </button>
@@ -22,28 +33,33 @@
           sgaButton
           variant="ghost"
           size="sm"
-          class="rounded-lg h-8 w-8 p-0 text-error hover:bg-error/10"
-          (click)="delete.emit(subjectArea())"
+          class="rounded-full h-9 w-9 p-0 text-error hover:bg-error/10"
+          (click)="delete.emit(subjectArea()); $event.stopPropagation()"
+          title="Eliminar"
         >
           <i class="fas fa-trash text-xs"></i>
         </button>
       </div>
     </div>
     <h2
-      class="text-2xl font-semibold leading-none tracking-tight mt-4 text-xl font-bold text-base-content group-hover:text-primary transition-colors"
+      class="mt-4 text-xl font-bold leading-tight tracking-tight text-base-content group-hover:text-primary transition-colors line-clamp-2"
     >
       {{ subjectArea().name }}
     </h2>
-    <p class="text-sm font-mono text-base-content/60 mt-0.5">{{ subjectArea().code }}</p>
+    @if (subjectArea().code) {
+      <p class="text-xs font-mono text-primary/70 bg-primary/5 px-3 py-1 rounded-full border border-primary/20 mt-1 w-fit">
+        {{ subjectArea().code }}
+      </p>
+    }
     <div class="flex flex-wrap items-center gap-2 mt-2">
       <span
-        class="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded border"
+        class="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full border"
         [ngClass]="getTypeColor(subjectArea().type)"
       >
         {{ getTypeLabel(subjectArea().type) }}
       </span>
       <span
-        class="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded border"
+        class="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full border"
         [ngClass]="getStatusColor(subjectArea().status)"
       >
         {{ getStatusLabel(subjectArea().status) }}
@@ -52,12 +68,21 @@
   </div>
 
   <div class="p-6 pt-5 grow">
-    @if (subjectArea().description) {
-      <p class="text-sm text-base-content/60 leading-relaxed line-clamp-3">
-        {{ subjectArea().description }}
-      </p>
-    } @else {
-      <p class="text-sm text-base-content/40 italic">Sin descripción</p>
-    }
+    <div class="space-y-4">
+      @if (subjectArea().description) {
+        <p
+          class="text-sm text-base-content/60 leading-relaxed line-clamp-4 px-4 py-3 rounded-2xl bg-base-200/10 border border-base-200/30 hover:bg-base-200/20 transition-colors"
+        >
+          {{ subjectArea().description }}
+        </p>
+      } @else {
+        <div
+          class="flex items-center gap-2 px-4 py-3 rounded-2xl bg-base-200/5 border border-base-200/20 text-base-content/40"
+        >
+          <i class="fas fa-align-left text-sm"></i>
+          <span class="text-sm italic">Sin descripción</span>
+        </div>
+      }
+    </div>
   </div>
 </sga-card>

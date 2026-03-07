@@ -4,13 +4,22 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Button } from '@shared/directives';
 import { Input } from '@shared/ui/input/input';
 import { DatePicker } from '@shared/ui/date-picker/date-picker';
+import { Select } from '@shared/ui/select/select';
 import { PeriodStore } from '../../services/store/period.store';
+import { PeriodStatus } from '../../types/period-types';
 import type { Period } from '../../types/period-types';
+
+const STATUS_OPTIONS = [
+  { value: PeriodStatus.PLANNED, label: 'Planificado' },
+  { value: PeriodStatus.IN_PROGRESS, label: 'En curso' },
+  { value: PeriodStatus.COMPLETED, label: 'Completado' },
+  { value: PeriodStatus.CANCELLED, label: 'Cancelado' },
+];
 
 @Component({
   selector: 'sga-period-form',
   standalone: true,
-  imports: [ReactiveFormsModule, Button, Input, DatePicker],
+  imports: [ReactiveFormsModule, Button, Input, DatePicker, Select],
   templateUrl: './period-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -24,6 +33,7 @@ export class PeriodForm implements OnInit {
   current: Period | null = null;
   yearAcademicId: string | null = null;
   yearAcademicName: string | null = null;
+  readonly statusOptions = STATUS_OPTIONS;
 
   ngOnInit(): void {
     this.current = this.data?.current ?? null;
@@ -33,6 +43,7 @@ export class PeriodForm implements OnInit {
       name: [this.current?.name ?? '', [Validators.required]],
       startDate: [this.current?.startDate ?? null, [Validators.required]],
       endDate: [this.current?.endDate ?? null, [Validators.required]],
+      ...(this.current && { status: [this.current?.status ?? PeriodStatus.PLANNED, [Validators.required]] }),
     });
   }
 
@@ -51,6 +62,7 @@ export class PeriodForm implements OnInit {
       startDate: this.toDateString(v.startDate),
       endDate: this.toDateString(v.endDate),
     };
+    if (v.status != null) payload['status'] = v.status;
     if (this.current?.id) {
       this.store.update(this.current.id, payload).subscribe({
         next: () => this.ref.close(),

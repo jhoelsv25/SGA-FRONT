@@ -1,7 +1,7 @@
 import { Dialog } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HeaderDetail } from '@shared/components/header-detail/header-detail';
+import { ConfirmDialog } from '@core/services/confirm-dialog';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 import { PeriodStore } from '../../services/store/period.store';
 import type { Period } from '../../types/period-types';
@@ -10,21 +10,46 @@ import { PeriodCardComponent } from '../../components/period-card/period-card';
 import { EmptyState } from '@shared/ui/empty-state/empty-state';
 import { Skeleton } from '@shared/ui/skeleton/skeleton';
 import { ListToolbar } from '@shared/ui/list-toolbar';
+import { Dropdown } from '@shared/ui/dropdown/dropdown';
+import { Select } from '@shared/ui/select/select';
+import { PermissionCheckStore } from '@core/stores/permission-check.store';
+
+const STATUS_OPTIONS = [
+  { value: '', label: 'Todos' },
+  { value: 'planned', label: 'Planificado' },
+  { value: 'in_progress', label: 'En curso' },
+  { value: 'completed', label: 'Completado' },
+  { value: 'cancelled', label: 'Cancelado' },
+];
 
 @Component({
   selector: 'sga-periods',
   standalone: true,
-  imports: [CommonModule, HeaderDetail, PeriodCardComponent, EmptyState, Skeleton, ListToolbar],
+  imports: [CommonModule, PeriodCardComponent, EmptyState, Skeleton, ListToolbar, Dropdown, Select],
   templateUrl: './periods.html',
   styleUrls: ['./periods.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class PeriodsComponent {
   private dialog = inject(Dialog);
+  private confirmDialog = inject(ConfirmDialog);
   private store = inject(PeriodStore);
+  private permissionStore = inject(PermissionCheckStore);
 
-  headerConfig = computed(() => this.store.headerConfig());
-  headerActions = computed(() => this.store.actions().filter((a) => a.typeAction === 'header'));
+  headerActions = computed(() =>
+    this.permissionStore.filterActions(this.store.actions().filter((a) => a.typeAction === 'header')),
+  );
+
+  readonly statusOptions = STATUS_OPTIONS;
+
+  actionDropdownItems = computed(() =>
+    this.headerActions().map((action) => ({
+      label: action.label,
+      icon: action.icon,
+      disabled: typeof action.disabled === 'function' ? action.disabled({}) : !!action.disabled,
+      action: () => this.onHeaderAction({ action, context: {} }),
+    })),
+  );
   data = computed(() => this.store.periods());
   loading = computed(() => this.store.loading());
   readonly skeletonItems = [1, 2, 3, 4];
@@ -49,8 +74,8 @@ export default class PeriodsComponent {
     this.searchTerm.set(value);
   }
 
-  onFilterStatus(event: Event) {
-    this.filterStatus.set((event.target as HTMLSelectElement).value);
+  onFilterStatus(value: unknown) {
+    this.filterStatus.set(value != null ? String(value) : '');
   }
 
   onHeaderAction(e: { action: ActionConfig; context: ActionContext }): void {
@@ -67,9 +92,20 @@ export default class PeriodsComponent {
   }
 
   deletePeriod(period: Period): void {
-    if (confirm(`¿Estás seguro de eliminar el período "${period.name}"?`)) {
-      this.store.delete(period.id);
-    }
+    this.confirmDialog
+      .open({
+        type: 'danger',
+        title: 'Eliminar período',
+        icon: 'fa-solid fa-trash',
+        message: `¿Estás seguro de eliminar "${period.name}"? Esta acción no se puede deshacer.`,
+        acceptButtonProps: { label: 'Eliminar', color: 'danger', variant: 'solid' },
+        rejectButtonProps: { label: 'Cancelar', variant: 'outline' },
+      })
+      .then((confirmed) => {
+        if (confirmed) {
+          this.store.delete(period.id);
+        }
+      });
   }
 
   createFromEmpty(): void {
