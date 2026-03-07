@@ -1,42 +1,29 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Button } from '@shared/directives';
 import { Input } from '@shared/ui/input/input';
-import { Select, type SelectOption } from '@shared/ui/select/select';
+import { Select } from '@shared/ui/select/select';
+import { SectionCourseSelect } from '@shared/components/selects';
 import { ScheduleStore } from '../../services/store/schedule.store';
 import { Schedule, ScheduleCreate } from '../../types/schedule-types';
-import { SectionCourseStore } from '@features/organization/section-courses/services/store/section-course.store';
-import type { SectionCourse } from '@features/organization/section-courses/types/section-course-types';
-import { computed } from '@angular/core';
 
 @Component({
   selector: 'sga-schedule-form',
   standalone: true,
-  imports: [ReactiveFormsModule, Button, Select, Input],
+  imports: [ReactiveFormsModule, Button, Select, Input, SectionCourseSelect],
   templateUrl: './schedule-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScheduleForm implements OnInit {
   private store = inject(ScheduleStore);
-  private sectionCourseStore = inject(SectionCourseStore);
   private data = inject(DIALOG_DATA, { optional: true });
   private ref = inject(DialogRef);
   private fb = inject(FormBuilder);
 
   form!: FormGroup;
   current: Schedule | null = null;
-
-  sectionCourseOptions = computed<SelectOption[]>(() => {
-    const list = this.sectionCourseStore.data();
-    return list.map((sc: SectionCourse) => ({
-      value: sc.id,
-      label:
-        sc.course?.name && sc.section?.name
-          ? `${sc.course.name} - ${sc.section.name}`
-          : sc.course?.name ?? sc.section?.name ?? String(sc.id).slice(0, 12) + '...',
-    }));
-  });
+  selectedSectionCourseLabel = signal<string | null>(null);
 
   dayOptions = [
     { value: 'monday', label: 'Lunes' },
@@ -67,12 +54,10 @@ export class ScheduleForm implements OnInit {
       description: [this.current?.description ?? ''],
     });
 
-    this.sectionCourseStore.loadAll({});
   }
 
-  private getTitleFromSectionCourse(sectionCourseId: string): string {
-    const opt = this.sectionCourseOptions().find((o) => o.value === sectionCourseId);
-    return (opt?.label as string) ?? sectionCourseId;
+  onSectionCourseSelect(e: { id: string; label: string }) {
+    this.selectedSectionCourseLabel.set(e.label);
   }
 
   private formatTime(v: string | Date): string {
@@ -87,7 +72,7 @@ export class ScheduleForm implements OnInit {
   submit() {
     if (this.form.invalid) return;
     const v = this.form.value;
-    const title = this.getTitleFromSectionCourse(v.sectionCourse);
+    const title = this.selectedSectionCourseLabel() ?? this.current?.title ?? v.sectionCourse ?? '';
     const payload: ScheduleCreate = {
       title,
       dayOfWeek: v.dayOfWeek,

@@ -1,4 +1,5 @@
 export { SectionSelect } from './section-select';
+export { SectionCourseSelect } from './section-course-select';
 export { TeacherSelect } from './teacher-select';
 export { SubjectAreaSelect } from './subject-area-select';
 export { GradeLevelSelect } from './grade-level-select';

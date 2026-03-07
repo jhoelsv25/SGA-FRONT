@@ -12,6 +12,9 @@ export type Section = {
   availableSlots?: number;
   grade?: string | { id: string };
   yearAcademic?: string | { id: string };
+  /** IDs directos cuando el backend no carga relaciones */
+  gradeId?: string;
+  yearAcademicId?: string;
 };
 
 export type SectionCreate = {

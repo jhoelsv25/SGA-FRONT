@@ -52,12 +52,16 @@ export class SectionForm implements OnInit {
   }
 
   private resolveGradeId(s?: Section | null): string | null {
-    if (!s?.grade) return null;
+    if (!s) return null;
+    if (s.gradeId) return s.gradeId;
+    if (!s.grade) return null;
     return typeof s.grade === 'string' ? s.grade : s.grade?.id ?? null;
   }
 
   private resolveYearId(s?: Section | null): string | null {
-    if (!s?.yearAcademic) return null;
+    if (!s) return null;
+    if (s.yearAcademicId) return s.yearAcademicId;
+    if (!s.yearAcademic) return null;
     return typeof s.yearAcademic === 'string' ? s.yearAcademic : (s.yearAcademic as { id?: string })?.id ?? null;
   }
 

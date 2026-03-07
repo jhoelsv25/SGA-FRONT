@@ -1,36 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Schedule } from '../../types/schedule-types';
-import { Button } from '@shared/directives';
-
-const DAY_ORDER: Schedule['dayOfWeek'][] = [
-  'monday',
-  'tuesday',
-  'wednesday',
-  'thursday',
-  'friday',
-  'saturday',
-  'sunday',
-];
-
-const DAY_LABELS: Record<Schedule['dayOfWeek'], string> = {
-  monday: 'Lun',
-  tuesday: 'Mar',
-  wednesday: 'Mié',
-  thursday: 'Jue',
-  friday: 'Vie',
-  saturday: 'Sáb',
-  sunday: 'Dom',
-};
-
-const HOUR_START = 7;
-const HOUR_END = 19;
-const SLOTS_PER_HOUR = 2; // 30-min slots
+import { DAY_ORDER, DAY_LABELS, HOUR_END, HOUR_START, SLOTS_PER_HOUR } from '../../config/schedule.constants';
 
 @Component({
   selector: 'sga-schedule-calendar',
   standalone: true,
-  imports: [CommonModule, Button],
+  imports: [CommonModule],
   templateUrl: './schedule-calendar.html',
   styleUrls: ['./schedule-calendar.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
