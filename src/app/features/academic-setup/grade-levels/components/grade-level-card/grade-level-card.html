@@ -12,7 +12,10 @@
       <div
         class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
         role="group"
+        tabindex="0"
         (click)="$event.stopPropagation()"
+        (keydown.enter)="$event.preventDefault(); $event.stopPropagation()"
+        (keydown.space)="$event.preventDefault(); $event.stopPropagation()"
       >
         <button
           sgaButton
