@@ -54,7 +54,7 @@
 
   <div class="p-6 pt-5 grow">
     <div class="space-y-4">
-      @if (section().capacity != null || section().availableSlots != null) {
+      @if (section().capacity !== null || section().availableSlots !== null) {
         <div
           class="flex items-center justify-between text-xs px-3 py-2.5 rounded-3xl bg-base-200/10 border border-base-200/30 hover:bg-base-200/20 transition-colors"
         >
@@ -63,9 +63,9 @@
             <span>Capacidad</span>
           </div>
           <span class="font-bold text-primary">
-            @if (section().availableSlots != null) {
+            @if (section().availableSlots !== null) {
               {{ section().availableSlots }} cupos
-            } @else if (section().capacity != null) {
+            } @else if (section().capacity !== null) {
               {{ section().capacity }} estudiantes
             }
           </span>
