@@ -44,21 +44,11 @@
     </div>
     <div>
       <label class="label-form" for="subjectArea">Área curricular</label>
-      <sga-select
-        id="subjectArea"
-        [options]="subjectAreaOptions()"
-        formControlName="subjectArea"
-        placeholder="Seleccionar área"
-      />
+      <sga-subject-area-select id="subjectArea" formControlName="subjectArea" placeholder="Seleccionar área" />
     </div>
     <div>
       <label class="label-form" for="grade">Grado / Nivel</label>
-      <sga-select
-        id="grade"
-        [options]="gradeOptions()"
-        formControlName="grade"
-        placeholder="Seleccionar grado"
-      />
+      <sga-grade-level-select id="grade" formControlName="grade" placeholder="Seleccionar grado" />
     </div>
     <div class="md:col-span-2 flex items-center gap-2">
       <sga-checkbox formControlName="active" label="Activo" />

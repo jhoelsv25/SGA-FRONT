@@ -46,12 +46,7 @@
     </div>
     <div class="md:col-span-2">
       <label class="label-form" for="course">Curso</label>
-      <sga-select
-        id="course"
-        [options]="courses()"
-        formControlName="course"
-        placeholder="Seleccionar curso"
-      />
+      <sga-course-select id="course" formControlName="course" placeholder="Seleccionar curso" />
     </div>
   </div>
   <footer class="flex items-center justify-end gap-2 mt-6">

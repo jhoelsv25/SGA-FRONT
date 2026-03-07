@@ -3,12 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Card } from '@shared/ui/card/card';
 import { Button } from '@shared/directives';
 import type { SectionCourse } from '../../types/section-course-types';
-
-const MODALITY_LABELS: Record<string, string> = {
-  online: 'En línea',
-  offline: 'Presencial',
-  hybrid: 'Híbrido',
-};
+import { MODALITY_LABELS } from '../../config/form.constants';
 
 @Component({
   selector: 'sga-section-course-card',
@@ -24,5 +19,15 @@ export class SectionCourseCardComponent {
 
   modalityLabel(modality?: string): string {
     return (modality && MODALITY_LABELS[modality]) || modality || '-';
+  }
+
+  getTeacherLabel(teacher?: SectionCourse['teacher']): string {
+    if (!teacher) return '-';
+    if (typeof teacher === 'string') return teacher;
+    const person = teacher.person as { firstName?: string; lastName?: string } | undefined;
+    if (person?.firstName || person?.lastName) {
+      return `${person.firstName ?? ''} ${person.lastName ?? ''}`.trim();
+    }
+    return teacher.teacherCode ?? teacher.specialization ?? teacher.id ?? '-';
   }
 }

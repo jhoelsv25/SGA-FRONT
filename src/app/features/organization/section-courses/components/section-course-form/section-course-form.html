@@ -15,29 +15,26 @@
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <div>
       <label class="label-form" for="section">Sección</label>
-      <sga-select
+      <sga-section-select
         id="section"
-        [options]="sectionOptions()"
         formControlName="section"
         placeholder="Seleccionar sección"
       />
     </div>
     <div>
       <label class="label-form" for="course">Curso</label>
-      <sga-select
-        id="course"
-        [options]="courseOptions()"
-        formControlName="course"
-        placeholder="Seleccionar curso"
-      />
+      <sga-course-select id="course" formControlName="course" placeholder="Seleccionar curso" />
     </div>
     <div>
       <label class="label-form" for="academicYear">Año académico</label>
-      <sga-select
-        id="academicYear"
-        [options]="yearOptions()"
-        formControlName="academicYear"
-        placeholder="Seleccionar año"
+      <sga-year-academic-select id="academicYear" formControlName="academicYear" placeholder="Seleccionar año" />
+    </div>
+    <div>
+      <label class="label-form" for="teacher">Docente</label>
+      <sga-teacher-select
+        id="teacher"
+        formControlName="teacher"
+        placeholder="Seleccionar docente"
       />
     </div>
     <div>

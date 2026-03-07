@@ -4,17 +4,16 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Button } from '@shared/directives';
 import { Input } from '@shared/ui/input/input';
 import { Select } from '@shared/ui/select/select';
+import { SectionSelect, YearAcademicSelect } from '@shared/components/selects';
 import { EnrollmentStore } from '../../services/store/enrollment.store';
 import { Enrollment } from '../../types/enrollment-types';
 import { StudentApi } from '@features/students/services/api/student-api';
-import { SectionApi } from '@features/organization/sections/services/api/section-api';
-import { YearAcademicApi } from '@features/academic-setup/year-academic/services/api/year-academic-api';
 import type { SelectOption } from '@shared/ui/select/select';
 
 @Component({
   selector: 'sga-enrollment-form',
   standalone: true,
-  imports: [ReactiveFormsModule, Button, Select, Input],
+  imports: [ReactiveFormsModule, Button, Select, Input, SectionSelect, YearAcademicSelect],
   templateUrl: './enrollment-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -24,8 +23,6 @@ export class EnrollmentForm implements OnInit {
   private ref = inject(DialogRef);
   private fb = inject(FormBuilder);
   private studentApi = inject(StudentApi);
-  private sectionApi = inject(SectionApi);
-  private yearApi = inject(YearAcademicApi);
 
   form = this.fb.group({
     student: [null as string | null, [Validators.required]],
@@ -39,8 +36,6 @@ export class EnrollmentForm implements OnInit {
 
   current: Enrollment | null = null;
   studentOptions: SelectOption[] = [];
-  sectionOptions: SelectOption[] = [];
-  yearOptions: SelectOption[] = [];
 
   typeOptions: SelectOption[] = [
     { value: 'new', label: 'Nuevo' },
@@ -74,20 +69,6 @@ export class EnrollmentForm implements OnInit {
         this.studentOptions = (res.data ?? []).map((s) => ({
           value: s.id,
           label: (s as { name?: string }).name ?? (`${(s as { firstName?: string }).firstName ?? ''} ${(s as { lastName?: string }).lastName ?? ''}`.trim() || s.id),
-        }));
-      },
-    });
-    this.sectionApi.getAll({}).subscribe({
-      next: (res) => {
-        const list = (res as { data?: { id: string; name: string }[] }).data ?? [];
-        this.sectionOptions = list.map((s) => ({ value: s.id, label: s.name || s.id }));
-      },
-    });
-    this.yearApi.getAll({}).subscribe({
-      next: (res) => {
-        this.yearOptions = (res.data ?? []).map((y: { id: string; name?: string; year?: number }) => ({
-          value: y.id,
-          label: y.name ?? String(y.year ?? y.id),
         }));
       },
     });

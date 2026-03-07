@@ -9,10 +9,9 @@ import {
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Input } from '@shared/ui/input/input';
-import { Select } from '@shared/ui/select/select';
+import { CourseSelect } from '@shared/components/selects';
 import { Button } from '@shared/directives';
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
-import { CourseApi } from '@features/academic-setup/courses/services/course-api';
 import { CompetencyStore } from '../../services/store/competency.store';
 import type { Competency } from '../../types/competency-types';
 import { Observable } from 'rxjs';
@@ -20,7 +19,7 @@ import { Observable } from 'rxjs';
 @Component({
   selector: 'sga-competency-form',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, Input, Select, Button],
+  imports: [ReactiveFormsModule, CommonModule, Input, CourseSelect, Button],
   templateUrl: './competency-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -28,12 +27,10 @@ export class CompetencyForm implements OnInit {
   private data = inject(DIALOG_DATA, { optional: true });
   private ref = inject(DialogRef);
   private fb = inject(FormBuilder);
-  private courseApi = inject(CourseApi);
   private store = inject(CompetencyStore);
 
   current: Competency | null = null;
   saving = signal(false);
-  courses = signal<{ value: string; label: string }[]>([]);
 
   title = computed(() => (this.current ? 'Editar competencia' : 'Crear competencia'));
   subTitle = computed(() => 'Complete el formulario para continuar');
@@ -57,12 +54,6 @@ export class CompetencyForm implements OnInit {
         course: this.current.course?.id ?? null,
       });
     }
-    this.courseApi.getAll({}).subscribe({
-      next: (res) => {
-        const list = (res.data ?? []) as { id: string; name?: string }[];
-        this.courses.set(list.map((c) => ({ value: c.id, label: c.name ?? c.id })));
-      },
-    });
   }
 
   onClose() {

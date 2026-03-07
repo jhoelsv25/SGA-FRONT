@@ -1,12 +1,14 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { Button } from '@shared/directives';
 import { Input } from '@shared/ui/input/input';
-import { Select } from '@shared/ui/select/select';
+import { Select, type SelectOption } from '@shared/ui/select/select';
 import { ScheduleStore } from '../../services/store/schedule.store';
 import { Schedule, ScheduleCreate } from '../../types/schedule-types';
+import { SectionCourseStore } from '@features/organization/section-courses/services/store/section-course.store';
+import type { SectionCourse } from '@features/organization/section-courses/types/section-course-types';
+import { computed } from '@angular/core';
 
 @Component({
   selector: 'sga-schedule-form',
@@ -17,14 +19,24 @@ import { Schedule, ScheduleCreate } from '../../types/schedule-types';
 })
 export class ScheduleForm implements OnInit {
   private store = inject(ScheduleStore);
+  private sectionCourseStore = inject(SectionCourseStore);
   private data = inject(DIALOG_DATA, { optional: true });
   private ref = inject(DialogRef);
   private fb = inject(FormBuilder);
-  private http = inject(HttpClient);
 
   form!: FormGroup;
   current: Schedule | null = null;
-  sectionCourseOptions: { value: string; label: string }[] = [];
+
+  sectionCourseOptions = computed<SelectOption[]>(() => {
+    const list = this.sectionCourseStore.data();
+    return list.map((sc: SectionCourse) => ({
+      value: sc.id,
+      label:
+        sc.course?.name && sc.section?.name
+          ? `${sc.course.name} - ${sc.section.name}`
+          : sc.course?.name ?? sc.section?.name ?? String(sc.id).slice(0, 12) + '...',
+    }));
+  });
 
   dayOptions = [
     { value: 'monday', label: 'Lunes' },
@@ -47,23 +59,20 @@ export class ScheduleForm implements OnInit {
       : null;
 
     this.form = this.fb.group({
-      title: [this.current?.title ?? '', [Validators.required]],
+      sectionCourse: [sectionCourseId ?? null, [Validators.required]],
       dayOfWeek: [this.current?.dayOfWeek ?? 'monday', [Validators.required]],
-      description: [this.current?.description ?? ''],
       startAt: [start, [Validators.required]],
       endAt: [end, [Validators.required]],
       classroom: [this.current?.classroom ?? '', [Validators.required]],
-      sectionCourse: [sectionCourseId ?? null, [Validators.required]],
+      description: [this.current?.description ?? ''],
     });
 
-    this.http.get<{ id: string }[]>(`section-course`).subscribe({
-      next: (list) => {
-        this.sectionCourseOptions = (list ?? []).map((item) => ({
-          value: item.id,
-          label: String(item.id).slice(0, 8) + '...',
-        }));
-      },
-    });
+    this.sectionCourseStore.loadAll({});
+  }
+
+  private getTitleFromSectionCourse(sectionCourseId: string): string {
+    const opt = this.sectionCourseOptions().find((o) => o.value === sectionCourseId);
+    return (opt?.label as string) ?? sectionCourseId;
   }
 
   private formatTime(v: string | Date): string {
@@ -78,8 +87,9 @@ export class ScheduleForm implements OnInit {
   submit() {
     if (this.form.invalid) return;
     const v = this.form.value;
+    const title = this.getTitleFromSectionCourse(v.sectionCourse);
     const payload: ScheduleCreate = {
-      title: v.title,
+      title,
       dayOfWeek: v.dayOfWeek,
       description: v.description || undefined,
       startAt: v.startAt,
