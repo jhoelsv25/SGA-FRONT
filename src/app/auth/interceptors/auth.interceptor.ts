@@ -9,16 +9,15 @@ let isRefreshing = false;
 const refreshTokenSubject = new BehaviorSubject<string | null>(null);
 
 function shouldSkipRefresh(url: string): boolean {
-  const skipUrls = [
-    '/auth/login',
-    '/auth/refresh-token',
-    '/auth/check-token',
-    '/auth/logout',
-    '/auth/forgot-password',
-    '/auth/reset-password',
-    '/auth/modules',
+
+  const skipPaths = [
+    'auth/login',
+    'auth/refresh-token',
+    'auth/logout',
+    'auth/forgot-password',
+    'auth/reset-password',
   ];
-  return skipUrls.some((skipUrl) => url.includes(skipUrl));
+  return skipPaths.some((path) => url.includes(path));
 }
 
 function addToken(request: HttpRequest<unknown>, token: string): HttpRequest<unknown> {
@@ -38,14 +37,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      // Solo intentar refresh en 401 si:
-      // 1. No es una URL que debe saltarse
-      // 2. Hay un token en localStorage (indica que hubo sesión)
       if (error.status === 401 && !shouldSkipRefresh(req.url) && token) {
         return handle401Error(req, next, tokenService, authFacade);
       }
 
-      // Para otros errores o si no hay token, simplemente propagarlos
       return throwError(() => error);
     }),
   );
@@ -57,7 +52,6 @@ function handle401Error(
   tokenService: TokenManager,
   authFacade: AuthFacade,
 ): Observable<HttpEvent<unknown>> {
-  // Si ya estamos refrescando, esperar el resultado
   if (isRefreshing) {
     return refreshTokenSubject.pipe(
       filter((token) => token !== null),
