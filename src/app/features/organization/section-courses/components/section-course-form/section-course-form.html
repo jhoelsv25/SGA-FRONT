@@ -1,7 +1,14 @@
 <form [formGroup]="form" class="grid gap-4" (ngSubmit)="onSubmit()">
   <header class="flex items-center justify-between mb-4">
     <h2 class="text-lg font-semibold">{{ title() }}</h2>
-    <button type="button" sgaButton color="secondary" variant="ghost" shape="pill" (click)="onClose()">
+    <button
+      type="button"
+      sgaButton
+      color="secondary"
+      variant="ghost"
+      shape="pill"
+      (click)="onClose()"
+    >
       <i class="fas fa-times"></i>
     </button>
   </header>
@@ -35,7 +42,12 @@
     </div>
     <div>
       <label class="label-form" for="modality">Modalidad</label>
-      <sga-select id="modality" [options]="modalityOptions" formControlName="modality" [searchable]="false" />
+      <sga-select
+        id="modality"
+        [options]="modalityOptions"
+        formControlName="modality"
+        [searchable]="false"
+      />
     </div>
     <div>
       <label class="label-form" for="maxStudents">Máx. estudiantes</label>
@@ -45,13 +57,20 @@
       <label class="label-form" for="enrolledStudents">Matriculados</label>
       <sga-input id="enrolledStudents" type="number" formControlName="enrolledStudents" />
     </div>
-    <div>
+    <div class="md:col-span-2">
       <label class="label-form" for="status">Estado</label>
-      <sga-select id="status" [options]="statusOptions" formControlName="status" [searchable]="false" />
+      <sga-select
+        id="status"
+        [options]="statusOptions"
+        formControlName="status"
+        [searchable]="false"
+      />
     </div>
   </div>
   <footer class="flex justify-end gap-2 mt-4">
-    <button type="button" sgaButton color="secondary" variant="outline" (click)="onClose()">Cancelar</button>
+    <button type="button" sgaButton color="secondary" variant="outline" (click)="onClose()">
+      Cancelar
+    </button>
     <button type="submit" sgaButton color="primary" [disabled]="form.invalid || saving()">
       {{ saving() ? 'Guardando...' : 'Guardar' }}
     </button>

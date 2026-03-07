@@ -7,7 +7,7 @@ import { Select } from '@shared/ui/select/select';
 import { SectionStore } from '../../services/store/section.store';
 import { Section, SectionCreate } from '../../types/section-types';
 import { YearAcademicApi } from '@features/academic-setup/year-academic/services/api/year-academic-api';
-import { HttpClient } from '@angular/common/http';
+import { GradeLevelApi } from '@features/academic-setup/grade-levels/services/api/grade-level-api';
 
 @Component({
   selector: 'sga-section-form',
@@ -22,7 +22,7 @@ export class SectionForm implements OnInit {
   private ref = inject(DialogRef);
   private fb = inject(FormBuilder);
   private yearApi = inject(YearAcademicApi);
-  private http = inject(HttpClient);
+  private gradeLevelApi = inject(GradeLevelApi);
 
   form!: FormGroup;
   current: Section | null = null;
@@ -54,14 +54,23 @@ export class SectionForm implements OnInit {
         label: y.name ?? String(y.year ?? y.id),
       }));
     });
-    this.http.get<{ id: string; finalGrade?: string }[]>(`grades`).subscribe({
+    this.gradeLevelApi.getAll().subscribe({
       next: (list) => {
         this.gradeOptions = (list ?? []).map((g) => ({
           value: g.id,
-          label: String(g.finalGrade ?? g.id),
+          label: g.name ?? `${g.gradeNumber}° ${this.getLevelLabel(g.level)}`,
         }));
       },
     });
+  }
+
+  private getLevelLabel(level: string): string {
+    const labels: Record<string, string> = {
+      primary: 'Primaria',
+      secondary: 'Secundaria',
+      higher: 'Superior',
+    };
+    return labels[level] || level;
   }
 
   private resolveGradeId(s?: Section | null): string | null {
@@ -76,7 +85,23 @@ export class SectionForm implements OnInit {
 
   submit() {
     if (this.form.invalid) return;
-    const v = this.form.value as SectionCreate;
+    const raw = this.form.value;
+    const capacityVal = raw.capacity != null && raw.capacity !== '' ? Number(raw.capacity) : null;
+    const availableSlotsVal = raw.availableSlots != null && raw.availableSlots !== '' ? Number(raw.availableSlots) : 0;
+
+    const v: SectionCreate = {
+      name: raw.name,
+      grade: raw.grade,
+      yearAcademic: raw.yearAcademic,
+      shift: raw.shift,
+      tutor: raw.tutor ?? '',
+      classroom: raw.classroom ?? '',
+      availableSlots: Math.max(0, Math.floor(Number.isNaN(availableSlotsVal) ? 0 : availableSlotsVal)),
+    };
+    if (capacityVal != null && !Number.isNaN(capacityVal)) {
+      const cap = Math.floor(capacityVal);
+      if (cap >= 1 && cap <= 100) v.capacity = cap;
+    }
     if (this.current?.id) {
       this.store.update(this.current.id, v);
     } else {

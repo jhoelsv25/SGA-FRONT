@@ -1,20 +1,28 @@
 <sga-card
-  class="group flex flex-col h-full hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 border-base-200 overflow-hidden bg-base-100"
+  class="group flex flex-col h-full transition-all duration-300 border border-base-200/80 overflow-hidden bg-base-100 rounded-4xl shadow-sm"
 >
-  <div class="flex flex-col space-y-1.5 p-6 pb-3 border-b border-base-200 bg-base-200/10">
+  <div class="flex flex-col space-y-1.5 p-6 pb-3 border-b border-base-200/50 bg-base-200/10">
     <div class="flex justify-between items-start">
       <div
-        class="p-2.5 rounded-xl bg-primary/10 text-primary border border-primary/20 shadow-sm transition-colors"
+        class="flex flex-col items-center justify-center w-14 h-14 rounded-2xl shadow-sm border bg-primary/10 text-primary border-primary/20"
       >
-        <i class="fas fa-chalkboard-teacher text-lg"></i>
+        <i class="fas fa-chalkboard-teacher text-xl"></i>
       </div>
-      <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div
+        class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
+        role="group"
+        tabindex="0"
+        (click)="$event.stopPropagation()"
+        (keydown.enter)="$event.preventDefault(); $event.stopPropagation()"
+        (keydown.space)="$event.preventDefault(); $event.stopPropagation()"
+      >
         <button
           sgaButton
           variant="ghost"
           size="sm"
-          class="rounded-lg h-8 w-8 p-0"
-          (click)="edit.emit(sectionCourse())"
+          class="rounded-lg h-8 w-8 p-0 hover:bg-base-200/60"
+          (click)="edit.emit(sectionCourse()); $event.stopPropagation()"
+          title="Editar"
         >
           <i class="fas fa-edit text-xs"></i>
         </button>
@@ -23,39 +31,53 @@
           variant="ghost"
           size="sm"
           class="rounded-lg h-8 w-8 p-0 text-error hover:bg-error/10"
-          (click)="delete.emit(sectionCourse())"
+          (click)="delete.emit(sectionCourse()); $event.stopPropagation()"
+          title="Eliminar"
         >
           <i class="fas fa-trash text-xs"></i>
         </button>
       </div>
     </div>
     <h2
-      class="text-2xl font-semibold leading-none tracking-tight mt-4 text-xl font-bold text-base-content group-hover:text-primary transition-colors"
+      class="leading-none tracking-tight mt-4 text-xl font-bold text-base-content group-hover:text-primary transition-colors"
     >
       {{ sectionCourse().course?.name ?? 'Curso' }}
     </h2>
-    <p class="text-sm text-base-content/60 mt-0.5">
-      Sección {{ sectionCourse().section?.name ?? '-' }}
-    </p>
+    <div class="flex items-center gap-2 mt-1">
+      <span
+        class="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded border bg-base-200/80 text-base-content/70 border-base-200"
+      >
+        Sección {{ sectionCourse().section?.name ?? '-' }}
+      </span>
+    </div>
   </div>
 
   <div class="p-6 pt-5 grow">
-    <div class="space-y-3">
-      <div class="flex flex-wrap items-center gap-2">
-        <span class="text-xs font-semibold px-2 py-1 rounded bg-base-200 text-base-content/80">
+    <div class="space-y-4">
+      <div class="flex items-center gap-2 flex-wrap">
+        <span
+          class="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded border bg-base-200/80 text-base-content/70 border-base-200"
+        >
           {{ modalityLabel(sectionCourse().modality) }}
         </span>
-        @if (sectionCourse().maxStudents !== null) {
-          <span class="text-xs font-semibold px-2 py-1 rounded bg-primary/10 text-primary">
-            Máx. {{ sectionCourse().maxStudents }} estudiantes
-          </span>
+        @if (sectionCourse().maxStudents != null || sectionCourse().enrolledStudents != null) {
+          <div
+            class="flex items-center justify-between text-xs px-3 py-2.5 rounded-3xl bg-base-200/10 border border-base-200/30 hover:bg-base-200/20 transition-colors flex-1 min-w-0"
+          >
+            <div class="flex items-center gap-2 text-base-content/50">
+              <i class="fas fa-users text-primary/50"></i>
+              <span>Estudiantes</span>
+            </div>
+            <span class="font-bold text-primary">
+              @if (sectionCourse().enrolledStudents != null) {
+                {{ sectionCourse().enrolledStudents }}/{{ sectionCourse().maxStudents ?? '-' }}
+              } @else if (sectionCourse().maxStudents != null) {
+                Máx. {{ sectionCourse().maxStudents }}
+              }
+            </span>
+          </div>
         }
       </div>
-      @if (sectionCourse().enrolledStudents !== null) {
-        <p class="text-sm text-base-content/60">
-          Matriculados: {{ sectionCourse().enrolledStudents }}
-        </p>
-      }
     </div>
   </div>
 </sga-card>
