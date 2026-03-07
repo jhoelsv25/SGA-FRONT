@@ -30,3 +30,8 @@ export type TeacherAttendanceBulkResponse = {
   processed: number;
   errors?: string[];
 };
+
+export type TeacherAttendanceResponse = {
+  message: string;
+  data: TeacherAttendance;
+};

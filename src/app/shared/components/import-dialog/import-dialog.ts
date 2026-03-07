@@ -13,6 +13,8 @@ export interface ImportDialogData {
   validateRow?: (row: Record<string, unknown>, index: number) => string | null;
   /** Llama al backend para importar; devuelve created y opcionalmente errors. */
   importRows: (rows: Record<string, unknown>[]) => import('rxjs').Observable<{ created: number; errors?: { row: number; message: string }[] }>;
+  /** Opcional: importar enviando el archivo Excel directo al backend. */
+  importFile?: (file: File) => import('rxjs').Observable<{ created: number; errors?: { row: number; message: string }[] }>;
 }
 
 @Component({
@@ -33,6 +35,7 @@ export class ImportDialog {
   templateSheetName = this.data.templateSheetName ?? 'Plantilla';
   validateRow = this.data.validateRow;
   importRows = this.data.importRows;
+  importFile = this.data.importFile;
 
   file = signal<File | null>(null);
   parsed = signal<Record<string, unknown>[]>([]);
@@ -48,6 +51,11 @@ export class ImportDialog {
     this.file.set(f);
     this.errorMessage.set(null);
     this.result.set(null);
+    if (this.importFile) {
+      this.parsed.set([]);
+      this.validationErrors.set(new Map());
+      return;
+    }
     this.excel.parse(f, this.columns).then(
       (rows) => {
         this.parsed.set(rows);
@@ -82,6 +90,30 @@ export class ImportDialog {
   }
 
   confirm(): void {
+    if (this.importFile) {
+      const selectedFile = this.file();
+      if (!selectedFile) {
+        this.errorMessage.set('Seleccione un archivo para importar.');
+        return;
+      }
+      this.loading.set(true);
+      this.errorMessage.set(null);
+      this.importFile(selectedFile).subscribe({
+        next: (res) => {
+          this.loading.set(false);
+          this.result.set(res);
+          if (res.created > 0 && (!res.errors || res.errors.length === 0)) {
+            setTimeout(() => this.ref.close(res), 1500);
+          }
+        },
+        error: (err) => {
+          this.loading.set(false);
+          this.errorMessage.set(err?.error?.message ?? err?.message ?? 'Error al importar');
+        },
+      });
+      return;
+    }
+
     const rows = this.parsed();
     if (rows.length === 0) {
       this.errorMessage.set('No hay filas para importar.');

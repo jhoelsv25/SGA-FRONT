@@ -5,6 +5,7 @@ import {
   TeacherAttendance,
   TeacherAttendanceBulkRequest,
   TeacherAttendanceBulkResponse,
+  TeacherAttendanceResponse,
 } from '@features/teachers/types/teacher-attendance-types';
 import { Observable } from 'rxjs';
 
@@ -19,7 +20,17 @@ export class TeacherAttendanceApi {
     return this.http.get<DataResponse<TeacherAttendance>>(this.baseUrl, { params });
   }
 
+  getTeachers(): Observable<{ message: string; data: { id: string; teacherCode: string; specialization: string }[] }> {
+    return this.http.get<{ message: string; data: { id: string; teacherCode: string; specialization: string }[] }>(
+      `${this.baseUrl}/teachers`,
+    );
+  }
+
   registerBulk(payload: TeacherAttendanceBulkRequest): Observable<TeacherAttendanceBulkResponse> {
     return this.http.post<TeacherAttendanceBulkResponse>(`${this.baseUrl}/bulk`, payload);
+  }
+
+  update(id: string, payload: Partial<TeacherAttendance>): Observable<TeacherAttendanceResponse> {
+    return this.http.patch<TeacherAttendanceResponse>(`${this.baseUrl}/${id}`, payload);
   }
 }

@@ -4,26 +4,27 @@ import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@ang
 import { FormsModule } from '@angular/forms';
 import { ExcelService } from '@core/services/excel.service';
 import { Toast } from '@core/services/toast';
-import { TeacherApi } from '@features/teachers/services/api/teacher-api';
 import { TeacherAttendanceApi } from '@features/teachers/services/api/teacher-attendance-api';
 import {
   TeacherAttendance,
   TeacherAttendanceStatus,
 } from '@features/teachers/types/teacher-attendance-types';
-import { Teacher } from '@features/teachers/types/teacher-types';
 import { Button } from '@shared/directives';
 import { HeaderDetail } from '@shared/components/header-detail/header-detail';
 import { ImportDialog } from '@shared/components/import-dialog/import-dialog';
 import { Input } from '@shared/ui/input/input';
+import { Select, SelectOption } from '@shared/ui/select/select';
 import { map } from 'rxjs';
 
 type TeacherAttendanceRow = {
   teacherId: string;
+  attendanceId?: string;
   teacherCode: string;
   teacherLabel: string;
   status: TeacherAttendanceStatus;
   checkInTime: string;
   observations: string;
+  dirty?: boolean;
 };
 
 const ATTENDANCE_COLUMNS = [
@@ -43,12 +44,11 @@ const HEADER_CONFIG = {
 @Component({
   selector: 'sga-teacher-attendances',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderDetail, Input, Button],
+  imports: [CommonModule, FormsModule, HeaderDetail, Input, Button, Select],
   templateUrl: './teacher-attendances.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class TeacherAttendancesPage implements OnInit {
-  private readonly teacherApi = inject(TeacherApi);
   private readonly teacherAttendanceApi = inject(TeacherAttendanceApi);
   private readonly dialog = inject(Dialog);
   private readonly excel = inject(ExcelService);
@@ -56,10 +56,18 @@ export default class TeacherAttendancesPage implements OnInit {
 
   readonly headerConfig = HEADER_CONFIG;
   readonly attendanceDate = signal(new Date().toISOString().slice(0, 10));
-  readonly teachers = signal<Teacher[]>([]);
+  readonly teachers = signal<{ id: string; teacherCode: string; specialization: string }[]>([]);
   readonly rows = signal<TeacherAttendanceRow[]>([]);
   readonly loading = signal(false);
   readonly saving = signal(false);
+  readonly creating = signal(false);
+  readonly rowSyncing = signal<Set<string>>(new Set());
+
+  readonly manualTeacherId = signal('');
+  readonly manualStatus = signal<TeacherAttendanceStatus>('present');
+  readonly manualCheckInTime = signal('08:00');
+  readonly manualObservations = signal('');
+  readonly manualTeacherOptions = signal<SelectOption[]>([]);
 
   ngOnInit(): void {
     this.loadTeachers();
@@ -67,10 +75,14 @@ export default class TeacherAttendancesPage implements OnInit {
 
   loadTeachers(): void {
     this.loading.set(true);
-    this.teacherApi.getAll({ page: 1, size: 9999 }).subscribe({
+    this.teacherAttendanceApi.getTeachers().subscribe({
       next: (response) => {
         const list = response.data ?? [];
         this.teachers.set(list);
+        this.manualTeacherOptions.set([
+          { value: '', label: 'Seleccione docente...' },
+          ...list.map((t) => ({ value: t.id, label: `${t.teacherCode} - ${t.specialization}` })),
+        ]);
         this.rows.set(
           list.map((teacher) => ({
             teacherId: teacher.id,
@@ -79,6 +91,7 @@ export default class TeacherAttendancesPage implements OnInit {
             status: 'present',
             checkInTime: '08:00:00',
             observations: '',
+            dirty: false,
           })),
         );
         this.loading.set(false);
@@ -96,32 +109,210 @@ export default class TeacherAttendancesPage implements OnInit {
     this.loadAttendancesByDate();
   }
 
-  setStatus(teacherId: string, status: TeacherAttendanceStatus): void {
+  onManualStatusChange(value: unknown): void {
+    const v = String(value ?? '').trim();
+    if (v === 'present' || v === 'late' || v === 'absent' || v === 'excused') {
+      this.manualStatus.set(v);
+      return;
+    }
+    this.manualStatus.set('present');
+  }
+
+  onManualTeacherChange(value: unknown): void {
+    this.manualTeacherId.set(value == null ? '' : `${value}`);
+  }
+
+  onManualCheckInTimeChange(value: unknown): void {
+    this.manualCheckInTime.set(value == null ? '08:00' : `${value}`);
+  }
+
+  onManualObservationsChange(value: unknown): void {
+    this.manualObservations.set(value == null ? '' : `${value}`);
+  }
+
+  addManualRecord(): void {
+    const teacherId = this.manualTeacherId();
+    if (!teacherId) {
+      this.toast.warning('Seleccione un docente.');
+      return;
+    }
+
+    const teacher = this.teachers().find((t) => t.id === teacherId);
+    if (!teacher) {
+      this.toast.error('Docente no encontrado.');
+      return;
+    }
+
+    const status = this.manualStatus();
+    const checkInTime = this.normalizeTime(this.manualCheckInTime());
+    const observations = this.manualObservations().trim();
+
     this.rows.update((current) =>
-      current.map((row) => (row.teacherId === teacherId ? { ...row, status } : row)),
+      current.map((row) =>
+        row.teacherId === teacherId
+          ? {
+              ...row,
+              status,
+              checkInTime,
+              observations,
+              dirty: true,
+            }
+          : row,
+      ),
     );
+
+    this.toast.success('Registro manual agregado. Presione "Guardar asistencia manual".');
+    this.manualStatus.set('present');
+    this.manualCheckInTime.set('08:00');
+    this.manualObservations.set('');
+  }
+
+  createManualRecord(): void {
+    const teacherId = this.manualTeacherId();
+    if (!teacherId) {
+      this.toast.warning('Seleccione un docente.');
+      return;
+    }
+
+    const teacher = this.teachers().find((t) => t.id === teacherId);
+    if (!teacher) {
+      this.toast.error('Docente no encontrado.');
+      return;
+    }
+
+    this.creating.set(true);
+    this.teacherAttendanceApi
+      .registerBulk({
+        date: this.attendanceDate(),
+        attendances: [
+          {
+            teacherCode: teacher.teacherCode,
+            status: this.manualStatus(),
+            checkInTime: this.normalizeTime(this.manualCheckInTime()),
+            observations: this.manualObservations().trim() || undefined,
+          },
+        ],
+      })
+      .subscribe({
+        next: (res) => {
+          this.creating.set(false);
+          if (res.success) {
+            this.toast.success('Asistencia creada correctamente.');
+            this.manualStatus.set('present');
+            this.manualCheckInTime.set('08:00');
+            this.manualObservations.set('');
+            this.loadAttendancesByDate();
+          } else {
+            this.toast.error(res.message);
+          }
+        },
+        error: (error) => {
+          this.creating.set(false);
+          this.toast.error(
+            error?.error?.message ?? error?.message ?? 'No se pudo crear la asistencia',
+          );
+        },
+      });
+  }
+
+  setStatus(teacherId: string, status: TeacherAttendanceStatus): void {
+    const currentRow = this.rows().find((row) => row.teacherId === teacherId);
+    if (!currentRow || currentRow.status === status || this.rowSyncing().has(teacherId)) return;
+
+    const previousStatus = currentRow.status;
+    this.rows.update((current) =>
+      current.map((row) =>
+        row.teacherId === teacherId ? { ...row, status, dirty: true } : row,
+      ),
+    );
+
+    this.setRowSyncing(teacherId, true);
+
+    if (currentRow.attendanceId) {
+      this.teacherAttendanceApi
+        .update(currentRow.attendanceId, {
+          status,
+          checkInTime: this.normalizeTime(currentRow.checkInTime),
+          observations: currentRow.observations || undefined,
+        })
+        .subscribe({
+          next: () => this.setRowSyncing(teacherId, false),
+          error: (error) => {
+            this.setRowSyncing(teacherId, false);
+            this.rows.update((rows) =>
+              rows.map((row) =>
+                row.teacherId === teacherId ? { ...row, status: previousStatus } : row,
+              ),
+            );
+            this.toast.error(
+              error?.error?.message ?? error?.message ?? 'No se pudo actualizar la asistencia',
+            );
+          },
+        });
+      return;
+    }
+
+    this.teacherAttendanceApi
+      .registerBulk({
+        date: this.attendanceDate(),
+        attendances: [
+          {
+            teacherCode: currentRow.teacherCode,
+            status,
+            checkInTime: this.normalizeTime(currentRow.checkInTime),
+            observations: currentRow.observations || undefined,
+          },
+        ],
+      })
+      .subscribe({
+        next: () => {
+          this.setRowSyncing(teacherId, false);
+          this.loadAttendancesByDate();
+        },
+        error: (error) => {
+          this.setRowSyncing(teacherId, false);
+          this.rows.update((rows) =>
+            rows.map((row) =>
+              row.teacherId === teacherId ? { ...row, status: previousStatus } : row,
+            ),
+          );
+          this.toast.error(
+            error?.error?.message ?? error?.message ?? 'No se pudo registrar la asistencia',
+          );
+        },
+      });
   }
 
   updateCheckInTime(teacherId: string, value: unknown): void {
     const parsed = String(value ?? '').trim();
     this.rows.update((current) =>
-      current.map((row) => (row.teacherId === teacherId ? { ...row, checkInTime: parsed } : row)),
+      current.map((row) =>
+        row.teacherId === teacherId ? { ...row, checkInTime: parsed, dirty: true } : row,
+      ),
     );
   }
 
   updateObservations(teacherId: string, value: unknown): void {
     const parsed = String(value ?? '').trim();
     this.rows.update((current) =>
-      current.map((row) => (row.teacherId === teacherId ? { ...row, observations: parsed } : row)),
+      current.map((row) =>
+        row.teacherId === teacherId ? { ...row, observations: parsed, dirty: true } : row,
+      ),
     );
   }
 
   saveManual(): void {
+    const dirtyRows = this.rows().filter((row) => row.dirty);
+    if (dirtyRows.length === 0) {
+      this.toast.info('No hay cambios manuales para guardar.');
+      return;
+    }
+
     this.saving.set(true);
     this.teacherAttendanceApi
       .registerBulk({
         date: this.attendanceDate(),
-        attendances: this.rows().map((row) => ({
+        attendances: dirtyRows.map((row) => ({
           teacherCode: row.teacherCode,
           status: row.status,
           checkInTime: this.normalizeTime(row.checkInTime),
@@ -133,6 +324,7 @@ export default class TeacherAttendancesPage implements OnInit {
           this.saving.set(false);
           if (response.success) {
             this.toast.success(`${response.message}. Procesados: ${response.processed}`);
+            this.loadAttendancesByDate();
           } else {
             this.toast.error(response.message);
           }
@@ -226,17 +418,32 @@ export default class TeacherAttendancesPage implements OnInit {
         this.rows.update((current) =>
           current.map((row) => {
             const existing = attendanceByCode.get(row.teacherCode);
-            if (!existing) return row;
+            if (!existing) {
+              return {
+                ...row,
+                attendanceId: undefined,
+                status: 'present',
+                checkInTime: '08:00:00',
+                observations: '',
+                dirty: false,
+              };
+            }
             return {
               ...row,
+              attendanceId: existing.id,
               status: existing.status ?? row.status,
               checkInTime: this.normalizeTime(existing.checkInTime ?? row.checkInTime),
               observations: existing.observations ?? row.observations,
+              dirty: false,
             };
           }),
         );
       },
     });
+  }
+
+  isRowSyncing(teacherId: string): boolean {
+    return this.rowSyncing().has(teacherId);
   }
 
   private parseStatus(value: unknown): TeacherAttendanceStatus | null {
@@ -276,5 +483,14 @@ export default class TeacherAttendancesPage implements OnInit {
     if (teacher.id) return teacherCodeById.get(teacher.id) ?? null;
 
     return null;
+  }
+
+  private setRowSyncing(teacherId: string, syncing: boolean): void {
+    this.rowSyncing.update((current) => {
+      const next = new Set(current);
+      if (syncing) next.add(teacherId);
+      else next.delete(teacherId);
+      return next;
+    });
   }
 }

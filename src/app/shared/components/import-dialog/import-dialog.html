@@ -72,19 +72,26 @@
         <p class="px-4 py-2 text-slate-500 text-xs">Mostrando 20 de {{ parsed().length }} filas.</p>
       }
     </div>
+  }
+
+  @if ((parsed().length > 0 || (importFile && file())) && !result()) {
     <div class="flex justify-end gap-2">
       <button type="button" sgaButton variant="outline" (click)="close()">Cancelar</button>
       <button
         type="button"
         sgaButton
         color="primary"
-        [disabled]="loading() || hasValidationErrors()"
+        [disabled]="loading() || (!importFile && hasValidationErrors())"
         (click)="confirm()"
       >
         @if (loading()) {
           <i class="fas fa-spinner fa-spin mr-2"></i>
         }
-        Importar {{ parsed().length }} fila(s)
+        @if (importFile) {
+          Importar archivo
+        } @else {
+          Importar {{ parsed().length }} fila(s)
+        }
       </button>
     </div>
   }
