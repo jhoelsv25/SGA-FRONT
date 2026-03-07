@@ -6,13 +6,17 @@
     </button>
   </header>
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div>
-      <label class="label-form" for="title">Título</label>
-      <sga-input id="title" formControlName="title" placeholder="Ej: Matemáticas" />
+    <div class="md:col-span-2">
+      <label class="label-form" for="sectionCourse">Curso - Sección</label>
+      <sga-select id="sectionCourse" [options]="sectionCourseOptions()" formControlName="sectionCourse" placeholder="Seleccionar curso y sección" />
     </div>
     <div>
       <label class="label-form" for="dayOfWeek">Día</label>
       <sga-select id="dayOfWeek" [options]="dayOptions" formControlName="dayOfWeek" />
+    </div>
+    <div>
+      <label class="label-form" for="classroom">Aula</label>
+      <sga-input id="classroom" formControlName="classroom" placeholder="Ej: Aula 006" />
     </div>
     <div>
       <label class="label-form" for="startAt">Hora inicio</label>
@@ -21,14 +25,6 @@
     <div>
       <label class="label-form" for="endAt">Hora fin</label>
       <sga-input id="endAt" type="time" formControlName="endAt" />
-    </div>
-    <div>
-      <label class="label-form" for="classroom">Aula</label>
-      <sga-input id="classroom" formControlName="classroom" placeholder="Ej: Aula 101" />
-    </div>
-    <div>
-      <label class="label-form" for="sectionCourse">Sección-Curso</label>
-      <sga-select id="sectionCourse" [options]="sectionCourseOptions" formControlName="sectionCourse" placeholder="Seleccionar" />
     </div>
     <div class="md:col-span-2">
       <label class="label-form" for="description">Descripción</label>

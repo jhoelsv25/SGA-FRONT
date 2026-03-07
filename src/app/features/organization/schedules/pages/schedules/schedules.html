@@ -1,14 +1,33 @@
-<sga-header-detail
-  [config]="headerConfig()"
-  [actions]="headerActions()"
-  (action)="onHeaderAction($event)"
-/>
-<sga-data-source
-  [data]="data()"
-  [columns]="columns()"
-  [loading]="loading()"
-  [pagination]="pagination()"
-  [actions]="rowActions()"
-  (actionClick)="onRowAction($event)"
-  (pageChange)="onPageChange($event)"
-/>
+<div class="p-6 space-y-6">
+  <sga-list-toolbar
+    title="Horarios"
+    icon="fas fa-calendar-alt"
+    description="Vista semanal de horarios por curso y sección"
+    [searchPlaceholder]="'Buscar por curso o aula...'"
+    [filterCount]="0"
+    [showFilter]="false"
+    (searchChange)="onSearch($event)"
+    (refresh)="onRefresh()"
+  >
+    <div list-toolbar-actions class="flex items-center gap-2">
+      <sga-dropdown [items]="actionDropdownItems()">
+        <button
+          sga-dropdown-trigger
+          class="flex items-center justify-center w-10 h-10 rounded-2xl border border-base-200 bg-base-100 hover:bg-base-200 transition-colors text-base-content/60 hover:text-primary"
+          aria-label="Más acciones"
+          type="button"
+        >
+          <i class="fas fa-ellipsis-h"></i>
+        </button>
+      </sga-dropdown>
+    </div>
+  </sga-list-toolbar>
+
+  <sga-schedule-calendar
+    [schedules]="filteredData()"
+    [loading]="loading()"
+    (edit)="editSchedule($event)"
+    (delete)="deleteSchedule($event)"
+    (create)="openForm()"
+  />
+</div>

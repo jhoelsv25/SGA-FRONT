@@ -102,7 +102,7 @@ export default class CompetenciesPage {
       data: { current: current ?? null },
       panelClass: 'dialog-top',
       width: '560px',
-      maxHeight: '530px',
+      maxHeight: '540px',
     });
     ref.closed.subscribe(() => this.onRefresh());
   }

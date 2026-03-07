@@ -101,7 +101,7 @@ export default class SectionCoursesPage {
       data: { current: current ?? null },
       panelClass: 'dialog-top',
       width: '560px',
-      maxHeight: '530px',
+      maxHeight: '90vh',
     });
     ref.closed.subscribe(() => this.onRefresh());
   }

@@ -4,15 +4,13 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Button } from '@shared/directives';
 import { Input } from '@shared/ui/input/input';
 import { Select } from '@shared/ui/select/select';
+import { GradeLevelSelect, YearAcademicSelect } from '@shared/components/selects';
 import { SectionStore } from '../../services/store/section.store';
 import { Section, SectionCreate } from '../../types/section-types';
-import { YearAcademicApi } from '@features/academic-setup/year-academic/services/api/year-academic-api';
-import { GradeLevelApi } from '@features/academic-setup/grade-levels/services/api/grade-level-api';
-
 @Component({
   selector: 'sga-section-form',
   standalone: true,
-  imports: [ReactiveFormsModule, Button, Select, Input],
+  imports: [ReactiveFormsModule, Button, Select, Input, GradeLevelSelect, YearAcademicSelect],
   templateUrl: './section-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -21,13 +19,8 @@ export class SectionForm implements OnInit {
   private data = inject(DIALOG_DATA, { optional: true });
   private ref = inject(DialogRef);
   private fb = inject(FormBuilder);
-  private yearApi = inject(YearAcademicApi);
-  private gradeLevelApi = inject(GradeLevelApi);
-
   form!: FormGroup;
   current: Section | null = null;
-  yearOptions: { value: string; label: string }[] = [];
-  gradeOptions: { value: string; label: string }[] = [];
 
   shiftOptions = [
     { value: 'morning', label: 'Mañana' },
@@ -46,21 +39,6 @@ export class SectionForm implements OnInit {
       availableSlots: [this.current?.availableSlots ?? 0],
       grade: [this.resolveGradeId(this.current) ?? null, [Validators.required]],
       yearAcademic: [this.resolveYearId(this.current) ?? null, [Validators.required]],
-    });
-
-    this.yearApi.getAll({}).subscribe((res) => {
-      this.yearOptions = (res.data ?? []).map((y: { id: string; name?: string; year?: number }) => ({
-        value: y.id,
-        label: y.name ?? String(y.year ?? y.id),
-      }));
-    });
-    this.gradeLevelApi.getAll().subscribe({
-      next: (list) => {
-        this.gradeOptions = (list ?? []).map((g) => ({
-          value: g.id,
-          label: g.name ?? `${g.gradeNumber}° ${this.getLevelLabel(g.level)}`,
-        }));
-      },
     });
   }
 

@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   computed,
   inject,
@@ -10,33 +11,18 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { CommonModule } from '@angular/common';
 import { Input } from '@shared/ui/input/input';
 import { Select } from '@shared/ui/select/select';
+import { SectionSelect, TeacherSelect, CourseSelect, YearAcademicSelect } from '@shared/components/selects';
 import { Button } from '@shared/directives';
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { SectionCourseStore } from '../../services/store/section-course.store';
 import type { SectionCourse, SectionCourseCreate } from '../../types/section-course-types';
-import { SectionApi } from '@features/organization/sections/services/api/section-api';
-import { CourseApi } from '@features/academic-setup/courses/services/course-api';
-import { YearAcademicApi } from '@features/academic-setup/year-academic/services/api/year-academic-api';
-import type { SelectOption } from '@shared/ui/select/select';
 import { Observable } from 'rxjs';
-
-const MODALITY_OPTIONS: SelectOption[] = [
-  { value: 'online', label: 'En línea' },
-  { value: 'offline', label: 'Presencial' },
-  { value: 'hybrid', label: 'Híbrido' },
-];
-
-const STATUS_OPTIONS: SelectOption[] = [
-  { value: 'active', label: 'Activo' },
-  { value: 'inactive', label: 'Inactivo' },
-  { value: 'pending', label: 'Pendiente' },
-  { value: 'suspended', label: 'Suspendido' },
-];
+import { MODALITY_OPTIONS, STATUS_OPTIONS } from '../../config/form.constants';
 
 @Component({
   selector: 'sga-section-course-form',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, Input, Select, Button],
+  imports: [ReactiveFormsModule, CommonModule, Input, Select, SectionSelect, TeacherSelect, CourseSelect, YearAcademicSelect, Button],
   templateUrl: './section-course-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -45,15 +31,10 @@ export class SectionCourseForm implements OnInit {
   private ref = inject(DialogRef);
   private fb = inject(FormBuilder);
   private store = inject(SectionCourseStore);
-  private sectionApi = inject(SectionApi);
-  private courseApi = inject(CourseApi);
-  private yearApi = inject(YearAcademicApi);
+  private cdr = inject(ChangeDetectorRef);
 
   current: SectionCourse | null = null;
   saving = signal(false);
-  sectionOptions = signal<SelectOption[]>([]);
-  courseOptions = signal<SelectOption[]>([]);
-  yearOptions = signal<SelectOption[]>([]);
 
   modalityOptions = MODALITY_OPTIONS;
   statusOptions = STATUS_OPTIONS;
@@ -69,6 +50,7 @@ export class SectionCourseForm implements OnInit {
     academicYear: [null as string | null, Validators.required],
     section: [null as string | null, Validators.required],
     course: [null as string | null, Validators.required],
+    teacher: [null as string | null],
   });
 
   ngOnInit() {
@@ -82,20 +64,10 @@ export class SectionCourseForm implements OnInit {
         academicYear: this.current.academicYear?.id ?? null,
         section: this.current.section?.id ?? null,
         course: this.current.course?.id ?? null,
+        teacher: this.current.teacher ? (typeof this.current.teacher === 'string' ? this.current.teacher : this.current.teacher?.id) : null,
       });
     }
-    this.sectionApi.getAll().subscribe((res) => {
-      const list = (res.data ?? []) as { id: string; name?: string }[];
-      this.sectionOptions.set(list.map((s) => ({ value: s.id, label: s.name ?? s.id })));
-    });
-    this.courseApi.getAll({}).subscribe((res) => {
-      const list = (res.data ?? []) as { id: string; name?: string }[];
-      this.courseOptions.set(list.map((c) => ({ value: c.id, label: c.name ?? c.id })));
-    });
-    this.yearApi.getAll({}).subscribe((res) => {
-      const list = (res.data ?? []) as { id: string; name?: string; year?: number }[];
-      this.yearOptions.set(list.map((y) => ({ value: y.id, label: y.name ?? String(y.year ?? y.id) })));
-    });
+    this.cdr.markForCheck();
   }
 
   onClose() {
@@ -112,6 +84,7 @@ export class SectionCourseForm implements OnInit {
       academicYear: string;
       section: string;
       course: string;
+      teacher: string | null;
     };
     const payload: SectionCourseCreate = {
       modality: v.modality,
@@ -121,6 +94,7 @@ export class SectionCourseForm implements OnInit {
       academicYear: v.academicYear,
       section: v.section,
       course: v.course,
+      ...(v.teacher && { teacher: v.teacher }),
     };
     this.saving.set(true);
     const request: Observable<unknown> = this.current?.id
