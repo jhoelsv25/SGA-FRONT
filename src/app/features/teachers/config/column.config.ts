@@ -1,10 +1,12 @@
 import { DataSourceColumn } from '@core/types/data-source-types';
 
 export const TEACHER_COLUMN: DataSourceColumn[] = [
-  { key: 'firstName', label: 'Nombre', sortable: true },
-  { key: 'lastName', label: 'Apellido', sortable: true },
-  { key: 'email', label: 'Email', sortable: true },
-  { key: 'subject', label: 'Asignatura' },
+  { key: 'teacherCode', label: 'Código', sortable: true },
+  { key: 'specialization', label: 'Especialidad', sortable: true },
+  { key: 'professionalTitle', label: 'Título profesional' },
+  { key: 'contractType', label: 'Contrato' },
+  { key: 'laborRegime', label: 'Régimen' },
   { key: 'hireDate', label: 'F. contratación', type: 'date' },
-  { key: 'isActive', label: 'Activo', type: 'boolean' },
+  { key: 'weeklyHours', label: 'Horas/semana', type: 'number' },
+  { key: 'employmentStatus', label: 'Estado' },
 ];

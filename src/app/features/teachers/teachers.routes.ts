@@ -9,7 +9,7 @@ export default [
   },
   {
     path: 'attendances',
-    loadComponent: () => import('../teachers/pages/teachers/teachers'), // Placeholder
+    loadComponent: () => import('./pages/teacher-attendances/teacher-attendances'),
     title: 'Asistencia Docente',
     data: { permissions: ['view_teacher_attendance', 'manage_teacher_attendance'] },
   },

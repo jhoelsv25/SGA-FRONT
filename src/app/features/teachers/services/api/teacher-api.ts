@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Params } from '@angular/router';
 import { DataResponse } from '@core/types/pagination-types';
 import { Teacher, TeacherResponse } from '@features/teachers/types/teacher-types';
-import { Observable } from 'rxjs';
+import { catchError, forkJoin, map, Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -16,8 +16,8 @@ export class TeacherApi {
     return this.http.get<DataResponse<Teacher>>(`${this.baseUrl}`, { params });
   }
 
-  getById(id: string): Observable<Teacher> {
-    return this.http.get<Teacher>(`${this.baseUrl}/${id}`);
+  getById(id: string): Observable<TeacherResponse> {
+    return this.http.get<TeacherResponse>(`${this.baseUrl}/${id}`);
   }
 
   create(teacher: Partial<Teacher>): Observable<TeacherResponse> {
@@ -32,11 +32,35 @@ export class TeacherApi {
     return this.http.delete<TeacherResponse>(`${this.baseUrl}/${id}`);
   }
 
-  /** Importación masiva. Backend recibe JSON array. */
   import(rows: Partial<Teacher>[]): Observable<{ created: number; errors?: { row: number; message: string }[] }> {
-    return this.http.post<{ created: number; errors?: { row: number; message: string }[] }>(
-      `${this.baseUrl}/import`,
-      { rows },
+    if (rows.length === 0) return of({ created: 0, errors: [] });
+
+    return forkJoin(
+      rows.map((row, index) =>
+        this.create(row).pipe(
+          map(() => ({ ok: true as const })),
+          catchError((error) =>
+            of({
+              ok: false as const,
+              error: error?.error?.message ?? error?.message ?? 'Error al crear docente',
+              row: index,
+            }),
+          ),
+        ),
+      ),
+    ).pipe(
+      map((results) => {
+        const errors: { row: number; message: string }[] = [];
+        results.forEach((result) => {
+          if (!result.ok) {
+            errors.push({ row: result.row, message: result.error });
+          }
+        });
+        return {
+          created: results.length - errors.length,
+          errors,
+        };
+      }),
     );
   }
 }

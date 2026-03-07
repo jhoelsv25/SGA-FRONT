@@ -1,22 +1,46 @@
 import { Dialog } from '@angular/cdk/dialog';
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { ActionConfig, ActionContext } from '@core/types/action-types';
-import { DataSource } from '@shared/components/data-source/data-source';
-import { HeaderDetail } from '@shared/components/header-detail/header-detail';
-import { TeacherStore } from '../../services/store/teacher.store';
-import { Teacher } from '../../types/teacher-types';
-import { TeacherForm } from '../../components/teacher-form/teacher-form';
-import { TeacherApi } from '../../services/api/teacher-api';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ActionConfig } from '@core/types/action-types';
+import { DataSourceSorting } from '@core/types/data-source-types';
 import { ExcelService } from '@core/services/excel.service';
+import { TeacherForm } from '@features/teachers/components/teacher-form/teacher-form';
+import { TEACHER_COLUMN } from '@features/teachers/config/column.config';
+import { TeacherApi } from '@features/teachers/services/api/teacher-api';
+import { TeacherStore } from '@features/teachers/services/store/teacher.store';
+import { Teacher, TeacherCreate, TeacherParams } from '@features/teachers/types/teacher-types';
+import { DataSource } from '@shared/components/data-source/data-source';
 import { ImportDialog } from '@shared/components/import-dialog/import-dialog';
-import { TEACHER_HEADER_CONFIG } from '../../config/header.config';
-import { TEACHER_COLUMN } from '../../config/column.config';
-import { TEACHER_ACTIONS } from '../../config/action.config';
+import { Dropdown, DropdownItem } from '@shared/ui/dropdown/dropdown';
+import { ListToolbar } from '@shared/ui/list-toolbar';
+import { Select, SelectOption } from '@shared/ui/select/select';
 
-const EXCEL_COLUMNS = TEACHER_COLUMN.map((c) => ({ key: c.key, label: c.label }));
+const EXCEL_COLUMNS = [
+  { key: 'teacherCode', label: 'Codigo docente' },
+  { key: 'specialization', label: 'Especialidad' },
+  { key: 'professionalTitle', label: 'Titulo profesional' },
+  { key: 'university', label: 'Universidad' },
+  { key: 'graduationYear', label: 'Anio graduacion' },
+  { key: 'professionalLicense', label: 'Licencia profesional' },
+  { key: 'contractType', label: 'Tipo contrato' },
+  { key: 'laborRegime', label: 'Regimen laboral' },
+  { key: 'hireDate', label: 'Fecha contratacion' },
+  { key: 'terminationDate', label: 'Fecha termino' },
+  { key: 'workloadType', label: 'Carga laboral' },
+  { key: 'weeklyHours', label: 'Horas semanales' },
+  { key: 'teachingLevel', label: 'Nivel ensenanza' },
+  { key: 'employmentStatus', label: 'Estado laboral' },
+  { key: 'institution', label: 'ID institucion' },
+  { key: 'person', label: 'ID persona' },
+];
 
-function parseDate(v: unknown): string {
-  if (v == null || v === '') return new Date().toISOString().slice(0, 10);
+function parseNumber(v: unknown, fallback = 0): number {
+  const n = Number(v);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+function parseDate(v: unknown): string | undefined {
+  if (v == null || v === '') return undefined;
   if (typeof v === 'number' && Number.isFinite(v)) {
     const d = new Date((v - 25569) * 86400 * 1000);
     return d.toISOString().slice(0, 10);
@@ -24,145 +48,343 @@ function parseDate(v: unknown): string {
   return String(v).trim().slice(0, 10);
 }
 
-function parseBoolean(v: unknown): boolean {
-  if (v === true || v === 1) return true;
-  const s = String(v ?? '').toLowerCase();
-  return s === 'sí' || s === 'si' || s === 'true' || s === '1' || s === 'yes';
+function toEntityId(v: string | { id: string } | undefined | null): string {
+  if (!v) return '';
+  return typeof v === 'string' ? v : v.id;
 }
 
 @Component({
   selector: 'sga-teachers',
   standalone: true,
-  imports: [HeaderDetail, DataSource],
+  imports: [ListToolbar, Select, DataSource, Dropdown],
   templateUrl: './teachers.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class TeachersPage {
-  private dialog = inject(Dialog);
-  private store = inject(TeacherStore);
-  private teacherApi = inject(TeacherApi);
-  private excel = inject(ExcelService);
+export default class TeachersPage implements OnInit {
+  private readonly dialog = inject(Dialog);
+  private readonly store = inject(TeacherStore);
+  private readonly teacherApi = inject(TeacherApi);
+  private readonly excel = inject(ExcelService);
+  readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
-  headerConfig = computed(() => TEACHER_HEADER_CONFIG);
-  columns = computed(() =>
-    TEACHER_COLUMN.map((col) => {
-      if (col.type === 'boolean' && col.key === 'isActive') {
-        return {
-          ...col,
-          editable: true,
-          onToggle: (checked: boolean, row: unknown) =>
-            this.store.update((row as Teacher).id, { isActive: checked }),
-        };
-      }
-      return {
-        ...col,
-        editable: col.type !== 'boolean',
-        onSave: (newVal: unknown, row: unknown, key: string) => {
-          const id = (row as Teacher).id;
-          if (key === 'hireDate') {
-            this.store.update(id, { hireDate: String(newVal).slice(0, 10) });
-          } else {
-            this.store.update(id, { [key]: newVal });
-          }
-        },
-      };
-    }),
-  );
+  private readonly currentSearch = signal('');
+  private readonly currentSort = signal<DataSourceSorting | null>(null);
+  readonly filterContractType = signal<string>('');
+  readonly filterLaborRegime = signal<string>('');
+  readonly filterWorkloadType = signal<string>('');
+  readonly filterEmploymentStatus = signal<string>('');
+
+  columns = computed(() => TEACHER_COLUMN);
   data = computed(() => this.store.teachers());
   loading = computed(() => this.store.loading());
   pagination = computed(() => this.store.pagination());
-  headerActions = computed(() => TEACHER_ACTIONS.filter((a) => a.typeAction === 'header'));
-  rowActions = computed(() => TEACHER_ACTIONS.filter((a) => a.typeAction === 'row'));
+  rowActions = computed<ActionConfig[]>(() => [
+    { key: 'edit', label: 'Editar', icon: 'fas fa-edit', typeAction: 'row', color: 'primary' as const },
+    { key: 'delete', label: 'Eliminar', icon: 'fas fa-trash', typeAction: 'row', color: 'danger' as const },
+  ]);
+  filterCount = computed(() => {
+    let count = 0;
+    if (this.filterContractType()) count++;
+    if (this.filterLaborRegime()) count++;
+    if (this.filterWorkloadType()) count++;
+    if (this.filterEmploymentStatus()) count++;
+    return count;
+  });
 
-  onHeaderAction(e: { action: ActionConfig; context: ActionContext }) {
-    if (e.action.key === 'create') this.openForm();
-    if (e.action.key === 'refresh') this.store.loadAll({ page: this.pagination().page, size: this.pagination().size });
-    if (e.action.key === 'downloadTemplate') this.downloadTemplate();
-    if (e.action.key === 'import') this.openImport();
-    if (e.action.key === 'export') this.export();
+  contractTypeOptions: SelectOption[] = [
+    { value: '', label: 'Todos' },
+    { value: 'full_time', label: 'Tiempo completo' },
+    { value: 'part_time', label: 'Medio tiempo' },
+    { value: 'temporary', label: 'Temporal' },
+    { value: 'permanent', label: 'Permanente' },
+  ];
+  laborRegimeOptions: SelectOption[] = [
+    { value: '', label: 'Todos' },
+    { value: 'public', label: 'Público' },
+    { value: 'private', label: 'Privado' },
+  ];
+  workloadTypeOptions: SelectOption[] = [
+    { value: '', label: 'Todos' },
+    { value: '20_hours', label: '20 horas' },
+    { value: '30_hours', label: '30 horas' },
+    { value: '40_hours', label: '40 horas' },
+  ];
+  employmentStatusOptions: SelectOption[] = [
+    { value: '', label: 'Todos' },
+    { value: 'active', label: 'Activo' },
+    { value: 'inactive', label: 'Inactivo' },
+    { value: 'on_leave', label: 'Licencia' },
+  ];
+  toolbarMoreItems = computed<DropdownItem[]>(() => [
+    {
+      label: 'Agregar docente',
+      icon: 'fas fa-plus',
+      action: () => this.openForm(),
+    },
+    {
+      label: 'Exportar Excel',
+      icon: 'fas fa-file-export',
+      action: () => this.export(),
+    },
+    { separator: true, label: 'sep-1' },
+    {
+      label: 'Asistencias',
+      icon: 'fas fa-user-check',
+      action: () => this.goToAttendances(),
+    },
+    {
+      label: 'Plantilla Excel',
+      icon: 'fas fa-download',
+      action: () => this.downloadTemplate(),
+    },
+    {
+      label: 'Importar Excel',
+      icon: 'fas fa-file-import',
+      action: () => this.openImport(),
+    },
+  ]);
+
+  ngOnInit(): void {
+    const query = this.route.snapshot.queryParamMap;
+    const page = Number(query.get('page') ?? 1) || 1;
+    const size = Number(query.get('size') ?? this.pagination().size) || this.pagination().size;
+
+    const search = query.get('search') ?? '';
+    const contractType = query.get('contractType') ?? '';
+    const laborRegime = query.get('laborRegime') ?? '';
+    const workloadType = query.get('workloadType') ?? '';
+    const employmentStatus = query.get('employmentStatus') ?? '';
+    const sortBy = query.get('sortBy');
+    const sortOrder = query.get('sortOrder');
+
+    this.currentSearch.set(search);
+    this.filterContractType.set(contractType);
+    this.filterLaborRegime.set(laborRegime);
+    this.filterWorkloadType.set(workloadType);
+    this.filterEmploymentStatus.set(employmentStatus);
+
+    if (sortBy && (sortOrder === 'ASC' || sortOrder === 'DESC')) {
+      this.currentSort.set({ column: sortBy, direction: sortOrder === 'ASC' ? 'asc' : 'desc' });
+    }
+
+    this.loadPage(page, size);
   }
 
-  onRowAction(e: { action: ActionConfig; context: ActionContext<unknown> }) {
+  onRowAction(e: {
+    action: { key: string };
+    context: { row?: unknown };
+  }): void {
     const row = e.context.row as Teacher;
     if (e.action.key === 'edit') this.openForm(row);
-    if (e.action.key === 'delete') this.store.delete(row.id);
+    if (e.action.key === 'delete') this.store.delete(row.id).subscribe();
   }
 
-  onPageChange(p: { page: number; size: number }) {
-    this.store.loadAll({ page: p.page, size: p.size });
+  onPageChange(p: { page: number; size: number }): void {
+    this.loadPage(p.page, p.size);
   }
 
-  private openForm(current?: Teacher | null) {
-    this.dialog.open(TeacherForm, {
-      data: { current: current ?? null },
-      panelClass: 'dialog-top',
-      width: '480px',
+  onSearch(term: string): void {
+    this.currentSearch.set(term.trim());
+    this.loadPage(1, this.pagination().size);
+  }
+
+  onRefresh(): void {
+    this.loadPage(this.pagination().page, this.pagination().size);
+  }
+
+  goToAttendances(): void {
+    this.router.navigate(['/teachers/attendances']);
+  }
+
+  onFilterContractType(value: unknown): void {
+    this.filterContractType.set(String(value ?? ''));
+    this.loadPage(1, this.pagination().size);
+  }
+
+  onFilterLaborRegime(value: unknown): void {
+    this.filterLaborRegime.set(String(value ?? ''));
+    this.loadPage(1, this.pagination().size);
+  }
+
+  onFilterWorkloadType(value: unknown): void {
+    this.filterWorkloadType.set(String(value ?? ''));
+    this.loadPage(1, this.pagination().size);
+  }
+
+  onFilterEmploymentStatus(value: unknown): void {
+    this.filterEmploymentStatus.set(String(value ?? ''));
+    this.loadPage(1, this.pagination().size);
+  }
+
+  clearFilters(): void {
+    this.filterContractType.set('');
+    this.filterLaborRegime.set('');
+    this.filterWorkloadType.set('');
+    this.filterEmploymentStatus.set('');
+    this.loadPage(1, this.pagination().size);
+  }
+
+  onSort(sort: DataSourceSorting): void {
+    this.currentSort.set(sort);
+    this.loadPage(this.pagination().page, this.pagination().size);
+  }
+
+  private loadPage(page: number, size: number): void {
+    const sort = this.currentSort();
+    const params: TeacherParams = {
+      page,
+      size,
+      search: this.currentSearch() || undefined,
+      sortBy: sort?.column,
+      sortOrder: sort ? (sort.direction === 'asc' ? 'ASC' : 'DESC') : undefined,
+      contractType: (this.filterContractType() || undefined) as TeacherParams['contractType'],
+      laborRegime: (this.filterLaborRegime() || undefined) as TeacherParams['laborRegime'],
+      workloadType: (this.filterWorkloadType() || undefined) as TeacherParams['workloadType'],
+      employmentStatus: (this.filterEmploymentStatus() || undefined) as TeacherParams['employmentStatus'],
+    };
+    this.syncUrl(params);
+    this.store.loadAll(params);
+  }
+
+  private syncUrl(params: TeacherParams): void {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        search: params.search || null,
+        page: params.page ?? 1,
+        size: params.size ?? this.pagination().size,
+        sortBy: params.sortBy || null,
+        sortOrder: params.sortOrder || null,
+        contractType: params.contractType || null,
+        laborRegime: params.laborRegime || null,
+        workloadType: params.workloadType || null,
+        employmentStatus: params.employmentStatus || null,
+      },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
     });
   }
 
-  private downloadTemplate() {
+  openForm(current?: Teacher | null): void {
+    const ref = this.dialog.open(TeacherForm, {
+      data: { current: current ?? null },
+      panelClass: 'dialog-top',
+      width: '720px',
+    });
+
+    ref.closed.subscribe(() => this.loadPage(this.pagination().page, this.pagination().size));
+  }
+
+  downloadTemplate(): void {
     const blob = this.excel.generateTemplate(
       EXCEL_COLUMNS,
       {
-        firstName: 'Juan',
-        lastName: 'Pérez',
-        email: 'docente@ejemplo.com',
-        subject: 'Matemáticas',
+        teacherCode: 'T20250001',
+        specialization: 'Matematicas',
+        professionalTitle: 'Licenciado en Educacion',
+        university: 'Universidad Nacional',
+        graduationYear: 2015,
+        professionalLicense: 'COL-123456',
+        contractType: 'full_time',
+        laborRegime: 'public',
         hireDate: new Date().toISOString().slice(0, 10),
-        isActive: 'Sí',
+        terminationDate: '',
+        workloadType: '40_hours',
+        weeklyHours: 40,
+        teachingLevel: 'Secundaria',
+        employmentStatus: 'active',
+        institution: 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx',
+        person: 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx',
       },
       'Docentes',
     );
+
     this.excel.download(blob, 'plantilla_docentes.xlsx');
   }
 
-  private openImport() {
+  openImport(): void {
     const ref = this.dialog.open(ImportDialog, {
       data: {
         title: 'Importar docentes',
         columns: EXCEL_COLUMNS,
         exampleRow: {
-          firstName: 'Juan',
-          lastName: 'Pérez',
-          email: 'docente@ejemplo.com',
-          subject: 'Matemáticas',
+          teacherCode: 'T20250001',
+          specialization: 'Matematicas',
+          professionalTitle: 'Licenciado en Educacion',
+          university: 'Universidad Nacional',
+          graduationYear: 2015,
+          professionalLicense: 'COL-123456',
+          contractType: 'full_time',
+          laborRegime: 'public',
           hireDate: new Date().toISOString().slice(0, 10),
-          isActive: 'Sí',
+          terminationDate: '',
+          workloadType: '40_hours',
+          weeklyHours: 40,
+          teachingLevel: 'Secundaria',
+          employmentStatus: 'active',
+          institution: 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx',
+          person: 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx',
         },
         templateSheetName: 'Docentes',
         validateRow: (row: Record<string, unknown>) => {
-          if (!String(row['firstName'] ?? '').trim()) return 'Nombre requerido';
-          if (!String(row['lastName'] ?? '').trim()) return 'Apellido requerido';
-          if (!String(row['email'] ?? '').trim()) return 'Email requerido';
+          if (!String(row['teacherCode'] ?? '').trim()) return 'Codigo docente requerido';
+          if (!String(row['specialization'] ?? '').trim()) return 'Especialidad requerida';
+          if (!String(row['professionalTitle'] ?? '').trim()) return 'Titulo profesional requerido';
+          if (!String(row['institution'] ?? '').trim()) return 'ID institucion requerido';
+          if (!String(row['person'] ?? '').trim()) return 'ID persona requerido';
           return null;
         },
         importRows: (rows: Record<string, unknown>[]) =>
           this.teacherApi.import(
-            rows.map((r) => ({
-              firstName: String(r['firstName'] ?? '').trim(),
-              lastName: String(r['lastName'] ?? '').trim(),
-              email: String(r['email'] ?? '').trim(),
-              subject: String(r['subject'] ?? '').trim(),
-              hireDate: parseDate(r['hireDate']),
-              isActive: parseBoolean(r['isActive']),
-            })),
+            rows.map((r) =>
+              ({
+                teacherCode: String(r['teacherCode'] ?? '').trim(),
+                specialization: String(r['specialization'] ?? '').trim(),
+                professionalTitle: String(r['professionalTitle'] ?? '').trim(),
+                university: String(r['university'] ?? '').trim(),
+                graduationYear: parseNumber(r['graduationYear'], new Date().getFullYear()),
+                professionalLicense: String(r['professionalLicense'] ?? '').trim(),
+                contractType: String(r['contractType'] ?? 'full_time').trim(),
+                laborRegime: String(r['laborRegime'] ?? 'public').trim(),
+                hireDate: parseDate(r['hireDate']) ?? new Date().toISOString().slice(0, 10),
+                terminationDate: parseDate(r['terminationDate']),
+                workloadType: String(r['workloadType'] ?? '40_hours').trim(),
+                weeklyHours: parseNumber(r['weeklyHours'], 40),
+                teachingLevel: String(r['teachingLevel'] ?? '').trim(),
+                employmentStatus: String(r['employmentStatus'] ?? 'active').trim(),
+                institution: String(r['institution'] ?? '').trim(),
+                person: String(r['person'] ?? '').trim(),
+              }) as Partial<TeacherCreate>,
+            ),
           ),
       },
       panelClass: 'dialog-top',
       width: '720px',
     });
-    ref.closed.subscribe(() => this.store.loadAll({}));
+
+    ref.closed.subscribe(() => this.loadPage(this.pagination().page, this.pagination().size));
   }
 
-  private export() {
-    this.teacherApi.getAll({ size: 9999 }).subscribe((res) => {
+  export(): void {
+    this.teacherApi.getAll({ page: 1, size: 9999 }).subscribe((res) => {
       const data = (res.data ?? []).map((t) => ({
-        firstName: t.firstName,
-        lastName: t.lastName,
-        email: t.email,
-        subject: t.subject,
+        teacherCode: t.teacherCode,
+        specialization: t.specialization,
+        professionalTitle: t.professionalTitle,
+        university: t.university,
+        graduationYear: t.graduationYear,
+        professionalLicense: t.professionalLicense,
+        contractType: t.contractType,
+        laborRegime: t.laborRegime,
         hireDate: t.hireDate?.slice(0, 10) ?? '',
-        isActive: t.isActive ? 'Sí' : 'No',
+        terminationDate: t.terminationDate?.slice(0, 10) ?? '',
+        workloadType: t.workloadType,
+        weeklyHours: t.weeklyHours,
+        teachingLevel: t.teachingLevel,
+        employmentStatus: t.employmentStatus,
+        institution: toEntityId(t.institution),
+        person: toEntityId(t.person),
       }));
       const blob = this.excel.generate(EXCEL_COLUMNS, data, 'Docentes');
       this.excel.download(blob, `docentes_${new Date().toISOString().slice(0, 10)}.xlsx`);

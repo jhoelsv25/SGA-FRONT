@@ -72,6 +72,7 @@ export class DataSource implements OnInit, OnDestroy {
     | undefined
   >();
   searchTerm = input('');
+  showToolbar = input(true);
   emptyStateTitle = input('Sin datos disponibles');
   emptyStateDescription = input('No se encontraron registros para mostrar en esta tabla.');
   emptyStateIcon = input('fas fa-folder-open');

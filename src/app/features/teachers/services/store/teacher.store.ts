@@ -32,46 +32,66 @@ export const initialTeacherState: TeacherState = {
 export const TeacherStore = signalStore(
   { providedIn: 'root' },
   withState<TeacherState>(initialTeacherState),
-  withMethods((store, api = inject(TeacherApi), toast = inject(Toast)) => ({
-    loadAll: rxMethod<TeacherParams | void>(
-      pipe(
-        switchMap((params) => {
-          patchState(store, { loading: true });
-          return api.getAll(params || {}).pipe(
-            tap({
-              next: (response) => {
-                patchState(store, {
-                  teachers: response.data ?? [],
-                  pagination: {
-                    page: response.page ?? 1,
-                    size: response.size ?? 10,
-                    total: response.total ?? 0,
-                  },
-                  loading: false,
-                  filterParams: params || {},
-                });
-              },
-              error: (error) => {
-                patchState(store, { loading: false, error: error.message });
-                toast.error(error.message);
-              },
-            }),
-          );
-        }),
+  withMethods((store, api = inject(TeacherApi), toast = inject(Toast)) => {
+    const reloadFromServer = (params: TeacherParams) => {
+      patchState(store, { loading: true });
+      api.getAll(params).subscribe({
+        next: (response) => {
+          patchState(store, {
+            teachers: response.data ?? [],
+            pagination: {
+              page: response.page ?? 1,
+              size: response.size ?? 10,
+              total: response.total ?? 0,
+            },
+            loading: false,
+            filterParams: params,
+          });
+        },
+        error: (error) => {
+          patchState(store, { loading: false, error: error.message });
+          toast.error(error.message);
+        },
+      });
+    };
+
+    return {
+      loadAll: rxMethod<TeacherParams | void>(
+        pipe(
+          switchMap((params) => {
+            patchState(store, { loading: true });
+            return api.getAll(params || {}).pipe(
+              tap({
+                next: (response) => {
+                  patchState(store, {
+                    teachers: response.data ?? [],
+                    pagination: {
+                      page: response.page ?? 1,
+                      size: response.size ?? 10,
+                      total: response.total ?? 0,
+                    },
+                    loading: false,
+                    filterParams: params || {},
+                  });
+                },
+                error: (error) => {
+                  patchState(store, { loading: false, error: error.message });
+                  toast.error(error.message);
+                },
+              }),
+            );
+          }),
+        ),
       ),
-    ),
 
     create: (teacher: Partial<Teacher>) => {
       patchState(store, { loading: true });
       return api.create(teacher).pipe(
         tap({
-          next: (response) => {
-            const currentTeachers = store.teachers();
-            patchState(store, {
-              teachers: [response.data, ...currentTeachers],
-              loading: false,
-            });
-            toast.success('Teacher created successfully');
+          next: () => {
+            patchState(store, { loading: false });
+            reloadFromServer(store.filterParams());
+            toast.success('Docente creado correctamente');
           },
           error: (error) => {
             patchState(store, { loading: false, error: error.message });
@@ -85,13 +105,10 @@ export const TeacherStore = signalStore(
       patchState(store, { loading: true });
       return api.update(id, teacher).pipe(
         tap({
-          next: (response) => {
-            const updatedTeachers = store.teachers().map((t) => (t.id === id ? response.data : t));
-            patchState(store, {
-              teachers: updatedTeachers,
-              loading: false,
-            });
-            toast.success('Teacher updated successfully');
+          next: () => {
+            patchState(store, { loading: false });
+            reloadFromServer(store.filterParams());
+            toast.success('Docente actualizado correctamente');
           },
           error: (error) => {
             patchState(store, { loading: false, error: error.message });
@@ -106,12 +123,9 @@ export const TeacherStore = signalStore(
       return api.delete(id).pipe(
         tap({
           next: () => {
-            const filteredTeachers = store.teachers().filter((t) => t.id !== id);
-            patchState(store, {
-              teachers: filteredTeachers,
-              loading: false,
-            });
-            toast.success('Teacher deleted successfully');
+            patchState(store, { loading: false });
+            reloadFromServer(store.filterParams());
+            toast.success('Docente eliminado correctamente');
           },
           error: (error) => {
             patchState(store, { loading: false, error: error.message });
@@ -120,5 +134,6 @@ export const TeacherStore = signalStore(
         }),
       );
     },
-  })),
+    };
+  }),
 );

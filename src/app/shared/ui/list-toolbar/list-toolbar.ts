@@ -20,7 +20,9 @@ import { Popover } from '@shared/ui/popover/popover';
   standalone: true,
   imports: [Popover, Button],
   template: `
-    <div class="w-full rounded-4xl border border-base-200 bg-base-100/50 backdrop-blur-sm p-4 md:p-5 shadow-sm">
+    <div
+      class="w-full rounded-4xl border border-base-200/80 bg-base-100/60 backdrop-blur-md p-4 md:p-5 shadow-[0_10px_30px_-18px_rgba(15,23,42,0.28)]"
+    >
       <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         @if (title()) {
           <div class="flex items-center gap-4 shrink-0">
@@ -42,17 +44,19 @@ import { Popover } from '@shared/ui/popover/popover';
           </div>
         }
 
-        <div class="flex flex-wrap items-center gap-2 flex-1 lg:flex-initial lg:justify-end min-w-0">
+        <div
+          class="flex flex-wrap items-center gap-2 flex-1 lg:flex-initial lg:justify-end min-w-0"
+        >
           <!-- Buscador -->
           <div class="relative flex-1 min-w-[180px] max-w-sm group">
             <div
-              class="absolute left-3.5 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none group-focus-within:text-primary transition-colors"
+              class="absolute left-3.5 top-1/2 -translate-y-1/2 text-base-content/45 pointer-events-none transition-colors"
             >
               <i class="fas fa-search text-sm"></i>
             </div>
             <input
               type="text"
-              class="w-full pl-10 pr-10 py-2.5 rounded-4xl border border-base-200 bg-base-200/50 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all placeholder:text-base-content/40 hover:border-base-300"
+              class="w-full pl-10 pr-10 py-2.5 rounded-4xl border border-base-200/85 bg-base-100/75 backdrop-blur-md text-sm focus:outline-none focus:ring-0 focus:border-base-300 transition-all placeholder:text-base-content/40 hover:border-base-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.45)]"
               [placeholder]="searchPlaceholder()"
               [value]="searchValue()"
               (input)="onSearchInput($event)"
@@ -80,20 +84,25 @@ import { Popover } from '@shared/ui/popover/popover';
                 sgaButton
                 shape="pill"
                 variant="ghost"
+                color="secondary"
+                size="sm"
                 type="button"
-                class="relative shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-primary text-primary-content hover:bg-primary/90 transition-colors"
+                class="relative shrink-0"
                 title="Filtros"
               >
                 <i class="fas fa-sliders-h text-sm"></i>
                 @if (filterCount() > 0) {
                   <span
-                    class="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full bg-primary-content text-primary text-[10px] font-bold"
+                    class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full bg-primary text-primary-content text-[10px] font-bold"
                   >
                     {{ filterCount() }}
                   </span>
                 }
               </button>
-              <div sga-popover-content class="min-w-[280px] text-base-content rounded-xl p-4">
+              <div
+                sga-popover-content
+                class="min-w-[280px] bg-base-100/90 backdrop-blur-md text-base-content rounded-2xl p-4 shadow-[0_20px_45px_-25px_rgba(15,23,42,0.35)]"
+              >
                 <ng-content select="[list-toolbar-filter]"></ng-content>
               </div>
             </sga-popover>
@@ -104,9 +113,11 @@ import { Popover } from '@shared/ui/popover/popover';
             sgaButton
             shape="pill"
             variant="ghost"
+            color="secondary"
+            size="sm"
             type="button"
             (click)="refresh.emit()"
-            class="shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-primary text-primary-content hover:bg-primary/90 transition-colors"
+            class="shrink-0"
             title="Actualizar"
           >
             <i class="fas fa-sync-alt text-sm"></i>
@@ -137,7 +148,6 @@ export class ListToolbar implements OnInit {
   useSearchParams = input<boolean>(true);
   debounceMs = input<number>(400);
 
-
   searchChange = output<string>();
   refresh = output<void>();
 
@@ -146,11 +156,7 @@ export class ListToolbar implements OnInit {
   constructor() {
     const debounce = this.debounceMs() || 400;
     this.searchSubject
-      .pipe(
-        debounceTime(debounce),
-        distinctUntilChanged(),
-        takeUntilDestroyed(this.destroyRef),
-      )
+      .pipe(debounceTime(debounce), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => {
         this.searchChange.emit(value);
         if (this.useSearchParams()) {

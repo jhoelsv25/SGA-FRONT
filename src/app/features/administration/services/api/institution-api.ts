@@ -22,7 +22,7 @@ export class InstitutionApi {
   }
 
   public update(id: string, data: Partial<Institution>): Observable<InstitutionResponse> {
-    return this.http.put<InstitutionResponse>(`${InstitutionApi.basePath}/${id}`, data);
+    return this.http.patch<InstitutionResponse>(`${InstitutionApi.basePath}/${id}`, data);
   }
 
   public delete(id: string): Observable<InstitutionResponse> {

@@ -1,0 +1,119 @@
+<sga-header-detail [config]="headerConfig" />
+
+<div class="rounded-xl border border-slate-200 bg-white p-4">
+  <div class="mb-4 flex flex-wrap items-end gap-3">
+    <div>
+      <label for="teacher-attendance-date" class="mb-1 block text-sm font-medium text-slate-700">Fecha</label>
+      <sga-input
+        id="teacher-attendance-date"
+        type="date"
+        [ngModel]="attendanceDate()"
+        (ngModelChange)="onDateChange($event)"
+      />
+    </div>
+    <button type="button" sgaButton color="primary" variant="outline" (click)="downloadTemplate()">
+      <i class="fas fa-download mr-2"></i>
+      Plantilla Excel
+    </button>
+    <button type="button" sgaButton color="primary" variant="outline" (click)="openImportDialog()">
+      <i class="fas fa-file-import mr-2"></i>
+      Importar Excel
+    </button>
+    <button type="button" sgaButton color="secondary" variant="outline" (click)="loadTeachers()">
+      <i class="fas fa-sync-alt mr-2"></i>
+      Recargar
+    </button>
+    <div class="ml-auto">
+      <button
+        type="button"
+        sgaButton
+        color="success"
+        [disabled]="saving() || loading() || rows().length === 0"
+        (click)="saveManual()"
+      >
+        @if (saving()) {
+          <i class="fas fa-spinner fa-spin mr-2"></i>
+        }
+        Guardar asistencia manual
+      </button>
+    </div>
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="w-full min-w-[860px] border-collapse">
+      <thead>
+        <tr class="border-b border-slate-200 bg-slate-50">
+          <th class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-600">Codigo</th>
+          <th class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-600">Docente</th>
+          <th class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-600">Estado</th>
+          <th class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-600">Hora entrada</th>
+          <th class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-600">Observaciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (loading()) {
+          <tr>
+            <td colspan="5" class="px-3 py-8 text-center text-sm text-slate-500">
+              Cargando docentes...
+            </td>
+          </tr>
+        } @else if (rows().length === 0) {
+          <tr>
+            <td colspan="5" class="px-3 py-8 text-center text-sm text-slate-500">
+              No hay docentes disponibles para registrar asistencia.
+            </td>
+          </tr>
+        } @else {
+          @for (row of rows(); track row.teacherId) {
+            <tr class="border-b border-slate-100 align-top">
+              <td class="px-3 py-2 text-sm font-semibold text-slate-700">{{ row.teacherCode }}</td>
+              <td class="px-3 py-2 text-sm text-slate-700">{{ row.teacherLabel }}</td>
+              <td class="px-3 py-2">
+                <div class="flex gap-2">
+                  <button
+                    type="button"
+                    class="rounded px-2 py-1 text-xs font-semibold"
+                    [class]="row.status === 'present' ? 'bg-green-600 text-white' : 'bg-green-50 text-green-700'"
+                    (click)="setStatus(row.teacherId, 'present')"
+                  >P</button>
+                  <button
+                    type="button"
+                    class="rounded px-2 py-1 text-xs font-semibold"
+                    [class]="row.status === 'late' ? 'bg-amber-500 text-white' : 'bg-amber-50 text-amber-700'"
+                    (click)="setStatus(row.teacherId, 'late')"
+                  >T</button>
+                  <button
+                    type="button"
+                    class="rounded px-2 py-1 text-xs font-semibold"
+                    [class]="row.status === 'absent' ? 'bg-rose-600 text-white' : 'bg-rose-50 text-rose-700'"
+                    (click)="setStatus(row.teacherId, 'absent')"
+                  >F</button>
+                  <button
+                    type="button"
+                    class="rounded px-2 py-1 text-xs font-semibold"
+                    [class]="row.status === 'excused' ? 'bg-sky-600 text-white' : 'bg-sky-50 text-sky-700'"
+                    (click)="setStatus(row.teacherId, 'excused')"
+                  >J</button>
+                </div>
+              </td>
+              <td class="px-3 py-2">
+                <sga-input
+                  type="time"
+                  [ngModel]="row.checkInTime.slice(0, 5)"
+                  (ngModelChange)="updateCheckInTime(row.teacherId, $event)"
+                />
+              </td>
+              <td class="px-3 py-2">
+                <sga-input
+                  [ngModel]="row.observations"
+                  (ngModelChange)="updateObservations(row.teacherId, $event)"
+                  placeholder="Observaciones"
+                />
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
