@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Params } from '@angular/router';
 import { DataResponse } from '@core/types/pagination-types';
@@ -13,7 +13,13 @@ export class TeacherApi {
   private readonly baseUrl = 'teachers';
 
   getAll(params: Params = {}): Observable<DataResponse<Teacher>> {
-    return this.http.get<DataResponse<Teacher>>(`${this.baseUrl}`, { params });
+    let httpParams = new HttpParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (value === undefined || value === null || value === '') return;
+      if (value === 'undefined' || value === 'null') return;
+      httpParams = httpParams.set(key, String(value));
+    });
+    return this.http.get<DataResponse<Teacher>>(`${this.baseUrl}`, { params: httpParams });
   }
 
   getById(id: string): Observable<TeacherResponse> {

@@ -53,6 +53,12 @@ function toEntityId(v: string | { id: string } | undefined | null): string {
   return typeof v === 'string' ? v : v.id;
 }
 
+function normalizeQueryValue(value: string | null): string {
+  if (!value) return '';
+  if (value === 'undefined' || value === 'null') return '';
+  return value;
+}
+
 @Component({
   selector: 'sga-teachers',
   standalone: true,
@@ -150,11 +156,11 @@ export default class TeachersPage implements OnInit {
     const page = Number(query.get('page') ?? 1) || 1;
     const size = Number(query.get('size') ?? this.pagination().size) || this.pagination().size;
 
-    const search = query.get('search') ?? '';
-    const contractType = query.get('contractType') ?? '';
-    const laborRegime = query.get('laborRegime') ?? '';
-    const workloadType = query.get('workloadType') ?? '';
-    const employmentStatus = query.get('employmentStatus') ?? '';
+    const search = normalizeQueryValue(query.get('search'));
+    const contractType = normalizeQueryValue(query.get('contractType'));
+    const laborRegime = normalizeQueryValue(query.get('laborRegime'));
+    const workloadType = normalizeQueryValue(query.get('workloadType'));
+    const employmentStatus = normalizeQueryValue(query.get('employmentStatus'));
     const sortBy = query.get('sortBy');
     const sortOrder = query.get('sortOrder');
 
@@ -198,22 +204,22 @@ export default class TeachersPage implements OnInit {
   }
 
   onFilterContractType(value: unknown): void {
-    this.filterContractType.set(String(value ?? ''));
+    this.filterContractType.set(normalizeQueryValue(value == null ? null : String(value)));
     this.loadPage(1, this.pagination().size);
   }
 
   onFilterLaborRegime(value: unknown): void {
-    this.filterLaborRegime.set(String(value ?? ''));
+    this.filterLaborRegime.set(normalizeQueryValue(value == null ? null : String(value)));
     this.loadPage(1, this.pagination().size);
   }
 
   onFilterWorkloadType(value: unknown): void {
-    this.filterWorkloadType.set(String(value ?? ''));
+    this.filterWorkloadType.set(normalizeQueryValue(value == null ? null : String(value)));
     this.loadPage(1, this.pagination().size);
   }
 
   onFilterEmploymentStatus(value: unknown): void {
-    this.filterEmploymentStatus.set(String(value ?? ''));
+    this.filterEmploymentStatus.set(normalizeQueryValue(value == null ? null : String(value)));
     this.loadPage(1, this.pagination().size);
   }
 
