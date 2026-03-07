@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 import { Dialog } from '@angular/cdk/dialog';
+import { ConfirmDialog } from '@core/services/confirm-dialog';
 import { YearAcademicStore } from '../../services/store/year-academic.store';
 import { YearAcademic } from '../../types/year-academi-types';
 import { YearAcademicForm } from '../../components/year-academic-form/year-academic-form';
@@ -33,6 +34,7 @@ const STATUS_OPTIONS = [
 })
 export default class YearAcademicComponent {
   private dialog = inject(Dialog);
+  private confirmDialog = inject(ConfirmDialog);
   private store = inject(YearAcademicStore);
   private router = inject(Router);
   private permissionStore = inject(PermissionCheckStore);
@@ -110,7 +112,7 @@ export default class YearAcademicComponent {
         break;
 
       case 'delete':
-        this.store.delete(row.id);
+        this.deleteYear(row);
         break;
     }
   }
@@ -132,9 +134,20 @@ export default class YearAcademicComponent {
   }
 
   public deleteYear(year: YearAcademic) {
-    if (confirm(`¿Estás seguro de eliminar el año académico ${year.name}?`)) {
-      this.store.delete(year.id);
-    }
+    this.confirmDialog
+      .open({
+        type: 'danger',
+        title: 'Eliminar año académico',
+        icon: 'fa-solid fa-trash',
+        message: `¿Estás seguro de eliminar "${year.name}"? Esta acción no se puede deshacer.`,
+        acceptButtonProps: { label: 'Eliminar', color: 'danger', variant: 'solid' },
+        rejectButtonProps: { label: 'Cancelar', variant: 'outline' },
+      })
+      .then((confirmed) => {
+        if (confirmed) {
+          this.store.delete(year.id);
+        }
+      });
   }
 
   public goToDetail(year: YearAcademic) {

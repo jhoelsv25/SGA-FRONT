@@ -1,20 +1,27 @@
 <sga-card
-  class="group flex flex-col h-full hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 border-base-200 overflow-hidden bg-base-100"
+  class="group flex flex-col h-full transition-all duration-300 border border-base-200/80 overflow-hidden bg-base-100 rounded-4xl shadow-sm"
 >
-  <div class="flex flex-col space-y-1.5 p-6 pb-3 border-b border-base-200 bg-base-200/10">
+  <div
+    class="flex flex-col space-y-1.5 p-6 pb-5 border-b border-base-200/50 bg-linear-to-br from-base-200/5 to-transparent rounded-t-4xl"
+  >
     <div class="flex justify-between items-start">
       <div
-        class="p-2.5 rounded-xl bg-primary/10 text-primary border border-primary/20 shadow-sm transition-colors"
+        class="flex flex-col items-center justify-center w-14 h-14 rounded-2xl bg-primary/10 text-primary border border-primary/20 shadow-sm"
       >
-        <i class="fas fa-book text-lg"></i>
+        <i class="fas fa-book text-xl"></i>
       </div>
-      <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div
+        class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
+        role="group"
+        (click)="$event.stopPropagation()"
+      >
         <button
           sgaButton
           variant="ghost"
           size="sm"
-          class="rounded-lg h-8 w-8 p-0"
-          (click)="edit.emit(course())"
+          class="rounded-full h-9 w-9 p-0 hover:bg-base-200/60"
+          (click)="edit.emit(course()); $event.stopPropagation()"
+          title="Editar"
         >
           <i class="fas fa-edit text-xs"></i>
         </button>
@@ -22,45 +29,64 @@
           sgaButton
           variant="ghost"
           size="sm"
-          class="rounded-lg h-8 w-8 p-0 text-error hover:bg-error/10"
-          (click)="delete.emit(course())"
+          class="rounded-full h-9 w-9 p-0 text-error hover:bg-error/10"
+          (click)="delete.emit(course()); $event.stopPropagation()"
+          title="Eliminar"
         >
           <i class="fas fa-trash text-xs"></i>
         </button>
       </div>
     </div>
     <h2
-      class="text-2xl font-semibold leading-none tracking-tight mt-4 text-xl font-bold text-base-content group-hover:text-primary transition-colors"
+      class="mt-4 text-xl font-bold leading-tight tracking-tight text-base-content group-hover:text-primary transition-colors line-clamp-2"
     >
       {{ course().name }}
     </h2>
-    <p class="text-sm font-mono text-base-content/60 mt-0.5">{{ course().code }}</p>
+    @if (course().code) {
+      <p class="text-xs font-mono text-primary/70 bg-primary/5 px-3 py-1 rounded-full border border-primary/20 mt-1 w-fit">
+        {{ course().code }}
+      </p>
+    }
     @if (course().subjectArea?.name) {
-      <p class="text-xs text-base-content/50 mt-1">{{ course().subjectArea?.name ?? '-' }}</p>
+      <span
+        class="text-[10px] font-black uppercase tracking-widest text-primary/60 bg-primary/5 px-3 py-1 rounded-full border border-primary/10 mt-2 w-fit"
+      >
+        {{ course().subjectArea?.name }}
+      </span>
     }
   </div>
 
   <div class="p-6 pt-5 grow">
-    <div class="space-y-3">
-      <div class="flex flex-wrap items-center gap-2">
-        <span class="text-xs font-semibold px-2 py-1 rounded bg-base-200 text-base-content/80">
-          {{ course().weeklyHours }} hrs/sem
-        </span>
-        <span class="text-xs font-semibold px-2 py-1 rounded bg-primary/10 text-primary">
-          {{ course().credits }} créditos
-        </span>
-        @if (course().isMandatory !== false) {
-          <span
-            class="text-[10px] font-black uppercase tracking-widest text-warning bg-warning/10 px-2 py-0.5 rounded border border-warning/20"
-          >
-            Obligatorio
-          </span>
-        }
+    <div class="space-y-4">
+      <div
+        class="flex items-center justify-between text-xs px-3 py-2.5 rounded-3xl bg-base-200/10 border border-base-200/30 hover:bg-base-200/20 transition-colors"
+      >
+        <div class="flex items-center gap-2 text-base-content/50">
+          <i class="fas fa-clock text-primary/50"></i>
+          <span>{{ course().weeklyHours }} hrs/sem</span>
+        </div>
+        <span class="font-bold text-primary">{{ course().credits }} créditos</span>
       </div>
+      @if (course().isMandatory !== false) {
+        <span
+          class="text-[10px] font-black uppercase tracking-widest text-warning bg-warning/10 px-3 py-1 rounded-full border border-warning/20 inline-block"
+        >
+          Obligatorio
+        </span>
+      }
       @if (course().description) {
-        <p class="text-sm text-base-content/60 leading-relaxed line-clamp-2">
+        <p
+          class="text-sm text-base-content/60 leading-relaxed line-clamp-3 px-4 py-3 rounded-2xl bg-base-200/10 border border-base-200/30"
+        >
           {{ course().description }}
         </p>
+      } @else {
+        <div
+          class="flex items-center gap-2 px-4 py-3 rounded-2xl bg-base-200/5 border border-base-200/20 text-base-content/40"
+        >
+          <i class="fas fa-align-left text-sm"></i>
+          <span class="text-sm italic">Sin descripción</span>
+        </div>
       }
     </div>
   </div>

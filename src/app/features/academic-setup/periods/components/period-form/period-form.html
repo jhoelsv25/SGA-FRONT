@@ -13,8 +13,26 @@
   <div class="grid grid-cols-1 gap-4">
     <div>
       <label class="label-form" for="name">Nombre</label>
-      <sga-input id="name" formControlName="name" placeholder="Ej: Primer trimestre" />
+      @if (current) {
+        <div class="rounded-xl border border-base-200 bg-base-200/30 px-3 py-2.5 text-sm text-base-content">
+          {{ current.name }}
+        </div>
+      } @else {
+        <sga-input id="name" formControlName="name" placeholder="Ej: Primer trimestre" />
+      }
     </div>
+    @if (current) {
+      <div>
+        <label class="label-form" for="status">Estado</label>
+        <sga-select
+          id="status"
+          formControlName="status"
+          [options]="statusOptions"
+          [searchable]="false"
+          placeholder="Seleccionar estado"
+        />
+      </div>
+    }
     <div>
       <label class="label-form" for="startDate">Fecha inicio</label>
       <sga-date-picker id="startDate" formControlName="startDate" [rangeMode]="false" />

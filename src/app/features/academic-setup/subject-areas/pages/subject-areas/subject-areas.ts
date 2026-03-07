@@ -1,7 +1,7 @@
 import { Dialog } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
-import { HeaderDetail } from '@shared/components/header-detail/header-detail';
+import { ConfirmDialog } from '@core/services/confirm-dialog';
 import { SubjectAreaStore } from '../../services/store/subject-area.store';
 import { SubjectArea } from '../../types/subject-area-types';
 import { SubjectAreaForm } from '../../components/subject-area-form/subject-area-form';
@@ -10,23 +10,48 @@ import { SubjectAreaCardComponent } from '../../components/subject-area-card/sub
 import { EmptyState } from '@shared/ui/empty-state/empty-state';
 import { Skeleton } from '@shared/ui/skeleton/skeleton';
 import { ListToolbar } from '@shared/ui/list-toolbar';
+import { Dropdown } from '@shared/ui/dropdown/dropdown';
+import { Select } from '@shared/ui/select/select';
+import { PermissionCheckStore } from '@core/stores/permission-check.store';
+
+const TYPE_OPTIONS = [
+  { value: '', label: 'Todos' },
+  { value: 'core', label: 'Troncal' },
+  { value: 'elective', label: 'Electiva' },
+  { value: 'optional', label: 'Opcional' },
+];
 
 @Component({
   selector: 'sga-subject-areas',
   standalone: true,
-  imports: [CommonModule, HeaderDetail, SubjectAreaCardComponent, EmptyState, Skeleton, ListToolbar],
+  imports: [CommonModule, SubjectAreaCardComponent, EmptyState, Skeleton, ListToolbar, Dropdown, Select],
   templateUrl: './subject-areas.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class SubjectAreasPage {
   private dialog = inject(Dialog);
+  private confirmDialog = inject(ConfirmDialog);
   private store = inject(SubjectAreaStore);
+  private permissionStore = inject(PermissionCheckStore);
 
   readonly skeletonItems = [1, 2, 3, 4];
+  readonly typeOptions = TYPE_OPTIONS;
   searchTerm = signal('');
   filterType = signal<string>('');
 
-  headerConfig = computed(() => this.store.headerConfig());
+  headerActions = computed(() =>
+    this.permissionStore.filterActions(this.store.actions().filter((a) => a.typeAction === 'header')),
+  );
+
+  actionDropdownItems = computed(() =>
+    this.headerActions().map((action) => ({
+      label: action.label,
+      icon: action.icon,
+      disabled: typeof action.disabled === 'function' ? action.disabled({}) : !!action.disabled,
+      action: () => this.onHeaderAction({ action, context: {} }),
+    })),
+  );
+
   data = computed(() => this.store.data());
 
   filteredData = computed(() => {
@@ -49,11 +74,11 @@ export default class SubjectAreasPage {
     this.searchTerm.set(value);
   }
 
-  onFilterType(event: Event) {
-    this.filterType.set((event.target as HTMLSelectElement).value);
+  onFilterType(value: unknown) {
+    this.filterType.set(value != null ? String(value) : '');
   }
+
   loading = computed(() => this.store.loading());
-  headerActions = computed(() => this.store.actions().filter((a) => a.typeAction === 'header'));
 
   onHeaderAction(e: { action: ActionConfig; context: ActionContext }) {
     if (e.action.key === 'create') this.openForm();
@@ -69,9 +94,20 @@ export default class SubjectAreasPage {
   }
 
   deleteSubjectArea(area: SubjectArea) {
-    if (confirm(`¿Eliminar el área "${area.name}"?`)) {
-      this.store.delete(area.id);
-    }
+    this.confirmDialog
+      .open({
+        type: 'danger',
+        title: 'Eliminar área curricular',
+        icon: 'fa-solid fa-trash',
+        message: `¿Estás seguro de eliminar "${area.name}"? Esta acción no se puede deshacer.`,
+        acceptButtonProps: { label: 'Eliminar', color: 'danger', variant: 'solid' },
+        rejectButtonProps: { label: 'Cancelar', variant: 'outline' },
+      })
+      .then((confirmed) => {
+        if (confirmed) {
+          this.store.delete(area.id);
+        }
+      });
   }
 
   createFromEmpty() {

@@ -1,19 +1,29 @@
-<sga-header-detail
-  [config]="headerConfig()"
-  [actions]="headerActions()"
-  (action)="onHeaderAction($event)"
-  (refresh)="onRefresh()"
-/>
-
-<div class="p-6 space-y-4">
+<div class="p-6 space-y-6">
   <sga-list-toolbar
+    title="Competencias"
+    icon="fas fa-bullseye"
+    description="Gestionar competencias"
     [searchPlaceholder]="'Buscar competencias por nombre o código...'"
     [showFilter]="false"
     (searchChange)="onSearch($event)"
-  />
+    (refresh)="onRefresh()"
+  >
+    <div list-toolbar-actions class="flex items-center gap-2">
+      <sga-dropdown [items]="actionDropdownItems()">
+        <button
+          sga-dropdown-trigger
+          class="flex items-center justify-center w-10 h-10 rounded-2xl border border-base-200 bg-base-100 hover:bg-base-200 transition-colors text-base-content/60 hover:text-primary"
+          aria-label="Más acciones"
+          type="button"
+        >
+          <i class="fas fa-ellipsis-h"></i>
+        </button>
+      </sga-dropdown>
+    </div>
+  </sga-list-toolbar>
 
   <div
-    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500"
+    class="grid grid-cols-1 mt-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500"
   >
     @if (loading() && !data().length) {
       @for (i of skeletonItems; track i) {

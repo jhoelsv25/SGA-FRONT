@@ -1,21 +1,38 @@
 <sga-card
-  class="group flex flex-col h-full hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 border-base-200 overflow-hidden bg-base-100"
+  class="group flex flex-col h-full transition-all duration-300 border border-base-200/80 overflow-hidden bg-base-100 rounded-4xl shadow-sm"
 >
-  <div class="flex flex-col space-y-1.5 p-6 pb-3 border-b border-base-200 bg-base-200/10">
+  <div class="flex flex-col space-y-1.5 p-6 pb-3 border-b border-base-200/50 bg-base-200/10">
     <div class="flex justify-between items-start">
       <div
-        class="flex flex-col items-center justify-center w-14 h-14 rounded-2xl bg-primary/10 text-primary border border-primary/20 shadow-sm group-hover:bg-primary group-hover:text-primary-content transition-colors"
+        class="flex flex-col items-center justify-center w-14 h-14 rounded-2xl bg-primary/10 text-primary border border-primary/20 shadow-sm"
       >
         <span class="text-[10px] font-black uppercase tracking-tighter leading-none mb-1">Nº</span>
-        <span class="text-xl font-bold leading-none">{{ period().order ?? period().periodNumber ?? '-' }}</span>
+        <span class="text-xl font-bold leading-none">{{
+          period().order ?? period().periodNumber ?? '-'
+        }}</span>
       </div>
-      <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div
+        class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
+        role="group"
+        (click)="$event.stopPropagation()"
+      >
         <button
           sgaButton
           variant="ghost"
           size="sm"
-          class="rounded-lg h-8 w-8 p-0"
-          (click)="edit.emit(period())"
+          class="rounded-lg h-8 w-8 p-0 hover:bg-base-200/60"
+          (click)="updateStatus.emit(period()); $event.stopPropagation()"
+          title="Actualizar estado"
+        >
+          <i class="fas fa-flag text-xs"></i>
+        </button>
+        <button
+          sgaButton
+          variant="ghost"
+          size="sm"
+          class="rounded-lg h-8 w-8 p-0 hover:bg-base-200/60"
+          (click)="edit.emit(period()); $event.stopPropagation()"
+          title="Editar"
         >
           <i class="fas fa-edit text-xs"></i>
         </button>
@@ -24,14 +41,15 @@
           variant="ghost"
           size="sm"
           class="rounded-lg h-8 w-8 p-0 text-error hover:bg-error/10"
-          (click)="delete.emit(period())"
+          (click)="delete.emit(period()); $event.stopPropagation()"
+          title="Eliminar"
         >
           <i class="fas fa-trash text-xs"></i>
         </button>
       </div>
     </div>
     <h2
-      class="text-2xl font-semibold leading-none tracking-tight mt-4 text-xl font-bold text-base-content group-hover:text-primary transition-colors"
+      class="mt-4 text-xl font-bold leading-tight tracking-tight text-base-content group-hover:text-primary transition-colors line-clamp-2"
     >
       {{ period().name }}
     </h2>
