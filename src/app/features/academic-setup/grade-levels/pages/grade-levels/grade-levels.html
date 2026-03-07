@@ -46,6 +46,7 @@
           [gradeLevel]="gradeLevel"
           (edit)="editGradeLevel(gradeLevel)"
           (delete)="deleteGradeLevel(gradeLevel)"
+          (viewSections)="goToSections(gradeLevel)"
         />
       } @empty {
         <div class="col-span-full">

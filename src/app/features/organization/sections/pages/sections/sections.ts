@@ -1,5 +1,6 @@
 import { Dialog } from '@angular/cdk/dialog';
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 import { HeaderDetail } from '@shared/components/header-detail/header-detail';
 import { SectionStore } from '../../services/store/section.store';
@@ -17,9 +18,10 @@ import { Skeleton } from '@shared/ui/skeleton/skeleton';
   templateUrl: './sections.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class SectionsPage {
+export default class SectionsPage implements OnInit {
   private dialog = inject(Dialog);
   private store = inject(SectionStore);
+  private route = inject(ActivatedRoute);
 
   readonly skeletonItems = [1, 2, 3, 4];
 
@@ -28,13 +30,19 @@ export default class SectionsPage {
   loading = computed(() => this.store.loading());
   headerActions = computed(() => this.store.actions().filter((a) => a.typeAction === 'header'));
 
+  ngOnInit() {
+    this.route.queryParams.subscribe((params) => {
+      this.store.loadAll(params);
+    });
+  }
+
   onHeaderAction(e: { action: ActionConfig; context: ActionContext }) {
     if (e.action.key === 'create') this.openForm();
     if (e.action.key === 'refresh') this.onRefresh();
   }
 
   onRefresh() {
-    this.store.loadAll();
+    this.store.loadAll(this.route.snapshot.queryParams);
   }
 
   editSection(section: Section) {

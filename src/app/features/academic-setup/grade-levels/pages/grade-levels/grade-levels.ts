@@ -1,4 +1,5 @@
 import { Dialog } from '@angular/cdk/dialog';
+import { Router } from '@angular/router';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 import { ConfirmDialog } from '@core/services/confirm-dialog';
@@ -30,6 +31,7 @@ const LEVEL_OPTIONS = [
 })
 export default class GradeLevelsPage {
   private dialog = inject(Dialog);
+  private router = inject(Router);
   private confirmDialog = inject(ConfirmDialog);
   private store = inject(GradeLevelStore);
   private permissionStore = inject(PermissionCheckStore);
@@ -100,6 +102,12 @@ export default class GradeLevelsPage {
 
   editGradeLevel(gradeLevel: GradeLevel) {
     this.openForm(gradeLevel);
+  }
+
+  goToSections(gradeLevel: GradeLevel) {
+    this.router.navigate(['/organization/sections'], {
+      queryParams: { gradeId: gradeLevel.id },
+    });
   }
 
   deleteGradeLevel(gradeLevel: GradeLevel) {
