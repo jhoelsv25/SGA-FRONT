@@ -70,6 +70,7 @@ export class Select implements OnInit, OnDestroy, ControlValueAccessor, Validato
   value = input<unknown>(null);
   required = input<boolean>(false); // Para validación
   showAddButton = input<boolean>(false);
+  id = input<string | undefined>(undefined);
 
   // Outputs
   valueChange = output<unknown>();

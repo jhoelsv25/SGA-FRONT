@@ -222,6 +222,17 @@
                       (dblclick)="col.editable && col.onSave ? startCellEdit(row, col, i) : col.onDblClick?.(getRowProperty(row, col.key), row)"
                     >
                       @switch (col.type) {
+                        @case ('custom') {
+                          @if (getTemplate(col.customTemplate)) {
+                            <ng-container
+                              [ngTemplateOutlet]="getTemplate(col.customTemplate)!"
+                              [ngTemplateOutletContext]="{ row: row, col: col, value: getRowProperty(row, col.key) }"
+                            ></ng-container>
+                          } @else {
+                            {{ formatCell(row, col) }}
+                          }
+                        }
+
                         @case ('boolean') {
                           @if (col.editable) {
                             <sga-checkbox

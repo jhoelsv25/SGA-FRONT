@@ -9,7 +9,7 @@ export default [
   },
   {
     path: 'scores',
-    loadComponent: () => import('../academic-setting/assessments/pages/assessments/assessments'), // Placeholder
+    loadComponent: () => import('../academic-setting/assessments/pages/scores/scores'),
     title: 'Registro de Calificaciones',
     data: { permissions: ['manage_assessment_score'] },
   },

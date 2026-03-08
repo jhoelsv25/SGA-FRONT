@@ -1,0 +1,37 @@
+<div class="p-6">
+  <sga-data-source
+    [data]="data()"
+    [columns]="columns"
+    [loading]="loading()"
+    [showToolbar]="false"
+  >
+    <div data-source-header class="sticky top-0 z-20 -mx-4 -mt-4 px-4 pt-4 pb-4 mb-4 bg-base-200 rounded-t-lg border-b border-base-300">
+      <sga-list-toolbar
+        title="Reportes de Asistencia"
+        icon="fas fa-chart-line"
+        description="Historial y reportes de asistencia de estudiantes"
+        [searchPlaceholder]="'Buscar por estudiante...'"
+        [showFilter]="false"
+        (refresh)="onRefresh()"
+        (searchChange)="onSearch($event)"
+      />
+    </div>
+
+    <!-- Custom Templates -->
+    <ng-template sgaTemplate="statusTemplate" let-row="row">
+        <span
+            class="badge badge-sm border-none font-bold uppercase py-2.5 px-3"
+            [ngClass]="{
+                'bg-success/10 text-success': row.status === 'present',
+                'bg-warning/10 text-warning': row.status === 'late',
+                'bg-error/10 text-error': row.status === 'absent',
+                'bg-info/10 text-info': row.status === 'excused'
+            }"
+            >
+            {{ row.status === 'present' ? 'Presente' : 
+                row.status === 'late' ? 'Tardanza' : 
+                row.status === 'absent' ? 'Falta' : 'Justificado' }}
+        </span>
+    </ng-template>
+  </sga-data-source>
+</div>

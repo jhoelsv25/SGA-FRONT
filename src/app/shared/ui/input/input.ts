@@ -37,6 +37,8 @@ export class Input implements ControlValueAccessor, Validator {
   public required = input<boolean>(false);
   public customClass = input<string>('');
   public id = input<string | undefined>(undefined);
+  public min = input<string | number | undefined>(undefined);
+  public max = input<string | number | undefined>(undefined);
 
   public valueChange = output<string | number | null>();
 

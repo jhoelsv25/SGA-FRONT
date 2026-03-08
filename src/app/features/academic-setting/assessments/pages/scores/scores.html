@@ -1,0 +1,81 @@
+<div class="flex flex-col gap-6 animate-in fade-in duration-500">
+  <sga-list-toolbar
+    title="Registro de Calificaciones"
+    description="Ingrese las notas de los estudiantes para la evaluación seleccionada"
+    icon="fas fa-pen-square"
+    [showSearch]="false"
+    [filterCount]="selectedAssessment() ? 2 : (selectedSectionCourse() ? 1 : 0)"
+  >
+    <div list-toolbar-filter class="flex flex-col gap-4 min-w-[280px]">
+      <h4 class="text-[10px] font-bold text-base-content/40 uppercase tracking-[0.2em] mb-1">Filtros</h4>
+      
+      <div class="flex flex-col gap-1.5">
+        <label for="section-course-select" class="text-[11px] font-bold text-base-content/60 uppercase">Curso / Sección</label>
+        <sga-select
+          id="section-course-select"
+          [options]="sectionCourseOptions()"
+          [value]="selectedSectionCourse()"
+          (valueChange)="onSectionCourseChange($event)"
+          placeholder="Seleccione uno..."
+        />
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label for="assessment-select" class="text-[11px] font-bold text-base-content/60 uppercase">Evaluación</label>
+        <sga-select
+          id="assessment-select"
+          [options]="filteredAssessments()"
+          [value]="selectedAssessment()"
+          (valueChange)="onAssessmentChange($event)"
+          [disabled]="!selectedSectionCourse()"
+          placeholder="Seleccione..."
+        />
+      </div>
+    </div>
+
+    <div list-toolbar-actions>
+      <button
+        sgaButton
+        color="primary"
+        shape="pill"
+        [disabled]="!canSave() || store.loading()"
+        (click)="saveScores()"
+      >
+        @if (store.loading()) {
+          <i class="fas fa-spinner fa-spin mr-2"></i>
+        } @else {
+          <i class="fas fa-save mr-2"></i>
+        }
+        Guardar Notas
+      </button>
+    </div>
+  </sga-list-toolbar>
+
+  <sga-data-source
+    [columns]="columns"
+    [data]="studentScores()"
+    [loading]="store.loading()"
+  >
+    <ng-template sgaTemplate="scoreTemplate" let-row>
+      <div class="flex items-center gap-2">
+        <sga-input
+          type="number"
+          class="w-24"
+          [(ngModel)]="row.score"
+          [min]="0"
+          [max]="20"
+        />
+        <span class="text-xs font-bold" [ngClass]="row.score < 11 ? 'text-error' : 'text-success'">
+          {{ row.score < 11 ? 'Desaprobado' : 'Aprobado' }}
+        </span>
+      </div>
+    </ng-template>
+
+    <ng-template sgaTemplate="observationTemplate" let-row>
+      <sga-input
+        placeholder="Opcional..."
+        [(ngModel)]="row.observation"
+      />
+    </ng-template>
+  </sga-data-source>
+</div>

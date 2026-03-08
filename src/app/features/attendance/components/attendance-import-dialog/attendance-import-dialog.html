@@ -1,0 +1,133 @@
+<div class="p-6">
+  <!-- Header -->
+  <header class="flex items-center justify-between mb-8">
+    <div class="flex items-center gap-4">
+      <div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-inner">
+        <i class="fas fa-file-import text-xl"></i>
+      </div>
+      <div>
+        <h2 class="text-xl font-bold text-base-content uppercase tracking-tight">Importar Asistencia</h2>
+        <p class="text-sm text-base-content/50">Siga los pasos para cargar datos desde Excel</p>
+      </div>
+    </div>
+    <button type="button" class="btn btn-ghost btn-circle" (click)="close()">
+      <i class="fas fa-times"></i>
+    </button>
+  </header>
+
+  <!-- Indicator -->
+  <div class="flex items-center justify-center mb-10">
+    <div class="flex items-center gap-0 w-full max-w-md">
+      @for (s of steps; track s.id; let first = $first; let last = $last) {
+        <div class="flex items-center flex-1 relative">
+            <div 
+                class="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all relative z-10"
+                [ngClass]="{
+                    'bg-primary border-primary text-white': step() === s.id || (step() === 'done' && s.id !== 'done'),
+                    'bg-base-100 border-base-300 text-base-content/40': step() !== s.id
+                }"
+            >
+                <i [class]="'fas ' + s.icon + ' text-sm'"></i>
+            </div>
+            @if (!last) {
+                <div class="flex-1 h-0.5" [class]="step() === s.id || step() === 'done' ? 'bg-primary' : 'bg-base-300'"></div>
+            }
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Step: Upload -->
+  @if (step() === 'upload') {
+    <div class="flex flex-col gap-6">
+      <div class="bg-base-200/50 rounded-2xl p-4 flex items-center justify-between border border-base-300/50">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-success/10 text-success flex items-center justify-center">
+            <i class="fas fa-file-excel"></i>
+          </div>
+          <div>
+            <h4 class="text-sm font-bold">¿No tiene la plantilla?</h4>
+            <p class="text-xs text-base-content/50">Descargue el formato base para su archivo</p>
+          </div>
+        </div>
+        <button sgaButton variant="outline" color="success" size="sm" shape="pill" (click)="downloadTemplate()">
+          <i class="fas fa-download mr-2"></i>
+          Descargar Plantilla
+        </button>
+      </div>
+
+      <div class="flex flex-col items-center justify-center border-2 border-dashed border-base-300 rounded-3xl p-12 bg-base-100/50 hover:bg-base-100 transition-colors group">
+        <div class="w-20 h-20 rounded-full bg-base-200 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+          <i class="fas fa-cloud-upload-alt text-4xl text-base-content/20"></i>
+        </div>
+        <h3 class="text-lg font-bold mb-2">Seleccione su archivo Excel</h3>
+        <p class="text-sm text-base-content/40 mb-8 text-center max-w-xs">Arrastre el archivo aquí o haga clic para buscar en su computadora (.xlsx, .xls)</p>
+        
+        <label class="btn btn-primary btn-wide rounded-full shadow-lg shadow-primary/20">
+          <i class="fas fa-search mr-2"></i>
+          Buscar Archivo
+          <input type="file" class="hidden" accept=".xlsx,.xls" (change)="onFileSelected($event)" />
+        </label>
+      </div>
+    </div>
+  }
+
+  <!-- Step: Mapping -->
+  @if (step() === 'mapping') {
+    <div class="bg-base-100 rounded-3xl border border-base-300 overflow-hidden">
+        <div class="p-6 border-b border-base-200 bg-base-200/30">
+            <h3 class="font-bold flex items-center gap-2">
+                <i class="fas fa-link text-primary"></i>
+                Vincular Columnas
+            </h3>
+            <p class="text-xs text-base-content/50 mt-1">Asocie los campos del sistema con las columnas de su archivo</p>
+        </div>
+        <div class="p-6 flex flex-col gap-6">
+            @for (opt of fieldOptions; track opt.key) {
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div class="flex-1">
+                        <span class="text-sm font-bold flex items-center gap-2 uppercase tracking-wide">
+                            {{ opt.label }}
+                            @if (opt.required) { <span class="text-error">*</span> }
+                        </span>
+                    </div>
+                    <div class="flex-1">
+                        <select 
+                            class="select select-bordered w-full rounded-2xl bg-base-200/50"
+                            [(ngModel)]="mapping()[opt.key]"
+                        >
+                            <option value="">-- Ignorar --</option>
+                            @for (h of headers(); track h) {
+                                <option [value]="h">{{ h }}</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="p-6 bg-base-200/30 flex justify-end gap-3">
+            <button sgaButton variant="ghost" color="secondary" shape="pill" (click)="step.set('upload')">Atrás</button>
+            <button 
+                sgaButton 
+                color="primary" 
+                shape="pill" 
+                [disabled]="!canStartImport()"
+                (click)="startImport()"
+            >
+                Confirmar e Importar
+            </button>
+        </div>
+    </div>
+  }
+
+  <!-- Step: Done -->
+  @if (step() === 'done') {
+    <div class="flex flex-col items-center justify-center py-12">
+        <div class="w-24 h-24 rounded-full bg-success/10 text-success flex items-center justify-center mb-6 animate-bounce">
+            <i class="fas fa-check-circle text-5xl"></i>
+        </div>
+        <h3 class="text-2xl font-bold mb-2 uppercase">¡Importación Exitosa!</h3>
+        <p class="text-base-content/50">Se ha procesado el archivo y actualizado la lista.</p>
+    </div>
+  }
+</div>
