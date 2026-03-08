@@ -1,22 +1,39 @@
 export type Student = {
   id: string;
-  name: string;
+  firstName: string;
+  lastName: string;
+  docType: string;
+  docNumber: string;
+  gender: 'M' | 'F' | 'O';
+  birthDate: string;
+  phone?: string;
+  address?: string;
   email: string;
+  username: string;
+  studentCode: string;
   age: number;
   grade: string;
+  isActive: boolean;
 };
+
 export type StudentCreate = {
-  name: string;
+  firstName: string;
+  lastName: string;
+  docType: string;
+  docNumber: string;
+  gender: 'M' | 'F' | 'O';
+  birthDate: string;
+  phone?: string;
+  address?: string;
   email: string;
+  username: string;
+  password?: string;
+  studentCode: string;
   age: number;
   grade: string;
 };
-export type StudentUpdate = {
-  name?: string;
-  email?: string;
-  age?: number;
-  grade?: string;
-};
+
+export type StudentUpdate = Partial<StudentCreate> & { isActive?: boolean };
 export type StudentParams = {
   search?: string;
   page?: number;

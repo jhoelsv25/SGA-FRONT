@@ -75,7 +75,8 @@ export default class StudentsPage implements OnInit {
     if (!search) return list;
     return list.filter(
       (s) =>
-        s.name?.toLowerCase().includes(search) ||
+        s.firstName?.toLowerCase().includes(search) ||
+        s.lastName?.toLowerCase().includes(search) ||
         s.email?.toLowerCase().includes(search) ||
         String(s.grade ?? '').toLowerCase().includes(search),
     );
@@ -131,7 +132,8 @@ export default class StudentsPage implements OnInit {
     const ref = this.dialog.open(StudentForm, {
       data: { current: current ?? null },
       panelClass: 'dialog-top',
-      width: '480px',
+      width: '880px',
+      height: '650px',
     });
     ref.closed.subscribe(() => this.onRefresh());
   }
@@ -139,7 +141,14 @@ export default class StudentsPage implements OnInit {
   private downloadTemplate() {
     this.excel.downloadTemplate(
       EXCEL_COLUMNS,
-      { name: 'Ejemplo Estudiante', email: 'estudiante@ejemplo.com', age: 15, grade: '1ro' },
+      {
+        firstName: 'Juan',
+        lastName: 'Pérez',
+        email: 'estudiante@ejemplo.com',
+        age: 15,
+        grade: '1ro',
+        studentCode: 'A2024001',
+      },
       { sheetName: 'Estudiantes', fileName: 'plantilla_estudiantes.xlsx' },
     );
   }
@@ -160,7 +169,14 @@ export default class StudentsPage implements OnInit {
 
   private export() {
     this.studentApi.getAll({ size: 9999 }).subscribe((res) => {
-      const data = (res.data ?? []).map((s) => ({ name: s.name, email: s.email, age: s.age, grade: s.grade }));
+      const data = (res.data ?? []).map((s) => ({
+        firstName: s.firstName,
+        lastName: s.lastName,
+        email: s.email,
+        age: s.age,
+        grade: s.grade,
+        studentCode: s.studentCode,
+      }));
       this.excel.downloadExport(EXCEL_COLUMNS, data, {
         sheetName: 'Estudiantes',
         fileName: `estudiantes_${new Date().toISOString().slice(0, 10)}.xlsx`,
