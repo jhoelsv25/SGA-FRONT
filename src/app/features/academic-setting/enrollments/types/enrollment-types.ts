@@ -6,7 +6,13 @@ export interface Enrollment {
   status: 'enrolled' | 'completed' | 'dropped' | 'graduated';
   orderNumber: number;
   observations?: string;
-  student: { id: string; firstName: string; lastName: string; studentCode: string };
+  student: { 
+    id: string; 
+    firstName?: string; 
+    lastName?: string; 
+    studentCode: string;
+    person?: { firstName: string; lastName: string };
+  };
   section: { id: string; name: string };
   academicYear: { id: string; year: number };
 }

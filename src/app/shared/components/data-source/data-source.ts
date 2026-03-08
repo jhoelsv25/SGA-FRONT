@@ -9,6 +9,10 @@ import {
   signal,
   OnInit,
   OnDestroy,
+  ContentChildren,
+  QueryList,
+  TemplateRef,
+  Directive,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -36,6 +40,15 @@ import {
   getRowClasses,
 } from '@shared/utils/data-source';
 
+@Directive({
+  selector: '[sgaTemplate]',
+  standalone: true,
+})
+export class SgaTemplate {
+  name = input.required<string>({ alias: 'sgaTemplate' });
+  public templateRef = inject(TemplateRef<unknown>);
+}
+
 @Component({
   selector: 'sga-data-source',
   standalone: true,
@@ -44,6 +57,13 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DataSource implements OnInit, OnDestroy {
+  @ContentChildren(SgaTemplate) templates!: QueryList<SgaTemplate>;
+
+  getTemplate(name: string | undefined): TemplateRef<unknown> | null {
+    if (!name || !this.templates) return null;
+    return this.templates.find((t) => t.name() === name)?.templateRef || null;
+  }
+
   private permissionStore = inject(PermissionCheckStore);
   private formatter = inject(CellFormatter);
 
@@ -120,8 +140,7 @@ export class DataSource implements OnInit, OnDestroy {
 
     return this.data().filter((row) =>
       this.columns().some((col) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const val = (row as any)[col.key];
+        const val = (row as Record<string, unknown>)[col.key];
         return val != null && String(val).toLowerCase().includes(term);
       }),
     );
@@ -303,8 +322,7 @@ export class DataSource implements OnInit, OnDestroy {
   }
 
   getRowId(row: unknown, index: number): string {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (row as any)?.id?.toString() ?? index.toString();
+    return (row as Record<string, unknown>)?.['id']?.toString() ?? index.toString();
   }
 
   // =========================
@@ -353,8 +371,7 @@ export class DataSource implements OnInit, OnDestroy {
   // CELL HELPERS
   // =========================
   formatCell(row: unknown, col: DataSourceColumn): string {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return this.formatter.format((row as any)[col.key], col);
+    return this.formatter.format((row as Record<string, unknown>)[col.key], col);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-expressions
@@ -375,8 +392,7 @@ export class DataSource implements OnInit, OnDestroy {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getRowProperty(row: unknown, key: string): unknown {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (row as any)?.[key];
+    return (row as Record<string, unknown>)?.[key];
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -397,8 +413,7 @@ export class DataSource implements OnInit, OnDestroy {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getNestedProperty(obj: unknown, key: string): unknown {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (obj as any)?.[key];
+    return (obj as Record<string, unknown>)?.[key];
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -411,17 +426,16 @@ export class DataSource implements OnInit, OnDestroy {
     return !!this.getRowProperty(row, key);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  getArrayDisplay(item: unknown, col: any): string {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  getArrayDisplay(item: unknown, col: DataSourceColumn): string {
     return typeof item === 'object'
-      ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ((item as any)[col.arrayLabelKey ?? 'label'] ?? JSON.stringify(item))
+      ? ((item as Record<string, unknown>)[col.arrayDisplayKey ?? 'label'] ?? JSON.stringify(item)) as string
       : String(item);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  getValueColor(col: any, item: unknown): string {
-    return col.valueColor?.(item) ?? '';
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  getValueColor(col: DataSourceColumn, _item: unknown): string {
+    return ''; // Placeholder as color logic is usually handled via cellCssClass or booleanColors
   }
 
   // =========================
@@ -472,8 +486,7 @@ export class DataSource implements OnInit, OnDestroy {
     } else {
       // Si no, intenta actualizar el valor directamente
       if (row && col.key) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (row as any)[col.key] = checked;
+        (row as Record<string, unknown>)[col.key] = checked;
       }
     }
   }

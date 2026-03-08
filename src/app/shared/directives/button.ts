@@ -283,8 +283,8 @@ export class Button implements OnInit {
         break;
       case 'pill':
         this.renderer.addClass(element, 'rounded-full');
-        // Si el botón solo tiene un ícono o un solo hijo, hacerlo circular y tamaño según size
-        if (element.childElementCount === 1 || element.textContent?.trim() === '') {
+        // Si el botón no tiene texto (solo íconos), hacerlo circular y tamaño según size
+        if (element.textContent?.trim() === '') {
           this.renderer.addClass(element, 'aspect-square');
           switch (this.size()) {
             case 'xs':

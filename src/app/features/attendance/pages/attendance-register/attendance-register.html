@@ -1,0 +1,121 @@
+<div class="p-6">
+  <sga-data-source
+    [data]="students()"
+    [columns]="columns"
+    [loading]="store.loading()"
+    [showToolbar]="false"
+    [config]="{ selectable: false, pagination: false }"
+  >
+    <!-- Standard Toolbar -->
+    <div data-source-header class="sticky top-0 z-20 -mx-4 -mt-4 px-4 pt-4 pb-4 mb-4 bg-base-200 rounded-t-lg border-b border-base-300">
+      <sga-list-toolbar
+        title="Registro de Asistencia"
+        icon="fas fa-clipboard-check"
+        description="Seleccione el curso y fecha para marcar la asistencia"
+        [showSearch]="false"
+        [filterCount]="selectedSectionCourse() ? 1 : 0"
+      >
+        <!-- Filters in Popover -->
+        <div list-toolbar-filter class="flex flex-col gap-4 min-w-[260px]">
+          <h4 class="text-[10px] font-bold text-base-content/40 uppercase tracking-[0.2em] mb-1">Configuración</h4>
+          <div class="flex flex-col gap-1.5">
+            <label for="attendance-date-select" class="text-[11px] font-bold text-base-content/60 uppercase">Fecha de Asistencia</label>
+            <sga-input
+              id="attendance-date-select"
+              type="date"
+              [ngModel]="attendanceDate()"
+              (ngModelChange)="attendanceDate.set($event); onDateChange()"
+            />
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="section-course-select" class="text-[11px] font-bold text-base-content/60 uppercase">Curso / Sección</label>
+            <sga-select
+              id="section-course-select"
+              [options]="sectionCourseOptions()"
+              [value]="selectedSectionCourse()"
+              (valueChange)="onSectionCourseChange($event)"
+              placeholder="Seleccione uno..."
+            />
+          </div>
+        </div>
+
+        <!-- Actions in Toolbar Menu (Dropdown) -->
+        <div list-toolbar-actions>
+          <sga-dropdown [items]="toolbarActions()">
+            <button
+              sga-dropdown-trigger
+              sgaButton
+              variant="ghost"
+              color="secondary"
+              shape="pill"
+              class="w-10 h-10 p-0"
+              title="Más acciones"
+            >
+              <i class="fas fa-ellipsis-v text-sm"></i>
+            </button>
+          </sga-dropdown>
+        </div>
+      </sga-list-toolbar>
+    </div>
+
+    <!-- Custom Cell Templates -->
+    <ng-template sgaTemplate="statusTemplate" let-row="row">
+        <span
+            class="badge badge-sm border-none font-bold uppercase py-2.5 px-3"
+            [ngClass]="{
+                'bg-success/10 text-success': row.status === 'present',
+                'bg-warning/10 text-warning': row.status === 'late',
+                'bg-error/10 text-error': row.status === 'absent',
+                'bg-info/10 text-info': row.status === 'excused'
+            }"
+            >
+            {{ row.status === 'present' ? 'Presente' : 
+                row.status === 'late' ? 'Tardanza' : 
+                row.status === 'absent' ? 'Falta' : 'Justificado' }}
+        </span>
+    </ng-template>
+
+    <ng-template sgaTemplate="actionsTemplate" let-row="row">
+        <div class="flex gap-1">
+            <button
+                type="button"
+                class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs border transition-all"
+                [class]="row.status === 'present' ? 'bg-success text-success-content border-success shadow-sm' : 'bg-base-100 text-base-content/50 border-base-300 hover:border-success hover:text-success'"
+                (click)="updateStatus(row.id, 'present')"
+                title="Presente"
+            >P</button>
+            <button
+                type="button"
+                class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs border transition-all"
+                [class]="row.status === 'late' ? 'bg-warning text-warning-content border-warning shadow-sm' : 'bg-base-100 text-base-content/50 border-base-300 hover:border-warning hover:text-warning'"
+                (click)="updateStatus(row.id, 'late')"
+                title="Tardanza"
+            >T</button>
+            <button
+                type="button"
+                class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs border transition-all"
+                [class]="row.status === 'absent' ? 'bg-error text-error-content border-error shadow-sm' : 'bg-base-100 text-base-content/50 border-base-300 hover:border-error hover:text-error'"
+                (click)="updateStatus(row.id, 'absent')"
+                title="Falta"
+            >F</button>
+            <button
+                type="button"
+                class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs border transition-all"
+                [class]="row.status === 'excused' ? 'bg-info text-info-content border-info shadow-sm' : 'bg-base-100 text-base-content/50 border-base-300 hover:border-info hover:text-info'"
+                (click)="updateStatus(row.id, 'excused')"
+                title="Justificado"
+            >J</button>
+        </div>
+    </ng-template>
+
+    <div data-source-empty class="flex flex-col items-center justify-center py-20 text-base-content/40">
+        @if (!selectedSectionCourse()) {
+            <i class="fas fa-arrow-up text-5xl mb-4 animate-bounce"></i>
+            <p class="font-medium text-lg">Seleccione un curso y fecha en los filtros</p>
+        } @else {
+            <i class="fas fa-users-slash text-5xl mb-4 text-base-content/20"></i>
+            <p class="font-medium text-lg">No hay estudiantes matriculados</p>
+        }
+    </div>
+  </sga-data-source>
+</div>

@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Select } from '@shared/ui/select/select';
 import type { SelectOption } from '@shared/ui/select/select';
 import { AssessmentStore } from '../../services/store/assessment.store';
+import { ListToolbar } from '@shared/ui/list-toolbar';
+import { Button } from '@shared/directives';
 import { type Assessment, type AssessmentScore } from '../../types/assessment-types';
 
 type ScoreRow = Pick<AssessmentScore, 'enrollmentId' | 'score' | 'observation'> & { studentName: string };
@@ -11,9 +13,8 @@ type ScoreRow = Pick<AssessmentScore, 'enrollmentId' | 'score' | 'observation'> 
 @Component({
   selector: 'sga-grades',
   standalone: true,
-  imports: [CommonModule, FormsModule, Select],
+  imports: [CommonModule, FormsModule, Select, ListToolbar, Button],
   templateUrl: './grades.html',
-  styleUrl: './grades.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class Grades implements OnInit {
