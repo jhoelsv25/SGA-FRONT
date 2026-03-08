@@ -1,34 +1,87 @@
 import { Dialog } from '@angular/cdk/dialog';
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 import { DataSource } from '@shared/components/data-source/data-source';
-import { HeaderDetail } from '@shared/components/header-detail/header-detail';
 import { StudentStore } from '../../services/store/student.store';
-import { Student, StudentCreate } from '../../types/student-types';
+import { Student } from '../../types/student-types';
 import { StudentForm } from '../../components/student-form/student-form';
 import { StudentApi } from '../../services/api/student-api';
 import { ExcelService } from '@core/services/excel.service';
-import { ImportDialog } from '@shared/components/import-dialog/import-dialog';
-import { STUDENT_HEADER_CONFIG } from '../../config/header.config';
+import { ImportWithProgressDialog } from '../../components/import-with-progress-dialog/import-with-progress-dialog';
 import { STUDENT_COLUMN } from '../../config/column.config';
 import { STUDENT_ACTIONS } from '../../config/action.config';
+import { ListToolbar } from '@shared/ui/list-toolbar';
+import { Dropdown, DropdownItem } from '@shared/ui/dropdown/dropdown';
+import { PermissionCheckStore } from '@core/stores/permission-check.store';
+import { Toast } from '@core/services/toast';
 
 const EXCEL_COLUMNS = STUDENT_COLUMN.map((c) => ({ key: c.key, label: c.label }));
+
+type ImportResult = { created: number; errors: { row: number; message: string }[] } | null;
 
 @Component({
   selector: 'sga-students',
   standalone: true,
-  imports: [HeaderDetail, DataSource],
+  imports: [ListToolbar, DataSource, Dropdown],
   templateUrl: './students.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class StudentsPage {
+export default class StudentsPage implements OnInit {
   private dialog = inject(Dialog);
   private store = inject(StudentStore);
   private studentApi = inject(StudentApi);
   private excel = inject(ExcelService);
+  private permissionStore = inject(PermissionCheckStore);
+  private toast = inject(Toast);
+  private route = inject(ActivatedRoute);
 
-  headerConfig = computed(() => STUDENT_HEADER_CONFIG);
+  searchTerm = signal('');
+
+  headerActions = computed(() =>
+    this.permissionStore.filterActions(STUDENT_ACTIONS.filter((a) => a.typeAction === 'header')),
+  );
+  toolbarMoreItems = computed<DropdownItem[]>(() => {
+    const actions = this.headerActions().filter((a) => a.key !== 'refresh');
+    const createIdx = actions.findIndex((a) => a.key === 'create');
+    const create = createIdx >= 0 ? actions[createIdx] : null;
+    const rest = actions.filter((a) => a.key !== 'create');
+    const items: DropdownItem[] = [];
+    if (create) {
+      items.push({
+        label: 'Nuevo',
+        icon: create.icon,
+        disabled: typeof create.disabled === 'function' ? create.disabled({}) : !!create.disabled,
+        action: () => this.onHeaderAction({ action: create, context: {} }),
+      });
+    }
+    if (rest.length > 0) {
+      items.push({ label: '', separator: true });
+      items.push({ label: 'Acciones', disabled: true });
+      rest.forEach((action) => {
+        items.push({
+          label: action.label,
+          icon: action.icon,
+          disabled: typeof action.disabled === 'function' ? action.disabled({}) : !!action.disabled,
+          action: () => this.onHeaderAction({ action, context: {} }),
+        });
+      });
+    }
+    return items;
+  });
+  filteredData = computed(() => {
+    const list = this.data();
+    const search = this.searchTerm().toLowerCase().trim();
+    if (!search) return list;
+    return list.filter(
+      (s) =>
+        s.firstName?.toLowerCase().includes(search) ||
+        s.lastName?.toLowerCase().includes(search) ||
+        s.email?.toLowerCase().includes(search) ||
+        String(s.grade ?? '').toLowerCase().includes(search),
+    );
+  });
+
   columns = computed(() =>
     STUDENT_COLUMN.map((col) => ({
       ...col,
@@ -43,7 +96,6 @@ export default class StudentsPage {
   data = computed(() => this.store.students());
   loading = computed(() => this.store.loading());
   pagination = computed(() => this.store.pagination());
-  headerActions = computed(() => STUDENT_ACTIONS.filter((a) => a.typeAction === 'header'));
   rowActions = computed(() => STUDENT_ACTIONS.filter((a) => a.typeAction === 'row'));
 
   onHeaderAction(e: { action: ActionConfig; context: ActionContext }) {
@@ -64,59 +116,71 @@ export default class StudentsPage {
     this.store.loadAll({ page: p.page, size: p.size });
   }
 
+  onSearch(value: string) {
+    this.searchTerm.set(value);
+  }
+
+  onRefresh() {
+    this.store.loadAll({ page: this.pagination().page, size: this.pagination().size });
+  }
+
+  ngOnInit() {
+    this.store.loadAll({});
+  }
+
   private openForm(current?: Student | null) {
-    this.dialog.open(StudentForm, {
+    const ref = this.dialog.open(StudentForm, {
       data: { current: current ?? null },
       panelClass: 'dialog-top',
-      width: '480px',
+      width: '880px',
+      height: '650px',
     });
+    ref.closed.subscribe(() => this.onRefresh());
   }
 
   private downloadTemplate() {
-    const blob = this.excel.generateTemplate(EXCEL_COLUMNS, {
-      name: 'Ejemplo Estudiante',
-      email: 'estudiante@ejemplo.com',
-      age: 15,
-      grade: '1ro',
-    }, 'Estudiantes');
-    this.excel.download(blob, 'plantilla_estudiantes.xlsx');
+    this.excel.downloadTemplate(
+      EXCEL_COLUMNS,
+      {
+        firstName: 'Juan',
+        lastName: 'Pérez',
+        email: 'estudiante@ejemplo.com',
+        age: 15,
+        grade: '1ro',
+        studentCode: 'A2024001',
+      },
+      { sheetName: 'Estudiantes', fileName: 'plantilla_estudiantes.xlsx' },
+    );
   }
 
   private openImport() {
-    const ref = this.dialog.open(ImportDialog, {
-      data: {
-        title: 'Importar estudiantes',
-        columns: EXCEL_COLUMNS,
-        exampleRow: { name: 'Ejemplo', email: 'correo@ejemplo.com', age: 15, grade: '1ro' },
-        templateSheetName: 'Estudiantes',
-        validateRow: (row: Record<string, unknown>) => {
-          if (!String(row['name'] ?? '').trim()) return 'Nombre requerido';
-          if (!String(row['email'] ?? '').trim()) return 'Email requerido';
-          const age = Number(row['age']);
-          if (Number.isNaN(age) || age < 1 || age > 120) return 'Edad inválida (1-120)';
-          return null;
-        },
-        importRows: (rows: Record<string, unknown>[]) =>
-          this.studentApi.import(
-            rows.map((r) => ({
-              name: String(r['name'] ?? '').trim(),
-              email: String(r['email'] ?? '').trim(),
-              age: Number(r['age']) || 0,
-              grade: String(r['grade'] ?? '').trim(),
-            })) as StudentCreate[],
-          ),
-      },
-      panelClass: 'dialog-top',
-      width: '720px',
+    const ref = this.dialog.open<ImportResult | null, void, ImportWithProgressDialog>(ImportWithProgressDialog, {
+      panelClass: 'dialog-center',
+      width: '960px',
+      height: '700px',
     });
-    ref.closed.subscribe(() => this.store.loadAll({}));
+    ref.closed.subscribe((result) => {
+      this.store.loadAll({ page: this.pagination().page, size: this.pagination().size });
+      if (result?.created != null && result.created > 0) {
+        this.toast.success(`Importación completada: ${result.created} estudiante(s) creado(s)`);
+      }
+    });
   }
 
   private export() {
     this.studentApi.getAll({ size: 9999 }).subscribe((res) => {
-      const data = (res.data ?? []).map((s) => ({ name: s.name, email: s.email, age: s.age, grade: s.grade }));
-      const blob = this.excel.generate(EXCEL_COLUMNS, data, 'Estudiantes');
-      this.excel.download(blob, `estudiantes_${new Date().toISOString().slice(0, 10)}.xlsx`);
+      const data = (res.data ?? []).map((s) => ({
+        firstName: s.firstName,
+        lastName: s.lastName,
+        email: s.email,
+        age: s.age,
+        grade: s.grade,
+        studentCode: s.studentCode,
+      }));
+      this.excel.downloadExport(EXCEL_COLUMNS, data, {
+        sheetName: 'Estudiantes',
+        fileName: `estudiantes_${new Date().toISOString().slice(0, 10)}.xlsx`,
+      });
     });
   }
 }

@@ -3,7 +3,7 @@ import { Routes } from '@angular/router';
 export default [
   {
     path: 'list',
-    loadComponent: () => import('../students/pages/students/students'),
+    loadComponent: () => import('./pages/students/students'),
     title: 'Lista de Estudiantes',
     data: { permissions: ['view_student'] },
   },
@@ -15,19 +15,19 @@ export default [
   },
   {
     path: 'guardians',
-    loadComponent: () => import('../students/pages/students/students'), // Placeholder
+    loadComponent: () => import('./pages/guardians/guardians'),
     title: 'Apoderados',
     data: { permissions: ['view_guardian', 'manage_guardian'] },
   },
   {
     path: 'observations',
-    loadComponent: () => import('../students/pages/students/students'), // Placeholder
+    loadComponent: () => import('./pages/observations/observations'),
     title: 'Observaciones',
     data: { permissions: ['view_observation', 'manage_observation'] },
   },
   {
     path: '',
     redirectTo: 'list',
-    pathMatch: 'full'
-  }
+    pathMatch: 'full',
+  },
 ] as Routes;

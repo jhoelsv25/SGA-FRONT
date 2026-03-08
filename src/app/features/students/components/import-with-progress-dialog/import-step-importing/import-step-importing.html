@@ -1,0 +1,29 @@
+<div class="space-y-6 py-4">
+  <div class="flex flex-col items-center gap-4">
+    <div class="w-20 h-20 rounded-2xl bg-primary/15 flex items-center justify-center">
+      <i class="fas fa-spinner fa-spin text-4xl text-primary"></i>
+    </div>
+    <div class="text-center">
+      <p class="font-semibold text-base-content">Importando estudiantes</p>
+      <p class="text-sm text-base-content/60 mt-1">Procesando registros...</p>
+    </div>
+  </div>
+  @if (progress(); as p) {
+    <div class="space-y-3 p-4 rounded-2xl bg-base-200/50 border border-base-300/50">
+      <div class="flex justify-between text-sm">
+        <span class="text-base-content/70">Progreso</span>
+        <span class="font-semibold text-primary">{{ p.processed }} / {{ p.total }}</span>
+      </div>
+      <div class="h-3 rounded-full bg-base-300 overflow-hidden shadow-inner">
+        <div
+          class="h-full bg-linear-to-r from-primary to-primary/80 transition-all duration-500 ease-out rounded-full"
+          [style.width.%]="p.percentage"
+        ></div>
+      </div>
+      <div class="flex items-center gap-2 text-sm text-success font-medium">
+        <i class="fas fa-user-plus"></i>
+        <span>{{ p.created }} estudiante(s) creado(s)</span>
+      </div>
+    </div>
+  }
+</div>

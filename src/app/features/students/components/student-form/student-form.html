@@ -1,30 +1,163 @@
-<form [formGroup]="form" class="grid gap-4" (ngSubmit)="submit()">
-  <header class="flex items-center justify-between mb-4">
+<form [formGroup]="form" class="flex flex-col gap-4" (ngSubmit)="submit()">
+  <header class="mb-2 flex items-center justify-between">
     <h2 class="text-lg font-semibold">{{ current ? 'Editar estudiante' : 'Nuevo estudiante' }}</h2>
     <button type="button" sgaButton color="secondary" variant="ghost" shape="pill" (click)="close()">
       <i class="fas fa-times"></i>
     </button>
   </header>
-  <div class="grid gap-4">
-    <div>
-      <label class="label-form" for="name">Nombre</label>
-      <sga-input id="name" formControlName="name" placeholder="Nombre completo" />
-    </div>
-    <div>
-      <label class="label-form" for="email">Email</label>
-      <sga-input id="email" type="email" formControlName="email" placeholder="correo@ejemplo.com" />
-    </div>
-    <div>
-      <label class="label-form" for="age">Edad</label>
-      <sga-input id="age" type="number" formControlName="age" placeholder="Edad" />
-    </div>
-    <div>
-      <label class="label-form" for="grade">Grado</label>
-      <sga-input id="grade" formControlName="grade" placeholder="Grado" />
-    </div>
+
+  <!-- Tabs Navigation -->
+  <div class="flex border-b border-base-200 mb-2">
+    <button
+      type="button"
+      class="px-4 py-2 text-sm font-medium transition-colors border-b-2"
+      [class.border-primary]="activeTab() === 'personal'"
+      [class.text-primary]="activeTab() === 'personal'"
+      [class.border-transparent]="activeTab() !== 'personal'"
+      [class.text-base-content/60]="activeTab() !== 'personal'"
+      (click)="setTab('personal')"
+    >
+      Personales
+    </button>
+    <button
+      type="button"
+      class="px-4 py-2 text-sm font-medium transition-colors border-b-2"
+      [class.border-primary]="activeTab() === 'user'"
+      [class.text-primary]="activeTab() === 'user'"
+      [class.border-transparent]="activeTab() !== 'user'"
+      [class.text-base-content/60]="activeTab() !== 'user'"
+      (click)="setTab('user')"
+    >
+      Usuario
+    </button>
+    <button
+      type="button"
+      class="px-4 py-2 text-sm font-medium transition-colors border-b-2"
+      [class.border-primary]="activeTab() === 'academic'"
+      [class.text-primary]="activeTab() === 'academic'"
+      [class.border-transparent]="activeTab() !== 'academic'"
+      [class.text-base-content/60]="activeTab() !== 'academic'"
+      (click)="setTab('academic')"
+    >
+      Académicos
+    </button>
   </div>
-  <footer class="flex justify-end gap-2 mt-4">
+
+  <div class="grid max-h-[60vh] gap-4 overflow-y-auto pr-1">
+    <!-- Tab: Personal -->
+    @if (activeTab() === 'personal') {
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div class="col-span-full sm:col-span-1">
+          <label class="label-form" for="firstName">Nombres</label>
+          <sga-input id="firstName" formControlName="firstName" placeholder="Ej: Juan" />
+          @if (getError('firstName')) {
+            <p class="mt-1 text-xs text-red-600">{{ getError('firstName') }}</p>
+          }
+        </div>
+        <div class="col-span-full sm:col-span-1">
+          <label class="label-form" for="lastName">Apellidos</label>
+          <sga-input id="lastName" formControlName="lastName" placeholder="Ej: Pérez García" />
+          @if (getError('lastName')) {
+            <p class="mt-1 text-xs text-red-600">{{ getError('lastName') }}</p>
+          }
+        </div>
+        <div>
+          <label class="label-form" for="docType">Tipo Doc.</label>
+          <sga-select id="docType" formControlName="docType" [options]="docTypeOptions" />
+        </div>
+        <div>
+          <label class="label-form" for="docNumber">Nro. Documento</label>
+          <sga-input id="docNumber" formControlName="docNumber" placeholder="12345678" />
+          @if (getError('docNumber')) {
+            <p class="mt-1 text-xs text-red-600">{{ getError('docNumber') }}</p>
+          }
+        </div>
+        <div>
+          <label class="label-form" for="gender">Género</label>
+          <sga-select id="gender" formControlName="gender" [options]="genderOptions" />
+        </div>
+        <div>
+          <label class="label-form" for="birthDate">Fec. Nacimiento</label>
+          <sga-input id="birthDate" type="date" formControlName="birthDate" />
+          @if (getError('birthDate')) {
+            <p class="mt-1 text-xs text-red-600">{{ getError('birthDate') }}</p>
+          }
+        </div>
+        <div class="col-span-full">
+          <label class="label-form" for="phone">Teléfono (opcional)</label>
+          <sga-input id="phone" formControlName="phone" placeholder="987654321" />
+        </div>
+        <div class="col-span-full">
+          <label class="label-form" for="address">Dirección (opcional)</label>
+          <sga-input id="address" formControlName="address" placeholder="Av. Siempre Viva 123" />
+        </div>
+      </div>
+    }
+
+    <!-- Tab: User -->
+    @if (activeTab() === 'user') {
+      <div class="flex flex-col gap-4">
+        <div>
+          <label class="label-form" for="email">Email de la cuenta</label>
+          <sga-input id="email" type="email" formControlName="email" placeholder="estudiante@colegio.edu.pe" />
+          @if (getError('email')) {
+            <p class="mt-1 text-xs text-red-600">{{ getError('email') }}</p>
+          }
+        </div>
+        <div>
+          <label class="label-form" for="username">Nombre de usuario</label>
+          <sga-input id="username" formControlName="username" placeholder="jperez123" />
+          @if (getError('username')) {
+            <p class="mt-1 text-xs text-red-600">{{ getError('username') }}</p>
+          }
+        </div>
+        @if (!current) {
+          <div>
+            <label class="label-form" for="password">Contraseña inicial</label>
+            <sga-input id="password" type="password" formControlName="password" placeholder="******" />
+            @if (getError('password')) {
+              <p class="mt-1 text-xs text-red-600">{{ getError('password') }}</p>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Tab: Academic -->
+    @if (activeTab() === 'academic') {
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div class="col-span-full">
+          <label class="label-form" for="studentCode">Código de Estudiante</label>
+          <sga-input id="studentCode" formControlName="studentCode" placeholder="A1234567" />
+          @if (getError('studentCode')) {
+            <p class="mt-1 text-xs text-red-600">{{ getError('studentCode') }}</p>
+          }
+        </div>
+        <div>
+          <label class="label-form" for="age">Edad</label>
+          <sga-input id="age" type="number" formControlName="age" placeholder="15" />
+          @if (getError('age')) {
+            <p class="mt-1 text-xs text-red-600">{{ getError('age') }}</p>
+          }
+        </div>
+        <div>
+          <label class="label-form" for="grade">Grado</label>
+          <sga-input id="grade" formControlName="grade" placeholder="1ro Secundaria" />
+          @if (getError('grade')) {
+            <p class="mt-1 text-xs text-red-600">{{ getError('grade') }}</p>
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  <footer class="mt-2 flex justify-end gap-2 border-t border-base-200 pt-4">
     <button type="button" sgaButton color="secondary" variant="outline" (click)="close()">Cancelar</button>
-    <button type="submit" sgaButton color="primary" [disabled]="form.invalid">Guardar</button>
+    <button type="submit" sgaButton color="primary" [disabled]="form.invalid || saving()">
+      @if (saving()) {
+        <i class="fas fa-spinner fa-spin mr-2"></i>
+      }
+      {{ current ? 'Actualizar' : 'Registrar Estudiante' }}
+    </button>
   </footer>
 </form>

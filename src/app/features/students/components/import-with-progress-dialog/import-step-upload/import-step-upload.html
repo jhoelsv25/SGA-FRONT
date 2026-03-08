@@ -1,0 +1,64 @@
+<div
+  class="flex flex-col items-center justify-center py-14 px-8 text-center rounded-2xl border-2 border-dashed transition-all duration-300 cursor-pointer min-h-[300px] hover:border-primary/60 hover:bg-base-200/70"
+  [ngClass]="{
+    'border-primary bg-primary/15 scale-[1.02] shadow-xl shadow-primary/20': isDragging(),
+    'border-base-300 bg-base-200/50': !isDragging(),
+  }"
+  (dragover)="onDragOver($event)"
+  (dragleave)="onDragLeave($event)"
+  (drop)="onDrop($event)"
+>
+  @if (isDragging()) {
+    <div class="flex flex-col items-center gap-4 animate-pulse">
+      <div class="w-24 h-24 rounded-2xl bg-primary/20 flex items-center justify-center">
+        <i class="fas fa-cloud-upload-alt text-6xl text-primary"></i>
+      </div>
+      <p class="text-lg font-semibold text-primary">Suelte el archivo aquí</p>
+      <p class="text-sm text-base-content/70">.xlsx, .xls o .csv</p>
+    </div>
+  } @else {
+    <div
+      class="w-28 h-28 rounded-3xl bg-linear-to-br from-primary/20 to-primary/5 flex items-center justify-center mb-6 shadow-lg shadow-primary/15 ring-2 ring-primary/10"
+    >
+      <i class="fas fa-file-excel text-6xl text-primary"></i>
+    </div>
+    <h3 class="text-xl font-semibold text-base-content mb-2">Arrastre o seleccione archivo</h3>
+    <p class="text-sm text-base-content/70 max-w-md mb-8 leading-relaxed">
+      Arrastre un archivo Excel aquí o haga clic para seleccionar. Formatos: .xlsx, .xls o .csv. En
+      el siguiente paso podrá mapear cada columna a los campos del estudiante.
+    </p>
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+      <label
+        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border-2 border-primary bg-primary/10 hover:bg-primary/20 font-medium cursor-pointer transition-all text-primary hover:shadow-md hover:shadow-primary/20"
+      >
+        <i class="fas fa-file-excel text-xl"></i>
+        <span>Seleccionar archivo</span>
+        <input
+          type="file"
+          accept=".xlsx,.xls,.csv"
+          class="hidden"
+          (change)="onFileSelected($event)"
+        />
+      </label>
+      <button
+        type="button"
+        sgaButton
+        variant="outline"
+        color="primary"
+        size="sm"
+        (click)="onDownloadTemplate()"
+      >
+        <i class="fas fa-download mr-2"></i>
+        Descargar plantilla
+      </button>
+    </div>
+    @if (file()) {
+      <div
+        class="mt-6 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-success/10 border border-success/30 shadow-sm"
+      >
+        <i class="fas fa-check-circle text-success text-lg"></i>
+        <span class="text-sm font-medium text-base-content">{{ file()?.name }}</span>
+      </div>
+    }
+  }
+</div>

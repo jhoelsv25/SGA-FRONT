@@ -35,11 +35,29 @@ export class StudentApi {
     return this.http.delete<DataResponse<StudentResponse>>(`${this.baseUrl}/${id}`);
   }
 
-  /** Importación masiva. Backend recibe JSON array y devuelve resultado. */
+  /** Importación masiva (síncrona). Backend recibe JSON array. */
   import(rows: StudentCreate[]): Observable<{ created: number; errors?: { row: number; message: string }[] }> {
     return this.http.post<{ created: number; errors?: { row: number; message: string }[] }>(
       `${this.baseUrl}/import`,
       { rows },
     );
+  }
+
+  /** Sube archivo Excel y obtiene encabezados para mapeo. */
+  uploadImportFile(file: File): Observable<{ uploadId: string; headers: string[]; rowCount: number }> {
+    const form = new FormData();
+    form.append('file', file);
+    return this.http.post<{ uploadId: string; headers: string[]; rowCount: number }>(
+      `${this.baseUrl}/import/upload`,
+      form,
+    );
+  }
+
+  /** Inicia importación asíncrona por colas. Progreso vía WebSocket. */
+  startImport(uploadId: string, columnMapping: Record<string, string>): Observable<{ jobId: string }> {
+    return this.http.post<{ jobId: string }>(`${this.baseUrl}/import/start`, {
+      uploadId,
+      columnMapping,
+    });
   }
 }

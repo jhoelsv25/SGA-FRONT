@@ -1,0 +1,108 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Button } from '@shared/directives';
+import { Input } from '@shared/ui/input/input';
+import { Select } from '@shared/ui/select/select';
+import { TeacherSelect } from '@shared/components/selects';
+import { ObservationApi } from '../../services/api/observation-api';
+import { StudentApi } from '../../services/api/student-api';
+import { StudentObservation } from '../../types/observation-types';
+import type { SelectOption } from '@shared/ui/select/select';
+
+@Component({
+  selector: 'sga-observation-form',
+  standalone: true,
+  imports: [ReactiveFormsModule, Button, Select, Input, TeacherSelect],
+  templateUrl: './observation-form.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class ObservationForm implements OnInit {
+  private data = inject(DIALOG_DATA, { optional: true });
+  private ref = inject(DialogRef);
+  private fb = inject(FormBuilder);
+  private api = inject(ObservationApi);
+  private studentApi = inject(StudentApi);
+
+  form = this.fb.group({
+    student: [null as string | null, [Validators.required]],
+    teacher: [null as string | null, [Validators.required]],
+    date: [new Date().toISOString().slice(0, 10), [Validators.required]],
+    type: ['behavioral' as 'behavioral' | 'academic' | 'social', [Validators.required]],
+    observation: ['', [Validators.required]],
+    followUp: [''],
+    referral: [''],
+    isConfidential: [false],
+  });
+
+  current: StudentObservation | null = null;
+  studentOptions: SelectOption[] = [];
+
+  typeOptions: SelectOption[] = [
+    { value: 'behavioral', label: 'Conducta' },
+    { value: 'academic', label: 'Académico' },
+    { value: 'social', label: 'Social' },
+  ];
+
+  ngOnInit(): void {
+    this.current = this.data?.current ?? null;
+    if (this.current) {
+      const o = this.current;
+      this.form.patchValue({
+        student: (o.student as { id?: string })?.id ?? null,
+        teacher: (o.teacher as { id?: string })?.id ?? null,
+        date: o.date?.slice(0, 10) ?? new Date().toISOString().slice(0, 10),
+        type: o.type,
+        observation: o.observation,
+        followUp: o.followUp ?? '',
+        referral: o.referral ?? '',
+        isConfidential: o.isConfidential ?? false,
+      });
+    }
+
+    this.studentApi.getAll({}).subscribe({
+      next: (res) => {
+        this.studentOptions = (res.data ?? []).map((s) => {
+          const p = (s as { person?: { firstName?: string; lastName?: string } }).person;
+          const label =
+            (s as { name?: string }).name ??
+            (p ? `${p.firstName ?? ''} ${p.lastName ?? ''}`.trim() : null) ??
+            (s as { studentCode?: string }).studentCode ??
+            s.id;
+          return { value: s.id, label: label || s.id };
+        });
+      },
+    });
+
+  }
+
+  submit(): void {
+    if (this.form.invalid) return;
+    const v = this.form.getRawValue();
+    const payload = {
+      student: v.student!,
+      teacher: v.teacher!,
+      date: v.date!,
+      type: v.type!,
+      observation: v.observation!,
+      followUp: v.followUp ?? '',
+      referral: v.referral ?? '',
+      isConfidential: v.isConfidential ?? false,
+    };
+    if (this.current?.id) {
+      this.api.update(this.current.id, payload).subscribe({
+        next: () => this.ref.close(),
+        error: (err) => console.error(err),
+      });
+    } else {
+      this.api.create(payload).subscribe({
+        next: () => this.ref.close(),
+        error: (err) => console.error(err),
+      });
+    }
+  }
+
+  close(): void {
+    this.ref.close();
+  }
+}

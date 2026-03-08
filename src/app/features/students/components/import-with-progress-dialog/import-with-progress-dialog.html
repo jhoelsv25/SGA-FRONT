@@ -1,0 +1,86 @@
+<div class="p-6">
+  <!-- Header -->
+  <header class="flex items-center justify-between mb-6">
+    <div class="flex items-center gap-3">
+      <div
+        class="w-12 h-12 rounded-2xl bg-linear-to-br from-primary/20 to-primary/5 dark:from-primary/30 dark:to-primary/10 flex items-center justify-center shadow-lg shadow-primary/10"
+      >
+        <i class="fas fa-file-import text-primary text-xl"></i>
+      </div>
+      <div>
+        <h2 class="text-lg font-semibold text-base-content">Importar estudiantes</h2>
+        <p class="text-xs text-base-content/60 mt-0.5">Importación masiva desde Excel</p>
+      </div>
+    </div>
+    <button
+      type="button"
+      sgaButton
+      color="secondary"
+      variant="ghost"
+      shape="pill"
+      (click)="close()"
+      class="shrink-0"
+    >
+      <i class="fas fa-times"></i>
+    </button>
+  </header>
+
+  <!-- Step indicator -->
+  <sga-import-step-indicator [currentStep]="step()" />
+
+  <!-- Step: Upload -->
+  @if (step() === 'upload') {
+    <sga-import-step-upload
+      [isDragging]="isDragging()"
+      [file]="file()"
+      [loading]="loading()"
+      (fileSelected)="onFileSelected($event)"
+      (dragOver)="onDragOver($event)"
+      (dragLeave)="onDragLeave($event)"
+      (fileDropped)="onDrop($event)"
+      (downloadTemplate)="downloadTemplate()"
+    />
+  }
+
+  <!-- Step: Mapping -->
+  @if (step() === 'mapping') {
+    <sga-import-step-mapping
+      [fieldOptions]="fieldOptions"
+      [headers]="headers()"
+      [rowCount]="rowCount()"
+      [getMapping]="getMapping.bind(this)"
+      [canStartImport]="canStartImport()"
+      (mappingChange)="onMappingChange($event)"
+      (startImport)="startImport()"
+      (cancelled)="close()"
+    />
+  }
+
+  <!-- Step: Importing -->
+  @if (step() === 'importing') {
+    <sga-import-step-importing [progress]="progress()" />
+  }
+
+  <!-- Step: Done -->
+  @if (step() === 'done') {
+    @if (result(); as res) {
+      <sga-import-step-done [result]="res" (closed)="close()" />
+    }
+  }
+
+  <!-- Error message -->
+  @if (errorMessage()) {
+    <div class="mt-4 p-4 rounded-xl bg-error/10 border border-error/20 flex items-start gap-3">
+      <i class="fas fa-exclamation-triangle text-error shrink-0 mt-0.5"></i>
+      <p class="text-sm text-base-content">{{ errorMessage() }}</p>
+    </div>
+  }
+
+  <!-- Loading (upload) -->
+  @if (loading()) {
+    <div class="flex items-center gap-2 text-sm text-base-content/70 mt-4">
+      <i class="fas fa-spinner fa-spin"></i>
+      <span>Subiendo archivo...</span>
+    </div>
+  }
+</div>

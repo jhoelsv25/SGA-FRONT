@@ -73,12 +73,10 @@ export class ImportDialog {
   }
 
   downloadTemplate(): void {
-    const blob = this.excel.generateTemplate(
-      this.columns,
-      this.exampleRow,
-      this.templateSheetName,
-    );
-    this.excel.download(blob, `plantilla_importacion.xlsx`);
+    this.excel.downloadTemplate(this.columns, this.exampleRow, {
+      sheetName: this.templateSheetName,
+      fileName: 'plantilla_importacion.xlsx',
+    });
   }
 
   hasValidationErrors(): boolean {

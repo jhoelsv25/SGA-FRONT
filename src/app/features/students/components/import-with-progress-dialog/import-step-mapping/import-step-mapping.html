@@ -1,0 +1,61 @@
+<div class="space-y-5">
+  <div class="p-3 rounded-xl bg-base-200/60 border border-base-300/50">
+    <p class="text-sm text-base-content/80">
+      Asigne cada columna del Excel al campo correspondiente.
+      <strong class="text-base-content">Nombre</strong> y
+      <strong class="text-base-content">Email</strong> son obligatorios.
+    </p>
+  </div>
+  <div class="grid gap-3">
+    @for (opt of fieldOptions(); track opt.key) {
+      <div
+        class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 p-3 rounded-xl border border-base-300/60 bg-base-100/50 hover:border-primary/30 hover:bg-base-100 transition-colors"
+      >
+        <label
+          [for]="opt.key"
+          class="w-full sm:w-32 text-sm font-medium text-base-content shrink-0 flex items-center gap-2"
+        >
+          <span
+            class="w-6 h-6 rounded-md flex items-center justify-center text-xs"
+            [class.bg-primary/20]="opt.required"
+            [class.text-primary]="opt.required"
+            [class.bg-base-300]="!opt.required"
+          >
+            {{ opt.required ? '*' : '○' }}
+          </span>
+          {{ opt.label }}
+        </label>
+        <select
+          [id]="opt.key"
+          class="flex-1 rounded-xl border border-base-300 bg-base-100 px-4 py-2.5 text-sm text-base-content focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-shadow"
+          [value]="getMapping()(opt.key)"
+          (change)="setMapping(opt.key, $any($event.target).value)"
+        >
+          <option value="">— No mapear —</option>
+          @for (h of headers(); track h) {
+            <option [value]="h">{{ h }}</option>
+          }
+        </select>
+      </div>
+    }
+  </div>
+  <div class="flex items-center justify-between pt-2">
+    <p class="text-xs text-base-content/60 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-base-200/60">
+      <i class="fas fa-database text-primary/70"></i>
+      {{ rowCount() }} fila(s) a importar
+    </p>
+    <div class="flex gap-2">
+      <button type="button" sgaButton variant="outline" (click)="onCancel()">Cancelar</button>
+      <button
+        type="button"
+        sgaButton
+        color="primary"
+        [disabled]="!canStartImport()"
+        (click)="onStartImport()"
+      >
+        <i class="fas fa-play mr-2"></i>
+        Iniciar importación
+      </button>
+    </div>
+  </div>
+</div>

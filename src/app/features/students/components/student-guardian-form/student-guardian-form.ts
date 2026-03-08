@@ -1,0 +1,106 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Button } from '@shared/directives';
+import { Select } from '@shared/ui/select/select';
+import { GuardianApi } from '../../services/api/guardian-api';
+import { StudentApi } from '../../services/api/student-api';
+import { StudentGuardian } from '../../types/guardian-types';
+import type { SelectOption } from '@shared/ui/select/select';
+
+@Component({
+  selector: 'sga-student-guardian-form',
+  standalone: true,
+  imports: [ReactiveFormsModule, Button, Select],
+  templateUrl: './student-guardian-form.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class StudentGuardianForm implements OnInit {
+  private data = inject(DIALOG_DATA, { optional: true });
+  private ref = inject(DialogRef);
+  private fb = inject(FormBuilder);
+  private api = inject(GuardianApi);
+  private studentApi = inject(StudentApi);
+
+  form = this.fb.group({
+    student: [null as string | null, [Validators.required]],
+    guardian: [null as string | null, [Validators.required]],
+    isPrimary: [false, [Validators.required]],
+    pickupAuthorization: [false, [Validators.required]],
+    emergencyContact: [false, [Validators.required]],
+    receivesNotifications: [''],
+  });
+
+  current: StudentGuardian | null = null;
+  studentOptions: SelectOption[] = [];
+  guardianOptions: SelectOption[] = [];
+
+  ngOnInit(): void {
+    this.current = this.data?.current ?? null;
+    if (this.current) {
+      const sg = this.current;
+      this.form.patchValue({
+        student: (sg.student as { id?: string })?.id ?? null,
+        guardian: (sg.guardian as { id?: string })?.id ?? null,
+        isPrimary: sg.isPrimary,
+        pickupAuthorization: sg.pickupAuthorization,
+        emergencyContact: sg.emergencyContact,
+        receivesNotifications: sg.receivesNotifications ?? '',
+      });
+    }
+
+    this.studentApi.getAll({}).subscribe({
+      next: (res) => {
+        this.studentOptions = (res.data ?? []).map((s) => {
+          const p = (s as { person?: { firstName?: string; lastName?: string } }).person;
+          const label =
+            (s as { name?: string }).name ??
+            (p ? `${p.firstName ?? ''} ${p.lastName ?? ''}`.trim() : null) ??
+            (s as { studentCode?: string }).studentCode ??
+            s.id;
+          return { value: s.id, label: label || s.id };
+        });
+      },
+    });
+
+    this.api.getAll({}).subscribe({
+      next: (res) => {
+        this.guardianOptions = (res.data ?? []).map((g) => {
+          const person = (g as { person?: { firstName?: string; lastName?: string } }).person;
+          const namePart = person ? `${person.firstName ?? ''} ${person.lastName ?? ''}`.trim() : '';
+          const occ = (g as { occupation?: string }).occupation;
+          const label = namePart || occ || g.id;
+          return { value: g.id, label };
+        });
+      },
+    });
+  }
+
+  submit(): void {
+    if (this.form.invalid) return;
+    const v = this.form.getRawValue();
+    const payload = {
+      student: v.student!,
+      guardian: v.guardian!,
+      isPrimary: v.isPrimary!,
+      pickupAuthorization: v.pickupAuthorization!,
+      emergencyContact: v.emergencyContact!,
+      receivesNotifications: v.receivesNotifications || undefined,
+    };
+    if (this.current?.id) {
+      this.api.updateStudentGuardian(this.current.id, payload).subscribe({
+        next: () => this.ref.close(),
+        error: (err) => console.error(err),
+      });
+    } else {
+      this.api.createStudentGuardian(payload).subscribe({
+        next: () => this.ref.close(),
+        error: (err) => console.error(err),
+      });
+    }
+  }
+
+  close(): void {
+    this.ref.close();
+  }
+}

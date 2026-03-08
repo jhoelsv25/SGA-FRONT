@@ -12,7 +12,7 @@ export interface DropdownItem {
   label: string;
   icon?: string;
   disabled?: boolean;
-  separator?: boolean; // New flag for Shadcn visual dividers
+  separator?: boolean;
   action?: () => void;
 }
 
