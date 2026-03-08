@@ -40,6 +40,10 @@
     [class.bg-base-200/5]="isRightSidebarOpen()"
     [class.backdrop-blur-[0.1px]]="isRightSidebarOpen()"
     (click)="toggleRightSidebar()"
+    (keydown.enter)="toggleRightSidebar()"
+    (keydown.space)="toggleRightSidebar()"
+    tabindex="0"
+    role="button"
   ></div>
 
   <!-- Right Sidebar (Sheet) -->

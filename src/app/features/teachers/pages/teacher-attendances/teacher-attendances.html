@@ -80,17 +80,20 @@
                 <input
                   type="checkbox"
                   class="sr-only"
-                  [checked]="bulkDeleteMode()"
-                  (change)="toggleBulkDeleteMode($event.target.checked)"
+                  [checked]="allSelected()"
+                  [indeterminate]="partialSelected()"
+                  (change)="toggleAllSelection()"
                 />
                 <div
                   class="w-5 h-5 border-2 rounded flex items-center justify-center transition-all"
-                  [class.bg-primary-500]="bulkDeleteMode()"
-                  [class.border-primary-500]="bulkDeleteMode()"
-                  [class.border-neutral-400]="!bulkDeleteMode()"
+                  [class.bg-primary-500]="allSelected() || partialSelected()"
+                  [class.border-primary-500]="allSelected() || partialSelected()"
+                  [class.border-neutral-400]="!allSelected() && !partialSelected()"
                 >
-                  @if (bulkDeleteMode()) {
+                  @if (allSelected()) {
                     <i class="fas fa-check text-white text-xs"></i>
+                  } @else if (partialSelected()) {
+                    <i class="fas fa-minus text-white text-xs"></i>
                   }
                 </div>
               </label>
@@ -121,31 +124,29 @@
           </tr>
         } @else {
           @for (row of rows(); track row.teacherId) {
-            <tr class="border-b border-slate-100 align-top" [class.bg-amber-50]="row.dirty">
+            <tr class="border-b border-slate-100 align-top" [class.bg-amber-50]="row.dirty" [class.bg-rose-50]="row.markedForDelete">
               <td class="w-12 px-3 py-2 text-center align-middle">
-                @if (bulkDeleteMode()) {
-                  <label
-                    class="inline-flex items-center justify-center w-full group"
-                    [class.opacity-50]="isRowDeleteDisabled(row.teacherId)"
+                <label
+                  class="inline-flex items-center justify-center w-full group"
+                  [class.opacity-50]="isRowDeleteDisabled(row.teacherId)"
+                >
+                  <input
+                    type="checkbox"
+                    class="sr-only"
+                    [checked]="row.markedForDelete"
+                    (change)="toggleDelete(row.attendanceId, $event.target.checked)"
+                  />
+                  <div
+                    class="w-5 h-5 border-2 rounded flex items-center justify-center transition-all"
+                    [class.bg-primary-500]="row.markedForDelete"
+                    [class.border-primary-500]="row.markedForDelete"
+                    [class.border-neutral-400]="!row.markedForDelete"
                   >
-                    <input
-                      type="checkbox"
-                      class="sr-only"
-                      [checked]="row.markedForDelete"
-                      [disabled]="true"
-                    />
-                    <div
-                      class="w-5 h-5 border-2 rounded flex items-center justify-center transition-all"
-                      [class.bg-primary-500]="row.markedForDelete"
-                      [class.border-primary-500]="row.markedForDelete"
-                      [class.border-neutral-400]="!row.markedForDelete"
-                    >
-                      @if (row.markedForDelete) {
-                        <i class="fas fa-check text-white text-xs"></i>
-                      }
-                    </div>
-                  </label>
-                }
+                    @if (row.markedForDelete) {
+                      <i class="fas fa-check text-white text-xs"></i>
+                    }
+                  </div>
+                </label>
               </td>
               <td class="px-3 py-2 text-sm font-semibold text-slate-700">{{ row.teacherCode }}</td>
               <td class="px-3 py-2 text-sm text-slate-700">{{ row.teacherLabel }}</td>

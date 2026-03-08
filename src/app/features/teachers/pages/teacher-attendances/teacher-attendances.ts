@@ -205,12 +205,14 @@ export default class TeacherAttendancesPage implements OnInit {
     );
   }
 
-  toggleDelete(teacherId: string, value: boolean): void {
+  toggleDelete(attendanceId: string | undefined, value: boolean): void {
+    if (!attendanceId) return;
     this.rows.update((current) =>
       current.map((row) =>
-        row.teacherId === teacherId ? { ...row, markedForDelete: value } : row,
+        row.attendanceId === attendanceId ? { ...row, markedForDelete: value } : row,
       ),
     );
+    this.syncBulkModeFromSelection();
   }
 
   toggleBulkDeleteMode(value: boolean): void {
@@ -226,16 +228,35 @@ export default class TeacherAttendancesPage implements OnInit {
     this.rows.update((current) => current.map((row) => ({ ...row, markedForDelete: false })));
   }
 
-  async onRowDeleteToggle(teacherId: string, value: boolean): Promise<void> {
-    if (this.isRowDeleteDisabled(teacherId)) {
-      this.toggleDelete(teacherId, false);
-      return;
-    }
+  toggleAllSelection(): void {
+    const allSelected = this.allSelected();
+    this.rows.update((current) =>
+      current.map((row) =>
+        row.attendanceId ? { ...row, markedForDelete: !allSelected } : row,
+      ),
+    );
+    this.bulkDeleteMode.set(!allSelected);
+  }
 
-    if (this.bulkDeleteMode()) {
-      this.toggleDelete(teacherId, value);
-      return;
-    }
+  allSelected(): boolean {
+    const selectable = this.rows().filter((row) => row.attendanceId);
+    return selectable.length > 0 && selectable.every((row) => row.markedForDelete);
+  }
+
+  partialSelected(): boolean {
+    const selectable = this.rows().filter((row) => row.attendanceId);
+    const selected = selectable.filter((row) => row.markedForDelete).length;
+    return selected > 0 && selected < selectable.length;
+  }
+
+  private syncBulkModeFromSelection(): void {
+    const anySelected = this.rows().some((row) => row.attendanceId && row.markedForDelete);
+    this.bulkDeleteMode.set(anySelected);
+  }
+
+  async onRowDeleteToggle(teacherId: string, value: boolean): Promise<void> {
+    if (this.isRowDeleteDisabled(teacherId)) return;
+    if (this.bulkDeleteMode()) return;
 
     if (!value) return;
 
@@ -461,10 +482,10 @@ export default class TeacherAttendancesPage implements OnInit {
 
     this.teacherAttendanceApi.getAll({ date: this.attendanceDate() }).subscribe({
       next: (res) => {
-        const selectedIds = new Set(
+        const selectedAttendanceIds = new Set(
           this.rows()
-            .filter((row) => row.markedForDelete)
-            .map((row) => row.teacherId),
+            .filter((row) => row.markedForDelete && row.attendanceId)
+            .map((row) => row.attendanceId as string),
         );
         const bulkMode = this.bulkDeleteMode();
         const teacherCodeById = new Map(this.teachers().map((teacher) => [teacher.id, teacher.teacherCode]));
@@ -478,30 +499,27 @@ export default class TeacherAttendancesPage implements OnInit {
         });
 
         this.rows.update((current) =>
-          current.map((row) => {
+          current.flatMap((row) => {
             const existing = attendanceByCode.get(row.teacherCode);
-            if (!existing) {
-              return {
+            if (!existing) return [];
+
+            if (!existing.id) return [];
+            return [
+              {
                 ...row,
-                attendanceId: undefined,
-                status: 'present',
-                checkInTime: '08:00:00',
-                observations: '',
+                attendanceId: existing.id,
+                status: existing.status ?? row.status,
+                checkInTime: this.normalizeTime(existing.checkInTime ?? row.checkInTime),
+                observations: existing.observations ?? row.observations,
                 dirty: false,
-                markedForDelete: false,
-              };
-            }
-            return {
-              ...row,
-              attendanceId: existing.id,
-              status: existing.status ?? row.status,
-              checkInTime: this.normalizeTime(existing.checkInTime ?? row.checkInTime),
-              observations: existing.observations ?? row.observations,
-              dirty: false,
-              markedForDelete: bulkMode ? true : selectedIds.has(row.teacherId),
-            };
+                markedForDelete: bulkMode
+                  ? true
+                  : selectedAttendanceIds.has(existing.id),
+              },
+            ];
           }),
         );
+        this.syncBulkModeFromSelection();
       },
     });
   }
