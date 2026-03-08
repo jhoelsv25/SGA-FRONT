@@ -21,9 +21,9 @@ import { Popover } from '@shared/ui/popover/popover';
   imports: [Popover, Button],
   template: `
     <div
-      class="w-full rounded-4xl border border-base-200/80 bg-base-100/60 backdrop-blur-md p-4 md:p-5 shadow-[0_10px_30px_-18px_rgba(15,23,42,0.28)]"
+      class="w-full rounded-4xl border border-base-200/80 bg-base-100/60 backdrop-blur-md p-4 md:p-5 shadow-[0_10px_30px_-18px_rgba(15,23,42,0.28)] overflow-visible"
     >
-      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 overflow-visible">
         @if (title()) {
           <div class="flex items-center gap-4 shrink-0">
             @if (icon()) {
@@ -45,7 +45,7 @@ import { Popover } from '@shared/ui/popover/popover';
         }
 
         <div
-          class="flex flex-wrap items-center gap-2 flex-1 lg:flex-initial lg:justify-end min-w-0"
+          class="flex flex-wrap items-center gap-2 flex-1 lg:flex-initial lg:justify-end min-w-0 relative z-10"
         >
           <!-- Buscador -->
           <div class="relative flex-1 min-w-[180px] max-w-sm group">

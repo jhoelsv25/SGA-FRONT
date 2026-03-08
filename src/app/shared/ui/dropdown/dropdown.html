@@ -7,10 +7,10 @@
   <!-- Dropdown Menu Content -->
   @if (showOpen()) {
     <div
-      class="absolute right-0 z-50 mt-2 min-w-[8rem] overflow-hidden rounded-md border border-base-200 bg-base-100 p-1 text-base-content shadow-md animate-in fade-in zoom-in-95 data-[side=bottom]:slide-in-from-top-2"
+      class="absolute right-0 z-[100] mt-2 min-w-[8rem] overflow-hidden rounded-md border border-base-200 bg-base-100 p-1 text-base-content shadow-lg animate-in fade-in zoom-in-95 data-[side=bottom]:slide-in-from-top-2 origin-top-right"
     >
       <div role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-        @for (item of items(); track item.label) {
+        @for (item of items(); track $index) {
           @if (item.separator) {
             <div class="-mx-1 my-1 h-px bg-base-200"></div>
           } @else {
@@ -21,7 +21,7 @@
               role="menuitem"
             >
               @if (item.icon) {
-                <i [class]="item.icon + ' mr-2 h-4 w-4'"></i>
+                <i [class]="item.icon + ' mr-2 w-4 shrink-0'"></i>
               }
               <span class="flex-1 text-left">{{ item.label }}</span>
             </button>

@@ -1,0 +1,43 @@
+@if (result(); as res) {
+  <div class="space-y-5 py-2">
+    <div
+      class="p-5 rounded-2xl bg-linear-to-br from-success/15 to-success/5 border-2 border-success/30 shadow-lg shadow-success/10"
+    >
+      <div class="flex items-start gap-4">
+        <div
+          class="w-14 h-14 rounded-2xl bg-success/25 flex items-center justify-center shrink-0 ring-2 ring-success/20"
+        >
+          <i class="fas fa-check text-2xl text-success"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="font-bold text-lg text-base-content">¡Importación completada!</p>
+          <p class="text-sm text-base-content/80 mt-1">
+            {{ res.created }} registro(s) creado(s) correctamente.
+          </p>
+          @if (res.errors && res.errors.length > 0) {
+            <div class="mt-4 pt-4 border-t border-base-300/60">
+              <p class="text-sm font-medium text-base-content/80 mb-2 flex items-center gap-2">
+                <i class="fas fa-exclamation-triangle text-warning"></i>
+                Filas con errores:
+              </p>
+              <ul class="list-none text-sm text-base-content/70 max-h-28 overflow-y-auto space-y-2">
+                @for (e of res.errors; track e.row) {
+                  <li class="flex items-start gap-2 px-2 py-1 rounded-lg bg-warning/5">
+                    <i class="fas fa-exclamation-circle text-warning mt-0.5 shrink-0"></i>
+                    <span>Fila {{ e.row }}: {{ e.message }}</span>
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+    <div class="flex justify-end">
+      <button type="button" sgaButton color="primary" (click)="onClose()">
+        <i class="fas fa-check mr-2"></i>
+        Cerrar
+      </button>
+    </div>
+  </div>
+}

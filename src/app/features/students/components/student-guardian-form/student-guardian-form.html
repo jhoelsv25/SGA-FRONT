@@ -1,0 +1,46 @@
+<form [formGroup]="form" class="grid gap-4" (ngSubmit)="submit()">
+  <header class="flex items-center justify-between mb-4">
+    <h2 class="text-lg font-semibold">{{ current ? 'Editar vínculo' : 'Vincular apoderado' }}</h2>
+    <button type="button" sgaButton color="secondary" variant="ghost" shape="pill" (click)="close()">
+      <i class="fas fa-times"></i>
+    </button>
+  </header>
+  <div class="grid grid-cols-1 gap-4">
+    <div>
+      <label class="label-form" for="student">Estudiante</label>
+      <sga-select id="student" [options]="studentOptions" formControlName="student" placeholder="Seleccionar estudiante" />
+    </div>
+    <div>
+      <label class="label-form" for="guardian">Apoderado</label>
+      <sga-select id="guardian" [options]="guardianOptions" formControlName="guardian" placeholder="Seleccionar apoderado" />
+    </div>
+    <div class="flex flex-wrap gap-4">
+      <label class="flex items-center gap-2 cursor-pointer">
+        <input type="checkbox" formControlName="isPrimary" class="checkbox checkbox-sm" />
+        <span>Principal</span>
+      </label>
+      <label class="flex items-center gap-2 cursor-pointer">
+        <input type="checkbox" formControlName="pickupAuthorization" class="checkbox checkbox-sm" />
+        <span>Autorizado a recoger</span>
+      </label>
+      <label class="flex items-center gap-2 cursor-pointer">
+        <input type="checkbox" formControlName="emergencyContact" class="checkbox checkbox-sm" />
+        <span>Contacto de emergencia</span>
+      </label>
+    </div>
+    <div>
+      <label class="label-form" for="receivesNotifications">Recibe notificaciones por</label>
+      <input
+        id="receivesNotifications"
+        type="text"
+        formControlName="receivesNotifications"
+        placeholder="ej. email, teléfono"
+        class="input input-bordered w-full"
+      />
+    </div>
+  </div>
+  <footer class="flex justify-end gap-2 mt-4">
+    <button type="button" sgaButton color="secondary" variant="outline" (click)="close()">Cancelar</button>
+    <button type="submit" sgaButton color="primary" [disabled]="form.invalid">Guardar</button>
+  </footer>
+</form>

@@ -283,7 +283,7 @@ export default class TeachersPage implements OnInit {
   }
 
   downloadTemplate(): void {
-    const blob = this.excel.generateTemplate(
+    this.excel.downloadTemplate(
       EXCEL_COLUMNS,
       {
         teacherCode: 'T20250001',
@@ -303,10 +303,8 @@ export default class TeachersPage implements OnInit {
         institution: 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx',
         person: 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx',
       },
-      'Docentes',
+      { sheetName: 'Docentes', fileName: 'plantilla_docentes.xlsx' },
     );
-
-    this.excel.download(blob, 'plantilla_docentes.xlsx');
   }
 
   openImport(): void {
@@ -392,8 +390,10 @@ export default class TeachersPage implements OnInit {
         institution: toEntityId(t.institution),
         person: toEntityId(t.person),
       }));
-      const blob = this.excel.generate(EXCEL_COLUMNS, data, 'Docentes');
-      this.excel.download(blob, `docentes_${new Date().toISOString().slice(0, 10)}.xlsx`);
+      this.excel.downloadExport(EXCEL_COLUMNS, data, {
+        sheetName: 'Docentes',
+        fileName: `docentes_${new Date().toISOString().slice(0, 10)}.xlsx`,
+      });
     });
   }
 }

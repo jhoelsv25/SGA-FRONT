@@ -1,0 +1,39 @@
+<nav
+  class="flex items-center gap-1 mb-8 p-1.5 rounded-2xl bg-base-200/60 dark:bg-base-300/40"
+  aria-label="Progreso de importación"
+>
+  @for (s of steps; track s.id) {
+    @let idx = $index;
+    @let isActive = currentStep() === s.id;
+    @let isPast = ['upload', 'mapping', 'importing', 'done'].indexOf(currentStep()) > idx;
+    <div
+      class="flex-1 flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-300"
+      [class.bg-primary]="isActive"
+      [class.text-primary-content]="isActive"
+      [class.shadow-md]="isActive"
+      [class.text-base-content/70]="!isActive && !isPast"
+      [class.text-base-content/50]="!isActive && isPast"
+    >
+      <div
+        class="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-semibold shrink-0 transition-all"
+        [class.bg-primary-content/20]="isActive"
+        [class.bg-base-300]="!isActive && isPast"
+        [class.bg-base-200]="!isActive && !isPast"
+      >
+        @if (isPast) {
+          <i class="fas fa-check text-success text-xs"></i>
+        } @else {
+          <i
+            class="fas"
+            [class.fa-spin]="s.id === 'importing' && isActive"
+            [ngClass]="s.icon"
+          ></i>
+        }
+      </div>
+      <span class="text-xs font-medium truncate hidden sm:inline">{{ s.label }}</span>
+      @if (idx < steps.length - 1) {
+        <div class="hidden sm:block w-px h-4 bg-base-300 ml-1 shrink-0"></div>
+      }
+    </div>
+  }
+</nav>

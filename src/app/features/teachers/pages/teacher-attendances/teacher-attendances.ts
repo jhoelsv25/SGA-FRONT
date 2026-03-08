@@ -387,7 +387,7 @@ export default class TeacherAttendancesPage implements OnInit {
   }
 
   downloadTemplate(): void {
-    const blob = this.excel.generateTemplate(
+    this.excel.downloadTemplate(
       ATTENDANCE_COLUMNS,
       {
         teacherCode: 'T20250001',
@@ -395,9 +395,8 @@ export default class TeacherAttendancesPage implements OnInit {
         checkInTime: '08:00:00',
         observations: 'Ingreso puntual',
       },
-      'AsistenciaDocentes',
+      { sheetName: 'AsistenciaDocentes', fileName: 'plantilla_asistencia_docentes.xlsx' },
     );
-    this.excel.download(blob, 'plantilla_asistencia_docentes.xlsx');
   }
 
   private loadAttendancesByDate(): void {

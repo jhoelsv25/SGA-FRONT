@@ -1,30 +1,52 @@
-<form [formGroup]="form" class="grid gap-4" (ngSubmit)="submit()">
-  <header class="flex items-center justify-between mb-4">
+<form [formGroup]="form" class="flex flex-col gap-4" (ngSubmit)="submit()">
+  <header class="mb-2 flex items-center justify-between">
     <h2 class="text-lg font-semibold">{{ current ? 'Editar estudiante' : 'Nuevo estudiante' }}</h2>
     <button type="button" sgaButton color="secondary" variant="ghost" shape="pill" (click)="close()">
       <i class="fas fa-times"></i>
     </button>
   </header>
-  <div class="grid gap-4">
+
+  <div class="grid max-h-[50vh] gap-4 overflow-y-auto pr-1">
+    <p class="text-sm text-base-content/60">Datos del estudiante</p>
     <div>
-      <label class="label-form" for="name">Nombre</label>
-      <sga-input id="name" formControlName="name" placeholder="Nombre completo" />
+      <label class="label-form" for="name">Nombre completo</label>
+      <sga-input id="name" formControlName="name" placeholder="Ej: Juan Pérez García" />
+      @if (getError('name')) {
+        <p class="mt-1 text-xs text-red-600">{{ getError('name') }}</p>
+      }
     </div>
     <div>
       <label class="label-form" for="email">Email</label>
       <sga-input id="email" type="email" formControlName="email" placeholder="correo@ejemplo.com" />
+      @if (getError('email')) {
+        <p class="mt-1 text-xs text-red-600">{{ getError('email') }}</p>
+      }
     </div>
-    <div>
-      <label class="label-form" for="age">Edad</label>
-      <sga-input id="age" type="number" formControlName="age" placeholder="Edad" />
-    </div>
-    <div>
-      <label class="label-form" for="grade">Grado</label>
-      <sga-input id="grade" formControlName="grade" placeholder="Grado" />
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div>
+        <label class="label-form" for="age">Edad</label>
+        <sga-input id="age" type="number" formControlName="age" placeholder="15" />
+        @if (getError('age')) {
+          <p class="mt-1 text-xs text-red-600">{{ getError('age') }}</p>
+        }
+      </div>
+      <div>
+        <label class="label-form" for="grade">Grado</label>
+        <sga-input id="grade" formControlName="grade" placeholder="1ro, 2do, etc." />
+        @if (getError('grade')) {
+          <p class="mt-1 text-xs text-red-600">{{ getError('grade') }}</p>
+        }
+      </div>
     </div>
   </div>
-  <footer class="flex justify-end gap-2 mt-4">
+
+  <footer class="mt-2 flex justify-end gap-2 border-t border-base-200 pt-4">
     <button type="button" sgaButton color="secondary" variant="outline" (click)="close()">Cancelar</button>
-    <button type="submit" sgaButton color="primary" [disabled]="form.invalid">Guardar</button>
+    <button type="submit" sgaButton color="primary" [disabled]="form.invalid || saving()">
+      @if (saving()) {
+        <i class="fas fa-spinner fa-spin mr-2"></i>
+      }
+      Guardar
+    </button>
   </footer>
 </form>

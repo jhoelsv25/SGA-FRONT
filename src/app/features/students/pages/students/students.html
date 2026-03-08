@@ -1,14 +1,38 @@
-<sga-header-detail
-  [config]="headerConfig()"
-  [actions]="headerActions()"
-  (action)="onHeaderAction($event)"
-/>
-<sga-data-source
-  [data]="data()"
-  [columns]="columns()"
-  [loading]="loading()"
-  [pagination]="pagination()"
-  [actions]="rowActions()"
-  (actionClick)="onRowAction($event)"
-  (pageChange)="onPageChange($event)"
-/>
+<div class="p-6">
+  <sga-data-source
+    [data]="filteredData()"
+    [columns]="columns()"
+    [loading]="loading()"
+    [pagination]="pagination()"
+    [actions]="rowActions()"
+    [showToolbar]="false"
+    (actionClick)="onRowAction($event)"
+    (pageChange)="onPageChange($event)"
+  >
+    <div data-source-header class="sticky top-0 z-20 -mx-4 -mt-4 px-4 pt-4 pb-4 mb-4 bg-base-200 rounded-t-lg border-b border-base-300">
+      <sga-list-toolbar
+        title="Lista de Estudiantes"
+        icon="fas fa-user-graduate"
+        description="Gestión de estudiantes"
+        [searchPlaceholder]="'Buscar por nombre, email o grado...'"
+        [filterCount]="0"
+        [showFilter]="false"
+        (searchChange)="onSearch($event)"
+        (refresh)="onRefresh()"
+      >
+        <div list-toolbar-actions class="flex items-center gap-2">
+          <sga-dropdown [items]="toolbarMoreItems()">
+            <button
+              sga-dropdown-trigger
+              type="button"
+              class="flex h-9 w-9 items-center justify-center rounded-full border border-base-200 bg-base-100 text-base-content/70 transition hover:bg-base-200 hover:text-primary shadow-sm"
+              aria-label="Más acciones"
+            >
+              <i class="fas fa-ellipsis-h"></i>
+            </button>
+          </sga-dropdown>
+        </div>
+      </sga-list-toolbar>
+    </div>
+  </sga-data-source>
+</div>

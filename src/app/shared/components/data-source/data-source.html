@@ -2,6 +2,9 @@
 <div
   class="w-full rounded-lg bg-base-200 shadow-sm border border-base-300 dark:border-base-200 p-4"
 >
+  <!-- Custom header (toolbar, título, etc.) - se renderiza encima de la tabla -->
+  <ng-content select="[data-source-header]"></ng-content>
+
   <!-- Toolbar -->
   @if (showToolbar()) {
   <header
@@ -331,7 +334,7 @@
 
                       @if (isMenuOpen(getRowId(row, i))) {
                         <div
-                          class="absolute z-50 min-w-48 bg-base border border-base-300 rounded-lg shadow-xl right-0 bottom-full mb-2"
+                          class="absolute z-50 min-w-48 bg-base border border-base-300 rounded-lg shadow-xl right-0 top-full mt-2"
                         >
                           @for (action of filteredActions(); track action.key) {
                             @if (isVisible(action, row)) {

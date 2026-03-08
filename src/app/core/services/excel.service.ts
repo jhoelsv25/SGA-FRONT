@@ -1,49 +1,72 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import * as XLSX from 'xlsx';
+import { Observable } from 'rxjs';
+import { ExcelApi, type ExcelColumn, type ExcelConfig } from './excel-api.service';
 
-export type ExcelColumn = { key: string; label: string };
+export type { ExcelColumn, ExcelConfig };
 
 /**
- * Servicio compartido para generar y leer Excel.
- * En backend se puede tener un equivalente (excel.service) que reciba headers, columns y data
- * y devuelva el archivo para descarga; para importar, el front envía JSON (rows) o el backend
- * recibe el archivo y lo parsea.
+ * Servicio global y reutilizable para Excel.
+ * - Generación y plantillas: vía backend (headers + data + config)
+ * - Parse: local (para ImportDialog con flujo JSON)
+ * - download: utilidad para disparar descarga
  */
 @Injectable({ providedIn: 'root' })
 export class ExcelService {
+  private readonly excelApi = inject(ExcelApi);
+
   /**
-   * Genera un archivo Excel a partir de columnas y datos.
-   * @param columns [{ key, label }] para cabecera y claves de cada fila
-   * @param data Array de objetos con las mismas keys que columns[].key
-   * @param sheetName Nombre de la hoja
+   * Genera Excel con headers + data. Llama al backend.
    */
-  generate(columns: ExcelColumn[], data: Record<string, unknown>[], sheetName = 'Datos'): Blob {
-    const headers = columns.map((c) => c.label);
-    const keys = columns.map((c) => c.key);
-    const rows = data.map((row) => keys.map((k) => row[k] ?? ''));
-    const aoa = [headers, ...rows];
-    const ws = XLSX.utils.aoa_to_sheet(aoa);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, sheetName);
-    const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-    return new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  generate(
+    columns: ExcelColumn[],
+    data: Record<string, unknown>[],
+    config?: ExcelConfig & { sheetName?: string },
+  ): Observable<Blob> {
+    return this.excelApi.generate(columns, data, {
+      sheetName: config?.sheetName ?? 'Datos',
+      fileName: config?.fileName,
+    });
   }
 
   /**
-   * Genera una plantilla Excel solo con la fila de cabecera (y opcionalmente una fila de ejemplo).
+   * Genera plantilla con headers + fila ejemplo opcional. Llama al backend.
    */
-  generateTemplate(columns: ExcelColumn[], exampleRow?: Record<string, unknown>, sheetName = 'Plantilla'): Blob {
-    const headers = columns.map((c) => c.label);
-    const keys = columns.map((c) => c.key);
-    const aoa = [headers];
-    if (exampleRow) {
-      aoa.push(keys.map((k) => String(exampleRow[k] ?? '')));
-    }
-    const ws = XLSX.utils.aoa_to_sheet(aoa);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, sheetName);
-    const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-    return new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  generateTemplate(
+    columns: ExcelColumn[],
+    exampleRow?: Record<string, unknown>,
+    config?: ExcelConfig & { sheetName?: string },
+  ): Observable<Blob> {
+    return this.excelApi.template(columns, exampleRow, {
+      sheetName: config?.sheetName ?? 'Plantilla',
+      fileName: config?.fileName,
+    });
+  }
+
+  /**
+   * Descarga plantilla (genera en backend + dispara descarga).
+   */
+  downloadTemplate(
+    columns: ExcelColumn[],
+    exampleRow?: Record<string, unknown>,
+    config?: ExcelConfig & { sheetName?: string },
+  ): void {
+    this.generateTemplate(columns, exampleRow, config).subscribe((blob) =>
+      this.download(blob, config?.fileName ?? 'plantilla.xlsx'),
+    );
+  }
+
+  /**
+   * Descarga export (genera en backend + dispara descarga).
+   */
+  downloadExport(
+    columns: ExcelColumn[],
+    data: Record<string, unknown>[],
+    config?: ExcelConfig & { sheetName?: string },
+  ): void {
+    this.generate(columns, data, config).subscribe((blob) =>
+      this.download(blob, config?.fileName ?? `export_${Date.now()}.xlsx`),
+    );
   }
 
   /**
