@@ -33,4 +33,8 @@ export class TeacherAttendanceApi {
   update(id: string, payload: Partial<TeacherAttendance>): Observable<TeacherAttendanceResponse> {
     return this.http.patch<TeacherAttendanceResponse>(`${this.baseUrl}/${id}`, payload);
   }
+
+  delete(id: string): Observable<{ message: string }> {
+    return this.http.delete<{ message: string }>(`${this.baseUrl}/${id}`);
+  }
 }

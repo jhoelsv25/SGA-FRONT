@@ -11,94 +11,61 @@
         (ngModelChange)="onDateChange($event)"
       />
     </div>
-    <button type="button" sgaButton color="primary" variant="outline" (click)="downloadTemplate()">
-      <i class="fas fa-download mr-2"></i>
-      Plantilla Excel
+
+    <button type="button" sgaButton color="primary" variant="outline" (click)="openManualDialog()">
+      <i class="fas fa-plus mr-2"></i>
+      Registro manual
     </button>
+
     <button type="button" sgaButton color="primary" variant="outline" (click)="openImportDialog()">
       <i class="fas fa-file-import mr-2"></i>
       Importar Excel
     </button>
+
+    <button type="button" sgaButton color="primary" variant="outline" (click)="downloadTemplate()">
+      <i class="fas fa-download mr-2"></i>
+      Plantilla Excel
+    </button>
+
     <button type="button" sgaButton color="secondary" variant="outline" (click)="loadTeachers()">
       <i class="fas fa-sync-alt mr-2"></i>
       Recargar
     </button>
-    <div class="ml-auto">
+
+    <div class="ml-auto flex items-center gap-2">
       <button
         type="button"
         sgaButton
         color="success"
+        variant="outline"
+        size="sm"
         [disabled]="saving() || loading()"
         (click)="saveManual()"
+        class="!h-9"
+        aria-label="Guardar asistencia manual"
       >
         @if (saving()) {
           <i class="fas fa-spinner fa-spin mr-2"></i>
+        } @else {
+          <i class="fas fa-save"></i>
         }
-        Guardar asistencia manual
       </button>
-    </div>
-  </div>
 
-  <div class="mb-5 rounded-xl border border-slate-200 bg-slate-50 p-4">
-    <p class="mb-3 text-sm font-semibold text-slate-700">Agregar registro manual</p>
-    <div class="grid grid-cols-1 gap-3 md:grid-cols-4">
-      <div>
-        <p class="mb-1 block text-xs font-medium text-slate-600">Docente</p>
-        <sga-select
-          [options]="manualTeacherOptions()"
-          [value]="manualTeacherId()"
-          [searchable]="true"
-          (valueChange)="onManualTeacherChange($event)"
-        />
-      </div>
-      <div>
-        <p class="mb-1 block text-xs font-medium text-slate-600">Estado</p>
-        <sga-select
-          [options]="[
-            { value: 'present', label: 'Presente' },
-            { value: 'late', label: 'Tardanza' },
-            { value: 'absent', label: 'Falta' },
-            { value: 'excused', label: 'Justificado' }
-          ]"
-          [value]="manualStatus()"
-          [searchable]="false"
-          (valueChange)="onManualStatusChange($event)"
-        />
-      </div>
-      <div>
-        <p class="mb-1 block text-xs font-medium text-slate-600">Hora entrada</p>
-        <sga-input
-          type="time"
-          [ngModel]="manualCheckInTime()"
-          (ngModelChange)="onManualCheckInTimeChange($event)"
-        />
-      </div>
-      <div>
-        <p class="mb-1 block text-xs font-medium text-slate-600">Observaciones</p>
-        <sga-input
-          [ngModel]="manualObservations()"
-          (ngModelChange)="onManualObservationsChange($event)"
-          placeholder="Opcional"
-        />
-      </div>
-    </div>
-    <div class="mt-3 flex justify-end">
-      <button type="button" sgaButton color="primary" variant="outline" (click)="addManualRecord()">
-        <i class="fas fa-plus mr-2"></i>
-        Agregar a la lista
-      </button>
       <button
         type="button"
         sgaButton
-        color="success"
-        class="ml-2"
-        [disabled]="creating()"
-        (click)="createManualRecord()"
+        color="danger"
+        variant="outline"
+        [disabled]="deleting() || loading() || !bulkDeleteMode() || !hasDeleteSelections()"
+        (click)="deleteSelected()"
+        aria-label="Eliminar seleccionados"
+        class="!h-10 !w-10 !px-0 flex items-center justify-center"
       >
-        @if (creating()) {
+        @if (deleting()) {
           <i class="fas fa-spinner fa-spin mr-2"></i>
+        } @else {
+          <i class="fas fa-trash"></i>
         }
-        Crear
       </button>
     </div>
   </div>
@@ -107,29 +74,79 @@
     <table class="w-full min-w-[860px] border-collapse">
       <thead>
         <tr class="border-b border-slate-200 bg-slate-50">
+          <th class="w-12 px-3 py-2 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">
+            <div class="flex items-center justify-center">
+              <label class="inline-flex items-center cursor-pointer group">
+                <input
+                  type="checkbox"
+                  class="sr-only"
+                  [checked]="bulkDeleteMode()"
+                  (change)="toggleBulkDeleteMode($event.target.checked)"
+                />
+                <div
+                  class="w-5 h-5 border-2 rounded flex items-center justify-center transition-all"
+                  [class.bg-primary-500]="bulkDeleteMode()"
+                  [class.border-primary-500]="bulkDeleteMode()"
+                  [class.border-neutral-400]="!bulkDeleteMode()"
+                >
+                  @if (bulkDeleteMode()) {
+                    <i class="fas fa-check text-white text-xs"></i>
+                  }
+                </div>
+              </label>
+            </div>
+          </th>
           <th class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-600">Codigo</th>
           <th class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-600">Docente</th>
           <th class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-600">Estado</th>
           <th class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-600">Hora entrada</th>
           <th class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-600">Observaciones</th>
+          <th class="w-12 px-3 py-2 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">
+            Acciones
+          </th>
         </tr>
       </thead>
       <tbody>
         @if (loading()) {
           <tr>
-            <td colspan="5" class="px-3 py-8 text-center text-sm text-slate-500">
+            <td colspan="7" class="px-3 py-8 text-center text-sm text-slate-500">
               Cargando docentes...
             </td>
           </tr>
         } @else if (rows().length === 0) {
           <tr>
-            <td colspan="5" class="px-3 py-8 text-center text-sm text-slate-500">
+            <td colspan="7" class="px-3 py-8 text-center text-sm text-slate-500">
               No hay docentes disponibles para registrar asistencia.
             </td>
           </tr>
         } @else {
           @for (row of rows(); track row.teacherId) {
             <tr class="border-b border-slate-100 align-top" [class.bg-amber-50]="row.dirty">
+              <td class="w-12 px-3 py-2 text-center align-middle">
+                @if (bulkDeleteMode()) {
+                  <label
+                    class="inline-flex items-center justify-center w-full group"
+                    [class.opacity-50]="isRowDeleteDisabled(row.teacherId)"
+                  >
+                    <input
+                      type="checkbox"
+                      class="sr-only"
+                      [checked]="row.markedForDelete"
+                      [disabled]="true"
+                    />
+                    <div
+                      class="w-5 h-5 border-2 rounded flex items-center justify-center transition-all"
+                      [class.bg-primary-500]="row.markedForDelete"
+                      [class.border-primary-500]="row.markedForDelete"
+                      [class.border-neutral-400]="!row.markedForDelete"
+                    >
+                      @if (row.markedForDelete) {
+                        <i class="fas fa-check text-white text-xs"></i>
+                      }
+                    </div>
+                  </label>
+                }
+              </td>
               <td class="px-3 py-2 text-sm font-semibold text-slate-700">{{ row.teacherCode }}</td>
               <td class="px-3 py-2 text-sm text-slate-700">{{ row.teacherLabel }}</td>
               <td class="px-3 py-2">
@@ -177,6 +194,21 @@
                   (ngModelChange)="updateObservations(row.teacherId, $event)"
                   placeholder="Observaciones"
                 />
+              </td>
+              <td class="w-12 px-3 py-2 text-center align-middle">
+                <button
+                  type="button"
+                  sgaButton
+                  color="danger"
+                  variant="ghost"
+                  size="sm"
+                  class="!h-9 !w-9 !px-0 flex items-center justify-center"
+                  [disabled]="isRowDeleteDisabled(row.teacherId)"
+                  (click)="deleteRow(row.teacherId)"
+                  aria-label="Eliminar asistencia"
+                >
+                  <i class="fas fa-trash"></i>
+                </button>
               </td>
             </tr>
           }

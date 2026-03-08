@@ -2,8 +2,10 @@ import { Dialog } from '@angular/cdk/dialog';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ConfirmDialog } from '@core/services/confirm-dialog';
 import { ExcelService } from '@core/services/excel.service';
 import { Toast } from '@core/services/toast';
+import { TeacherAttendanceManualForm } from '@features/teachers/components/teacher-attendance-manual-form/teacher-attendance-manual-form';
 import { TeacherAttendanceApi } from '@features/teachers/services/api/teacher-attendance-api';
 import {
   TeacherAttendance,
@@ -13,8 +15,7 @@ import { Button } from '@shared/directives';
 import { HeaderDetail } from '@shared/components/header-detail/header-detail';
 import { ImportDialog } from '@shared/components/import-dialog/import-dialog';
 import { Input } from '@shared/ui/input/input';
-import { Select, SelectOption } from '@shared/ui/select/select';
-import { map } from 'rxjs';
+import { forkJoin, map } from 'rxjs';
 
 type TeacherAttendanceRow = {
   teacherId: string;
@@ -25,6 +26,7 @@ type TeacherAttendanceRow = {
   checkInTime: string;
   observations: string;
   dirty?: boolean;
+  markedForDelete: boolean;
 };
 
 const ATTENDANCE_COLUMNS = [
@@ -44,13 +46,14 @@ const HEADER_CONFIG = {
 @Component({
   selector: 'sga-teacher-attendances',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderDetail, Input, Button, Select],
+  imports: [CommonModule, FormsModule, HeaderDetail, Input, Button],
   templateUrl: './teacher-attendances.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class TeacherAttendancesPage implements OnInit {
   private readonly teacherAttendanceApi = inject(TeacherAttendanceApi);
   private readonly dialog = inject(Dialog);
+  private readonly confirmDialog = inject(ConfirmDialog);
   private readonly excel = inject(ExcelService);
   private readonly toast = inject(Toast);
 
@@ -60,14 +63,9 @@ export default class TeacherAttendancesPage implements OnInit {
   readonly rows = signal<TeacherAttendanceRow[]>([]);
   readonly loading = signal(false);
   readonly saving = signal(false);
-  readonly creating = signal(false);
+  readonly deleting = signal(false);
+  readonly bulkDeleteMode = signal(false);
   readonly rowSyncing = signal<Set<string>>(new Set());
-
-  readonly manualTeacherId = signal('');
-  readonly manualStatus = signal<TeacherAttendanceStatus>('present');
-  readonly manualCheckInTime = signal('08:00');
-  readonly manualObservations = signal('');
-  readonly manualTeacherOptions = signal<SelectOption[]>([]);
 
   ngOnInit(): void {
     this.loadTeachers();
@@ -79,10 +77,6 @@ export default class TeacherAttendancesPage implements OnInit {
       next: (response) => {
         const list = response.data ?? [];
         this.teachers.set(list);
-        this.manualTeacherOptions.set([
-          { value: '', label: 'Seleccione docente...' },
-          ...list.map((t) => ({ value: t.id, label: `${t.teacherCode} - ${t.specialization}` })),
-        ]);
         this.rows.set(
           list.map((teacher) => ({
             teacherId: teacher.id,
@@ -92,6 +86,7 @@ export default class TeacherAttendancesPage implements OnInit {
             checkInTime: '08:00:00',
             observations: '',
             dirty: false,
+            markedForDelete: false,
           })),
         );
         this.loading.set(false);
@@ -109,110 +104,21 @@ export default class TeacherAttendancesPage implements OnInit {
     this.loadAttendancesByDate();
   }
 
-  onManualStatusChange(value: unknown): void {
-    const v = String(value ?? '').trim();
-    if (v === 'present' || v === 'late' || v === 'absent' || v === 'excused') {
-      this.manualStatus.set(v);
-      return;
-    }
-    this.manualStatus.set('present');
-  }
-
-  onManualTeacherChange(value: unknown): void {
-    this.manualTeacherId.set(value == null ? '' : `${value}`);
-  }
-
-  onManualCheckInTimeChange(value: unknown): void {
-    this.manualCheckInTime.set(value == null ? '08:00' : `${value}`);
-  }
-
-  onManualObservationsChange(value: unknown): void {
-    this.manualObservations.set(value == null ? '' : `${value}`);
-  }
-
-  addManualRecord(): void {
-    const teacherId = this.manualTeacherId();
-    if (!teacherId) {
-      this.toast.warning('Seleccione un docente.');
-      return;
-    }
-
-    const teacher = this.teachers().find((t) => t.id === teacherId);
-    if (!teacher) {
-      this.toast.error('Docente no encontrado.');
-      return;
-    }
-
-    const status = this.manualStatus();
-    const checkInTime = this.normalizeTime(this.manualCheckInTime());
-    const observations = this.manualObservations().trim();
-
-    this.rows.update((current) =>
-      current.map((row) =>
-        row.teacherId === teacherId
-          ? {
-              ...row,
-              status,
-              checkInTime,
-              observations,
-              dirty: true,
-            }
-          : row,
-      ),
-    );
-
-    this.toast.success('Registro manual agregado. Presione "Guardar asistencia manual".');
-    this.manualStatus.set('present');
-    this.manualCheckInTime.set('08:00');
-    this.manualObservations.set('');
-  }
-
-  createManualRecord(): void {
-    const teacherId = this.manualTeacherId();
-    if (!teacherId) {
-      this.toast.warning('Seleccione un docente.');
-      return;
-    }
-
-    const teacher = this.teachers().find((t) => t.id === teacherId);
-    if (!teacher) {
-      this.toast.error('Docente no encontrado.');
-      return;
-    }
-
-    this.creating.set(true);
-    this.teacherAttendanceApi
-      .registerBulk({
+  openManualDialog(): void {
+    const ref = this.dialog.open(TeacherAttendanceManualForm, {
+      data: {
         date: this.attendanceDate(),
-        attendances: [
-          {
-            teacherCode: teacher.teacherCode,
-            status: this.manualStatus(),
-            checkInTime: this.normalizeTime(this.manualCheckInTime()),
-            observations: this.manualObservations().trim() || undefined,
-          },
-        ],
-      })
-      .subscribe({
-        next: (res) => {
-          this.creating.set(false);
-          if (res.success) {
-            this.toast.success('Asistencia creada correctamente.');
-            this.manualStatus.set('present');
-            this.manualCheckInTime.set('08:00');
-            this.manualObservations.set('');
-            this.loadAttendancesByDate();
-          } else {
-            this.toast.error(res.message);
-          }
-        },
-        error: (error) => {
-          this.creating.set(false);
-          this.toast.error(
-            error?.error?.message ?? error?.message ?? 'No se pudo crear la asistencia',
-          );
-        },
-      });
+        teachers: this.teachers(),
+      },
+      panelClass: 'dialog-top',
+      width: '560px',
+    });
+
+    ref.closed.subscribe((created) => {
+      if (created) {
+        this.loadAttendancesByDate();
+      }
+    });
   }
 
   setStatus(teacherId: string, status: TeacherAttendanceStatus): void {
@@ -221,9 +127,7 @@ export default class TeacherAttendancesPage implements OnInit {
 
     const previousStatus = currentRow.status;
     this.rows.update((current) =>
-      current.map((row) =>
-        row.teacherId === teacherId ? { ...row, status, dirty: true } : row,
-      ),
+      current.map((row) => (row.teacherId === teacherId ? { ...row, status, dirty: true } : row)),
     );
 
     this.setRowSyncing(teacherId, true);
@@ -299,6 +203,159 @@ export default class TeacherAttendancesPage implements OnInit {
         row.teacherId === teacherId ? { ...row, observations: parsed, dirty: true } : row,
       ),
     );
+  }
+
+  toggleDelete(teacherId: string, value: boolean): void {
+    this.rows.update((current) =>
+      current.map((row) =>
+        row.teacherId === teacherId ? { ...row, markedForDelete: value } : row,
+      ),
+    );
+  }
+
+  toggleBulkDeleteMode(value: boolean): void {
+    this.bulkDeleteMode.set(value);
+    if (value) {
+      this.rows.update((current) =>
+        current.map((row) =>
+          row.attendanceId ? { ...row, markedForDelete: true } : { ...row, markedForDelete: false },
+        ),
+      );
+      return;
+    }
+    this.rows.update((current) => current.map((row) => ({ ...row, markedForDelete: false })));
+  }
+
+  async onRowDeleteToggle(teacherId: string, value: boolean): Promise<void> {
+    if (this.isRowDeleteDisabled(teacherId)) {
+      this.toggleDelete(teacherId, false);
+      return;
+    }
+
+    if (this.bulkDeleteMode()) {
+      this.toggleDelete(teacherId, value);
+      return;
+    }
+
+    if (!value) return;
+
+    const row = this.rows().find((item) => item.teacherId === teacherId);
+    if (!row || !row.attendanceId) return;
+
+    const confirmed = await this.confirmDialog.open({
+      type: 'danger',
+      icon: 'fa-solid fa-triangle-exclamation',
+      title: 'Eliminar asistencia',
+      message: `Se eliminará la asistencia de ${row.teacherLabel}. Esta acción no se puede deshacer.`,
+      acceptButtonProps: { label: 'Eliminar', color: 'danger', variant: 'solid', size: 'md' },
+      rejectButtonProps: { label: 'Cancelar', color: 'secondary', variant: 'outline', size: 'md' },
+    });
+
+    if (!confirmed) {
+      this.toggleDelete(teacherId, false);
+      return;
+    }
+
+    this.setRowSyncing(teacherId, true);
+    this.teacherAttendanceApi.delete(row.attendanceId).subscribe({
+      next: () => {
+        this.setRowSyncing(teacherId, false);
+        this.toast.success('Asistencia eliminada correctamente.');
+        this.loadAttendancesByDate();
+      },
+      error: (error) => {
+        this.setRowSyncing(teacherId, false);
+        this.toast.error(
+          error?.error?.message ?? error?.message ?? 'No se pudo eliminar la asistencia',
+        );
+      },
+    });
+  }
+
+  async deleteRow(teacherId: string): Promise<void> {
+    if (this.isRowDeleteDisabled(teacherId)) return;
+    const row = this.rows().find((item) => item.teacherId === teacherId);
+    if (!row || !row.attendanceId) return;
+
+    const confirmed = await this.confirmDialog.open({
+      type: 'danger',
+      icon: 'fa-solid fa-triangle-exclamation',
+      title: 'Eliminar asistencia',
+      message: `Se eliminará la asistencia de ${row.teacherLabel}. Esta acción no se puede deshacer.`,
+      acceptButtonProps: { label: 'Eliminar', color: 'danger', variant: 'solid', size: 'md' },
+      rejectButtonProps: { label: 'Cancelar', color: 'secondary', variant: 'outline', size: 'md' },
+    });
+
+    if (!confirmed) return;
+
+    this.setRowSyncing(teacherId, true);
+    this.teacherAttendanceApi.delete(row.attendanceId).subscribe({
+      next: () => {
+        this.setRowSyncing(teacherId, false);
+        this.toast.success('Asistencia eliminada correctamente.');
+        this.loadAttendancesByDate();
+      },
+      error: (error) => {
+        this.setRowSyncing(teacherId, false);
+        this.toast.error(
+          error?.error?.message ?? error?.message ?? 'No se pudo eliminar la asistencia',
+        );
+      },
+    });
+  }
+
+  async deleteSelected(): Promise<void> {
+    const selected = this.rows().filter((row) => row.markedForDelete);
+    if (selected.length === 0) {
+      this.toast.info('Selecciona al menos una asistencia para eliminar.');
+      return;
+    }
+
+    const deletable = selected.filter((row) => row.attendanceId);
+    if (deletable.length === 0) {
+      this.toast.info('Las asistencias seleccionadas no están registradas.');
+      return;
+    }
+
+    const confirmed = await this.confirmDialog.open({
+      type: 'danger',
+      icon: 'fa-solid fa-triangle-exclamation',
+      title: 'Eliminar asistencias',
+      message: `Se eliminarán ${deletable.length} asistencias. Esta acción no se puede deshacer.`,
+      acceptButtonProps: { label: 'Eliminar', color: 'danger', variant: 'solid', size: 'md' },
+      rejectButtonProps: { label: 'Cancelar', color: 'secondary', variant: 'outline', size: 'md' },
+    });
+
+    if (!confirmed) return;
+
+    this.deleting.set(true);
+    deletable.forEach((row) => this.setRowSyncing(row.teacherId, true));
+
+    forkJoin(deletable.map((row) => this.teacherAttendanceApi.delete(row.attendanceId!))).subscribe({
+      next: () => {
+        this.deleting.set(false);
+        deletable.forEach((row) => this.setRowSyncing(row.teacherId, false));
+        this.toast.success('Asistencias eliminadas correctamente.');
+        this.loadAttendancesByDate();
+      },
+      error: (error) => {
+        this.deleting.set(false);
+        deletable.forEach((row) => this.setRowSyncing(row.teacherId, false));
+        this.toast.error(
+          error?.error?.message ?? error?.message ?? 'No se pudo eliminar la asistencia',
+        );
+      },
+    });
+  }
+
+  hasDeleteSelections(): boolean {
+    return this.rows().some((row) => row.markedForDelete);
+  }
+
+  isRowDeleteDisabled(teacherId: string): boolean {
+    const row = this.rows().find((item) => item.teacherId === teacherId);
+    if (!row) return true;
+    return !row.attendanceId || this.isRowSyncing(row.teacherId) || this.deleting();
   }
 
   saveManual(): void {
@@ -405,6 +462,12 @@ export default class TeacherAttendancesPage implements OnInit {
 
     this.teacherAttendanceApi.getAll({ date: this.attendanceDate() }).subscribe({
       next: (res) => {
+        const selectedIds = new Set(
+          this.rows()
+            .filter((row) => row.markedForDelete)
+            .map((row) => row.teacherId),
+        );
+        const bulkMode = this.bulkDeleteMode();
         const teacherCodeById = new Map(this.teachers().map((teacher) => [teacher.id, teacher.teacherCode]));
         const attendanceByCode = new Map<string, TeacherAttendance>();
 
@@ -426,6 +489,7 @@ export default class TeacherAttendancesPage implements OnInit {
                 checkInTime: '08:00:00',
                 observations: '',
                 dirty: false,
+                markedForDelete: false,
               };
             }
             return {
@@ -435,6 +499,7 @@ export default class TeacherAttendancesPage implements OnInit {
               checkInTime: this.normalizeTime(existing.checkInTime ?? row.checkInTime),
               observations: existing.observations ?? row.observations,
               dirty: false,
+              markedForDelete: bulkMode ? true : selectedIds.has(row.teacherId),
             };
           }),
         );

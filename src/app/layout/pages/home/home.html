@@ -1,6 +1,9 @@
 <section id="admin" class="flex h-screen w-full overflow-hidden bg-base-50 dark:bg-base-900 text-base-content">
   <!-- Sidebar Container -->
-  <aside class="flex-shrink-0 z-50 h-full border-r border-base-200 dark:border-base-800 bg-base-100 dark:bg-base-950 transition-all duration-300">
+  <aside
+    class="flex-shrink-0 z-50 h-full border-r border-base-200 dark:border-base-800 bg-base-100 dark:bg-base-950 transition-all duration-300"
+    [class.hidden]="isRightSidebarOpen() && isMobile()"
+  >
     <sga-sidebar />
   </aside>
 
@@ -28,11 +31,23 @@
     </div>
   </main>
 
+  <!-- Right Sidebar Backdrop -->
+  <div
+    class="fixed inset-0 z-40 transition-opacity duration-300"
+    [class.opacity-0]="!isRightSidebarOpen()"
+    [class.opacity-100]="isRightSidebarOpen()"
+    [class.pointer-events-none]="!isRightSidebarOpen()"
+    [class.bg-base-200/5]="isRightSidebarOpen()"
+    [class.backdrop-blur-[0.1px]]="isRightSidebarOpen()"
+    (click)="toggleRightSidebar()"
+  ></div>
+
   <!-- Right Sidebar (Sheet) -->
   <aside 
-    class="fixed top-0 right-0 h-full w-80 bg-base-100 dark:bg-base-950 border-l border-base-200 dark:border-base-800 shadow-2xl z-50 transition-transform duration-300 overflow-hidden flex flex-col"
+    class="fixed top-0 right-0 h-full w-full max-w-full md:w-80 md:max-w-[24rem] bg-base-100 dark:bg-base-950 border-l border-base-200 dark:border-base-800 shadow-2xl z-50 transition-transform duration-300 overflow-hidden flex flex-col"
     [class.translate-x-0]="isRightSidebarOpen()"
     [class.translate-x-full]="!isRightSidebarOpen()"
+    [class.pointer-events-none]="!isRightSidebarOpen()"
   >
     <!-- Header -->
     <div class="flex items-center justify-between p-4 border-b border-base-200 dark:border-base-800">
