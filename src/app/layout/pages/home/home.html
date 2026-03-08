@@ -40,6 +40,9 @@
     [class.bg-base-200/5]="isRightSidebarOpen()"
     [class.backdrop-blur-[0.1px]]="isRightSidebarOpen()"
     (click)="toggleRightSidebar()"
+    (keydown.enter)="toggleRightSidebar()"
+    tabindex="-1"
+    aria-hidden="true"
   ></div>
 
   <!-- Right Sidebar (Sheet) -->
@@ -235,6 +238,8 @@
     <div 
       class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 transition-opacity duration-300"
       (click)="toggleRightSidebar()"
+      (keydown.enter)="toggleRightSidebar()"
+      tabindex="-1"
       aria-hidden="true"
     ></div>
   }
@@ -244,6 +249,8 @@
     <div 
       class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 transition-opacity duration-300 md:hidden"
       (click)="closeMobileSidebar()"
+      (keydown.enter)="closeMobileSidebar()"
+      tabindex="-1"
       aria-hidden="true"
     ></div>
   }

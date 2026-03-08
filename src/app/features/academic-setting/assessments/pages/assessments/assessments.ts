@@ -38,8 +38,9 @@ export default class Assessments implements OnInit {
     if (e.action.key === 'refresh') this.onRefresh();
   }
 
-  onRowAction() {
-    // Implementation for edit/delete
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onRowAction(e: { action: ActionConfig; context: ActionContext }) {
+    // TODO: implementar acciones
   }
 
   onPageChange(p: { page: number; size: number }) {
