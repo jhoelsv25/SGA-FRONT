@@ -1,9 +1,9 @@
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Button } from '@shared/directives';
-import { Input } from '@shared/ui/input/input';
-import { Select } from '@shared/ui/select/select';
+import { Input } from '@shared/adapters/ui/input/input';
+import { Select } from '@shared/adapters/ui/select/select';
 import { GradeLevelStore } from '../../services/store/grade-level.store';
 import { GradeLevel, GradeLevelCreate } from '../../types/grade-level-types';
 import { InstitutionApi } from '@features/administration/services/api/institution-api';
@@ -17,8 +17,8 @@ import { InstitutionApi } from '@features/administration/services/api/institutio
 })
 export class GradeLevelForm implements OnInit {
   private store = inject(GradeLevelStore);
-  private data = inject(DIALOG_DATA, { optional: true });
-  private ref = inject(DialogRef);
+  private data = inject(Z_MODAL_DATA, { optional: true });
+  private ref = inject(ZardDialogRef);
   private fb = inject(FormBuilder);
   private institutionApi = inject(InstitutionApi);
 

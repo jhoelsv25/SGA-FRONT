@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { ListToolbar } from '@shared/ui/list-toolbar';
-import { DataSource, SgaTemplate } from '@shared/components/data-source/data-source';
+import { ListToolbar } from '@shared/widgets/ui/list-toolbar';
+import { DataSource, SgaTemplate } from '@shared/widgets/data-source/data-source';
 import { AttendanceStore } from '../../../academic-setting/attendances/services/store/attendance.store';
 import { DataSourceColumn } from '@core/types/data-source-types';
+import { UiFiltersService } from '@core/services/ui-filters.service';
 
 @Component({
   selector: 'sga-attendance-reports',
@@ -15,6 +16,8 @@ import { DataSourceColumn } from '@core/types/data-source-types';
 })
 export default class AttendanceReportsPage implements OnInit {
   public readonly store = inject(AttendanceStore);
+  private readonly filters = inject(UiFiltersService);
+  private readonly searchTerm = signal('');
 
   columns: DataSourceColumn[] = [
     { key: 'date', label: 'Fecha', sortable: true, type: 'date' },
@@ -23,10 +26,23 @@ export default class AttendanceReportsPage implements OnInit {
     { key: 'sessionType', label: 'Sesión' },
   ];
 
-  data = computed(() => this.store.attendances());
+  data = computed(() => {
+    const term = this.searchTerm().trim().toLowerCase();
+    const rows = this.store.attendances();
+
+    if (!term) return rows;
+
+    return rows.filter((row) => {
+      const student = (row as { studentName?: string }).studentName?.toLowerCase() ?? '';
+      const status = (row.status ?? '').toLowerCase();
+      const sessionType = (row.sessionType ?? '').toLowerCase();
+      return student.includes(term) || status.includes(term) || sessionType.includes(term);
+    });
+  });
   loading = computed(() => this.store.loading());
 
   ngOnInit(): void {
+    this.searchTerm.set(this.filters.attendanceReportsSearch());
     this.onRefresh();
   }
 
@@ -34,7 +50,16 @@ export default class AttendanceReportsPage implements OnInit {
     this.store.loadByFilter({});
   }
 
-  onSearch() {
-    // Implementar búsqueda si el store lo soporta
+  onSearch(value: string) {
+    const next = value ?? '';
+    this.searchTerm.set(next);
+    this.filters.setAttendanceReportsSearch(next);
+  }
+
+  hasSearch = computed(() => Boolean(this.searchTerm().trim()));
+
+  clearFilters(): void {
+    this.filters.clearAttendanceReportsFilters();
+    this.searchTerm.set('');
   }
 }

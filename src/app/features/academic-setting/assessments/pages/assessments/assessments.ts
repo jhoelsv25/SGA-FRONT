@@ -1,23 +1,24 @@
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
-import { DataSource } from '@shared/components/data-source/data-source';
-import { HeaderDetail } from '@shared/components/header-detail/header-detail';
+import { DataSource } from '@shared/widgets/data-source/data-source';
+import { ListToolbar } from '@shared/widgets/ui/list-toolbar';
+import { Button } from '@shared/directives';
 import { AssessmentStore } from '../../services/store/assessment.store';
-import { ASSESSMENT_HEADER_CONFIG } from '../../config/header.config';
 import { ASSESSMENT_COLUMNS } from '../../config/column.config';
 import { ASSESSMENT_ACTIONS } from '../../config/action.config';
+import { AssessmentFiltersService } from '../../services/assessment-filters.service';
 @Component({
   selector: 'sga-assessments',
   standalone: true,
-  imports: [CommonModule, HeaderDetail, DataSource],
+  imports: [CommonModule, ListToolbar, DataSource, Button],
   templateUrl: './assessments.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class Assessments implements OnInit {
-  private store = inject(AssessmentStore);
+  private readonly store = inject(AssessmentStore);
+  private readonly filters = inject(AssessmentFiltersService);
 
-  headerConfig = computed(() => ASSESSMENT_HEADER_CONFIG);
   columns = computed(() => ASSESSMENT_COLUMNS);
   data = computed(() => this.store.assessments());
   loading = computed(() => this.store.loading());
@@ -27,15 +28,32 @@ export default class Assessments implements OnInit {
     total: this.store.assessments().length
   }));
 
-  headerActions = computed(() => ASSESSMENT_ACTIONS.filter((a) => a.typeAction === 'header'));
   rowActions = computed(() => ASSESSMENT_ACTIONS.filter((a) => a.typeAction === 'row'));
+  totalAssessments = computed(() => this.data().length);
+  hasListSearch = computed(() => Boolean(this.filters.listSearch()));
 
   ngOnInit() {
+    this.store.loadAll({ search: this.filters.listSearch() });
+  }
+
+  onSearch(value: string): void {
+    this.filters.setListSearch(value);
+    this.store.loadAll({ search: this.filters.listSearch() });
+  }
+
+  onCreate(): void {
+    // Placeholder para próxima implementación de modal/formulario
+  }
+
+  clearFilters(): void {
+    this.filters.clearListFilters();
     this.store.loadAll({});
   }
 
   onHeaderAction(e: { action: ActionConfig; context: ActionContext }) {
-    if (e.action.key === 'refresh') this.onRefresh();
+    if (e.action.key === 'refresh') {
+      this.onRefresh();
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -48,6 +66,6 @@ export default class Assessments implements OnInit {
   }
 
   onRefresh() {
-    this.store.loadAll({});
+    this.store.loadAll({ search: this.filters.listSearch() });
   }
 }

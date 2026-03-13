@@ -5,11 +5,11 @@ import { Button } from '@shared/directives';
 
 import type { Period, PeriodStatus } from '@features/academic-setup/periods/types/period-types';
 import { PeriodCardComponent } from '@features/academic-setup/periods/components/period-card/period-card';
-import { Dialog } from '@angular/cdk/dialog';
+import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { PeriodForm } from '@features/academic-setup/periods/components/period-form/period-form';
 import { PeriodApi } from '@features/academic-setup/periods/services/period-api';
-import { EmptyState } from '@shared/ui/empty-state/empty-state';
-import { Skeleton } from '@shared/ui/skeleton/skeleton';
+import { EmptyState } from '@shared/widgets/ui/empty-state/empty-state';
+import { Skeleton } from '@shared/widgets/ui/skeleton/skeleton';
 import { YearAcademicApi } from '../../services/api/year-academic-api';
 import type { YearAcademic, YearAcademicPeriod } from '../../types/year-academi-types';
 
@@ -31,7 +31,7 @@ export default class YearAcademicDetailComponent implements OnInit {
   private router = inject(Router);
   private api = inject(YearAcademicApi);
   private periodApi = inject(PeriodApi);
-  private dialog = inject(Dialog);
+  private dialog = inject(DialogModalService);
 
   year = signal<YearAcademic | null>(null);
   loading = signal(true);

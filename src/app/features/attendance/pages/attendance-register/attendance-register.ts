@@ -1,12 +1,12 @@
-import { Dialog } from '@angular/cdk/dialog';
+import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import { ListToolbar } from '@shared/ui/list-toolbar';
-import { DataSource, SgaTemplate } from '@shared/components/data-source/data-source';
-import { Input } from '@shared/ui/input/input';
-import { Select, type SelectOption } from '@shared/ui/select/select';
+import { ListToolbar } from '@shared/widgets/ui/list-toolbar';
+import { DataSource, SgaTemplate } from '@shared/widgets/data-source/data-source';
+import { Input } from '@shared/adapters/ui/input/input';
+import { Select, type SelectOption } from '@shared/adapters/ui/select/select';
 import { Button } from '@shared/directives';
 import { Toast } from '@core/services/toast';
 
@@ -18,7 +18,8 @@ import { EnrollmentApi } from '../../../academic-setting/enrollments/services/en
 import type { SectionCourse } from '@features/organization/section-courses/types/section-course-types';
 import { DataSourceColumn } from '@core/types/data-source-types';
 import { AttendanceImportDialog } from '../../components/attendance-import-dialog/attendance-import-dialog';
-import { Dropdown, DropdownItem } from '@shared/ui/dropdown/dropdown';
+import { Dropdown, DropdownItem } from '@shared/adapters/ui/dropdown/dropdown';
+import { UiFiltersService } from '@core/services/ui-filters.service';
 
 type StudentRow = { id: string; name: string; studentCode: string; status: AttendanceStatus };
 
@@ -30,16 +31,17 @@ type StudentRow = { id: string; name: string; studentCode: string; status: Atten
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class AttendanceRegisterPage implements OnInit {
-  private readonly dialog = inject(Dialog);
+  private readonly dialog = inject(DialogModalService);
   public readonly store = inject(AttendanceStore);
   private readonly attendanceApi = inject(AttendanceApi);
   private readonly sectionCourseApi = inject(SectionCourseApi);
   private readonly enrollmentApi = inject(EnrollmentApi);
   private readonly toast = inject(Toast);
+  private readonly filters = inject(UiFiltersService);
 
   // Filters
   public selectedSectionCourse = signal<string>('');
-  public attendanceDate = signal<string>(new Date().toISOString().split('T')[0]);
+  public attendanceDate = signal<string>('');
   
   // Data
   public sectionCourseOptions = signal<SelectOption[]>([]);
@@ -53,6 +55,7 @@ export default class AttendanceRegisterPage implements OnInit {
   ];
 
   public canSave = computed(() => this.selectedSectionCourse() && this.students().length > 0);
+  public hasActiveFilters = computed(() => Boolean(this.selectedSectionCourse() || this.filters.attendanceRegisterDate()));
 
   public toolbarActions = computed<DropdownItem[]>(() => [
     {
@@ -69,6 +72,10 @@ export default class AttendanceRegisterPage implements OnInit {
   ]);
 
   ngOnInit(): void {
+    const today = new Date().toISOString().split('T')[0];
+    const initialDate = this.filters.attendanceRegisterDate() || today;
+    this.attendanceDate.set(initialDate);
+    this.filters.setAttendanceRegisterDate(initialDate);
     this.loadSectionCourses();
   }
 
@@ -84,6 +91,14 @@ export default class AttendanceRegisterPage implements OnInit {
               : sc.id.slice(0, 8),
           }))
         );
+
+        const options = this.sectionCourseOptions();
+        const saved = this.filters.attendanceRegisterSectionCourseId();
+        const fallback = options[0]?.value?.toString() ?? '';
+        const nextSection = saved && options.some((o) => o.value?.toString() === saved) ? saved : fallback;
+        if (nextSection) {
+          this.onSectionCourseChange(nextSection);
+        }
       },
     });
   }
@@ -91,6 +106,7 @@ export default class AttendanceRegisterPage implements OnInit {
   onSectionCourseChange(value: unknown): void {
     const id = String(value ?? '');
     this.selectedSectionCourse.set(id);
+    this.filters.setAttendanceRegisterSectionCourseId(id);
     if (id) {
        this.loadStudents(id);
     } else {
@@ -99,6 +115,7 @@ export default class AttendanceRegisterPage implements OnInit {
   }
 
   onDateChange(): void {
+    this.filters.setAttendanceRegisterDate(this.attendanceDate());
     const id = this.selectedSectionCourse();
     if (id) this.loadStudents(id);
   }
@@ -177,5 +194,14 @@ export default class AttendanceRegisterPage implements OnInit {
       width: '600px',
       panelClass: 'dialog-center',
     });
+  }
+
+  clearFilters(): void {
+    this.filters.clearAttendanceRegisterFilters();
+    const today = new Date().toISOString().split('T')[0];
+    this.attendanceDate.set(today);
+    this.selectedSectionCourse.set('');
+    this.students.set([]);
+    this.filters.setAttendanceRegisterDate(today);
   }
 }

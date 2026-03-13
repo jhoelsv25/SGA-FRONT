@@ -1,32 +1,66 @@
-import { Dialog } from '@angular/cdk/dialog';
+import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
-import { DataSource } from '@shared/components/data-source/data-source';
-import { HeaderDetail } from '@shared/components/header-detail/header-detail';
+import { DataSource } from '@shared/widgets/data-source/data-source';
+import { ListToolbar } from '@shared/widgets/ui/list-toolbar';
+import { Select, SelectOption } from '@shared/adapters/ui/select/select';
+import { Button } from '@shared/directives';
 import { PaymentStore } from '../../services/store/payment.store';
 import { Payment } from '../../types/payment-types';
 import { PaymentForm } from '../../components/payment-form/payment-form';
+import { UiFiltersService } from '@core/services/ui-filters.service';
 
 @Component({
   selector: 'sga-payments',
-  imports: [HeaderDetail, DataSource],
+  imports: [CommonModule, ListToolbar, Select, DataSource, Button],
   templateUrl: './payments.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class PaymentsPage {
-  private dialog = inject(Dialog);
+  private dialog = inject(DialogModalService);
   private store = inject(PaymentStore);
+  public readonly filters = inject(UiFiltersService);
 
-  headerConfig = computed(() => this.store.headerConfig());
   columns = computed(() => this.store.columns());
-  data = computed(() => this.store.data());
+  data = computed(() => {
+    const search = this.filters.paymentSearch().toLowerCase();
+    const status = this.filters.paymentStatus();
+
+    return this.store.data().filter((row) => {
+      const matchesSearch =
+        !search ||
+        row.studentName?.toLowerCase().includes(search) ||
+        row.concept?.toLowerCase().includes(search) ||
+        row.reference?.toLowerCase().includes(search);
+      const matchesStatus = !status || row.status === status;
+      return matchesSearch && matchesStatus;
+    });
+  });
   loading = computed(() => this.store.loading());
   pagination = computed(() => ({
     ...this.store.pagination(),
-    total: this.store.data().length,
+    total: this.data().length,
   }));
-  headerActions = computed(() => this.store.actions().filter((a) => a.typeAction === 'header'));
   rowActions = computed(() => this.store.actions().filter((a) => a.typeAction === 'row'));
+  activeFiltersCount = computed(() => [this.filters.paymentSearch(), this.filters.paymentStatus()].filter(Boolean).length);
+
+  statusOptions = computed<SelectOption[]>(() => [
+    { value: '', label: 'Todos' },
+    { value: 'pending', label: 'Pendiente' },
+    { value: 'partial', label: 'Parcial' },
+    { value: 'paid', label: 'Pagado' },
+    { value: 'overdue', label: 'Vencido' },
+    { value: 'cancelled', label: 'Cancelado' },
+  ]);
+
+  onSearch(value: string): void {
+    this.filters.setPaymentSearch(value);
+  }
+
+  onStatusChange(value: unknown): void {
+    this.filters.setPaymentStatus(String(value ?? ''));
+  }
 
   onHeaderAction(e: { action: ActionConfig; context: ActionContext }) {
     if (e.action.key === 'create') this.openForm();
@@ -41,6 +75,18 @@ export default class PaymentsPage {
 
   onPageChange(p: { page: number; size: number }) {
     this.store.setPagination(p.page, p.size);
+  }
+
+  onRefresh(): void {
+    this.store.loadAll();
+  }
+
+  clearFilters(): void {
+    this.filters.clearPaymentFilters();
+  }
+
+  openCreate(): void {
+    this.openForm();
   }
 
   private openForm(current?: Payment | null) {

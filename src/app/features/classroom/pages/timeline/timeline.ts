@@ -2,10 +2,10 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Button } from '@shared/directives';
-import { Input } from '@shared/ui/input/input';
-import { Textarea } from '@shared/ui/textarea/textarea';
-import { Card } from '@shared/ui/card/card';
-import { Skeleton } from '@shared/ui/skeleton/skeleton';
+import { Input } from '@shared/adapters/ui/input/input';
+import { Textarea } from '@shared/widgets/ui/textarea/textarea';
+import { Card } from '@shared/adapters/ui/card/card';
+import { Skeleton } from '@shared/widgets/ui/skeleton/skeleton';
 import { ClassroomStore } from '../../services/store/classroom.store';
 import { ClassroomSocketService } from '../../services/classroom-socket';
 

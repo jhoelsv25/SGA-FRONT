@@ -1,8 +1,8 @@
-import { Dialog } from '@angular/cdk/dialog';
+import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
-import { DataSource } from '@shared/components/data-source/data-source';
-import { HeaderDetail } from '@shared/components/header-detail/header-detail';
+import { DataSource } from '@shared/widgets/data-source/data-source';
+import { HeaderDetail } from '@shared/widgets/header-detail/header-detail';
 import { GuardianApi } from '../../services/api/guardian-api';
 import { StudentGuardian } from '../../types/guardian-types';
 import { GUARDIAN_HEADER_CONFIG, GUARDIAN_COLUMN, GUARDIAN_ACTIONS } from '../../config/guardian.config';
@@ -17,7 +17,7 @@ import { Toast } from '@core/services/toast';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class GuardiansPage implements OnInit {
-  private dialog = inject(Dialog);
+  private dialog = inject(DialogModalService);
   private api = inject(GuardianApi);
   private toast = inject(Toast);
 

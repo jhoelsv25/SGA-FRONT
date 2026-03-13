@@ -1,9 +1,9 @@
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Button } from '@shared/directives';
-import { Input } from '@shared/ui/input/input';
-import { Select } from '@shared/ui/select/select';
+import { Input } from '@shared/adapters/ui/input/input';
+import { Select } from '@shared/adapters/ui/select/select';
 import { InstitutionStore } from '../../../services/store/institution.store';
 import { Institution } from '../../types/institution-types';
 
@@ -15,12 +15,12 @@ import { Institution } from '../../types/institution-types';
 })
 export class InstitutionForm implements OnInit {
   private store = inject(InstitutionStore);
-  private data = inject(DIALOG_DATA);
+  private data = inject(Z_MODAL_DATA);
 
   public errror = computed(() => this.store.error());
   public title = computed(() => this.data?.title ?? 'Nueva institución');
   public subTitle = computed(() => this.data?.subTitle ?? 'Complete el formulario para continuar');
-  private ref = inject(DialogRef);
+  private ref = inject(ZardDialogRef);
   private fb = inject(FormBuilder);
 
   public institutionForm: FormGroup;

@@ -3,11 +3,11 @@ import { CommonModule } from '@angular/common';
 import { RoleStore } from '../../../services/store/role.store';
 import { Button } from '@shared/directives';
 import { Role } from '../../../services/api/role-api';
-import { Dialog } from '@angular/cdk/dialog';
+import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { RoleCardComponent } from '../../components/role-card/role-card';
 import { RoleForm } from '../../components/role-form/role-form';
 import { Router } from '@angular/router';
-import { EmptyState } from '@shared/ui/empty-state/empty-state';
+import { EmptyState } from '@shared/widgets/ui/empty-state/empty-state';
 
 @Component({
   selector: 'sga-roles',
@@ -25,7 +25,7 @@ import { EmptyState } from '@shared/ui/empty-state/empty-state';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class RolesComponent implements OnInit {
-  private dialog = inject(Dialog);
+  private dialog = inject(DialogModalService);
   private router = inject(Router);
   public store = inject(RoleStore);
   

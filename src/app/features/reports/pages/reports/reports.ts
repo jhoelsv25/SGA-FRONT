@@ -1,8 +1,8 @@
-import { Dialog } from '@angular/cdk/dialog';
+import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
-import { DataSource } from '@shared/components/data-source/data-source';
-import { HeaderDetail } from '@shared/components/header-detail/header-detail';
+import { DataSource } from '@shared/widgets/data-source/data-source';
+import { HeaderDetail } from '@shared/widgets/header-detail/header-detail';
 import { ReportStore } from '../../services/store/report.store';
 import { Report } from '../../types/report-types';
 import { ReportForm } from '../../components/report-form/report-form';
@@ -14,7 +14,7 @@ import { ReportForm } from '../../components/report-form/report-form';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ReportsPage {
-  private dialog = inject(Dialog);
+  private dialog = inject(DialogModalService);
   private store = inject(ReportStore);
 
   headerConfig = computed(() => this.store.headerConfig());

@@ -1,8 +1,8 @@
-import { Dialog } from '@angular/cdk/dialog';
+import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
-import { DataSource } from '@shared/components/data-source/data-source';
-import { HeaderDetail } from '@shared/components/header-detail/header-detail';
+import { DataSource } from '@shared/widgets/data-source/data-source';
+import { HeaderDetail } from '@shared/widgets/header-detail/header-detail';
 import { EnrollmentStore } from '../../services/store/enrollment.store';
 import { Enrollment } from '../../types/enrollment-types';
 import { EnrollmentForm } from '../../components/enrollment-form/enrollment-form';
@@ -16,7 +16,7 @@ import { EnrollmentForm } from '../../components/enrollment-form/enrollment-form
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class Enrollments {
-  private dialog = inject(Dialog);
+  private dialog = inject(DialogModalService);
   private store = inject(EnrollmentStore);
 
   headerConfig = computed(() => this.store.headerConfig());

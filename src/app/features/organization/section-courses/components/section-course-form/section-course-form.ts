@@ -9,11 +9,11 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Input } from '@shared/ui/input/input';
-import { Select } from '@shared/ui/select/select';
-import { SectionSelect, TeacherSelect, CourseSelect, YearAcademicSelect } from '@shared/components/selects';
+import { Input } from '@shared/adapters/ui/input/input';
+import { Select } from '@shared/adapters/ui/select/select';
+import { SectionSelect, TeacherSelect, CourseSelect, YearAcademicSelect } from '@shared/widgets/selects';
 import { Button } from '@shared/directives';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
 import { SectionCourseStore } from '../../services/store/section-course.store';
 import type { SectionCourse, SectionCourseCreate } from '../../types/section-course-types';
 import { Observable } from 'rxjs';
@@ -27,8 +27,8 @@ import { MODALITY_OPTIONS, STATUS_OPTIONS } from '../../config/form.constants';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SectionCourseForm implements OnInit {
-  private data = inject(DIALOG_DATA, { optional: true });
-  private ref = inject(DialogRef);
+  private data = inject(Z_MODAL_DATA, { optional: true });
+  private ref = inject(ZardDialogRef);
   private fb = inject(FormBuilder);
   private store = inject(SectionCourseStore);
   private cdr = inject(ChangeDetectorRef);

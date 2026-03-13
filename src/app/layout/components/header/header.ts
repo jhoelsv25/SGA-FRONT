@@ -11,7 +11,7 @@ import {
 import { Router, RouterModule } from '@angular/router';
 import { AuthFacade } from '@auth/services/store/auth.acede';
 import { LayoutStore } from '@core/stores/layout.store';
-import { UserMenu, UserMenuAction } from '@shared/components/user-menu/user-menu';
+import { UserMenu, UserMenuAction, UserMenuDetail, UserMenuStat } from '@shared/widgets/user-menu/user-menu';
 import { Subject } from 'rxjs';
 
 @Component({
@@ -37,6 +37,61 @@ export class Header implements OnInit, OnDestroy {
   public searchQuery = signal<string>('');
 
   public isSidebarCollapsed = computed(() => this.layout.isSidebarCollapsed());
+  public modules = computed(() => this.authFacade.getModules());
+
+  public userMenuDetails = computed<UserMenuDetail[]>(() => {
+    const user = this.currentUser();
+    const profile = user?.profile;
+    const modules = this.modules() ?? [];
+    const details: UserMenuDetail[] = [
+      {
+        label: 'Rol activo',
+        value: profile?.roleLabel || this.getUserRole(),
+        icon: 'fa-solid fa-user-shield',
+      },
+      {
+        label: 'Módulos',
+        value: `${modules.length} habilitados`,
+        icon: 'fa-solid fa-grid-2',
+      },
+    ];
+
+    if (profile?.institution) {
+      details.push({
+        label: 'Institución',
+        value: profile.institution,
+        icon: 'fa-solid fa-school',
+      });
+    }
+
+    if (user?.person?.email || user?.email) {
+      details.push({
+        label: 'Correo',
+        value: user?.person?.email || user?.email || 'No registrado',
+        icon: 'fa-solid fa-envelope',
+      });
+    }
+
+    return details;
+  });
+
+  public userMenuStats = computed<UserMenuStat[]>(() => {
+    const profileStats = this.currentUser()?.profile?.stats as Record<string, unknown> | undefined;
+    if (profileStats) {
+      return Object.entries(profileStats)
+        .slice(0, 3)
+        .map(([key, value]) => ({
+          label: this.mapStatLabel(key),
+          value: this.normalizeStatValue(value),
+        }));
+    }
+
+    return [
+      { label: 'Módulos', value: this.modules().length },
+      { label: 'Cursos', value: 0 },
+      { label: 'Prom.', value: 'N/A' },
+    ];
+  });
 
   ngOnInit() {
     // Cerrar menú al hacer clic fuera
@@ -95,8 +150,8 @@ export class Header implements OnInit, OnDestroy {
     const user = this.currentUser();
     if (!user) return 'U';
 
-    const firstName = user.firstName || '';
-    const lastName = user.lastName || '';
+    const firstName = user.firstName || user.person?.firstName || user.username || '';
+    const lastName = user.lastName || user.person?.lastName || '';
 
     return (firstName.charAt(0) + lastName.charAt(0)).toUpperCase();
   }
@@ -105,7 +160,9 @@ export class Header implements OnInit, OnDestroy {
     const user = this.currentUser();
     if (!user) return 'Usuario';
 
-    return `${user.firstName || ''} ${user.lastName || ''}`.trim();
+    const firstName = user.firstName || user.person?.firstName || '';
+    const lastName = user.lastName || user.person?.lastName || '';
+    return `${firstName} ${lastName}`.trim() || user.username || 'Usuario';
   }
 
   public getUserRole(): string {
@@ -119,7 +176,7 @@ export class Header implements OnInit, OnDestroy {
     const user = this.currentUser();
     if (!user) return '000000';
 
-    return user.id?.padStart(6, '0') || '000000';
+    return user.code || user.profile?.code || user.id?.padStart(6, '0') || '000000';
   }
 
   public getUserAvatar(): string {
@@ -128,12 +185,16 @@ export class Header implements OnInit, OnDestroy {
       return user.profilePicture;
     }
 
+    if (user?.person?.photoUrl) {
+      return user.person.photoUrl;
+    }
+
     return '/logo.jpeg';
   }
 
-  goProfile = () => this.router.navigateByUrl('/profile');
-  goSettings = () => this.router.navigateByUrl('/settings');
-  goChangePass = () => this.router.navigateByUrl('/change-password');
+  goProfile = () => this.router.navigateByUrl('/account/profile');
+  goSettings = () => this.router.navigateByUrl('/account/settings');
+  goChangePass = () => this.router.navigateByUrl('/account/change-password');
 
   onAction(event: UserMenuAction) {
     if (event.type === 'logout') {
@@ -143,5 +204,28 @@ export class Header implements OnInit, OnDestroy {
     } else if (event.action) {
       event.action();
     }
+  }
+
+  private mapStatLabel(key: string): string {
+    const labels: Record<string, string> = {
+      weeklyHours: 'Horas',
+      graduationYear: 'Promo.',
+      dependents: 'Hijos',
+      monthlyIncome: 'Ingreso',
+    };
+
+    return labels[key] ?? key;
+  }
+
+  private normalizeStatValue(value: unknown): string | number {
+    if (typeof value === 'number' || typeof value === 'string') {
+      return value;
+    }
+
+    if (typeof value === 'boolean') {
+      return value ? 'Sí' : 'No';
+    }
+
+    return 'N/A';
   }
 }

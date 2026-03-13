@@ -5,7 +5,7 @@ import { SessionStore } from '@features/administration/services/store/session.st
 import { Session } from '@features/administration/services/api/session-api';
 import { SessionCardComponent } from '../../components/session-card/session-card';
 import { Button } from '@shared/directives';
-import { EmptyState } from '@shared/ui/empty-state/empty-state';
+import { EmptyState } from '@shared/widgets/ui/empty-state/empty-state';
 
 @Component({
   selector: 'sga-sessions',

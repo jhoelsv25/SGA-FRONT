@@ -1,12 +1,12 @@
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Toast } from '@core/services/toast';
 import { TeacherAttendanceApi } from '@features/teachers/services/api/teacher-attendance-api';
 import { TeacherAttendanceStatus } from '@features/teachers/types/teacher-attendance-types';
 import { Button } from '@shared/directives';
-import { Input } from '@shared/ui/input/input';
-import { Select, SelectOption } from '@shared/ui/select/select';
+import { Input } from '@shared/adapters/ui/input/input';
+import { Select, SelectOption } from '@shared/adapters/ui/select/select';
 
 interface ManualAttendanceDialogData {
   date: string;
@@ -21,8 +21,8 @@ interface ManualAttendanceDialogData {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TeacherAttendanceManualForm {
-  private readonly data = inject(DIALOG_DATA) as ManualAttendanceDialogData;
-  private readonly ref = inject(DialogRef<boolean>);
+  private readonly data = inject(Z_MODAL_DATA) as ManualAttendanceDialogData;
+  private readonly ref = inject(ZardDialogRef<boolean>);
   private readonly fb = inject(FormBuilder);
   private readonly api = inject(TeacherAttendanceApi);
   private readonly toast = inject(Toast);

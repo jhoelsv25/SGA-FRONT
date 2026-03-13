@@ -1,13 +1,13 @@
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Button } from '@shared/directives';
-import { Input } from '@shared/ui/input/input';
-import { Select } from '@shared/ui/select/select';
+import { Input } from '@shared/adapters/ui/input/input';
+import { Select } from '@shared/adapters/ui/select/select';
 import { StudentStore } from '../../services/store/student.store';
 import { Student, StudentCreate } from '../../types/student-types';
-import type { SelectOption } from '@shared/ui/select/select';
+import type { SelectOption } from '@shared/adapters/ui/select/select';
 
 @Component({
   selector: 'sga-student-form',
@@ -18,8 +18,8 @@ import type { SelectOption } from '@shared/ui/select/select';
 })
 export class StudentForm implements OnInit {
   private store = inject(StudentStore);
-  private data = inject(DIALOG_DATA, { optional: true });
-  private ref = inject(DialogRef);
+  private data = inject(Z_MODAL_DATA, { optional: true });
+  private ref = inject(ZardDialogRef);
   private fb = inject(FormBuilder);
 
   form!: FormGroup;

@@ -2,19 +2,19 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { Router } from '@angular/router';
 
 import { ActionConfig, ActionContext } from '@core/types/action-types';
-import { Dialog } from '@angular/cdk/dialog';
+import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { ConfirmDialog } from '@core/services/confirm-dialog';
 import { YearAcademicStore } from '../../services/store/year-academic.store';
 import { YearAcademic } from '../../types/year-academi-types';
 import { YearAcademicForm } from '../../components/year-academic-form/year-academic-form';
 import { CommonModule } from '@angular/common';
 import { YearAcademicCardComponent } from '../../components/year-academic-card/year-academic-card';
-import { EmptyState } from '@shared/ui/empty-state/empty-state';
-import { Skeleton } from '@shared/ui/skeleton/skeleton';
+import { EmptyState } from '@shared/widgets/ui/empty-state/empty-state';
+import { Skeleton } from '@shared/widgets/ui/skeleton/skeleton';
 import { PeriodForm } from '@features/academic-setup/periods/components/period-form/period-form';
-import { ListToolbar } from '@shared/ui/list-toolbar';
-import { Dropdown } from '@shared/ui/dropdown/dropdown';
-import { Select } from '@shared/ui/select/select';
+import { ListToolbar } from '@shared/widgets/ui/list-toolbar';
+import { Dropdown } from '@shared/adapters/ui/dropdown/dropdown';
+import { Select } from '@shared/adapters/ui/select/select';
 import { PermissionCheckStore } from '@core/stores/permission-check.store';
 
 const STATUS_OPTIONS = [
@@ -33,7 +33,7 @@ const STATUS_OPTIONS = [
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class YearAcademicComponent {
-  private dialog = inject(Dialog);
+  private dialog = inject(DialogModalService);
   private confirmDialog = inject(ConfirmDialog);
   private store = inject(YearAcademicStore);
   private router = inject(Router);
@@ -178,7 +178,7 @@ export default class YearAcademicComponent {
         current: this.store.current(),
       },
       panelClass: 'dialog-top',
-      width: '700px',
+      width: '800px',
       maxHeight: '700px'
     });
     ref.closed.subscribe(() => this.onRefresh());

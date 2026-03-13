@@ -1,9 +1,36 @@
 <div class="p-6 max-w-7xl mx-auto">
-  <sga-header-detail
-    [config]="headerConfig()"
-    [actions]="headerActions()"
-    (action)="onHeaderAction($event)"
-  />
+  <sga-list-toolbar
+    title="Registro de Conducta"
+    description="Gestiona incidencias, logros y observaciones de estudiantes"
+    icon="fas fa-flag"
+    [searchPlaceholder]="'Buscar por estudiante, descripción o docente...'"
+    [filterCount]="activeFiltersCount()"
+    (refresh)="onRefresh()"
+    (searchChange)="onSearch($event)"
+  >
+    <div list-toolbar-filter class="flex flex-col gap-4 min-w-[280px]">
+      <h4 class="text-[10px] font-bold text-base-content/40 uppercase tracking-[0.2em] mb-1">Filtros</h4>
+      <div class="flex flex-col gap-1.5">
+        <label class="text-[11px] font-bold text-base-content/60 uppercase">Tipo</label>
+        <sga-select [options]="typeOptions()" [value]="filters.behaviorType()" (valueChange)="onTypeChange($event)" />
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <label class="text-[11px] font-bold text-base-content/60 uppercase">Severidad</label>
+        <sga-select [options]="severityOptions()" [value]="filters.behaviorSeverity()" (valueChange)="onSeverityChange($event)" />
+      </div>
+    </div>
+    <div list-toolbar-actions>
+      <button sgaButton variant="ghost" color="secondary" shape="pill" [disabled]="activeFiltersCount() === 0" (click)="clearFilters()">
+        <i class="fas fa-filter-circle-xmark mr-2"></i>
+        Limpiar
+      </button>
+      <button sgaButton color="primary" shape="pill" (click)="openCreate()">
+        <i class="fas fa-plus mr-2"></i>
+        Nuevo Registro
+      </button>
+    </div>
+  </sga-list-toolbar>
+
   <sga-data-source
     [data]="data()"
     [columns]="columns()"

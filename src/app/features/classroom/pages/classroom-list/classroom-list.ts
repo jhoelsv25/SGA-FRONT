@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@ang
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { SectionCourseApi } from '@features/organization/section-courses/services/section-course-api';
-import { Card } from '@shared/ui/card/card';
+import { Card } from '@shared/adapters/ui/card/card';
 import type { SectionCourse } from '@features/organization/section-courses/types/section-course-types';
 
 @Component({

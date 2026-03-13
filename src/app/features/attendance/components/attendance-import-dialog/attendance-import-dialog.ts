@@ -1,4 +1,4 @@
-import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
+import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
 import { ChangeDetectionStrategy, Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -25,8 +25,8 @@ const STEPS = [
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AttendanceImportDialog {
-  private readonly ref = inject(DialogRef);
-  private readonly data = inject<ImportData>(DIALOG_DATA);
+  private readonly ref = inject(ZardDialogRef);
+  private readonly data = inject<ImportData>(Z_MODAL_DATA);
   private readonly toast = inject(Toast);
 
   steps = STEPS;

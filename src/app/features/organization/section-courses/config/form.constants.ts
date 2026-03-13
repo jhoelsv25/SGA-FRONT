@@ -1,4 +1,4 @@
-import type { SelectOption } from '@shared/ui/select/select';
+import type { SelectOption } from '@shared/adapters/ui/select/select';
 
 export const MODALITY_OPTIONS: SelectOption[] = [
   { value: 'online', label: 'En línea' },

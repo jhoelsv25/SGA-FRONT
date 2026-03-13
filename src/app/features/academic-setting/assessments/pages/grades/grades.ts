@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component, effect, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Select } from '@shared/ui/select/select';
-import type { SelectOption } from '@shared/ui/select/select';
+import { Select } from '@shared/adapters/ui/select/select';
+import type { SelectOption } from '@shared/adapters/ui/select/select';
 import { AssessmentStore } from '../../services/store/assessment.store';
-import { ListToolbar } from '@shared/ui/list-toolbar';
+import { ListToolbar } from '@shared/widgets/ui/list-toolbar';
 import { Button } from '@shared/directives';
 import { type Assessment, type AssessmentScore } from '../../types/assessment-types';
+import { AssessmentFiltersService } from '../../services/assessment-filters.service';
 
 type ScoreRow = Pick<AssessmentScore, 'enrollmentId' | 'score' | 'observation'> & { studentName: string };
 
@@ -19,10 +20,12 @@ type ScoreRow = Pick<AssessmentScore, 'enrollmentId' | 'score' | 'observation'> 
 })
 export default class Grades implements OnInit {
   public readonly assessmentStore = inject(AssessmentStore);
+  private readonly filters = inject(AssessmentFiltersService);
 
   public selectedAssessmentId = signal<string>('');
   public localScores = signal<ScoreRow[]>([]);
   public assessmentOptions = signal<SelectOption[]>([]);
+  public hasActiveFilters = signal(false);
 
   ngOnInit(): void {
     this.assessmentStore.loadAll({});
@@ -38,6 +41,17 @@ export default class Grades implements OnInit {
           label: `${a.name} - ${a.sectionCourse?.course?.name ?? ''} (${a.sectionCourse?.id ?? ''})`,
         })),
       ]);
+
+      const options = this.assessmentOptions().filter((o) => o.value);
+      if (options.length === 0) return;
+
+      const saved = this.filters.gradesAssessmentId();
+      const fallback = options[0]?.value?.toString() ?? '';
+      const next = (saved && options.some((o) => o.value?.toString() === saved)) ? saved : fallback;
+
+      if (next && next !== this.selectedAssessmentId()) {
+        this.onAssessmentChange(next);
+      }
     });
     effect(() => {
       const scores = this.assessmentStore.activeScores();
@@ -51,6 +65,8 @@ export default class Grades implements OnInit {
   onAssessmentChange(value: unknown): void {
     const id = value === null || value === undefined ? '' : String(value);
     this.selectedAssessmentId.set(id);
+    this.hasActiveFilters.set(Boolean(id));
+    this.filters.setGradesAssessmentId(id);
     this.localScores.set([]);
     if (id) {
       this.assessmentStore.loadScores(id);
@@ -89,5 +105,17 @@ export default class Grades implements OnInit {
     this.localScores.update(prev => 
       prev.map(s => s.enrollmentId === enrollmentId ? { ...s, observation } : s)
     );
+  }
+
+  getSelectedAssessmentLabel(): string {
+    const selected = this.selectedAssessmentId();
+    return this.assessmentOptions().find((o) => String(o.value ?? '') === selected)?.label ?? '';
+  }
+
+  clearFilters(): void {
+    this.filters.clearGradesFilters();
+    this.selectedAssessmentId.set('');
+    this.hasActiveFilters.set(false);
+    this.localScores.set([]);
   }
 }

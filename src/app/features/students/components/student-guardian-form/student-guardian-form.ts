@@ -1,12 +1,12 @@
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Button } from '@shared/directives';
-import { Select } from '@shared/ui/select/select';
+import { Select } from '@shared/adapters/ui/select/select';
 import { GuardianApi } from '../../services/api/guardian-api';
 import { StudentApi } from '../../services/api/student-api';
 import { StudentGuardian } from '../../types/guardian-types';
-import type { SelectOption } from '@shared/ui/select/select';
+import type { SelectOption } from '@shared/adapters/ui/select/select';
 
 @Component({
   selector: 'sga-student-guardian-form',
@@ -16,8 +16,8 @@ import type { SelectOption } from '@shared/ui/select/select';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StudentGuardianForm implements OnInit {
-  private data = inject(DIALOG_DATA, { optional: true });
-  private ref = inject(DialogRef);
+  private data = inject(Z_MODAL_DATA, { optional: true });
+  private ref = inject(ZardDialogRef);
   private fb = inject(FormBuilder);
   private api = inject(GuardianApi);
   private studentApi = inject(StudentApi);

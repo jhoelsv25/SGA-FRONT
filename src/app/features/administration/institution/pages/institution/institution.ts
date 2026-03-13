@@ -1,13 +1,13 @@
-import { Dialog } from '@angular/cdk/dialog';
+import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { HeaderDetail } from '@shared/components/header-detail/header-detail';
+import { HeaderDetail } from '@shared/widgets/header-detail/header-detail';
 import { InstitutionStore } from '../../../services/store/institution.store';
 import { Institution as InstitutionType } from '../../types/institution-types';
 import { InstitutionForm } from '../../components/institution-form/institution-form';
 import { CommonModule } from '@angular/common';
 import { InstitutionCardComponent } from '../../components/institution-card/institution-card';
 import { InstitutionSkeleton } from '../../components/institution-skeleton/institution-skeleton';
-import { EmptyState } from '@shared/ui/empty-state/empty-state';
+import { EmptyState } from '@shared/widgets/ui/empty-state/empty-state';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 
 @Component({
@@ -18,7 +18,7 @@ import { ActionConfig, ActionContext } from '@core/types/action-types';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class Institution {
-  private dialog = inject(Dialog);
+  private dialog = inject(DialogModalService);
   public store = inject(InstitutionStore);
 
   headerConfig = computed(() => this.store.headerConfig());

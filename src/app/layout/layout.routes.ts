@@ -77,6 +77,21 @@ export default [
         title: 'Reportes',
       },
       {
+        path: 'account/profile',
+        loadComponent: () => import('@features/account/pages/profile/profile'),
+        title: 'Mi Perfil',
+      },
+      {
+        path: 'account/settings',
+        loadComponent: () => import('@features/account/pages/settings/settings'),
+        title: 'Configuración',
+      },
+      {
+        path: 'account/change-password',
+        loadComponent: () => import('@features/account/pages/change-password/change-password'),
+        title: 'Cambiar contraseña',
+      },
+      {
         path: '',
         pathMatch: 'full',
         redirectTo: 'dashboard',

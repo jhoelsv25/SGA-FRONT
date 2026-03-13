@@ -1,9 +1,32 @@
-<div class="p-6">
-  <sga-header-detail
-    [config]="headerConfig()"
-    [actions]="headerActions()"
-    (action)="onHeaderAction($event)"
-  />
+<div class="p-6 space-y-4">
+  <sga-list-toolbar
+    title="Evaluaciones"
+    description="Gestión de evaluaciones y criterios de calificación"
+    icon="fas fa-file-alt"
+    [searchPlaceholder]="'Buscar por nombre o estado...'"
+    [showFilter]="false"
+    (refresh)="onRefresh()"
+    (searchChange)="onSearch($event)"
+  >
+    <div list-toolbar-actions>
+      <button sgaButton variant="ghost" color="secondary" shape="pill" [disabled]="!hasListSearch()" (click)="clearFilters()">
+        <i class="fas fa-filter-circle-xmark mr-2"></i>
+        Limpiar Filtros
+      </button>
+      <button sgaButton color="primary" shape="pill" (click)="onCreate()">
+        <i class="fas fa-plus mr-2"></i>
+        Nueva Evaluación
+      </button>
+    </div>
+  </sga-list-toolbar>
+
+  <div class="flex items-center justify-between px-1">
+    <p class="text-sm text-base-content/60">Administra evaluaciones, pesos y fechas en un solo lugar.</p>
+    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
+      {{ totalAssessments() }} registradas
+    </span>
+  </div>
+
   <sga-data-source
     [data]="data()"
     [columns]="columns()"

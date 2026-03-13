@@ -7,7 +7,7 @@ import { AuditLog } from '@features/administration/services/api/audit-api';
 import { AuditLogItem } from '../components/audit-log-item/audit-log-item';
 import { AuditLogsFilters } from '../components/audit-logs-filters/audit-logs-filters';
 import { Button } from '@shared/directives';
-import { EmptyState } from '@shared/ui/empty-state/empty-state';
+import { EmptyState } from '@shared/widgets/ui/empty-state/empty-state';
 
 @Component({
   selector: 'sga-audit-logs',

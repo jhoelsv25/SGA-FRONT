@@ -1,6 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { AuthResponse, LoginCredentials, RefreshTokenResponse, RoleResponse } from '@auth/types/auth-type';
+import {
+  AccountAuditResponse,
+  AccountUserDetail,
+  AuthResponse,
+  LoginCredentials,
+  RefreshTokenResponse,
+  RoleResponse,
+} from '@auth/types/auth-type';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -36,6 +43,26 @@ export class AuthApi {
     return this.http.post<void>('auth/reset-password', {
       token,
       newPassword,
+    });
+  }
+
+  changePassword(userId: string, currentPassword: string, newPassword: string): Observable<void> {
+    return this.http.patch<void>(`users/${userId}/change-password`, {
+      currentPassword,
+      newPassword,
+    });
+  }
+
+  getCurrentUserDetail(userId: string): Observable<AccountUserDetail> {
+    return this.http.get<AccountUserDetail>(`users/${userId}`);
+  }
+
+  getCurrentUserAudit(userId: string, limit = 6): Observable<AccountAuditResponse> {
+    return this.http.get<AccountAuditResponse>(`audit/user/${userId}`, {
+      params: {
+        page: 1,
+        limit,
+      },
     });
   }
 

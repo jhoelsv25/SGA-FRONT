@@ -2,9 +2,9 @@ import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@ang
 import * as XLSX from 'xlsx';
 import { CommonModule, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Input } from '@shared/ui/input/input';
-import { Select } from '@shared/ui/select/select';
-import type { SelectOption } from '@shared/ui/select/select';
+import { Input } from '@shared/adapters/ui/input/input';
+import { Select } from '@shared/adapters/ui/select/select';
+import type { SelectOption } from '@shared/adapters/ui/select/select';
 import { AttendanceApi } from '../../services/attendance-api';
 import { AttendanceStore } from '../../services/store/attendance.store';
 import { AttendanceStatus } from '../../types/attendance-types';

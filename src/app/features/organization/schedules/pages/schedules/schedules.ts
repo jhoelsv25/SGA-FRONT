@@ -1,12 +1,12 @@
-import { Dialog } from '@angular/cdk/dialog';
+import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 import { ScheduleStore } from '../../services/store/schedule.store';
 import { Schedule } from '../../types/schedule-types';
 import { ScheduleForm } from '../../components/schedule-form/schedule-form';
 import { ScheduleCalendarComponent } from '../../components/schedule-calendar/schedule-calendar';
-import { ListToolbar } from '@shared/ui/list-toolbar';
-import { Dropdown } from '@shared/ui/dropdown/dropdown';
+import { ListToolbar } from '@shared/widgets/ui/list-toolbar';
+import { Dropdown } from '@shared/adapters/ui/dropdown/dropdown';
 import { PermissionCheckStore } from '@core/stores/permission-check.store';
 import { ConfirmDialog } from '@core/services/confirm-dialog';
 import { CommonModule } from '@angular/common';
@@ -19,7 +19,7 @@ import { CommonModule } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class SchedulesPage {
-  private dialog = inject(Dialog);
+  private dialog = inject(DialogModalService);
   private store = inject(ScheduleStore);
   private permissionStore = inject(PermissionCheckStore);
   private confirmDialog = inject(ConfirmDialog);

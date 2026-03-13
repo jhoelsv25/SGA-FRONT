@@ -1,4 +1,4 @@
-import { Dialog } from '@angular/cdk/dialog';
+import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ActionConfig } from '@core/types/action-types';
@@ -9,11 +9,11 @@ import { TEACHER_COLUMN } from '@features/teachers/config/column.config';
 import { TeacherApi } from '@features/teachers/services/api/teacher-api';
 import { TeacherStore } from '@features/teachers/services/store/teacher.store';
 import { Teacher, TeacherCreate, TeacherParams } from '@features/teachers/types/teacher-types';
-import { DataSource } from '@shared/components/data-source/data-source';
-import { ImportDialog } from '@shared/components/import-dialog/import-dialog';
-import { Dropdown, DropdownItem } from '@shared/ui/dropdown/dropdown';
-import { ListToolbar } from '@shared/ui/list-toolbar';
-import { Select, SelectOption } from '@shared/ui/select/select';
+import { DataSource } from '@shared/widgets/data-source/data-source';
+import { ImportDialog } from '@shared/widgets/import-dialog/import-dialog';
+import { Dropdown, DropdownItem } from '@shared/adapters/ui/dropdown/dropdown';
+import { ListToolbar } from '@shared/widgets/ui/list-toolbar';
+import { Select, SelectOption } from '@shared/adapters/ui/select/select';
 
 const EXCEL_COLUMNS = [
   { key: 'teacherCode', label: 'Codigo docente' },
@@ -67,7 +67,7 @@ function normalizeQueryValue(value: string | null): string {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class TeachersPage implements OnInit {
-  private readonly dialog = inject(Dialog);
+  private readonly dialog = inject(DialogModalService);
   private readonly store = inject(TeacherStore);
   private readonly teacherApi = inject(TeacherApi);
   private readonly excel = inject(ExcelService);

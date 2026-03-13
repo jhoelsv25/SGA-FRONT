@@ -1,7 +1,7 @@
 <div class="flex flex-col gap-6 animate-in fade-in duration-500">
   <sga-list-toolbar
     title="Registro de Calificaciones"
-    description="Ingrese las notas de los estudiantes para la evaluación seleccionada"
+    description="Registra notas por evaluación con validación rápida de estado"
     icon="fas fa-pen-square"
     [showSearch]="false"
     [filterCount]="selectedAssessment() ? 2 : (selectedSectionCourse() ? 1 : 0)"
@@ -36,6 +36,17 @@
     <div list-toolbar-actions>
       <button
         sgaButton
+        variant="ghost"
+        color="secondary"
+        shape="pill"
+        [disabled]="!hasActiveFilters()"
+        (click)="clearFilters()"
+      >
+        <i class="fas fa-filter-circle-xmark mr-2"></i>
+        Limpiar
+      </button>
+      <button
+        sgaButton
         color="primary"
         shape="pill"
         [disabled]="!canSave() || store.loading()"
@@ -51,31 +62,59 @@
     </div>
   </sga-list-toolbar>
 
-  <sga-data-source
-    [columns]="columns"
-    [data]="studentScores()"
-    [loading]="store.loading()"
-  >
-    <ng-template sgaTemplate="scoreTemplate" let-row>
-      <div class="flex items-center gap-2">
-        <sga-input
-          type="number"
-          class="w-24"
-          [(ngModel)]="row.score"
-          [min]="0"
-          [max]="20"
-        />
-        <span class="text-xs font-bold" [ngClass]="row.score < 11 ? 'text-error' : 'text-success'">
-          {{ row.score < 11 ? 'Desaprobado' : 'Aprobado' }}
-        </span>
-      </div>
-    </ng-template>
+  <div class="flex flex-wrap items-center gap-2 px-1">
+    @if (selectedSectionLabel()) {
+      <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-base-200 text-base-content/70 border border-base-300">
+        <i class="fas fa-layer-group mr-1.5"></i>{{ selectedSectionLabel() }}
+      </span>
+    }
+    @if (selectedAssessmentLabel()) {
+      <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
+        <i class="fas fa-clipboard-check mr-1.5"></i>{{ selectedAssessmentLabel() }}
+      </span>
+    }
+    @if (studentScores().length > 0) {
+      <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-success/10 text-success border border-success/20">
+        {{ studentScores().length }} estudiantes
+      </span>
+    }
+  </div>
 
-    <ng-template sgaTemplate="observationTemplate" let-row>
-      <sga-input
-        placeholder="Opcional..."
-        [(ngModel)]="row.observation"
-      />
-    </ng-template>
-  </sga-data-source>
+  @if (!selectedSectionCourse()) {
+    <div class="rounded-2xl border border-dashed border-base-300 bg-base-100 p-10 text-center">
+      <div class="w-14 h-14 rounded-2xl bg-base-200 text-base-content/50 mx-auto mb-3 flex items-center justify-center">
+        <i class="fa-solid fa-filter-circle-xmark"></i>
+      </div>
+      <p class="font-semibold text-base-content">Selecciona un curso y una evaluación</p>
+      <p class="text-sm text-base-content/60 mt-1">Al elegir filtros, aquí aparecerá la grilla editable de notas.</p>
+    </div>
+  } @else {
+    <sga-data-source
+      [columns]="columns"
+      [data]="studentScores()"
+      [loading]="store.loading()"
+    >
+      <ng-template sgaTemplate="scoreTemplate" let-row>
+        <div class="flex items-center gap-2">
+          <sga-input
+            type="number"
+            class="w-24"
+            [(ngModel)]="row.score"
+            [min]="0"
+            [max]="20"
+          />
+          <span class="text-xs font-bold" [ngClass]="row.score < 11 ? 'text-error' : 'text-success'">
+            {{ row.score < 11 ? 'Desaprobado' : 'Aprobado' }}
+          </span>
+        </div>
+      </ng-template>
+
+      <ng-template sgaTemplate="observationTemplate" let-row>
+        <sga-input
+          placeholder="Opcional..."
+          [(ngModel)]="row.observation"
+        />
+      </ng-template>
+    </sga-data-source>
+  }
 </div>

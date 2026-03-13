@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Information } from '@auth/components/information/information';
-import { CopyRight } from '@shared/components/copy-righ/copy-righ';
+import { CopyRight } from '@shared/widgets/copy-righ/copy-righ';
 
 @Component({
   selector: 'sga-home',

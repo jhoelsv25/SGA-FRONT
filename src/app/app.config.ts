@@ -6,15 +6,14 @@ import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/
 import { apiInterceptor } from '@core/interceptors/api.interceptor';
 import { errorInterceptor } from '@core/interceptors/error.interceptor';
 import { authInterceptor } from '@auth/interceptors/auth.interceptor';
+import { provideZard } from '@/shared/core/provider/providezard';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding()),
-    provideHttpClient(
-      withInterceptors([authInterceptor, apiInterceptor, errorInterceptor]),
-      withFetch(),
-    ),
+    provideHttpClient(withInterceptors([authInterceptor, apiInterceptor, errorInterceptor]), withFetch()),
+    provideZard(),
     // ❌ Ya NO usamos provideInitializer() - Se hace en App.ts
   ],
 };

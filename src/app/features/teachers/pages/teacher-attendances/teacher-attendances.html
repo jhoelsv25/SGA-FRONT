@@ -1,9 +1,9 @@
 <sga-header-detail [config]="headerConfig" />
 
-<div class="rounded-xl border border-slate-200 bg-white p-4">
+<div class="rounded-2xl border border-base-200 bg-base-100 p-4 md:p-5 shadow-sm">
   <div class="mb-4 flex flex-wrap items-end gap-3">
     <div>
-      <label for="teacher-attendance-date" class="mb-1 block text-sm font-medium text-slate-700">Fecha</label>
+      <label for="teacher-attendance-date" class="mb-1 block text-sm font-medium text-base-content/70">Fecha</label>
       <sga-input
         id="teacher-attendance-date"
         type="date"
@@ -70,11 +70,11 @@
     </div>
   </div>
 
-  <div class="overflow-x-auto">
-    <table class="w-full min-w-[860px] border-collapse">
+  <div class="overflow-x-auto rounded-xl border border-base-200">
+    <table class="w-full min-w-[860px] border-collapse bg-base-100">
       <thead>
-        <tr class="border-b border-slate-200 bg-slate-50">
-          <th class="w-12 px-3 py-2 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">
+        <tr class="border-b border-base-200 bg-base-200/50">
+          <th class="w-12 px-3 py-2 text-center text-xs font-semibold uppercase tracking-wide text-base-content/60">
             <div class="flex items-center justify-center">
               <label class="inline-flex items-center cursor-pointer group">
                 <input
@@ -88,7 +88,7 @@
                   class="w-5 h-5 border-2 rounded flex items-center justify-center transition-all"
                   [class.bg-primary-500]="allSelected() || partialSelected()"
                   [class.border-primary-500]="allSelected() || partialSelected()"
-                  [class.border-neutral-400]="!allSelected() && !partialSelected()"
+                  [class.border-base-400]="!allSelected() && !partialSelected()"
                 >
                   @if (allSelected()) {
                     <i class="fas fa-check text-white text-xs"></i>
@@ -99,12 +99,12 @@
               </label>
             </div>
           </th>
-          <th class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-600">Codigo</th>
-          <th class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-600">Docente</th>
-          <th class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-600">Estado</th>
-          <th class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-600">Hora entrada</th>
-          <th class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-600">Observaciones</th>
-          <th class="w-12 px-3 py-2 text-center text-xs font-semibold uppercase tracking-wide text-slate-600">
+          <th class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Codigo</th>
+          <th class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Docente</th>
+          <th class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Estado</th>
+          <th class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Hora entrada</th>
+          <th class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Observaciones</th>
+          <th class="w-12 px-3 py-2 text-center text-xs font-semibold uppercase tracking-wide text-base-content/60">
             Acciones
           </th>
         </tr>
@@ -112,19 +112,23 @@
       <tbody>
         @if (loading()) {
           <tr>
-            <td colspan="7" class="px-3 py-8 text-center text-sm text-slate-500">
+            <td colspan="7" class="px-3 py-8 text-center text-sm text-base-content/50">
               Cargando docentes...
             </td>
           </tr>
         } @else if (rows().length === 0) {
           <tr>
-            <td colspan="7" class="px-3 py-8 text-center text-sm text-slate-500">
+            <td colspan="7" class="px-3 py-8 text-center text-sm text-base-content/50">
               No hay docentes disponibles para registrar asistencia.
             </td>
           </tr>
         } @else {
           @for (row of rows(); track row.teacherId) {
-            <tr class="border-b border-slate-100 align-top" [class.bg-amber-50]="row.dirty" [class.bg-rose-50]="row.markedForDelete">
+            <tr
+              class="border-b border-base-200/70 align-top"
+              [class.bg-warning/10]="row.dirty"
+              [class.bg-error/10]="row.markedForDelete"
+            >
               <td class="w-12 px-3 py-2 text-center align-middle">
                 <label
                   class="inline-flex items-center justify-center w-full group"
@@ -140,7 +144,7 @@
                     class="w-5 h-5 border-2 rounded flex items-center justify-center transition-all"
                     [class.bg-primary-500]="row.markedForDelete"
                     [class.border-primary-500]="row.markedForDelete"
-                    [class.border-neutral-400]="!row.markedForDelete"
+                    [class.border-base-400]="!row.markedForDelete"
                   >
                     @if (row.markedForDelete) {
                       <i class="fas fa-check text-white text-xs"></i>
@@ -148,35 +152,35 @@
                   </div>
                 </label>
               </td>
-              <td class="px-3 py-2 text-sm font-semibold text-slate-700">{{ row.teacherCode }}</td>
-              <td class="px-3 py-2 text-sm text-slate-700">{{ row.teacherLabel }}</td>
+              <td class="px-3 py-2 text-sm font-semibold text-base-content">{{ row.teacherCode }}</td>
+              <td class="px-3 py-2 text-sm text-base-content/80">{{ row.teacherLabel }}</td>
               <td class="px-3 py-2">
                 <div class="flex gap-2">
                   <button
                     type="button"
-                    class="rounded px-2 py-1 text-xs font-semibold"
-                    [class]="row.status === 'present' ? 'bg-green-600 text-white' : 'bg-green-50 text-green-700'"
+                    class="rounded px-2 py-1 text-xs font-semibold transition-colors"
+                    [class]="row.status === 'present' ? 'bg-success text-success-content' : 'bg-success/10 text-success hover:bg-success/20'"
                     [disabled]="isRowSyncing(row.teacherId)"
                     (click)="setStatus(row.teacherId, 'present')"
                   >P</button>
                   <button
                     type="button"
-                    class="rounded px-2 py-1 text-xs font-semibold"
-                    [class]="row.status === 'late' ? 'bg-amber-500 text-white' : 'bg-amber-50 text-amber-700'"
+                    class="rounded px-2 py-1 text-xs font-semibold transition-colors"
+                    [class]="row.status === 'late' ? 'bg-warning text-warning-content' : 'bg-warning/10 text-warning hover:bg-warning/20'"
                     [disabled]="isRowSyncing(row.teacherId)"
                     (click)="setStatus(row.teacherId, 'late')"
                   >T</button>
                   <button
                     type="button"
-                    class="rounded px-2 py-1 text-xs font-semibold"
-                    [class]="row.status === 'absent' ? 'bg-rose-600 text-white' : 'bg-rose-50 text-rose-700'"
+                    class="rounded px-2 py-1 text-xs font-semibold transition-colors"
+                    [class]="row.status === 'absent' ? 'bg-error text-error-content' : 'bg-error/10 text-error hover:bg-error/20'"
                     [disabled]="isRowSyncing(row.teacherId)"
                     (click)="setStatus(row.teacherId, 'absent')"
                   >F</button>
                   <button
                     type="button"
-                    class="rounded px-2 py-1 text-xs font-semibold"
-                    [class]="row.status === 'excused' ? 'bg-sky-600 text-white' : 'bg-sky-50 text-sky-700'"
+                    class="rounded px-2 py-1 text-xs font-semibold transition-colors"
+                    [class]="row.status === 'excused' ? 'bg-info text-info-content' : 'bg-info/10 text-info hover:bg-info/20'"
                     [disabled]="isRowSyncing(row.teacherId)"
                     (click)="setStatus(row.teacherId, 'excused')"
                   >J</button>

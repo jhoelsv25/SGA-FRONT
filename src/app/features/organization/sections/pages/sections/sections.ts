@@ -1,4 +1,4 @@
-import { Dialog } from '@angular/cdk/dialog';
+import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
@@ -7,10 +7,10 @@ import type { Section } from '../../types/section-types';
 import { SectionForm } from '../../components/section-form/section-form';
 import { CommonModule } from '@angular/common';
 import { SectionCardComponent } from '../../components/section-card/section-card';
-import { EmptyState } from '@shared/ui/empty-state/empty-state';
-import { Skeleton } from '@shared/ui/skeleton/skeleton';
-import { ListToolbar } from '@shared/ui/list-toolbar';
-import { Dropdown } from '@shared/ui/dropdown/dropdown';
+import { EmptyState } from '@shared/widgets/ui/empty-state/empty-state';
+import { Skeleton } from '@shared/widgets/ui/skeleton/skeleton';
+import { ListToolbar } from '@shared/widgets/ui/list-toolbar';
+import { Dropdown } from '@shared/adapters/ui/dropdown/dropdown';
 import { PermissionCheckStore } from '@core/stores/permission-check.store';
 import { ConfirmDialog } from '@core/services/confirm-dialog';
 
@@ -22,7 +22,7 @@ import { ConfirmDialog } from '@core/services/confirm-dialog';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class SectionsPage implements OnInit {
-  private dialog = inject(Dialog);
+  private dialog = inject(DialogModalService);
   private store = inject(SectionStore);
   private route = inject(ActivatedRoute);
   private permissionStore = inject(PermissionCheckStore);

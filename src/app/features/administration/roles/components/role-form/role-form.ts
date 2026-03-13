@@ -1,11 +1,11 @@
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Button } from '@shared/directives';
-import { Input } from '@shared/ui/input/input';
+import { Input } from '@shared/adapters/ui/input/input';
 import { Role } from '../../../services/api/role-api';
-import { Card } from '@shared/ui/card/card';
+import { Card } from '@shared/adapters/ui/card/card';
 
 interface RoleFormData {
   current: Role | null;
@@ -21,8 +21,8 @@ interface RoleFormData {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RoleForm implements OnInit {
-  private data = inject<RoleFormData>(DIALOG_DATA, { optional: true });
-  private ref = inject(DialogRef);
+  private data = inject<RoleFormData>(Z_MODAL_DATA, { optional: true });
+  private ref = inject(ZardDialogRef);
   private fb = inject(FormBuilder);
 
   form!: FormGroup;

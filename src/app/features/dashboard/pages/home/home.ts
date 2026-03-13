@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } 
 import { AuthFacade } from '@auth/services/store/auth.acede';
 import { StudentStore } from '@features/students/services/store/student.store';
 import { TeacherStore } from '@features/teachers/services/store/teacher.store';
-import { Card } from '@shared/ui/card/card';
+import { Card } from '@shared/adapters/ui/card/card';
 import { RouterLink } from '@angular/router';
 
 @Component({

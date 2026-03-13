@@ -1,0 +1,24 @@
+<z-dropdown-menu>
+  <div dropdown-trigger>
+    <ng-content select="[sga-dropdown-trigger]"></ng-content>
+  </div>
+
+  @for (item of items(); track $index) {
+    @if (item.separator) {
+      <div class="-mx-1 my-1 h-px bg-border"></div>
+    } @else {
+      <button
+        z-dropdown-menu-item
+        type="button"
+        [disabled]="item.disabled"
+        class="flex w-full items-center gap-2 text-left"
+        (click)="handleItemClick(item)"
+      >
+        @if (item.icon) {
+          <i [class]="item.icon + ' h-4 w-4 shrink-0'"></i>
+        }
+        <span class="flex-1">{{ item.label }}</span>
+      </button>
+    }
+  }
+</z-dropdown-menu>

@@ -1,4 +1,4 @@
-import { Dialog } from '@angular/cdk/dialog';
+import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ConfirmDialog } from '@core/services/confirm-dialog';
@@ -7,11 +7,11 @@ import { PeriodStore } from '../../services/store/period.store';
 import type { Period } from '../../types/period-types';
 import { PeriodForm } from '../../components/period-form/period-form';
 import { PeriodCardComponent } from '../../components/period-card/period-card';
-import { EmptyState } from '@shared/ui/empty-state/empty-state';
-import { Skeleton } from '@shared/ui/skeleton/skeleton';
-import { ListToolbar } from '@shared/ui/list-toolbar';
-import { Dropdown } from '@shared/ui/dropdown/dropdown';
-import { Select } from '@shared/ui/select/select';
+import { EmptyState } from '@shared/widgets/ui/empty-state/empty-state';
+import { Skeleton } from '@shared/widgets/ui/skeleton/skeleton';
+import { ListToolbar } from '@shared/widgets/ui/list-toolbar';
+import { Dropdown } from '@shared/adapters/ui/dropdown/dropdown';
+import { Select } from '@shared/adapters/ui/select/select';
 import { PermissionCheckStore } from '@core/stores/permission-check.store';
 
 const STATUS_OPTIONS = [
@@ -31,7 +31,7 @@ const STATUS_OPTIONS = [
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class PeriodsComponent {
-  private dialog = inject(Dialog);
+  private dialog = inject(DialogModalService);
   private confirmDialog = inject(ConfirmDialog);
   private store = inject(PeriodStore);
   private permissionStore = inject(PermissionCheckStore);

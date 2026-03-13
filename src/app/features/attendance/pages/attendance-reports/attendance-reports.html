@@ -14,7 +14,14 @@
         [showFilter]="false"
         (refresh)="onRefresh()"
         (searchChange)="onSearch($event)"
-      />
+      >
+        <div list-toolbar-actions>
+          <button sgaButton variant="ghost" color="secondary" shape="pill" [disabled]="!hasSearch()" (click)="clearFilters()">
+            <i class="fas fa-filter-circle-xmark mr-2"></i>
+            Limpiar
+          </button>
+        </div>
+      </sga-list-toolbar>
     </div>
 
     <!-- Custom Templates -->

@@ -8,10 +8,10 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Input } from '@shared/ui/input/input';
-import { CourseSelect } from '@shared/components/selects';
+import { Input } from '@shared/adapters/ui/input/input';
+import { CourseSelect } from '@shared/widgets/selects';
 import { Button } from '@shared/directives';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
 import { CompetencyStore } from '../../services/store/competency.store';
 import type { Competency } from '../../types/competency-types';
 import { Observable } from 'rxjs';
@@ -24,8 +24,8 @@ import { Observable } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CompetencyForm implements OnInit {
-  private data = inject(DIALOG_DATA, { optional: true });
-  private ref = inject(DialogRef);
+  private data = inject(Z_MODAL_DATA, { optional: true });
+  private ref = inject(ZardDialogRef);
   private fb = inject(FormBuilder);
   private store = inject(CompetencyStore);
 

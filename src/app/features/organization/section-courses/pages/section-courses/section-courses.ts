@@ -1,4 +1,4 @@
-import { Dialog } from '@angular/cdk/dialog';
+import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 import { SectionCourseStore } from '../../services/store/section-course.store';
@@ -6,10 +6,10 @@ import type { SectionCourse } from '../../types/section-course-types';
 import { SectionCourseForm } from '../../components/section-course-form/section-course-form';
 import { CommonModule } from '@angular/common';
 import { SectionCourseCardComponent } from '../../components/section-course-card/section-course-card';
-import { EmptyState } from '@shared/ui/empty-state/empty-state';
-import { Skeleton } from '@shared/ui/skeleton/skeleton';
-import { ListToolbar } from '@shared/ui/list-toolbar';
-import { Dropdown } from '@shared/ui/dropdown/dropdown';
+import { EmptyState } from '@shared/widgets/ui/empty-state/empty-state';
+import { Skeleton } from '@shared/widgets/ui/skeleton/skeleton';
+import { ListToolbar } from '@shared/widgets/ui/list-toolbar';
+import { Dropdown } from '@shared/adapters/ui/dropdown/dropdown';
 import { PermissionCheckStore } from '@core/stores/permission-check.store';
 import { ConfirmDialog } from '@core/services/confirm-dialog';
 
@@ -21,7 +21,7 @@ import { ConfirmDialog } from '@core/services/confirm-dialog';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class SectionCoursesPage {
-  private dialog = inject(Dialog);
+  private dialog = inject(DialogModalService);
   private store = inject(SectionCourseStore);
   private permissionStore = inject(PermissionCheckStore);
   private confirmDialog = inject(ConfirmDialog);

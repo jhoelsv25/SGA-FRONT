@@ -5,10 +5,10 @@ import { PermissionStore } from '../../../services/store/permission.store';
 import { Permission } from '../../../services/api/permission-api';
 
 import { Button } from '@shared/directives';
-import { Dialog } from '@angular/cdk/dialog';
+import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { PermissionCardComponent } from '../../components/permission-card/permission-card';
 import { PermissionForm } from '../../components/permission-form/permission-form';
-import { EmptyState } from '@shared/ui/empty-state/empty-state';
+import { EmptyState } from '@shared/widgets/ui/empty-state/empty-state';
 
 interface ModuleGroup {
   name: string;
@@ -33,7 +33,7 @@ interface ModuleGroup {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class PermissionsComponent implements OnInit {
-  private dialog = inject(Dialog);
+  private dialog = inject(DialogModalService);
   public store = inject(PermissionStore);
   
   public searchTerm = signal('');

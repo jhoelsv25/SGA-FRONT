@@ -41,6 +41,17 @@
 
         <!-- Actions in Toolbar Menu (Dropdown) -->
         <div list-toolbar-actions>
+          <button
+            sgaButton
+            variant="ghost"
+            color="secondary"
+            shape="pill"
+            [disabled]="!hasActiveFilters()"
+            (click)="clearFilters()"
+            title="Limpiar filtros"
+          >
+            <i class="fas fa-filter-circle-xmark"></i>
+          </button>
           <sga-dropdown [items]="toolbarActions()">
             <button
               sga-dropdown-trigger

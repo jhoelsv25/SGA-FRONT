@@ -1,8 +1,8 @@
-import { Dialog } from '@angular/cdk/dialog';
+import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
-import { DataSource } from '@shared/components/data-source/data-source';
-import { HeaderDetail } from '@shared/components/header-detail/header-detail';
+import { DataSource } from '@shared/widgets/data-source/data-source';
+import { HeaderDetail } from '@shared/widgets/header-detail/header-detail';
 import { CommunicationStore } from '../../services/store/communication.store';
 import { Communication } from '../../types/communication-types';
 import { CommunicationForm } from '../../components/communication-form/communication-form';
@@ -14,7 +14,7 @@ import { CommunicationForm } from '../../components/communication-form/communica
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class CommunicationsPage {
-  private dialog = inject(Dialog);
+  private dialog = inject(DialogModalService);
   private store = inject(CommunicationStore);
 
   headerConfig = computed(() => this.store.headerConfig());

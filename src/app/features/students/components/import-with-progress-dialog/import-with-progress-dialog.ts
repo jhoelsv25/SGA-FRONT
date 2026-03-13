@@ -1,4 +1,4 @@
-import { DialogRef } from '@angular/cdk/dialog';
+import { ZardDialogRef } from '@shared/components/dialog';
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Button } from '@shared/directives';
@@ -35,7 +35,7 @@ const FIELD_OPTIONS = [
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ImportWithProgressDialog implements OnDestroy {
-  private readonly ref = inject(DialogRef);
+  private readonly ref = inject(ZardDialogRef);
   private readonly studentApi = inject(StudentApi);
   private readonly socketService = inject(StudentsImportSocketService);
   private readonly excel = inject(ExcelService);

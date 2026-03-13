@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Permission } from '../../../services/api/permission-api';
-import { Checkbox } from '@shared/ui/checkbox/checkbox';
+import { Checkbox } from '@shared/widgets/ui/checkbox/checkbox';
 
 @Component({
   selector: 'sga-selectable-permission',

@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
-import { Toast } from '@shared/ui/toast/toast';
+import { Toast } from '@shared/widgets/ui/toast/toast';
 import { AuthInitializer } from '@auth/services/auth-initializer';
 import { AuthFacade } from '@auth/services/store/auth.acede';
 

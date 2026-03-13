@@ -1,14 +1,14 @@
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Button } from '@shared/directives';
-import { Input } from '@shared/ui/input/input';
-import { Select } from '@shared/ui/select/select';
-import { TeacherSelect } from '@shared/components/selects';
+import { Input } from '@shared/adapters/ui/input/input';
+import { Select } from '@shared/adapters/ui/select/select';
+import { TeacherSelect } from '@shared/widgets/selects';
 import { ObservationApi } from '../../services/api/observation-api';
 import { StudentApi } from '../../services/api/student-api';
 import { StudentObservation } from '../../types/observation-types';
-import type { SelectOption } from '@shared/ui/select/select';
+import type { SelectOption } from '@shared/adapters/ui/select/select';
 
 @Component({
   selector: 'sga-observation-form',
@@ -18,8 +18,8 @@ import type { SelectOption } from '@shared/ui/select/select';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ObservationForm implements OnInit {
-  private data = inject(DIALOG_DATA, { optional: true });
-  private ref = inject(DialogRef);
+  private data = inject(Z_MODAL_DATA, { optional: true });
+  private ref = inject(ZardDialogRef);
   private fb = inject(FormBuilder);
   private api = inject(ObservationApi);
   private studentApi = inject(StudentApi);

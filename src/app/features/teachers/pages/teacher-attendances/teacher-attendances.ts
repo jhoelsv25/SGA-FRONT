@@ -1,4 +1,4 @@
-import { Dialog } from '@angular/cdk/dialog';
+import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -12,9 +12,9 @@ import {
   TeacherAttendanceStatus,
 } from '@features/teachers/types/teacher-attendance-types';
 import { Button } from '@shared/directives';
-import { HeaderDetail } from '@shared/components/header-detail/header-detail';
-import { ImportDialog } from '@shared/components/import-dialog/import-dialog';
-import { Input } from '@shared/ui/input/input';
+import { HeaderDetail } from '@shared/widgets/header-detail/header-detail';
+import { ImportDialog } from '@shared/widgets/import-dialog/import-dialog';
+import { Input } from '@shared/adapters/ui/input/input';
 import { forkJoin, map } from 'rxjs';
 
 type TeacherAttendanceRow = {
@@ -52,7 +52,7 @@ const HEADER_CONFIG = {
 })
 export default class TeacherAttendancesPage implements OnInit {
   private readonly teacherAttendanceApi = inject(TeacherAttendanceApi);
-  private readonly dialog = inject(Dialog);
+  private readonly dialog = inject(DialogModalService);
   private readonly confirmDialog = inject(ConfirmDialog);
   private readonly excel = inject(ExcelService);
   private readonly toast = inject(Toast);

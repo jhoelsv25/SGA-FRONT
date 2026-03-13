@@ -119,11 +119,11 @@
 
     <!-- User Menu -->
     <sga-user-menu
-      [name]="currentUser()?.firstName + ' ' + currentUser()?.lastName"
-      [role]="currentUser()?.role?.name || 'Usuario'"
-      code="A-123"
-      initials="CS"
-      [stats]="{ courses: 12, students: 240, average: '4.7' }"
+      [name]="getUserDisplayName()"
+      [role]="getUserRole()"
+      [code]="getUserCode()"
+      [initials]="getUserInitials()"
+      [statsItems]="userMenuStats()"
       [actions]="[
         {
           label: 'Mi Perfil',

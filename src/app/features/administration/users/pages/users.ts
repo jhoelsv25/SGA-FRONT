@@ -1,8 +1,8 @@
-import { Dialog } from '@angular/cdk/dialog';
+import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
-import { DataSource } from '@shared/components/data-source/data-source';
-import { HeaderDetail } from '@shared/components/header-detail/header-detail';
+import { DataSource } from '@shared/widgets/data-source/data-source';
+import { HeaderDetail } from '@shared/widgets/header-detail/header-detail';
 import { UserStore } from '../../services/store/user.store';
 import { User } from '../types/user-types';
 import { UserForm } from '../components/user-form/user-form';
@@ -17,7 +17,7 @@ import { USER_ACTIONS } from '../config/action.config';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class UsersPage {
-  private dialog = inject(Dialog);
+  private dialog = inject(DialogModalService);
   private store = inject(UserStore);
 
   headerConfig = computed(() => USER_HEADER_CONFIG);

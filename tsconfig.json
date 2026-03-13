@@ -6,18 +6,45 @@
     "strict": true,
     "baseUrl": "./src",
     "paths": {
-      "@env/*": ["./src/environments/*"],
-      "@core/*": ["app/core/*"],
-      "@shared/*": ["app/shared/*"],
-      "@auth/*": ["app/auth/*"],
-      "@dashboard/*": ["app/dashboard/*"],
-      "@management/*": ["app/management/*"],
-      "@environments/*": ["src/environments/*"],
-      "@features/*": ["app/features/*"],
-      "@public/*": ["app/public/*"],
-      "@constants/*": ["app/constants/*"],
-      "@components/*": ["app/components/*"],
-      "@utils/*": ["app/utils/*"]
+      "@env/*": [
+        "./src/environments/*"
+      ],
+      "@core/*": [
+        "app/core/*"
+      ],
+      "@shared/*": [
+        "app/shared/*"
+      ],
+      "@auth/*": [
+        "app/auth/*"
+      ],
+      "@dashboard/*": [
+        "app/dashboard/*"
+      ],
+      "@management/*": [
+        "app/management/*"
+      ],
+      "@environments/*": [
+        "src/environments/*"
+      ],
+      "@features/*": [
+        "app/features/*"
+      ],
+      "@public/*": [
+        "app/public/*"
+      ],
+      "@constants/*": [
+        "app/constants/*"
+      ],
+      "@components/*": [
+        "app/components/*"
+      ],
+      "@utils/*": [
+        "app/utils/*"
+      ],
+      "@/*": [
+        "app/*"
+      ]
     },
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,

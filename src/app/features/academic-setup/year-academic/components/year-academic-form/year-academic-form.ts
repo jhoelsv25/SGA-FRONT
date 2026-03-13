@@ -10,11 +10,11 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { CommonModule } from '@angular/common';
 
 import { AcademicYearStatus, GradingSystem, Modality, YearAcademic } from '../../types/year-academi-types';
-import { Select } from '@shared/ui/select/select';
+import { Select } from '@shared/adapters/ui/select/select';
 import { Button } from '@shared/directives';
-import { DatePicker } from '@shared/ui/date-picker/date-picker';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
-import { Input } from '@shared/ui/input/input';
+import { DatePicker } from '@shared/widgets/ui/date-picker/date-picker';
+import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
+import { Input } from '@shared/adapters/ui/input/input';
 import { InstitutionApi } from '@features/administration/services/api/institution-api';
 import { YearAcademicStore } from '../../services/store/year-academic.store';
 
@@ -27,8 +27,8 @@ import { YearAcademicStore } from '../../services/store/year-academic.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class YearAcademicForm implements OnInit {
-  private data = inject(DIALOG_DATA);
-  private ref = inject(DialogRef);
+  private data = inject(Z_MODAL_DATA);
+  private ref = inject(ZardDialogRef);
   private fb = inject(FormBuilder);
   private institutionApi = inject(InstitutionApi);
   private store = inject(YearAcademicStore);

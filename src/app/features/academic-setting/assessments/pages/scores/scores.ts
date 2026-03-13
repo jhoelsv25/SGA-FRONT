@@ -1,26 +1,26 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import { ListToolbar } from '@shared/ui/list-toolbar';
-import { DataSource, SgaTemplate } from '@shared/components/data-source/data-source';
-import { Input } from '@shared/ui/input/input';
-import { Select, type SelectOption } from '@shared/ui/select/select';
+import { ListToolbar } from '@shared/widgets/ui/list-toolbar';
+import { DataSource, SgaTemplate } from '@shared/widgets/data-source/data-source';
+import { Input } from '@shared/adapters/ui/input/input';
+import { Select, type SelectOption } from '@shared/adapters/ui/select/select';
 import { Button } from '@shared/directives';
-import { Toast } from '@core/services/toast';
 
 import { AssessmentStore } from '../../services/store/assessment.store';
 import { EnrollmentApi } from '../../../enrollments/services/enrollment-api';
 import { SectionCourseApi } from '@features/organization/section-courses/services/section-course-api';
 import { DataSourceColumn } from '@core/types/data-source-types';
+import { AssessmentFiltersService } from '../../services/assessment-filters.service';
 
-type ScoreRow = { 
-  id?: string; 
-  enrollmentId: string; 
-  studentName: string; 
-  studentCode: string; 
-  score: number; 
-  observation: string 
+type ScoreRow = {
+  id?: string;
+  enrollmentId: string;
+  studentName: string;
+  studentCode: string;
+  score: number;
+  observation: string;
 };
 
 @Component({
@@ -34,17 +34,14 @@ export default class AssessmentScoresPage implements OnInit {
   public readonly store = inject(AssessmentStore);
   private readonly enrollmentApi = inject(EnrollmentApi);
   private readonly sectionCourseApi = inject(SectionCourseApi);
-  private readonly toast = inject(Toast);
+  private readonly filters = inject(AssessmentFiltersService);
 
-  // Filters
   public selectedSectionCourse = signal<string>('');
   public selectedAssessment = signal<string>('');
-  
-  // Data
+
   public sectionCourseOptions = signal<SelectOption[]>([]);
-  public assessmentOptions = signal<SelectOption[]>([]);
   public studentScores = signal<ScoreRow[]>([]);
-  
+
   public columns: DataSourceColumn[] = [
     { key: 'studentCode', label: 'Código', width: '120px' },
     { key: 'studentName', label: 'Estudiante', sortable: true },
@@ -53,20 +50,94 @@ export default class AssessmentScoresPage implements OnInit {
   ];
 
   public canSave = computed(() => this.selectedAssessment() && this.studentScores().length > 0);
+  public hasActiveFilters = computed(() => Boolean(this.selectedSectionCourse() || this.selectedAssessment()));
+
+  public filteredAssessments = computed(() => {
+    return this.store.assessments().map((a) => ({
+      value: a.id,
+      label: `${a.name} (${a.weightPercentage}%)`,
+    }));
+  });
+
+  public selectedSectionLabel = computed(() => {
+    const selected = this.selectedSectionCourse();
+    return this.sectionCourseOptions().find((o) => String(o.value ?? '') === selected)?.label ?? '';
+  });
+
+  public selectedAssessmentLabel = computed(() => {
+    const selected = this.selectedAssessment();
+    return this.filteredAssessments().find((o) => String(o.value ?? '') === selected)?.label ?? '';
+  });
+
+  constructor() {
+    // Aplica selección previa guardada de sección
+    effect(() => {
+      const savedSection = this.filters.scoresSectionCourseId();
+      const currentSection = this.selectedSectionCourse();
+      if (savedSection && savedSection !== currentSection) {
+        this.selectedSectionCourse.set(savedSection);
+      }
+    });
+
+    // Si hay evaluaciones disponibles, selecciona evaluación válida (guardada o primera)
+    effect(() => {
+      const sectionId = this.selectedSectionCourse();
+      const options = this.filteredAssessments();
+      if (!sectionId || options.length === 0) return;
+
+      const saved = this.filters.scoresAssessmentId();
+      const fallback = options[0]?.value?.toString() ?? '';
+      const nextAssessment =
+        saved && options.some((o) => o.value?.toString() === saved) ? saved : fallback;
+
+      if (nextAssessment && nextAssessment !== this.selectedAssessment()) {
+        this.onAssessmentChange(nextAssessment);
+      }
+    });
+
+    // Sincroniza notas existentes del backend con las filas locales
+    effect(() => {
+      const scores = this.store.activeScores();
+      if (scores.length === 0) return;
+
+      this.studentScores.update((rows) =>
+        rows.map((row) => {
+          const found = scores.find((s) => s.enrollmentId === row.enrollmentId);
+          return found
+            ? {
+                ...row,
+                id: found.id,
+                score: found.score,
+                observation: found.observation ?? '',
+              }
+            : row;
+        }),
+      );
+    });
+  }
 
   ngOnInit(): void {
     this.loadSectionCourses();
   }
 
-  private loadSectionCourses() {
+  private loadSectionCourses(): void {
     this.sectionCourseApi.getAll().subscribe({
       next: (res) => {
         this.sectionCourseOptions.set(
           res.data.map((sc) => ({
             value: sc.id,
             label: `${sc.course?.name || 'CP'} - ${sc.section?.name || 'S'}`,
-          }))
+          })),
         );
+
+        const options = this.sectionCourseOptions();
+        const saved = this.filters.scoresSectionCourseId();
+        const fallback = options[0]?.value?.toString() ?? '';
+        const nextSection = saved && options.some((o) => o.value?.toString() === saved) ? saved : fallback;
+
+        if (nextSection) {
+          this.onSectionCourseChange(nextSection);
+        }
       },
     });
   }
@@ -74,76 +145,70 @@ export default class AssessmentScoresPage implements OnInit {
   onSectionCourseChange(value: unknown): void {
     const id = String(value ?? '');
     this.selectedSectionCourse.set(id);
+    this.filters.setScoresSectionCourseId(id);
     this.selectedAssessment.set('');
+    this.filters.setScoresAssessmentId('');
     this.studentScores.set([]);
-    
+
     if (id) {
-      this.loadAssessments(id);
-    } else {
-      this.assessmentOptions.set([]);
+      this.store.loadAll({ sectionCourse: id });
     }
   }
-
-  private loadAssessments(sectionCourseId: string) {
-    this.store.loadAll({ sectionCourse: sectionCourseId });
-    // Note: In an effect or simple subscribe we would update options. 
-    // For simplicity here, we'll use an effect or just signal derived.
-  }
-
-  // Derived options from store
-  public filteredAssessments = computed(() => {
-    return this.store.assessments().map(a => ({
-      value: a.id,
-      label: `${a.name} (${a.weightPercentage}%)`
-    }));
-  });
 
   onAssessmentChange(value: unknown): void {
     const id = String(value ?? '');
     this.selectedAssessment.set(id);
-    if (id) {
-      this.loadData(id);
-    } else {
+    this.filters.setScoresAssessmentId(id);
+
+    if (!id) {
       this.studentScores.set([]);
+      return;
     }
+
+    this.loadData(id);
   }
 
-  private loadData(assessmentId: string) {
-    // 1. Get enrollments for the section
+  private loadData(assessmentId: string): void {
     const scId = this.selectedSectionCourse();
+
     this.enrollmentApi.getAll({ sectionCourse: scId }).subscribe({
       next: (enrollmentRes) => {
-        const baseRows: ScoreRow[] = enrollmentRes.data.map(e => ({
+        const baseRows: ScoreRow[] = enrollmentRes.data.map((e) => ({
           enrollmentId: e.id,
-          studentName: `${e.student?.person?.firstName || ''} ${e.student?.person?.lastName || ''}`.trim() || e.student?.studentCode,
+          studentName:
+            `${e.student?.person?.firstName || ''} ${e.student?.person?.lastName || ''}`.trim() ||
+            e.student?.studentCode,
           studentCode: e.student?.studentCode,
           score: 0,
-          observation: ''
+          observation: '',
         }));
-        this.studentScores.set(baseRows);
 
-        // 2. Get existing scores
+        this.studentScores.set(baseRows);
         this.store.loadScores(assessmentId);
-        // We'll merge them in a separate step or effect
-        // For brevity in this mock-up, let's assume we merge manually here if store was synchronous or use a timeout/manual subscribe
-      }
+      },
     });
   }
 
-  // Merging logic would go here, listening to store.activeScores()
-  
-  saveScores() {
+  saveScores(): void {
     if (!this.selectedAssessment()) return;
-    
+
     const request = {
       assessmentId: this.selectedAssessment(),
-      scores: this.studentScores().map(s => ({
+      scores: this.studentScores().map((s) => ({
         enrollmentId: s.enrollmentId,
         score: s.score,
-        observation: s.observation
-      }))
+        observation: s.observation,
+      })),
     };
 
     this.store.saveScores(request).subscribe();
+  }
+
+  clearFilters(): void {
+    this.filters.clearScoresFilters();
+    this.selectedSectionCourse.set('');
+    this.selectedAssessment.set('');
+    this.studentScores.set([]);
+    this.store.loadAll({});
   }
 }

@@ -1,8 +1,8 @@
-import { Dialog } from '@angular/cdk/dialog';
+import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
-import { DataSource } from '@shared/components/data-source/data-source';
-import { HeaderDetail } from '@shared/components/header-detail/header-detail';
+import { DataSource } from '@shared/widgets/data-source/data-source';
+import { HeaderDetail } from '@shared/widgets/header-detail/header-detail';
 import { ObservationApi } from '../../services/api/observation-api';
 import { StudentObservation } from '../../types/observation-types';
 import { OBSERVATION_HEADER_CONFIG, OBSERVATION_COLUMN, OBSERVATION_ACTIONS } from '../../config/observation.config';
@@ -17,7 +17,7 @@ import { Toast } from '@core/services/toast';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ObservationsPage implements OnInit {
-  private dialog = inject(Dialog);
+  private dialog = inject(DialogModalService);
   private api = inject(ObservationApi);
   private toast = inject(Toast);
 

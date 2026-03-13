@@ -5,7 +5,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { RoleStore } from '../../../services/store/role.store';
 import { PermissionApi, Permission } from '../../../services/api/permission-api';
 import { Button } from '@shared/directives';
-import { EmptyState } from '@shared/ui/empty-state/empty-state';
+import { EmptyState } from '@shared/widgets/ui/empty-state/empty-state';
 import { PermissionGroupCardComponent } from '../../components/permission-group-card/permission-group-card';
 import { getModuleIcon } from '../../utils/icons.util';
 

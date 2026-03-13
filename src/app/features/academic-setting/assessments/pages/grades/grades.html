@@ -1,7 +1,7 @@
 <div class="flex flex-col gap-6 animate-in fade-in duration-500">
   <sga-list-toolbar
     title="Notas Finales"
-    description="Consolidado de calificaciones finales por evaluación"
+    description="Consolidado final con edición rápida de calificaciones y observaciones"
     icon="fas fa-chart-line"
     [showSearch]="false"
     [filterCount]="selectedAssessmentId() ? 1 : 0"
@@ -25,6 +25,17 @@
     <div list-toolbar-actions>
       <button
         sgaButton
+        variant="ghost"
+        color="secondary"
+        shape="pill"
+        [disabled]="!hasActiveFilters()"
+        (click)="clearFilters()"
+      >
+        <i class="fas fa-filter-circle-xmark mr-2"></i>
+        Limpiar
+      </button>
+      <button
+        sgaButton
         color="primary"
         shape="pill"
         [disabled]="!selectedAssessmentId() || assessmentStore.loading()"
@@ -39,6 +50,19 @@
       </button>
     </div>
   </sga-list-toolbar>
+
+  <div class="flex flex-wrap items-center gap-2 px-1">
+    @if (selectedAssessmentId()) {
+      <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
+        <i class="fas fa-chart-line mr-1.5"></i>{{ getSelectedAssessmentLabel() }}
+      </span>
+    }
+    @if (localScores().length > 0) {
+      <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-success/10 text-success border border-success/20">
+        {{ localScores().length }} estudiantes cargados
+      </span>
+    }
+  </div>
 
   <div class="bg-base-100 rounded-3xl shadow-sm border border-base-200 overflow-hidden">
     @if (!selectedAssessmentId()) {

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Card } from '@shared/ui/card/card';
-import { Checkbox } from '@shared/ui/checkbox/checkbox';
+import { Card } from '@shared/adapters/ui/card/card';
+import { Checkbox } from '@shared/widgets/ui/checkbox/checkbox';
 import { SelectablePermissionComponent } from '../selectable-permission/selectable-permission';
 import { Permission } from '../../../services/api/permission-api';
 

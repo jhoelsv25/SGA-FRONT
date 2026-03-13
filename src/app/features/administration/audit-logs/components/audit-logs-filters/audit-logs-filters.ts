@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, OnDestroy, OnInit, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Select, SelectOption } from '@shared/ui/select/select';
+import { Select, SelectOption } from '@shared/adapters/ui/select/select';
 import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs';
 
 @Component({
