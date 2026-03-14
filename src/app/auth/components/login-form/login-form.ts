@@ -1,4 +1,3 @@
-import { NgClass } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLinkWithHref } from '@angular/router';
@@ -10,7 +9,7 @@ import { ZardIconComponent } from '@shared/components/icon';
 
 @Component({
   selector: 'sga-login-form',
-  imports: [ReactiveFormsModule, NgClass, RouterLinkWithHref, Button, Input, Checkbox, ZardIconComponent],
+  imports: [ReactiveFormsModule, RouterLinkWithHref, Button, Input, Checkbox, ZardIconComponent],
   templateUrl: './login-form.html',
 })
 export class LoginForm {

@@ -2,10 +2,12 @@ import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Button } from '@shared/directives';
-import { Input } from '@shared/adapters/ui/input/input';
+import { ZardButtonComponent } from '@shared/components/button';
+import { ZardIconComponent } from '@shared/components/icon';
+import { ZardInputDirective } from '@shared/components/input';
+import { ZardInputGroupComponent } from '@shared/components/input-group';
+import { ZardSwitchComponent } from '@shared/components/switch';
 import { Role } from '../../../services/api/role-api';
-import { Card } from '@shared/adapters/ui/card/card';
 
 interface RoleFormData {
   current: Role | null;
@@ -15,7 +17,15 @@ interface RoleFormData {
 @Component({
   selector: 'sga-role-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, Button, Input, Card],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    ZardButtonComponent,
+    ZardIconComponent,
+    ZardInputDirective,
+    ZardInputGroupComponent,
+    ZardSwitchComponent,
+  ],
   templateUrl: './role-form.html',
   styleUrls: ['./role-form.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,52 +1,77 @@
-<sga-card class="flex flex-col h-full border-none shadow-none bg-transparent animate-in zoom-in-95 duration-200">
-  <!-- Modal Header -->
-  <div class="flex flex-col space-y-1.5 p-6 pb-6 border-b border-base-200 bg-base-200/20 flex flex-row justify-between items-center space-y-0">
-    <div>
-      <h2 class="text-2xl font-semibold leading-none tracking-tight text-2xl font-bold text-base-content tracking-tight">{{ title }}</h2>
-      <div class="text-sm text-base-content/60">Define los detalles básicos para este rol.</div>
+<section class="relative space-y-4">
+  <header class="relative flex justify-between space-y-1.5 bg-base-200/20 items-center">
+    <div class="flex items-center gap-2">
+      <z-icon zType="info" class="w-4 h-4" />
+      <span class="flex flex-col gap-1">
+        <h2 class="text-2xl font-semibold leading-none text-base-content tracking-tight">
+          {{ title }}
+        </h2>
+        <p class="text-sm text-base-content/60">Define los detalles básicos del rol.</p>
+      </span>
     </div>
-    <button class="btn btn-ghost btn-circle btn-sm" (click)="close()">
-      <i class="fas fa-times"></i>
-    </button>
-  </div>
 
-  <!-- Modal Body -->
-  <div class="p-6 pt-0 p-8 overflow-y-auto max-h-[70vh]">
+    <button type="button" z-button zType="ghost" zSize="sm" (click)="close()">
+      <z-icon zType="x" />
+    </button>
+  </header>
+
+  <div class="overflow-y-auto max-h-[70vh]">
     <form [formGroup]="form" (ngSubmit)="submit()" id="role-form" class="space-y-6">
       <div class="space-y-2">
-        <label for="role-name" class="text-xs font-bold uppercase tracking-wider text-base-content/50 ml-1">Nombre del Rol</label>
-        <sga-input 
-          formControlName="name" 
-          placeholder="Ej: Administrador de Académico"
-        ></sga-input>
+        <label
+          for="role-name"
+          class="text-xs font-bold uppercase tracking-wider text-base-content/50 ml-1"
+          >Nombre del Rol</label
+        >
+        <z-input-group>
+          <input
+            id="role-name"
+            z-input
+            type="text"
+            formControlName="name"
+            placeholder="Ej: Administrador de Académico"
+          />
+        </z-input-group>
       </div>
 
       <div class="space-y-2">
-        <label for="role-description" class="text-xs font-bold uppercase tracking-wider text-base-content/50 ml-1">Descripción</label>
-        <textarea 
-          id="role-description"
-          formControlName="description" 
-          class="textarea textarea-bordered w-full h-32 focus:textarea-primary transition-all bg-base-100" 
-          placeholder="Describe las responsabilidades de este rol..."></textarea>
+        <label
+          for="role-description"
+          class="text-xs font-bold uppercase tracking-wider text-base-content/50 ml-1"
+          >Descripción</label
+        >
+        <z-input-group>
+          <textarea
+            id="role-description"
+            z-input
+            formControlName="description"
+            placeholder="Describe las responsabilidades de este rol..."
+            rows="4"
+          ></textarea>
+        </z-input-group>
       </div>
 
-      <div class="flex items-center justify-between p-4 bg-base-200/30 rounded-xl border border-base-200">
+      <div
+        class="flex items-center justify-between p-4 bg-base-200/30 rounded-xl border border-base-200"
+      >
         <div>
           <span class="block font-bold text-sm">Estado del Rol</span>
-          <span class="text-xs text-base-content/50">Define si el rol puede ser asignado a usuarios.</span>
+          <span class="text-xs text-base-content/50"
+            >Define si el rol puede ser asignado a usuarios.</span
+          >
         </div>
-        <input type="checkbox" formControlName="isActive" class="toggle toggle-primary toggle-lg">
+        <z-switch formControlName="isActive"></z-switch>
       </div>
     </form>
   </div>
 
-  <!-- Modal Footer -->
-  <div class="flex items-center p-6 pt-0 p-6 bg-base-200/50 border-t border-base-200 justify-end gap-3">
-    <button sgaButton variant="ghost" (click)="close()" type="button">
-      Cancelar
-    </button>
-    <button sgaButton color="primary" type="submit" form="role-form" [disabled]="form.invalid">
-      <i class="fas fa-save mr-2"></i> {{ current ? 'Actualizar' : 'Crear' }} Rol
+  <div
+    class="flex items-center gap-2 justify-end pt-6 border-t border-base-200 bg-base-200/50 sm:space-x-2"
+  >
+    <button type="button" z-button zType="outline" (click)="close()">Cancelar</button>
+    <button type="submit" z-button zType="default" form="role-form" [disabled]="form.invalid">
+      <z-icon zType="save" class="mr-2 h-4 w-4" />
+      {{ current ? 'Actualizar' : 'Crear' }} Rol
     </button>
   </div>
-</sga-card>
+</section>

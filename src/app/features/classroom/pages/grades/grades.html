@@ -47,10 +47,10 @@
             <button
               type="button"
               class="w-full rounded-xl border px-4 py-4 text-left transition"
-              [class.border-primary]="selectedRecord()?.id === record.id"
-              [class.bg-primary/5]="selectedRecord()?.id === record.id"
-              [class.border-border]="selectedRecord()?.id !== record.id"
-              [class.bg-background]="selectedRecord()?.id !== record.id"
+              [class.border-primary]="selectedRecord().id === record.id"
+              [class.bg-primary/5]="selectedRecord().id === record.id"
+              [class.border-border]="selectedRecord().id !== record.id"
+              [class.bg-background]="selectedRecord().id !== record.id"
               (click)="selectRecord(record.id)"
             >
               <div class="flex items-start justify-between gap-3">
@@ -120,10 +120,10 @@
                           <button
                             type="button"
                             class="min-w-[180px] rounded-2xl border px-4 py-3 text-left transition"
-                            [class.border-primary]="selectedStudent()?.studentId === student.studentId"
-                            [class.bg-primary/5]="selectedStudent()?.studentId === student.studentId"
-                            [class.border-border]="selectedStudent()?.studentId !== student.studentId"
-                            [class.bg-card]="selectedStudent()?.studentId !== student.studentId"
+                            [class.border-primary]="selectedStudent().studentId === student.studentId"
+                            [class.bg-primary/5]="selectedStudent().studentId === student.studentId"
+                            [class.border-border]="selectedStudent().studentId !== student.studentId"
+                            [class.bg-card]="selectedStudent().studentId !== student.studentId"
                             (click)="selectStudent(student.studentId)"
                           >
                             <p class="truncate text-sm font-semibold text-foreground">{{ student.studentName }}</p>
