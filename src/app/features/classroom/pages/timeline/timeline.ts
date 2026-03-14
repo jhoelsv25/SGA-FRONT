@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthFacade } from '@auth/services/store/auth.acede';
 import { Button } from '@shared/directives';
-import { Input } from '@shared/adapters/ui/input/input';
 import { Textarea } from '@shared/widgets/ui/textarea/textarea';
 import { Card } from '@shared/adapters/ui/card/card';
 import { Skeleton } from '@shared/widgets/ui/skeleton/skeleton';
@@ -12,7 +11,7 @@ import { ClassroomStore } from '../../services/store/classroom.store';
 @Component({
   selector: 'sga-classroom-timeline',
   standalone: true,
-  imports: [CommonModule, FormsModule, Button, Input, Textarea, Card, Skeleton],
+  imports: [CommonModule, FormsModule, Button, Textarea, Card, Skeleton],
   templateUrl: './timeline.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

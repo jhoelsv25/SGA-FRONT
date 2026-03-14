@@ -61,6 +61,34 @@ export class ClassroomApi {
     return this.http.get<ClassroomTask[]>(`${this.baseUrl}/${sectionCourseId}/tasks`);
   }
 
+  submitTask(
+    sectionCourseId: string,
+    assignmentId: string,
+    data: {
+      submissionText?: string;
+      fileUrl?: string;
+      fileName?: string;
+      linkUrl?: string;
+    },
+  ): Observable<{ id: string; status: ClassroomTask['status']; submittedAt: string }> {
+    return this.http.post<{ id: string; status: ClassroomTask['status']; submittedAt: string }>(
+      `${this.baseUrl}/${sectionCourseId}/tasks/${assignmentId}/submit`,
+      data,
+    );
+  }
+
+  reviewTaskSubmission(
+    sectionCourseId: string,
+    assignmentId: string,
+    submissionId: string,
+    data: { score: number; feedback?: string },
+  ): Observable<{ id: string; score: number; feedback?: string; status: ClassroomTask['status'] }> {
+    return this.http.patch<{ id: string; score: number; feedback?: string; status: ClassroomTask['status'] }>(
+      `${this.baseUrl}/${sectionCourseId}/tasks/${assignmentId}/submissions/${submissionId}/review`,
+      data,
+    );
+  }
+
   getGrades(sectionCourseId: string): Observable<ClassroomGradesResponse> {
     return this.http.get<ClassroomGradesResponse>(`${this.baseUrl}/${sectionCourseId}/grades`);
   }
@@ -79,6 +107,7 @@ export interface ClassroomTask {
     pendingCount: number;
   };
   studentSubmissions?: Array<{
+    submissionId?: string;
     studentId?: string;
     studentName: string;
     status: 'pending' | 'delivered' | 'graded' | 'late';

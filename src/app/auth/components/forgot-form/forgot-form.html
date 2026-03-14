@@ -1,52 +1,59 @@
-<form class="flex flex-col">
-  <div class="form-group">
-    <label for="username" class="label-form">
-      <i class="fa-solid fa-user mr-2 text-primary"></i>
-      Código de Usuario
-    </label>
-    <input
+<form class="space-y-5" [formGroup]="form" (ngSubmit)="submit()">
+  <div class="space-y-2">
+    <label for="username" class="text-sm font-semibold text-foreground">Usuario</label>
+    <sga-input
       id="username"
       type="text"
-      name="username"
-      class="form-control"
-      required
       autocomplete="username"
-      placeholder="Ingresa tu código de usuario"
+      placeholder="Codigo o usuario institucional"
+      formControlName="username"
     />
+    @if (form.get('username')?.invalid && form.get('username')?.touched) {
+      <p class="text-xs text-destructive">Ingresa un usuario valido.</p>
+    }
   </div>
 
-  <div class="form-group">
-    <label for="birthdate" class="label-form">
-      <i class="fa-solid fa-calendar mr-2 text-primary"></i>
-      Fecha de Nacimiento
-    </label>
-    <input
+  <div class="space-y-2">
+    <label for="birthdate" class="text-sm font-semibold text-foreground">Fecha de nacimiento</label>
+    <sga-input
       id="birthdate"
       type="date"
-      name="birthdate"
-      class="form-control"
-      required
-      placeholder="Selecciona tu fecha de nacimiento"
+      formControlName="birthdate"
     />
+    @if (form.get('birthdate')?.invalid && form.get('birthdate')?.touched) {
+      <p class="text-xs text-destructive">Selecciona tu fecha de nacimiento.</p>
+    }
   </div>
+
+  @if (successMessage()) {
+    <div class="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-700">
+      {{ successMessage() }}
+    </div>
+  }
+
+  @if (errorMessage()) {
+    <div class="rounded-xl border border-destructive/20 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+      {{ errorMessage() }}
+    </div>
+  }
 
   <button
     type="submit"
-    class="btn-primary mt-4 w-full rounded-lg px-6 py-3 text-base font-semibold transition-all duration-200 hover:shadow-lg hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+    sgaButton
+    color="primary"
+    class="w-full"
+    [disabled]="loading()"
   >
-    <i class="fa-solid fa-paper-plane mr-2"></i>
-    Solicitar Recuperación
+    @if (loading()) {
+      Procesando...
+    } @else {
+      Solicitar recuperacion
+    }
   </button>
 
-  <div class="mt-6 flex justify-center">
-    <a
-      routerLink="/auth/login"
-      class="inline-flex items-center text-sm font-medium text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary-300 transition-colors duration-200 group"
-    >
-      <i
-        class="fa-solid fa-arrow-left mr-2 transition-transform duration-200 group-hover:-translate-x-1"
-      ></i>
-      Volver al inicio de sesión
+  <div class="pt-2 text-center">
+    <a routerLink="/auth/login" class="text-sm font-semibold text-primary hover:underline">
+      Volver al inicio de sesion
     </a>
   </div>
 </form>

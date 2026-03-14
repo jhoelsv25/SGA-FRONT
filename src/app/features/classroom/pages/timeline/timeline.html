@@ -162,8 +162,8 @@
           </div>
   
           @if (item.type === 'post') {
-            <div class="flex items-center p-6 pt-0 border-t border-base-200/50 flex flex-col items-stretch gap-0 p-0">
-              <div class="p-4 w-full flex items-center justify-between">
+            <div class="border-t border-base-200/50">
+              <div class="flex w-full items-center justify-between p-4">
                 <div class="flex items-center gap-6">
                   <button class="flex items-center gap-2 text-base-content/50 hover:text-primary font-bold text-sm transition-colors">
                     <i class="fa-regular fa-comment"></i>
@@ -171,24 +171,10 @@
                   </button>
                 </div>
               </div>
-    
-              <!-- Responses / Comments Section -->
-              <div class="bg-base-200/30 p-6 space-y-4 w-full border-t border-base-200/50">
-                 <div class="flex gap-3 items-center">
-                    <div class="w-10 h-10 rounded-full bg-primary/10 border-2 border-base-100 shadow-sm shrink-0 flex items-center justify-center font-bold text-primary">
-                       <i class="fa-solid fa-user"></i>
-                    </div>
-                    <div class="flex-1 flex items-center gap-2 bg-base-100 rounded-2xl border border-base-200 px-3 py-2 shadow-sm">
-                      <sga-input
-                        type="text"
-                        placeholder="Añadir un comentario de clase..."
-                        [class]="'border-0 shadow-none !bg-transparent w-full'"
-                      />
-                      <button type="button" sgaButton variant="ghost" color="primary" size="sm" shape="square" title="Enviar comentario">
-                        <i class="fas fa-paper-plane"></i>
-                      </button>
-                    </div>
-                 </div>
+              <div class="border-t border-base-200/50 bg-base-200/30 p-4">
+                <p class="text-xs font-medium text-base-content/50">
+                  El detalle de comentarios del muro todavia no esta habilitado en esta vista.
+                </p>
               </div>
             </div>
           }
