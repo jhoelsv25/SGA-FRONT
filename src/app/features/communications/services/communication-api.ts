@@ -12,7 +12,7 @@ import {
 @Injectable({ providedIn: 'root' })
 export class CommunicationApi {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'communications';
+  private readonly baseUrl = 'announcements';
 
   getAll(params?: Params): Observable<CommunicationsListResponse> {
     return this.http.get<CommunicationsListResponse>(this.baseUrl, { params: params ?? {} });

@@ -6,10 +6,17 @@ export default [
     loadComponent: () => import('./pages/classroom-list/classroom-list'),
   },
   {
-    path: '', // Fallback to list
+    path: '',
     redirectTo: 'list',
-    pathMatch: 'full'
+    pathMatch: 'full',
   },
+  // Rutas literales del menú: deben ir ANTES de :id para no interpretar "materials", "chat", etc. como UUID
+  { path: 'materials', redirectTo: 'list', pathMatch: 'full' },
+  { path: 'modules', redirectTo: 'list', pathMatch: 'full' },
+  { path: 'assignments', redirectTo: 'list', pathMatch: 'full' },
+  { path: 'submissions', redirectTo: 'list', pathMatch: 'full' },
+  { path: 'forums', redirectTo: 'list', pathMatch: 'full' },
+  { path: 'chat', redirectTo: 'list', pathMatch: 'full' },
   {
     path: ':id',
     loadComponent: () => import('./pages/classroom/classroom'),
