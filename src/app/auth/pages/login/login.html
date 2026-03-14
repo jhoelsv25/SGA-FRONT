@@ -1,23 +1,14 @@
-<section class="relative h-full overflow-hidden rounded-3xl bg-[radial-gradient(circle_at_top,_rgba(122,32,32,0.18),_transparent_38%),linear-gradient(135deg,_rgba(250,245,235,1)_0%,_rgba(244,236,224,1)_50%,_rgba(237,227,212,1)_100%)]">
-  <div class="absolute inset-0 bg-[linear-gradient(rgba(122,32,32,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(122,32,32,0.04)_1px,transparent_1px)] bg-[size:32px_32px]"></div>
-
-  <div class="relative mx-auto flex h-full w-full items-center justify-center px-4 py-8 sm:px-6">
-    <div class="w-full max-w-none">
-      <div class="w-full rounded-[1.5rem] border border-border/70 bg-background/90 p-5 shadow-[0_25px_70px_-40px_rgba(70,25,25,0.45)] backdrop-blur sm:p-6">
-        <div class="mb-5 flex flex-col items-center text-center">
-          <div class="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl border border-border/70 bg-card shadow-sm">
-            <sga-logo />
-          </div>
-
-          <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">Bienvenido</p>
-          <h2 class="mt-2 text-2xl font-semibold tracking-tight text-foreground">Iniciar sesion</h2>
-          <p class="mt-2 max-w-sm text-xs leading-5 text-muted-foreground">
-            Ingresa con tus credenciales institucionales para continuar al entorno administrativo.
-          </p>
-        </div>
-
-        <sga-login-form />
-      </div>
+<div class="flex h-full w-full flex-col">
+  <div class="mb-6 flex flex-col items-center text-center">
+    <div class="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
+      <sga-logo />
     </div>
+    <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">Bienvenido</p>
+    <h2 class="mt-2 text-xl font-semibold tracking-tight text-foreground">Iniciar sesion</h2>
+    <p class="mt-2 max-w-sm text-xs leading-5 text-muted-foreground">
+      Ingresa con tus credenciales institucionales para continuar al entorno administrativo.
+    </p>
   </div>
-</section>
+
+  <sga-login-form />
+</div>

@@ -1,73 +1,27 @@
-<label class="inline-flex items-center gap-2 cursor-pointer select-none group">
-  <span class="relative">
+<label class="inline-flex cursor-pointer select-none items-center gap-2 peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+  <span class="relative flex shrink-0">
     <input
       type="checkbox"
-      class="absolute opacity-0 w-6 h-6 cursor-pointer"
+      class="peer absolute size-4 cursor-pointer opacity-0"
       [checked]="isChecked()"
       (change)="onToggle($event)"
       tabindex="0"
     />
     <span
-      class="block w-6 h-6 rounded-lg border transition-all duration-300 ease-in-out shadow group-active:scale-95"
-      [class]="boxClass()"
+      class="flex size-4 shrink-0 items-center justify-center rounded-[4px] border border-input bg-background text-primary shadow-xs transition-colors peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
+      [class.border-primary]="isChecked()"
+      [class.bg-primary]="isChecked()"
+      [class.text-primary-foreground]="isChecked()"
     >
-      <span
-        class="absolute inset-0 rounded-lg pointer-events-none transition-all duration-300"
-        [class.opacity-0]="!isChecked()"
-        [class.opacity-100]="isChecked()"
-        [class.scale-100]="isChecked()"
-        [class.scale-90]="!isChecked()"
-        [class.bg-gradient-to-br]="isChecked()"
-        [class.shadow-lg]="isChecked()"
-        [class.from-primary-400]="isChecked() && color() === 'primary'"
-        [class.to-primary-500]="isChecked() && color() === 'primary'"
-        [class.from-gray-400]="isChecked() && color() === 'secondary'"
-        [class.to-gray-600]="isChecked() && color() === 'secondary'"
-        [class.from-green-400]="isChecked() && color() === 'success'"
-        [class.to-green-600]="isChecked() && color() === 'success'"
-        [class.from-red-400]="isChecked() && color() === 'danger'"
-        [class.to-red-600]="isChecked() && color() === 'danger'"
-        [class.from-yellow-300]="isChecked() && color() === 'warning'"
-        [class.to-yellow-500]="isChecked() && color() === 'warning'"
-        [class.from-blue-400]="isChecked() && color() === 'info'"
-        [class.to-blue-600]="isChecked() && color() === 'info'"
-        [class.from-gray-700]="isChecked() && color() === 'dark'"
-        [class.to-gray-900]="isChecked() && color() === 'dark'"
-      ></span>
       @if (isChecked()) {
-        <svg class="w-5 h-5 mx-auto my-auto animate-check-in" viewBox="0 0 24 24" fill="none">
-          <polyline
-            points="6 13 10 17 18 7"
-            stroke="white"
-            stroke-width="3"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            style="filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.15))"
-          />
+        <svg class="size-2.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12" />
         </svg>
       }
     </span>
-    <style>
-      .animate-check-in {
-        animation: check-in 0.35s cubic-bezier(0.4, 2, 0.3, 1) both;
-      }
-      @keyframes check-in {
-        0% {
-          opacity: 0;
-          transform: scale(0.5) rotate(-20deg);
-        }
-        60% {
-          opacity: 1;
-          transform: scale(1.1) rotate(8deg);
-        }
-        100% {
-          opacity: 1;
-          transform: scale(1) rotate(0deg);
-        }
-      }
-    </style>
   </span>
-  <span class="transition-colors duration-200 group-hover:text-primary-600 font-medium">{{
-    label()
-  }}</span>
+  @if (label()) {
+    <span class="text-sm font-medium leading-none">{{ label() }}</span>
+  }
+  <ng-content />
 </label>

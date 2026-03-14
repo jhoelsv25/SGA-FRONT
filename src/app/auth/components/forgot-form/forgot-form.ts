@@ -1,13 +1,15 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLinkWithHref } from '@angular/router';
+import { format } from 'date-fns';
 import { AuthApi } from '@auth/services/api/auth-api';
 import { Button } from '@shared/directives';
 import { Input } from '@shared/adapters/ui/input/input';
+import { DatePicker } from '@shared/widgets/ui/date-picker/date-picker';
 
 @Component({
   selector: 'sga-forgot-form',
-  imports: [RouterLinkWithHref, ReactiveFormsModule, Button, Input],
+  imports: [RouterLinkWithHref, ReactiveFormsModule, Button, Input, DatePicker],
   templateUrl: './forgot-form.html',
 })
 export class ForgotForm {
@@ -18,9 +20,12 @@ export class ForgotForm {
   readonly successMessage = signal<string | null>(null);
   readonly errorMessage = signal<string | null>(null);
 
+  /** Fecha máxima para fecha de nacimiento (hoy) */
+  maxBirthdate = signal<Date>(new Date());
+
   readonly form = this.fb.group({
     username: ['', [Validators.required, Validators.minLength(4)]],
-    birthdate: ['', [Validators.required]],
+    birthdate: [null as Date | null, [Validators.required]],
   });
 
   submit() {
@@ -30,11 +35,12 @@ export class ForgotForm {
     }
 
     const { username, birthdate } = this.form.getRawValue();
+    const birthdateStr = birthdate instanceof Date ? format(birthdate, 'yyyy-MM-dd') : '';
     this.loading.set(true);
     this.successMessage.set(null);
     this.errorMessage.set(null);
 
-    this.authApi.forgotPassword(username ?? '', birthdate ?? '').subscribe({
+    this.authApi.forgotPassword(username ?? '', birthdateStr).subscribe({
       next: () => {
         this.successMessage.set('Solicitud enviada. Revisa el flujo definido por tu institucion para continuar con la recuperacion.');
         this.loading.set(false);

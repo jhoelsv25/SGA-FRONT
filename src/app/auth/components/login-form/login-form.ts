@@ -5,10 +5,11 @@ import { RouterLinkWithHref } from '@angular/router';
 import { AuthFacade } from '@auth/services/store/auth.acede';
 import { Button } from '@shared/directives';
 import { Input } from '@shared/adapters/ui/input/input';
+import { Checkbox } from '@shared/widgets/ui/checkbox/checkbox';
 
 @Component({
   selector: 'sga-login-form',
-  imports: [ReactiveFormsModule, NgClass, RouterLinkWithHref, Button, Input],
+  imports: [ReactiveFormsModule, NgClass, RouterLinkWithHref, Button, Input, Checkbox],
   templateUrl: './login-form.html',
 })
 export class LoginForm {
