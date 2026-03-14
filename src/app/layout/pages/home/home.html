@@ -16,7 +16,7 @@
         class="w-10 h-10 rounded-full bg-primary text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 flex items-center justify-center"
         title="Notificaciones y Acciones"
       >
-        <i class="fa-solid fa-bell text-sm"></i>
+        <z-icon zType="bell" class="h-4 w-4" />
         @if (hasNotifications()) {
           <span class="absolute -top-1 -right-1 w-5 h-5 bg-error text-white text-[10px] font-bold rounded-full flex items-center justify-center">3</span>
         }
@@ -60,7 +60,7 @@
         (click)="toggleRightSidebar()"
         class="w-8 h-8 rounded-lg hover:bg-base-200 dark:hover:bg-base-800 transition-colors flex items-center justify-center"
       >
-        <i class="fa-solid fa-xmark text-base-content/60"></i>
+        <z-icon zType="x" class="h-4 w-4 text-base-content/60" />
       </button>
     </div>
 
@@ -72,7 +72,7 @@
         [class.text-primary]="rightSidebarTab() === 'notifications'"
         [class.text-base-content/60]="rightSidebarTab() !== 'notifications'"
       >
-        <i class="fa-solid fa-bell mr-2"></i>
+        <z-icon zType="bell" class="h-4 w-4 mr-2" />
         Notificaciones
         @if (rightSidebarTab() === 'notifications') {
           <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"></div>
@@ -84,7 +84,7 @@
         [class.text-primary]="rightSidebarTab() === 'calendar'"
         [class.text-base-content/60]="rightSidebarTab() !== 'calendar'"
       >
-        <i class="fa-solid fa-calendar mr-2"></i>
+        <z-icon zType="calendar" class="h-4 w-4 mr-2" />
         Calendario
         @if (rightSidebarTab() === 'calendar') {
           <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"></div>
@@ -103,7 +103,7 @@
           <div class="p-3 bg-base-50 dark:bg-base-900 rounded-lg border border-base-200 dark:border-base-800 hover:border-primary/50 transition-colors cursor-pointer">
             <div class="flex gap-3">
               <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                <i class="fa-solid fa-user-plus text-primary text-sm"></i>
+                <z-icon zType="user-plus" class="h-4 w-4 text-primary" />
               </div>
               <div class="flex-1 min-w-0">
                 <p class="text-sm font-medium text-base-content">Nuevo estudiante registrado</p>
@@ -116,7 +116,7 @@
           <div class="p-3 bg-base-50 dark:bg-base-900 rounded-lg border border-base-200 dark:border-base-800 hover:border-primary/50 transition-colors cursor-pointer">
             <div class="flex gap-3">
               <div class="w-10 h-10 rounded-full bg-warning/10 flex items-center justify-center shrink-0">
-                <i class="fa-solid fa-clock text-warning text-sm"></i>
+                <z-icon zType="clock" class="h-4 w-4 text-warning" />
               </div>
               <div class="flex-1 min-w-0">
                 <p class="text-sm font-medium text-base-content">Recordatorio de clase</p>
@@ -129,7 +129,7 @@
           <div class="p-3 bg-base-50 dark:bg-base-900 rounded-lg border border-base-200 dark:border-base-800 hover:border-primary/50 transition-colors cursor-pointer">
             <div class="flex gap-3">
               <div class="w-10 h-10 rounded-full bg-success/10 flex items-center justify-center shrink-0">
-                <i class="fa-solid fa-check-circle text-success text-sm"></i>
+                <z-icon zType="circle-check" class="h-4 w-4 text-success" />
               </div>
               <div class="flex-1 min-w-0">
                 <p class="text-sm font-medium text-base-content">Tarea calificada</p>
@@ -156,11 +156,11 @@
               <div class="flex-1 min-w-0">
                 <p class="text-sm font-semibold text-base-content">Reunión de Profesores</p>
                 <p class="text-xs text-base-content/60 mt-1">
-                  <i class="fa-solid fa-clock mr-1"></i>
+                  <z-icon zType="clock" class="h-3 w-3 mr-1" />
                   10:00 AM - 12:00 PM
                 </p>
                 <p class="text-xs text-base-content/60">
-                  <i class="fa-solid fa-location-dot mr-1"></i>
+                  <z-icon zType="map-pin" class="h-3 w-3 mr-1" />
                   Sala de Conferencias
                 </p>
               </div>
@@ -176,11 +176,11 @@
               <div class="flex-1 min-w-0">
                 <p class="text-sm font-semibold text-base-content">Examen Final - Matemáticas</p>
                 <p class="text-xs text-base-content/60 mt-1">
-                  <i class="fa-solid fa-clock mr-1"></i>
+                  <z-icon zType="clock" class="h-3 w-3 mr-1" />
                   2:00 PM - 4:00 PM
                 </p>
                 <p class="text-xs text-base-content/60">
-                  <i class="fa-solid fa-users mr-1"></i>
+                  <z-icon zType="users" class="h-3 w-3 mr-1" />
                   Grupo A - 30 estudiantes
                 </p>
               </div>
@@ -196,11 +196,11 @@
               <div class="flex-1 min-w-0">
                 <p class="text-sm font-semibold text-base-content">Entrega de Notas</p>
                 <p class="text-xs text-base-content/60 mt-1">
-                  <i class="fa-solid fa-clock mr-1"></i>
+                  <z-icon zType="clock" class="h-3 w-3 mr-1" />
                   Todo el día
                 </p>
                 <p class="text-xs text-base-content/60">
-                  <i class="fa-solid fa-file-lines mr-1"></i>
+                  <z-icon zType="file-text" class="h-3 w-3 mr-1" />
                   Periodo Académico 2024-I
                 </p>
               </div>
@@ -215,19 +215,19 @@
       <h3 class="text-xs font-semibold uppercase tracking-wide text-base-content/50 mb-3">Acciones Rápidas</h3>
       <div class="grid grid-cols-2 gap-2">
         <button class="p-3 bg-base-100 dark:bg-base-950 rounded-lg border border-base-200 dark:border-base-800 hover:border-primary hover:bg-primary/5 transition-all text-center">
-          <i class="fa-solid fa-plus text-primary text-lg mb-1"></i>
+          <z-icon zType="plus" class="h-5 w-5 text-primary mb-1" />
           <p class="text-xs font-medium text-base-content">Nueva Tarea</p>
         </button>
         <button class="p-3 bg-base-100 dark:bg-base-950 rounded-lg border border-base-200 dark:border-base-800 hover:border-primary hover:bg-primary/5 transition-all text-center">
-          <i class="fa-solid fa-calendar-plus text-primary text-lg mb-1"></i>
+          <z-icon zType="calendar-plus" class="h-5 w-5 text-primary mb-1" />
           <p class="text-xs font-medium text-base-content">Nuevo Evento</p>
         </button>
         <button class="p-3 bg-base-100 dark:bg-base-950 rounded-lg border border-base-200 dark:border-base-800 hover:border-primary hover:bg-primary/5 transition-all text-center">
-          <i class="fa-solid fa-user-plus text-primary text-lg mb-1"></i>
+          <z-icon zType="user-plus" class="h-5 w-5 text-primary mb-1" />
           <p class="text-xs font-medium text-base-content">Añadir Estudiante</p>
         </button>
         <button class="p-3 bg-base-100 dark:bg-base-950 rounded-lg border border-base-200 dark:border-base-800 hover:border-primary hover:bg-primary/5 transition-all text-center">
-          <i class="fa-solid fa-file-export text-primary text-lg mb-1"></i>
+          <z-icon zType="file-text" class="h-5 w-5 text-primary mb-1" />
           <p class="text-xs font-medium text-base-content">Exportar Datos</p>
         </button>
       </div>

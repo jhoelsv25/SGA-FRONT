@@ -15,7 +15,7 @@
         (click)="handleItemClick(item)"
       >
         @if (item.icon) {
-          <i [class]="item.icon + ' h-4 w-4 shrink-0'"></i>
+          <z-icon [zType]="resolveIcon(item.icon)" class="h-4 w-4 shrink-0" />
         }
         <span class="flex-1">{{ item.label }}</span>
       </button>

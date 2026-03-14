@@ -1,24 +1,28 @@
 <div class="relative w-full">
   <div class="relative flex items-center w-full">
     @if (type() === 'email') {
-      <i
-        class="fas fa-envelope absolute left-2.5 top-1/2 -translate-y-1/2 text-base-content/40 text-xs pointer-events-none w-4"
-      ></i>
+      <z-icon
+        zType="mail"
+        class="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-base-content/40 text-xs pointer-events-none"
+      />
     }
     @if (type() === 'password') {
-      <i
-        class="fas fa-lock absolute left-2.5 top-1/2 -translate-y-1/2 text-base-content/40 text-xs pointer-events-none w-4"
-      ></i>
+      <z-icon
+        zType="shield"
+        class="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-base-content/40 text-xs pointer-events-none"
+      />
     }
     @if (type() === 'date') {
-      <i
-        class="fas fa-calendar absolute left-2.5 top-1/2 -translate-y-1/2 text-base-content/40 text-xs pointer-events-none w-4"
-      ></i>
+      <z-icon
+        zType="calendar"
+        class="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-base-content/40 text-xs pointer-events-none"
+      />
     }
     @if (type() === 'tel') {
-      <i
-        class="fas fa-phone absolute left-2.5 top-1/2 -translate-y-1/2 text-base-content/40 text-xs pointer-events-none w-4"
-      ></i>
+      <z-icon
+        zType="phone"
+        class="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-base-content/40 text-xs pointer-events-none"
+      />
     }
 
     <!-- Input Element -->
@@ -49,7 +53,7 @@
         (click)="clearInput()"
         tabindex="-1"
       >
-        <i class="fas fa-xmark text-sm"></i>
+        <z-icon zType="x" class="h-4 w-4" />
       </button>
     }
   </div>

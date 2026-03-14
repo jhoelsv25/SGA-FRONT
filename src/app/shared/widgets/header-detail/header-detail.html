@@ -20,7 +20,7 @@
           type="button"
           class="flex items-center gap-2 px-3 py-2 text-sm bg-base-100 dark:bg-base-200 border border-base-300 rounded-lg text-neutral-700 dark:text-neutral-300 hover:bg-base-200 dark:hover:bg-base-300 transition"
         >
-          <i class="fas fa-sliders-h text-neutral-500"></i>
+          <z-icon zType="settings" class="h-4 w-4 text-neutral-500" />
           <span>Filtros</span>
 
           <!-- @if (activeFiltersCount() > 0) {
@@ -39,7 +39,7 @@
         (click)="onRefresh()"
         class="flex items-center gap-2 px-3 py-2 text-sm bg-base-100 dark:bg-base-200 border border-base-300 rounded-lg text-neutral-700 dark:text-neutral-300 hover:bg-base-200 dark:hover:bg-base-300 transition"
       >
-        <i class="fas fa-sync-alt text-neutral-500"></i>
+        <z-icon zType="loader-circle" class="h-4 w-4 text-neutral-500" />
       </button>
 
       @if (headerConfig().showActions) {
@@ -50,7 +50,7 @@
             aria-label="Más acciones"
             type="button"
           >
-            <i class="fas fa-ellipsis-h"></i>
+            <z-icon zType="ellipsis" class="h-4 w-4" />
           </button>
         </sga-dropdown>
       }

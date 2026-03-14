@@ -6,13 +6,14 @@ import { Module } from '@auth/types/auth-type';
 import { LayoutStore } from '@core/stores/layout.store';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { ZardButtonComponent } from '@shared/components/button';
+import { ZardIconComponent, type ZardIcon, toZardIcon } from '@shared/components/icon';
 import { ZardInputDirective } from '@shared/components/input';
 import { ZardPopoverDirective } from '@shared/components/popover/popover.component';
 import { UserMenu, UserMenuAction, UserMenuDetail, UserMenuStat } from '@shared/widgets/user-menu/user-menu';
 
 export interface MenuItem {
   id: string;
-  icon: string;
+  icon: ZardIcon;
   label: string;
   route: string;
   badge?: number;
@@ -26,7 +27,15 @@ export interface MenuItem {
 @Component({
   selector: 'sga-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterModule, UserMenu, ZardButtonComponent, ZardInputDirective, ZardPopoverDirective],
+  imports: [
+    CommonModule,
+    RouterModule,
+    UserMenu,
+    ZardButtonComponent,
+    ZardIconComponent,
+    ZardInputDirective,
+    ZardPopoverDirective,
+  ],
   templateUrl: './sidebar.html',
   styleUrls: ['./sidebar.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -81,18 +90,9 @@ export class Sidebar implements OnInit, OnDestroy {
     return backendModules.map(mapToMenuItem);
   });
 
-  private normalizeIcon(icon: string): string {
-    if (!icon) return 'fa-circle';
-
-    const clean = icon.trim();
-
-    // Si ya empieza con fa- o lo que sea, devolverlo
-    if (clean.startsWith('fa-') || clean.startsWith('fas ') || clean.startsWith('fab ')) {
-      return clean;
-    }
-
-    // Caso: "home" -> "fa-home"
-    return `fa-${clean}`;
+  private normalizeIcon(icon: string): ZardIcon {
+    if (!icon) return 'circle';
+    return toZardIcon(icon);
   }
 
   // --- Permissions ---

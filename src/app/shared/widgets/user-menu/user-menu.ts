@@ -7,6 +7,7 @@ import {
   output,
   signal,
 } from "@angular/core";
+import { ZardIconComponent, toZardIcon, type ZardIcon } from "@/shared/components/icon";
 
 export interface UserMenuAction {
   label: string;
@@ -29,6 +30,8 @@ export interface UserMenuStat {
 @Component({
   selector: 'sga-user-menu',
   templateUrl: './user-menu.html',
+  standalone: true,
+  imports: [ZardIconComponent],
 })
 export class UserMenu {
   private elRef = inject(ElementRef);
@@ -55,6 +58,10 @@ export class UserMenu {
 
   // Output
   actionSelected = output<UserMenuAction>();
+
+  resolveIcon(icon?: string): ZardIcon {
+    return toZardIcon(icon || '');
+  }
 
 
   toggleMenu() {

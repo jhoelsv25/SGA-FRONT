@@ -37,7 +37,7 @@
         class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground transition hover:text-foreground"
         (click)="togglePassword()"
       >
-        <i class="fa-solid" [ngClass]="showPassword() ? 'fa-eye-slash' : 'fa-eye'"></i>
+        <z-icon [zType]="showPassword() ? 'eye' : 'eye'" class="h-4 w-4" />
       </button>
     </div>
 

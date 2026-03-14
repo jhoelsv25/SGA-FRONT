@@ -14,11 +14,12 @@ import { HeaderConfig } from '@core/types/header-types';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 
 import { Dropdown } from '@shared/adapters/ui/dropdown/dropdown';
+import { ZardIconComponent } from '@shared/components/icon';
 
 @Component({
   selector: 'sga-header-detail',
   standalone: true,
-  imports: [CommonModule, Dropdown],
+  imports: [CommonModule, Dropdown, ZardIconComponent],
   templateUrl: './header-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

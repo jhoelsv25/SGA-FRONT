@@ -20,10 +20,11 @@ import {
 } from '@angular/forms';
 
 import { ZardInputDirective } from '@shared/components/input';
+import { ZardIconComponent } from '@shared/components/icon';
 
 @Component({
   selector: 'sga-input',
-  imports: [ZardInputDirective],
+  imports: [ZardInputDirective, ZardIconComponent],
   templateUrl: './input.html',
   providers: [
     {

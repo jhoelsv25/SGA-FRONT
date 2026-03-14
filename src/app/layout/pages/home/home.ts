@@ -4,11 +4,12 @@ import { RouterOutlet } from '@angular/router';
 import { LayoutStore } from '@core/stores/layout.store';
 import { NotificationService } from '@core/services/notification.service';
 import { Sidebar } from 'app/layout/components/sidebar/sidebar';
+import { ZardIconComponent } from '@shared/components/icon';
 
 @Component({
   selector: 'sga-home',
   standalone: true,
-  imports: [CommonModule, Sidebar, RouterOutlet],
+  imports: [CommonModule, Sidebar, RouterOutlet, ZardIconComponent],
   templateUrl: './home.html',
   styleUrls: ['./home.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

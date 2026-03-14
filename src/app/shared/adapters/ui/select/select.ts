@@ -20,6 +20,7 @@ import {
   ValidationErrors,
   Validator,
 } from '@angular/forms';
+import { ZardIconComponent } from '@shared/components/icon';
 
 export interface SelectOption {
   value: unknown;
@@ -51,7 +52,7 @@ const NG_VALIDATOR = {
 @Component({
   selector: 'sga-select',
   standalone: true,
-  imports: [],
+  imports: [ZardIconComponent],
   templateUrl: './select.html',
   providers: [VALUE_ACCESSOR, NG_VALIDATOR],
   changeDetection: ChangeDetectionStrategy.OnPush,

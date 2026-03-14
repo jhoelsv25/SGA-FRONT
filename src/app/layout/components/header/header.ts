@@ -11,12 +11,13 @@ import {
 import { Router, RouterModule } from '@angular/router';
 import { AuthFacade } from '@auth/services/store/auth.acede';
 import { LayoutStore } from '@core/stores/layout.store';
+import { ZardIconComponent } from '@shared/components/icon';
 import { UserMenu, UserMenuAction, UserMenuDetail, UserMenuStat } from '@shared/widgets/user-menu/user-menu';
 import { Subject } from 'rxjs';
 
 @Component({
   selector: 'sga-header',
-  imports: [CommonModule, RouterModule, UserMenu],
+  imports: [CommonModule, RouterModule, UserMenu, ZardIconComponent],
   templateUrl: './header.html',
   styleUrls: ['./header.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -47,12 +48,12 @@ export class Header implements OnInit, OnDestroy {
       {
         label: 'Rol activo',
         value: profile?.roleLabel || this.getUserRole(),
-        icon: 'fa-solid fa-user-shield',
+        icon: 'fa-user-shield',
       },
       {
         label: 'Módulos',
         value: `${modules.length} habilitados`,
-        icon: 'fa-solid fa-grid-2',
+        icon: 'fa-grid-2',
       },
     ];
 
@@ -60,7 +61,7 @@ export class Header implements OnInit, OnDestroy {
       details.push({
         label: 'Institución',
         value: profile.institution,
-        icon: 'fa-solid fa-school',
+        icon: 'fa-school',
       });
     }
 
@@ -68,7 +69,7 @@ export class Header implements OnInit, OnDestroy {
       details.push({
         label: 'Correo',
         value: user?.person?.email || user?.email || 'No registrado',
-        icon: 'fa-solid fa-envelope',
+        icon: 'fa-envelope',
       });
     }
 
