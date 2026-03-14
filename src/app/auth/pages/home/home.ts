@@ -10,5 +10,4 @@ import { CopyRight } from '@shared/widgets/copy-righ/copy-righ';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class Home {
-  public time = new Date();
 }

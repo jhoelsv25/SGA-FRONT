@@ -597,7 +597,7 @@ export default class AccountSettingsPage {
       });
   }
 
-  private formatDate(value?: string | null, fallback = 'No registrado') {
+  protected formatDate(value?: string | null, fallback = 'No registrado') {
     if (!value) return fallback;
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return fallback;
