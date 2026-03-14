@@ -5,17 +5,11 @@ import { RouterLink } from '@angular/router';
 
 import { AuthApi } from '@auth/services/api/auth-api';
 import { AuthFacade } from '@auth/services/store/auth.acede';
-import type {
-  AccountAuditLog,
-  AccountEmailLog,
-  AccountSession,
-  AccountUserDetail,
-  AccountUserPreferences,
-} from '@auth/types/auth-type';
+import type { AccountAuditLog, AccountEmailLog, AccountSession, AccountUserDetail } from '@auth/types/auth-type';
 import { LayoutStore } from '@core/stores/layout.store';
 import type { ThemeConfig } from '@core/types/layout-types';
 import { Card } from '@shared/adapters/ui/card/card';
-import { catchError, of, switchMap, tap } from 'rxjs';
+import { catchError, of } from 'rxjs';
 
 type SettingsSectionId = 'general' | 'appearance' | 'notifications' | 'email' | 'security' | 'logs' | 'sessions';
 
@@ -35,82 +29,55 @@ type ToggleKey =
   template: `
     <div class="space-y-6 p-4 md:p-6">
       <section class="rounded-[2rem] border border-border bg-card p-6 shadow-sm lg:p-8">
-        <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div class="space-y-3">
-            <span class="inline-flex w-fit items-center rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-primary">
-              Centro de cuenta
-            </span>
-            <div>
-              <h1 class="text-3xl font-semibold tracking-tight text-foreground">Configuracion de cuenta</h1>
-              <p class="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
-                Vista conectada a la data real del usuario, su perfil institucional y eventos de auditoria recientes.
-              </p>
-            </div>
-          </div>
+        <h1 class="text-3xl font-semibold tracking-tight text-foreground">Configuracion de cuenta</h1>
+        <p class="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
+          Preferencias y actividad conectadas a la cuenta autenticada.
+        </p>
 
-          <div class="grid gap-3 sm:grid-cols-3">
-            @for (metric of headerMetrics(); track metric.label) {
-              <div class="rounded-[1.5rem] border border-border bg-background/80 px-4 py-4">
-                <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">{{ metric.label }}</p>
-                <p class="mt-2 text-base font-semibold text-foreground">{{ metric.value }}</p>
-                <p class="mt-1 text-xs text-muted-foreground">{{ metric.helper }}</p>
-              </div>
-            }
-          </div>
+        <div class="mt-5 flex flex-wrap gap-2">
+          @for (section of sections(); track section.id) {
+            <button
+              type="button"
+              class="rounded-full border px-3 py-1.5 text-xs font-semibold transition"
+              [class.border-primary]="activeSection() === section.id"
+              [class.bg-primary]="activeSection() === section.id"
+              [class.text-primary-foreground]="activeSection() === section.id"
+              [class.border-border]="activeSection() !== section.id"
+              [class.bg-background]="activeSection() !== section.id"
+              [class.text-muted-foreground]="activeSection() !== section.id"
+              (click)="activeSection.set(section.id)"
+            >
+              {{ section.label }}
+            </button>
+          }
         </div>
       </section>
 
-      <div class="grid gap-6 xl:grid-cols-[280px_minmax(0,1fr)]">
+      <div class="grid gap-6 xl:grid-cols-[240px_minmax(0,1fr)]">
         <sga-card class="h-fit overflow-hidden">
-          <div class="border-border/70 border-b px-5 py-4">
-            <p class="text-sm font-semibold text-foreground">Areas de configuracion</p>
-            <p class="mt-1 text-xs text-muted-foreground">Preferencias, seguridad y actividad del usuario.</p>
+          <div class="border-border/70 border-b px-4 py-3">
+            <p class="text-sm font-semibold text-foreground">Secciones</p>
           </div>
 
-          <nav class="space-y-2 p-3">
+          <nav class="space-y-1 p-2">
             @for (section of sections(); track section.id) {
               <button
                 type="button"
-                class="group flex w-full items-start gap-3 rounded-[1.25rem] border border-transparent px-3 py-3 text-left transition"
+                class="flex w-full items-start gap-3 rounded-xl px-3 py-2.5 text-left transition"
                 [class.bg-primary]="activeSection() === section.id"
                 [class.text-primary-foreground]="activeSection() === section.id"
-                [class.border-primary/30]="activeSection() === section.id"
                 [class.bg-background]="activeSection() !== section.id"
                 [class.text-foreground]="activeSection() !== section.id"
-                [class.hover:border-border]="activeSection() !== section.id"
                 [class.hover:bg-muted]="activeSection() !== section.id"
                 (click)="activeSection.set(section.id)"
               >
-                <span
-                  class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
-                  [class.bg-primary-foreground/15]="activeSection() === section.id"
-                  [class.bg-primary/10]="activeSection() !== section.id"
-                  [class.text-primary-foreground]="activeSection() === section.id"
-                  [class.text-primary]="activeSection() !== section.id"
-                >
+                <span class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
                   <i [class]="section.icon"></i>
                 </span>
-                <span class="min-w-0 flex-1">
+                <span class="min-w-0">
                   <span class="block text-sm font-semibold">{{ section.label }}</span>
-                  <span
-                    class="mt-1 block text-xs leading-5"
-                    [class.text-primary-foreground/80]="activeSection() === section.id"
-                    [class.text-muted-foreground]="activeSection() !== section.id"
-                  >
-                    {{ section.description }}
-                  </span>
+                  <span class="mt-1 block text-xs leading-5 text-muted-foreground">{{ section.description }}</span>
                 </span>
-                @if (section.count !== null) {
-                  <span
-                    class="mt-0.5 inline-flex rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]"
-                    [class.bg-primary-foreground/15]="activeSection() === section.id"
-                    [class.text-primary-foreground]="activeSection() === section.id"
-                    [class.bg-muted]="activeSection() !== section.id"
-                    [class.text-muted-foreground]="activeSection() !== section.id"
-                  >
-                    {{ section.count }}
-                  </span>
-                }
               </button>
             }
           </nav>
@@ -119,22 +86,19 @@ type ToggleKey =
         <div class="space-y-6">
           @if (activeSection() === 'general') {
             <sga-card>
-              <div class="border-border/70 flex items-center justify-between border-b p-6">
-                <div>
-                  <h2 class="text-xl font-semibold text-foreground">General</h2>
-                  <p class="mt-1 text-sm text-muted-foreground">Detalle de cuenta traido desde users/:id.</p>
-                </div>
-                <i class="fa-solid fa-user-gear text-muted-foreground"></i>
+              <div class="border-border/70 border-b p-6">
+                <h2 class="text-xl font-semibold text-foreground">General</h2>
+                <p class="mt-1 text-sm text-muted-foreground">Datos desde users/:id.</p>
               </div>
 
               @if (loadingUser()) {
-                <div class="p-6 text-sm text-muted-foreground">Cargando informacion de cuenta...</div>
+                <div class="p-6 text-sm text-muted-foreground">Cargando informacion...</div>
               } @else {
                 <div class="grid gap-4 p-6 md:grid-cols-2">
                   @for (item of generalRows(); track item.label) {
-                    <div class="rounded-[1.5rem] border border-border bg-background/80 p-4">
-                      <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">{{ item.label }}</p>
-                      <p class="mt-2 text-sm font-medium leading-6 text-foreground">{{ item.value }}</p>
+                    <div class="rounded-xl border border-border bg-background/80 p-4">
+                      <p class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">{{ item.label }}</p>
+                      <p class="mt-2 text-sm font-medium text-foreground">{{ item.value }}</p>
                     </div>
                   }
                 </div>
@@ -143,16 +107,14 @@ type ToggleKey =
               <div class="border-border/70 flex flex-wrap gap-3 border-t p-6">
                 <a
                   routerLink="/account/profile"
-                  class="inline-flex items-center gap-2 rounded-2xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground"
+                  class="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground"
                 >
-                  <i class="fa-solid fa-id-badge"></i>
                   Ver perfil completo
                 </a>
                 <a
                   routerLink="/account/change-password"
-                  class="inline-flex items-center gap-2 rounded-2xl border border-border bg-background px-4 py-2.5 text-sm font-semibold text-foreground"
+                  class="inline-flex items-center gap-2 rounded-xl border border-border bg-background px-4 py-2.5 text-sm font-semibold text-foreground"
                 >
-                  <i class="fa-solid fa-key"></i>
                   Cambiar contrasena
                 </a>
               </div>
@@ -162,36 +124,25 @@ type ToggleKey =
           @if (activeSection() === 'appearance') {
             <sga-card>
               <div class="border-border/70 border-b p-6">
-                <h2 class="text-xl font-semibold text-foreground">Apariencia y entorno</h2>
-                <p class="mt-1 text-sm text-muted-foreground">Preferencias locales del entorno del usuario.</p>
+                <h2 class="text-xl font-semibold text-foreground">Apariencia</h2>
+                <p class="mt-1 text-sm text-muted-foreground">Preferencias locales del entorno.</p>
               </div>
 
-              <div class="space-y-6 p-6">
-                <div class="grid gap-3 lg:grid-cols-3">
-                  @for (option of themeOptions(); track option.value) {
-                    <button
-                      type="button"
-                      class="rounded-[1.5rem] border p-5 text-left transition"
-                      [class.border-primary]="currentTheme() === option.value"
-                      [class.bg-primary/5]="currentTheme() === option.value"
-                      [class.border-border]="currentTheme() !== option.value"
-                      [class.hover:border-primary/30]="currentTheme() !== option.value"
-                      (click)="setTheme(option.value)"
-                    >
-                      <p class="text-sm font-semibold text-foreground">{{ option.label }}</p>
-                      <p class="mt-1 text-xs leading-5 text-muted-foreground">{{ option.description }}</p>
-                    </button>
-                  }
-                </div>
-
-                <div class="grid gap-4 md:grid-cols-2">
-                  @for (item of appearanceRows(); track item.label) {
-                    <div class="rounded-[1.5rem] border border-border bg-background/80 p-4">
-                      <p class="text-sm font-semibold text-foreground">{{ item.label }}</p>
-                      <p class="mt-1 text-sm leading-6 text-muted-foreground">{{ item.description }}</p>
-                    </div>
-                  }
-                </div>
+              <div class="grid gap-3 p-6 lg:grid-cols-3">
+                @for (option of themeOptions(); track option.value) {
+                  <button
+                    type="button"
+                    class="rounded-xl border p-4 text-left transition"
+                    [class.border-primary]="currentTheme() === option.value"
+                    [class.bg-primary/5]="currentTheme() === option.value"
+                    [class.border-border]="currentTheme() !== option.value"
+                    [class.hover:border-primary/30]="currentTheme() !== option.value"
+                    (click)="setTheme(option.value)"
+                  >
+                    <p class="text-sm font-semibold text-foreground">{{ option.label }}</p>
+                    <p class="mt-1 text-xs leading-5 text-muted-foreground">{{ option.description }}</p>
+                  </button>
+                }
               </div>
             </sga-card>
           }
@@ -200,14 +151,14 @@ type ToggleKey =
             <sga-card>
               <div class="border-border/70 border-b p-6">
                 <h2 class="text-xl font-semibold text-foreground">Notificaciones</h2>
-                <p class="mt-1 text-sm text-muted-foreground">Preferencias persistidas en base de datos.</p>
+                <p class="mt-1 text-sm text-muted-foreground">Preferencias guardadas en tu cuenta.</p>
               </div>
 
-              <div class="space-y-4 p-6">
+              <div class="space-y-3 p-6">
                 @for (item of notificationRows(); track item.key) {
                   <button
                     type="button"
-                    class="flex w-full items-center justify-between rounded-[1.5rem] border border-border bg-background/80 p-4 text-left transition hover:border-primary/30"
+                    class="flex w-full items-center justify-between rounded-xl border border-border bg-background/80 p-4 text-left transition hover:border-primary/30"
                     (click)="togglePreference(item.key)"
                   >
                     <span class="pr-4">
@@ -226,8 +177,8 @@ type ToggleKey =
                   </button>
                 }
 
-                <div class="rounded-[1.25rem] border border-border bg-background/80 px-4 py-3 text-xs text-muted-foreground">
-                  Los cambios se guardan automaticamente en tu cuenta.
+                <div class="rounded-xl border border-border bg-background/80 px-4 py-3 text-xs text-muted-foreground">
+                  {{ preferenceStatus() }}
                 </div>
               </div>
             </sga-card>
@@ -236,68 +187,52 @@ type ToggleKey =
           @if (activeSection() === 'email') {
             <sga-card>
               <div class="border-border/70 border-b p-6">
-                <h2 class="text-xl font-semibold text-foreground">Correo y comunicacion</h2>
-                <p class="mt-1 text-sm text-muted-foreground">Canales y estado de contacto basados en la cuenta actual.</p>
+                <h2 class="text-xl font-semibold text-foreground">Correo</h2>
+                <p class="mt-1 text-sm text-muted-foreground">Contacto y ultimos envios.</p>
               </div>
 
               <div class="grid gap-4 p-6 lg:grid-cols-[1.1fr_0.9fr]">
-                <div class="space-y-4">
+                <div class="space-y-3">
                   @for (item of emailRows(); track item.label) {
-                    <div class="rounded-[1.5rem] border border-border bg-background/80 p-4">
-                      <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">{{ item.label }}</p>
+                    <div class="rounded-xl border border-border bg-background/80 p-4">
+                      <p class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">{{ item.label }}</p>
                       <p class="mt-2 text-sm font-medium text-foreground">{{ item.value }}</p>
                       <p class="mt-1 text-xs text-muted-foreground">{{ item.helper }}</p>
                     </div>
                   }
-
-                  <div class="rounded-[1.5rem] border border-border bg-background/80 p-4">
-                    <div class="flex items-center justify-between">
-                      <p class="text-sm font-semibold text-foreground">Ultimos correos enviados</p>
-                      <span class="text-xs text-muted-foreground">{{ emailLogs().length }}</span>
-                    </div>
-                    @if (loadingEmailLogs()) {
-                      <p class="mt-3 text-xs text-muted-foreground">Cargando historial...</p>
-                    } @else if (emailLogs().length === 0) {
-                      <p class="mt-3 text-xs text-muted-foreground">No hay correos registrados.</p>
-                    } @else {
-                      <div class="mt-3 space-y-3">
-                        @for (log of emailLogs(); track log.id) {
-                          <div class="rounded-xl border border-border bg-card px-3 py-3">
-                            <div class="flex items-center justify-between gap-2">
-                              <p class="text-sm font-semibold text-foreground">{{ log.subject }}</p>
-                              <span
-                                class="rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]"
-                                [class.bg-emerald-500/10]="log.status === 'sent'"
-                                [class.text-emerald-600]="log.status === 'sent'"
-                                [class.bg-destructive/10]="log.status !== 'sent'"
-                                [class.text-destructive]="log.status !== 'sent'"
-                              >
-                                {{ log.status === 'sent' ? 'enviado' : 'fallido' }}
-                              </span>
-                            </div>
-                            <p class="mt-1 text-xs text-muted-foreground">{{ log.recipient }}</p>
-                            <p class="mt-1 text-xs text-muted-foreground">{{ formatDate(log.createdAt) }}</p>
-                          </div>
-                        }
-                      </div>
-                    }
-                  </div>
                 </div>
 
-                <div class="rounded-[1.75rem] border border-primary/15 bg-primary/5 p-5">
-                  <p class="text-sm font-semibold text-foreground">Politica operativa</p>
-                  <p class="mt-2 text-sm leading-6 text-muted-foreground">
-                    Esta seccion combina correo principal, telefono y disponibilidad de contacto que llegan desde la ficha del usuario y persona.
-                  </p>
-
-                  <div class="mt-5 space-y-3">
-                    @for (item of emailPolicyRows(); track item.label) {
-                      <div class="flex items-center justify-between rounded-2xl border border-primary/10 bg-background/80 px-4 py-3">
-                        <span class="text-sm font-medium text-foreground">{{ item.label }}</span>
-                        <span class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">{{ item.value }}</span>
-                      </div>
-                    }
+                <div class="rounded-xl border border-border bg-background/80 p-4">
+                  <div class="flex items-center justify-between">
+                    <p class="text-sm font-semibold text-foreground">Ultimos correos</p>
+                    <span class="text-xs text-muted-foreground">{{ userEmailLogs().length }}</span>
                   </div>
+                  @if (loadingEmailLogs()) {
+                    <p class="mt-3 text-xs text-muted-foreground">Cargando historial...</p>
+                  } @else if (userEmailLogs().length === 0) {
+                    <p class="mt-3 text-xs text-muted-foreground">No hay correos registrados.</p>
+                  } @else {
+                    <div class="mt-3 space-y-2">
+                      @for (log of userEmailLogs(); track log.id) {
+                        <div class="rounded-lg border border-border bg-card px-3 py-2">
+                          <div class="flex items-center justify-between gap-2">
+                            <p class="text-sm font-semibold text-foreground">{{ log.subject }}</p>
+                            <span
+                              class="rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]"
+                              [class.bg-emerald-500/10]="log.status === 'sent'"
+                              [class.text-emerald-600]="log.status === 'sent'"
+                              [class.bg-destructive/10]="log.status !== 'sent'"
+                              [class.text-destructive]="log.status !== 'sent'"
+                            >
+                              {{ log.status === 'sent' ? 'enviado' : 'fallido' }}
+                            </span>
+                          </div>
+                          <p class="mt-1 text-xs text-muted-foreground">{{ log.recipient }}</p>
+                          <p class="mt-1 text-xs text-muted-foreground">{{ formatDate(log.createdAt) }}</p>
+                        </div>
+                      }
+                    </div>
+                  }
                 </div>
               </div>
             </sga-card>
@@ -307,33 +242,25 @@ type ToggleKey =
             <sga-card>
               <div class="border-border/70 border-b p-6">
                 <h2 class="text-xl font-semibold text-foreground">Seguridad</h2>
-                <p class="mt-1 text-sm text-muted-foreground">Estado de acceso y control de cuenta.</p>
+                <p class="mt-1 text-sm text-muted-foreground">Estado de acceso y control.</p>
               </div>
 
-              <div class="grid gap-4 p-6 lg:grid-cols-[1fr_340px]">
-                <div class="space-y-4">
-                  @for (item of securityRows(); track item.label) {
-                    <div class="rounded-[1.5rem] border border-border bg-background/80 p-4">
-                      <p class="text-sm font-semibold text-foreground">{{ item.label }}</p>
-                      <p class="mt-1 text-sm leading-6 text-muted-foreground">{{ item.description }}</p>
-                    </div>
-                  }
-                </div>
+              <div class="space-y-3 p-6">
+                @for (item of securityRows(); track item.label) {
+                  <div class="rounded-xl border border-border bg-background/80 p-4">
+                    <p class="text-sm font-semibold text-foreground">{{ item.label }}</p>
+                    <p class="mt-1 text-sm leading-6 text-muted-foreground">{{ item.description }}</p>
+                  </div>
+                }
+              </div>
 
-                <div class="rounded-[1.75rem] border border-destructive/15 bg-destructive/5 p-5">
-                  <p class="text-sm font-semibold text-foreground">Accion prioritaria</p>
-                  <p class="mt-2 text-sm leading-6 text-muted-foreground">
-                    Si hay intentos fallidos o la ultima actividad no te resulta conocida, cambia la contrasena y revisa los logs.
-                  </p>
-
-                  <a
-                    routerLink="/account/change-password"
-                    class="mt-5 inline-flex items-center gap-2 rounded-2xl bg-foreground px-4 py-2.5 text-sm font-semibold text-background"
-                  >
-                    <i class="fa-solid fa-shield-halved"></i>
-                    Ir a cambio de contrasena
-                  </a>
-                </div>
+              <div class="border-border/70 border-t p-6">
+                <a
+                  routerLink="/account/change-password"
+                  class="inline-flex items-center gap-2 rounded-xl bg-foreground px-4 py-2.5 text-sm font-semibold text-background"
+                >
+                  Ir a cambio de contrasena
+                </a>
               </div>
             </sga-card>
           }
@@ -342,18 +269,18 @@ type ToggleKey =
             <sga-card>
               <div class="border-border/70 border-b p-6">
                 <h2 class="text-xl font-semibold text-foreground">Logs y auditoria</h2>
-                <p class="mt-1 text-sm text-muted-foreground">Eventos reales obtenidos desde audit/user/:userId.</p>
+                <p class="mt-1 text-sm text-muted-foreground">Eventos recientes del usuario.</p>
               </div>
 
               @if (loadingAudit()) {
-                <div class="p-6 text-sm text-muted-foreground">Cargando eventos de auditoria...</div>
+                <div class="p-6 text-sm text-muted-foreground">Cargando eventos...</div>
               } @else if (auditRows().length === 0) {
-                <div class="p-6 text-sm text-muted-foreground">No hay eventos de auditoria recientes para este usuario.</div>
+                <div class="p-6 text-sm text-muted-foreground">No hay eventos recientes.</div>
               } @else {
                 <div class="space-y-3 p-6">
                   @for (item of auditRows(); track item.id) {
-                    <div class="flex items-start gap-4 rounded-[1.5rem] border border-border bg-background/80 p-4">
-                      <span class="mt-0.5 flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                    <div class="flex items-start gap-4 rounded-xl border border-border bg-background/80 p-4">
+                      <span class="mt-0.5 flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
                         <i [class]="item.icon"></i>
                       </span>
                       <div class="min-w-0 flex-1">
@@ -373,32 +300,28 @@ type ToggleKey =
           @if (activeSection() === 'sessions') {
             <sga-card>
               <div class="border-border/70 border-b p-6">
-                <h2 class="text-xl font-semibold text-foreground">Sesiones activas</h2>
-                <p class="mt-1 text-sm text-muted-foreground">Estado operativo de la cuenta y ultima actividad registrada.</p>
+                <h2 class="text-xl font-semibold text-foreground">Sesiones</h2>
+                <p class="mt-1 text-sm text-muted-foreground">Estado operativo y accesos recientes.</p>
               </div>
 
               <div class="grid gap-4 p-6 lg:grid-cols-[1fr_1fr]">
                 @for (item of sessionRows(); track item.label) {
-                  <div class="rounded-[1.5rem] border border-border bg-background/80 p-4">
-                    <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">{{ item.label }}</p>
+                  <div class="rounded-xl border border-border bg-background/80 p-4">
+                    <p class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">{{ item.label }}</p>
                     <p class="mt-2 text-sm font-medium leading-6 text-foreground">{{ item.value }}</p>
                   </div>
                 }
               </div>
 
               <div class="border-border/70 border-t p-6">
-                <div class="flex items-center justify-between">
-                  <p class="text-sm font-semibold text-foreground">Sesiones registradas</p>
-                  <span class="text-xs text-muted-foreground">{{ sessions().length }}</span>
-                </div>
                 @if (loadingSessions()) {
-                  <p class="mt-3 text-xs text-muted-foreground">Cargando sesiones...</p>
-                } @else if (sessions().length === 0) {
-                  <p class="mt-3 text-xs text-muted-foreground">No hay sesiones activas registradas.</p>
+                  <p class="text-xs text-muted-foreground">Cargando sesiones...</p>
+                } @else if (userSessions().length === 0) {
+                  <p class="text-xs text-muted-foreground">No hay sesiones registradas.</p>
                 } @else {
-                  <div class="mt-4 grid gap-3 lg:grid-cols-2">
-                    @for (session of sessions(); track session.id) {
-                      <div class="rounded-[1.25rem] border border-border bg-background/80 p-4">
+                  <div class="mt-2 grid gap-3 lg:grid-cols-2">
+                    @for (session of userSessions(); track session.id) {
+                      <div class="rounded-xl border border-border bg-background/80 p-4">
                         <div class="flex items-center justify-between gap-2">
                           <p class="text-sm font-semibold text-foreground">Sesion</p>
                           <span
@@ -414,7 +337,6 @@ type ToggleKey =
                         <p class="mt-2 text-xs text-muted-foreground">{{ session.userAgent }}</p>
                         <p class="mt-1 text-xs text-muted-foreground">IP {{ session.ipAddress }}</p>
                         <p class="mt-1 text-xs text-muted-foreground">Ultima actividad: {{ formatDate(session.lastActive) }}</p>
-                        <p class="mt-1 text-xs text-muted-foreground">Expira: {{ formatDate(session.expiresAt) }}</p>
                       </div>
                     }
                   </div>
@@ -439,12 +361,11 @@ export default class AccountSettingsPage {
   protected readonly loadingAudit = signal(false);
   protected readonly loadingSessions = signal(false);
   protected readonly loadingEmailLogs = signal(false);
-  protected readonly loadingPreferences = signal(false);
+  protected readonly preferenceStatus = signal('Sincronizado');
   protected readonly userDetail = signal<AccountUserDetail | null>(null);
   protected readonly userAudit = signal<AccountAuditLog[]>([]);
   protected readonly userSessions = signal<AccountSession[]>([]);
   protected readonly userEmailLogs = signal<AccountEmailLog[]>([]);
-  protected readonly userPreferences = signal<AccountUserPreferences | null>(null);
   protected readonly currentTheme = computed(() => this.layout.currentTheme());
   protected readonly currentUser = computed(() => this.authFacade.getCurrentUser());
   protected readonly modules = computed(() => this.authFacade.getModules());
@@ -477,69 +398,41 @@ export default class AccountSettingsPage {
     newDeviceAlerts: true,
   });
   protected readonly sections = computed(() => [
-    { id: 'general' as SettingsSectionId, label: 'General', description: 'Cuenta, rol y datos personales.', icon: 'fa-solid fa-user', count: null },
-    { id: 'appearance' as SettingsSectionId, label: 'Apariencia', description: 'Tema y entorno visual local.', icon: 'fa-solid fa-palette', count: null },
-    { id: 'notifications' as SettingsSectionId, label: 'Notificaciones', description: 'Preferencias persistidas.', icon: 'fa-solid fa-bell', count: null },
-    { id: 'email' as SettingsSectionId, label: 'Correo', description: 'Historial real de envio.', icon: 'fa-solid fa-envelope', count: this.userEmailLogs().length },
-    { id: 'security' as SettingsSectionId, label: 'Seguridad', description: 'Estado de acceso y control.', icon: 'fa-solid fa-shield-halved', count: null },
-    { id: 'logs' as SettingsSectionId, label: 'Logs', description: 'Auditoria reciente del usuario.', icon: 'fa-solid fa-clipboard-list', count: this.userAudit().length },
-    { id: 'sessions' as SettingsSectionId, label: 'Sesiones', description: 'Accesos activos y expirados.', icon: 'fa-solid fa-laptop', count: this.userSessions().length },
+    { id: 'general' as SettingsSectionId, label: 'General', description: 'Cuenta y datos personales.', icon: 'fa-solid fa-user' },
+    { id: 'appearance' as SettingsSectionId, label: 'Apariencia', description: 'Tema del sistema.', icon: 'fa-solid fa-palette' },
+    { id: 'notifications' as SettingsSectionId, label: 'Notificaciones', description: 'Preferencias guardadas.', icon: 'fa-solid fa-bell' },
+    { id: 'email' as SettingsSectionId, label: 'Correo', description: 'Historial de envios.', icon: 'fa-solid fa-envelope' },
+    { id: 'security' as SettingsSectionId, label: 'Seguridad', description: 'Estado y control.', icon: 'fa-solid fa-shield-halved' },
+    { id: 'logs' as SettingsSectionId, label: 'Logs', description: 'Auditoria reciente.', icon: 'fa-solid fa-clipboard-list' },
+    { id: 'sessions' as SettingsSectionId, label: 'Sesiones', description: 'Accesos activos.', icon: 'fa-solid fa-laptop' },
   ]);
   protected readonly themeOptions = computed(() => [
-    { value: 'light' as ThemeConfig, label: 'Claro', description: 'Para oficinas con mucha luz y jornadas largas.' },
-    { value: 'dark' as ThemeConfig, label: 'Oscuro', description: 'Reduce brillo y mejora el foco visual.' },
-    { value: 'system' as ThemeConfig, label: 'Sistema', description: 'Respeta la preferencia del dispositivo.' },
+    { value: 'light' as ThemeConfig, label: 'Claro', description: 'Entorno luminoso.' },
+    { value: 'dark' as ThemeConfig, label: 'Oscuro', description: 'Reduce brillo.' },
+    { value: 'system' as ThemeConfig, label: 'Sistema', description: 'Respeta preferencia del dispositivo.' },
   ]);
-  protected readonly headerMetrics = computed(() => {
-    const user = this.accountUser();
-    return [
-      {
-        label: 'Perfil',
-        value: user?.profile?.roleLabel || user?.role?.name || 'Cuenta',
-        helper: 'Rol activo cargado desde base de datos',
-      },
-      {
-        label: 'Permisos',
-        value: `${user?.role?.permissions?.length ?? 0}`,
-        helper: 'Permisos asociados al rol',
-      },
-      {
-        label: 'Estado',
-        value: user?.status || (user?.isActive ? 'ACTIVE' : 'INACTIVE') || 'N/A',
-        helper: 'Estado actual de la cuenta',
-      },
-    ];
-  });
   protected readonly generalRows = computed(() => {
     const user = this.accountUser();
     const person = user?.person;
     const location = [person?.district, person?.province, person?.department].filter(Boolean).join(', ');
     return [
-      { label: 'Nombre visible', value: `${user?.firstName || person?.firstName || ''} ${user?.lastName || person?.lastName || ''}`.trim() || user?.username || 'No definido' },
+      { label: 'Nombre', value: `${user?.firstName || person?.firstName || ''} ${user?.lastName || person?.lastName || ''}`.trim() || user?.username || 'No definido' },
       { label: 'Usuario', value: user?.username || 'No definido' },
       { label: 'Correo', value: user?.email || person?.email || 'No registrado' },
-      { label: 'Rol operativo', value: user?.role?.name || 'Sin rol' },
+      { label: 'Rol', value: user?.role?.name || 'Sin rol' },
       { label: 'Institucion', value: user?.profile?.institution || 'No asignada' },
       { label: 'Telefono', value: person?.mobile || person?.phone || 'No registrado' },
       { label: 'Direccion', value: person?.address || 'No registrada' },
       { label: 'Ubicacion', value: location || 'No registrada' },
-      { label: 'Fecha de alta', value: this.formatDate(user?.createdAt) },
-      { label: 'Ultima actualizacion', value: this.formatDate(user?.updatedAt) },
     ];
   });
-  protected readonly appearanceRows = computed(() => [
-    { label: 'Sidebar compacto', description: 'Ideal para perfiles con muchos modulos y navegacion frecuente.' },
-    { label: 'Vista enfocada', description: 'Prioriza contraste, jerarquia visual y lectura de formularios.' },
-    { label: 'Preferencia persistente', description: 'El tema elegido se conserva en este navegador.' },
-    { label: 'Base institucional', description: 'La UI se mantiene alineada con el sistema academico.' },
-  ]);
   protected readonly notificationRows = computed(() => [
-    { key: 'digest' as ToggleKey, label: 'Resumen diario', description: 'Consolida pendientes, aprobaciones y eventos del dia.' },
-    { key: 'reminders' as ToggleKey, label: 'Recordatorios academicos', description: 'Fechas de cierre, actas y tareas administrativas.' },
-    { key: 'incidents' as ToggleKey, label: 'Alertas de incidencias', description: 'Errores operativos, accesos fallidos o estados inusuales.' },
-    { key: 'approvals' as ToggleKey, label: 'Flujos de aprobacion', description: 'Procesos que requieren accion del usuario.' },
-    { key: 'browserAlerts' as ToggleKey, label: 'Avisos dentro del sistema', description: 'Banners y estados visibles en el panel.' },
-    { key: 'newDeviceAlerts' as ToggleKey, label: 'Alertas por nuevo dispositivo', description: 'Avisa cuando hay un acceso desde un equipo distinto.' },
+    { key: 'digest' as ToggleKey, label: 'Resumen diario', description: 'Consolida pendientes y eventos.' },
+    { key: 'reminders' as ToggleKey, label: 'Recordatorios', description: 'Fechas de cierre y tareas.' },
+    { key: 'incidents' as ToggleKey, label: 'Incidencias', description: 'Errores operativos o accesos fallidos.' },
+    { key: 'approvals' as ToggleKey, label: 'Aprobaciones', description: 'Procesos que requieren accion.' },
+    { key: 'browserAlerts' as ToggleKey, label: 'Avisos en el panel', description: 'Banners y alertas internas.' },
+    { key: 'newDeviceAlerts' as ToggleKey, label: 'Nuevo dispositivo', description: 'Aviso por accesos desconocidos.' },
   ]);
   protected readonly emailRows = computed(() => {
     const user = this.accountUser();
@@ -548,7 +441,7 @@ export default class AccountSettingsPage {
       {
         label: 'Correo principal',
         value: user?.email || person?.email || 'Sin correo institucional',
-        helper: 'Usado para acceso, recuperacion y comunicaciones clave.',
+        helper: 'Usado para acceso y comunicaciones clave.',
       },
       {
         label: 'Canal movil',
@@ -558,29 +451,24 @@ export default class AccountSettingsPage {
       {
         label: 'Perfil de envio',
         value: user?.profile?.roleLabel || user?.role?.name || 'General',
-        helper: 'Segmento institucional usado para personalizar mensajes.',
+        helper: 'Segmento institucional del usuario.',
       },
     ];
   });
-  protected readonly emailPolicyRows = computed(() => [
-    { label: 'Resumen diario', value: this.preferences().digest ? 'activo' : 'pausado' },
-    { label: 'Correo de seguridad', value: this.preferences().newDeviceAlerts ? 'activo' : 'pausado' },
-    { label: 'Aprobaciones', value: this.preferences().approvals ? 'activo' : 'pausado' },
-  ]);
   protected readonly securityRows = computed(() => {
     const user = this.accountUser();
     return [
       {
         label: 'Estado de cuenta',
-        description: `La cuenta se encuentra en estado ${user?.status || 'desconocido'} y ${user?.isActive ? 'habilitada' : 'deshabilitada'} para autenticacion.`,
+        description: `Cuenta ${user?.status || 'desconocido'} (${user?.isActive ? 'activa' : 'inactiva'}).`,
       },
       {
-        label: 'Ultimo acceso registrado',
-        description: this.formatDate(user?.lastLogin, 'No hay acceso registrado todavia.'),
+        label: 'Ultimo acceso',
+        description: this.formatDate(user?.lastLogin, 'Sin acceso registrado.'),
       },
       {
         label: 'Intentos fallidos',
-        description: `${user?.failedLoginAttempts ?? 0} intento(s) fallido(s) registrados para esta cuenta.`,
+        description: `${user?.failedLoginAttempts ?? 0} intento(s).`,
       },
     ];
   });
@@ -600,152 +488,16 @@ export default class AccountSettingsPage {
       { label: 'Activo', value: user?.isActive ? 'Si' : 'No' },
       { label: 'Ultimo login', value: this.formatDate(user?.lastLogin) },
       { label: 'Usuario', value: user?.username || 'No definido' },
-      { label: 'Rol en uso', value: user?.role?.name || 'Sin rol' },
-      { label: 'Permisos del rol', value: `${user?.role?.permissions?.length ?? 0}` },
-      { label: 'Modulos visibles', value: `${this.modules().length}` },
-      { label: 'Tema aplicado', value: this.currentTheme() },
+      { label: 'Rol', value: user?.role?.name || 'Sin rol' },
+      { label: 'Modulos', value: `${this.modules().length}` },
+      { label: 'Tema', value: this.currentTheme() },
     ];
   });
 
-  protected readonly sessions = computed(() => this.userSessions());
-  protected readonly emailLogs = computed(() => this.userEmailLogs());
-
   constructor() {
     toObservable(this.currentUser)
-      .pipe(
-        tap((user) => {
-          if (user?.id) {
-            this.loadingUser.set(true);
-          } else {
-            this.userDetail.set(null);
-          }
-        }),
-        switchMap((user) => {
-          if (!user?.id) {
-            this.loadingUser.set(false);
-            return of(null);
-          }
-
-          return this.authApi.getCurrentUserDetail(user.id).pipe(
-            catchError(() => of(null)),
-          );
-        }),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((detail) => {
-        this.userDetail.set(detail);
-        this.loadingUser.set(false);
-      });
-
-    toObservable(this.currentUser)
-      .pipe(
-        tap((user) => {
-          if (user?.id) {
-            this.loadingAudit.set(true);
-          } else {
-            this.userAudit.set([]);
-          }
-        }),
-        switchMap((user) => {
-          if (!user?.id) {
-            this.loadingAudit.set(false);
-            return of(null);
-          }
-
-          return this.authApi.getCurrentUserAudit(user.id).pipe(
-            catchError(() => of(null)),
-          );
-        }),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((response) => {
-        this.userAudit.set(response?.data ?? []);
-        this.loadingAudit.set(false);
-      });
-
-    toObservable(this.currentUser)
-      .pipe(
-        tap((user) => {
-          if (user?.id) {
-            this.loadingSessions.set(true);
-          } else {
-            this.userSessions.set([]);
-          }
-        }),
-        switchMap((user) => {
-          if (!user?.id) {
-            this.loadingSessions.set(false);
-            return of(null);
-          }
-
-          return this.authApi.getCurrentUserSessions(user.id, 6).pipe(
-            catchError(() => of(null)),
-          );
-        }),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((response) => {
-        this.userSessions.set(response?.data ?? []);
-        this.loadingSessions.set(false);
-      });
-
-    toObservable(this.currentUser)
-      .pipe(
-        tap((user) => {
-          if (user?.id) {
-            this.loadingEmailLogs.set(true);
-          } else {
-            this.userEmailLogs.set([]);
-          }
-        }),
-        switchMap((user) => {
-          if (!user?.id) {
-            this.loadingEmailLogs.set(false);
-            return of(null);
-          }
-
-          return this.authApi.getCurrentUserEmailLogs(user.id, 6).pipe(
-            catchError(() => of(null)),
-          );
-        }),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((response) => {
-        this.userEmailLogs.set(response?.data ?? []);
-        this.loadingEmailLogs.set(false);
-      });
-
-    toObservable(this.currentUser)
-      .pipe(
-        tap((user) => {
-          if (user?.id) {
-            this.loadingPreferences.set(true);
-          } else {
-            this.userPreferences.set(null);
-          }
-        }),
-        switchMap((user) => {
-          if (!user?.id) {
-            this.loadingPreferences.set(false);
-            return of(null);
-          }
-
-          return this.authApi.getUserPreferences(user.id).pipe(
-            catchError(() => of(null)),
-          );
-        }),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((response) => {
-        this.userPreferences.set(response);
-        if (response?.preferences) {
-          this.preferences.update((state) => ({
-            ...state,
-            ...response.preferences,
-          }));
-        }
-        this.loadingPreferences.set(false);
-      });
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((user) => this.loadUserData(user?.id));
   }
 
   protected setTheme(target: ThemeConfig) {
@@ -763,23 +515,92 @@ export default class AccountSettingsPage {
     const userId = this.currentUser()?.id;
     if (!userId) return;
 
-    const payload = this.preferences();
-    this.authApi.updateUserPreferences(userId, payload).subscribe({
-      next: (response) => {
-        this.userPreferences.set(response);
+    this.preferenceStatus.set('Guardando cambios...');
+
+    this.authApi.updateUserPreferences(userId, this.preferences()).subscribe({
+      next: () => {
+        this.preferenceStatus.set('Cambios guardados');
       },
       error: () => {
-        // Non-blocking: keep local state even if persistence fails.
+        this.preferenceStatus.set('No se pudo guardar. El cambio queda solo local.');
       },
     });
   }
 
+  private loadUserData(userId?: string) {
+    if (!userId) {
+      this.userDetail.set(null);
+      this.userAudit.set([]);
+      this.userSessions.set([]);
+      this.userEmailLogs.set([]);
+      return;
+    }
+
+    this.loadUserDetail(userId);
+    this.loadAudit(userId);
+    this.loadSessions(userId);
+    this.loadEmailLogs(userId);
+    this.loadPreferences(userId);
+  }
+
+  private loadUserDetail(userId: string) {
+    this.loadingUser.set(true);
+    this.authApi.getCurrentUserDetail(userId)
+      .pipe(catchError(() => of(null)), takeUntilDestroyed(this.destroyRef))
+      .subscribe((detail) => {
+        this.userDetail.set(detail);
+        this.loadingUser.set(false);
+      });
+  }
+
+  private loadAudit(userId: string) {
+    this.loadingAudit.set(true);
+    this.authApi.getCurrentUserAudit(userId)
+      .pipe(catchError(() => of(null)), takeUntilDestroyed(this.destroyRef))
+      .subscribe((response) => {
+        this.userAudit.set(response?.data ?? []);
+        this.loadingAudit.set(false);
+      });
+  }
+
+  private loadSessions(userId: string) {
+    this.loadingSessions.set(true);
+    this.authApi.getCurrentUserSessions(userId, 6)
+      .pipe(catchError(() => of(null)), takeUntilDestroyed(this.destroyRef))
+      .subscribe((response) => {
+        this.userSessions.set(response?.data ?? []);
+        this.loadingSessions.set(false);
+      });
+  }
+
+  private loadEmailLogs(userId: string) {
+    this.loadingEmailLogs.set(true);
+    this.authApi.getCurrentUserEmailLogs(userId, 6)
+      .pipe(catchError(() => of(null)), takeUntilDestroyed(this.destroyRef))
+      .subscribe((response) => {
+        this.userEmailLogs.set(response?.data ?? []);
+        this.loadingEmailLogs.set(false);
+      });
+  }
+
+  private loadPreferences(userId: string) {
+    this.authApi.getUserPreferences(userId)
+      .pipe(catchError(() => of(null)), takeUntilDestroyed(this.destroyRef))
+      .subscribe((response) => {
+        if (response?.preferences) {
+          this.preferences.update((state) => ({
+            ...state,
+            ...response.preferences,
+          }));
+        }
+        this.preferenceStatus.set('Sincronizado');
+      });
+  }
+
   private formatDate(value?: string | null, fallback = 'No registrado') {
     if (!value) return fallback;
-
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return fallback;
-
     return new Intl.DateTimeFormat('es-PE', {
       dateStyle: 'medium',
       timeStyle: 'short',

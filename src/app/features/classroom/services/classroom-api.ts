@@ -56,6 +56,10 @@ export class ClassroomApi {
   getTasks(sectionCourseId: string): Observable<ClassroomTask[]> {
     return this.http.get<ClassroomTask[]>(`${this.baseUrl}/${sectionCourseId}/tasks`);
   }
+
+  getGrades(sectionCourseId: string): Observable<ClassroomGradesResponse> {
+    return this.http.get<ClassroomGradesResponse>(`${this.baseUrl}/${sectionCourseId}/grades`);
+  }
 }
 
 export interface ClassroomTask {
@@ -65,4 +69,31 @@ export interface ClassroomTask {
   status: 'pending' | 'delivered' | 'graded';
   points: number;
   grade?: number;
+}
+
+export interface ClassroomGradeScore {
+  id: string;
+  studentId: string;
+  studentName: string;
+  score: number;
+  observation?: string;
+}
+
+export interface ClassroomGradeRecord {
+  id: string;
+  name: string;
+  date: string;
+  total: number;
+  average: number;
+  studentsCount: number;
+  scores: ClassroomGradeScore[];
+}
+
+export interface ClassroomGradesResponse {
+  data: ClassroomGradeRecord[];
+  summary: {
+    assessments: number;
+    scores: number;
+    average: number;
+  };
 }

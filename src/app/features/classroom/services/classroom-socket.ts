@@ -1,6 +1,8 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { inject, Injectable, OnDestroy } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
-import { Subject } from 'rxjs';
+
+import { TokenManager } from '@auth/services/api/token-manager';
 import { environment } from '../../../../environments/environment.development';
 
 export interface SocketMessage {
@@ -26,17 +28,28 @@ export interface FeedPost {
 
 @Injectable({ providedIn: 'root' })
 export class ClassroomSocketService implements OnDestroy {
+  private readonly tokenManager = inject(TokenManager);
   private socket: Socket | null = null;
-  public message$ = new Subject<SocketMessage>();
-  public feedUpdate$ = new Subject<FeedPost>();
-  /** Notificaciones en tiempo real (nuevo mensaje, nuevo post, etc.) */
-  public notification$ = new Subject<{ type: string; title: string; body?: string }>();
+
+  public readonly message$ = new Subject<SocketMessage>();
+  public readonly feedUpdate$ = new Subject<FeedPost>();
+  public readonly notification$ = new Subject<{ type: string; title: string; body?: string }>();
 
   connect(room: string): void {
-    if (this.socket) this.socket.disconnect();
+    const token = this.tokenManager.getToken();
+    if (!token) {
+      this.notification$.next({ type: 'error', title: 'Sesion no valida', body: 'No hay token para conectar realtime.' });
+      return;
+    }
+
+    if (this.socket) {
+      this.socket.disconnect();
+    }
+
     const wsBase = (environment as { wsUrl?: string }).wsUrl ?? 'http://localhost:3000';
     this.socket = io(`${wsBase}/classroom`, {
       transports: ['websocket'],
+      auth: { token },
     });
 
     this.socket.on('connect', () => {
@@ -52,13 +65,13 @@ export class ClassroomSocketService implements OnDestroy {
       this.feedUpdate$.next(post);
       this.notification$.next({
         type: 'feed',
-        title: 'Nueva publicación',
-        body: post.author?.name ? `${post.author.name} publicó en el muro` : undefined,
+        title: 'Nueva publicacion',
+        body: post.author?.name ? `${post.author.name} publico en el muro` : undefined,
       });
     });
 
     this.socket.on('connect_error', () => {
-      this.notification$.next({ type: 'error', title: 'Conexión perdida', body: 'Reconectando...' });
+      this.notification$.next({ type: 'error', title: 'Conexion perdida', body: 'No se pudo conectar al canal realtime.' });
     });
   }
 
@@ -67,12 +80,32 @@ export class ClassroomSocketService implements OnDestroy {
     this.socket = null;
   }
 
-  sendMessage(room: string, message: Record<string, unknown>): void {
-    this.socket?.emit('sendMessage', { room, message });
+  sendMessage(room: string, content: string): Observable<SocketMessage> {
+    return new Observable<SocketMessage>((subscriber) => {
+      if (!this.socket) {
+        subscriber.error(new Error('Socket no conectado'));
+        return;
+      }
+
+      this.socket.emit('sendMessage', { room, message: { content } }, (response: SocketMessage) => {
+        subscriber.next(response);
+        subscriber.complete();
+      });
+    });
   }
 
-  notifyNewPost(room: string, post: Record<string, unknown>): void {
-    this.socket?.emit('newPost', { room, post });
+  publishPost(room: string, post: { content: string; attachmentUrl?: string }): Observable<FeedPost> {
+    return new Observable<FeedPost>((subscriber) => {
+      if (!this.socket) {
+        subscriber.error(new Error('Socket no conectado'));
+        return;
+      }
+
+      this.socket.emit('newPost', { room, post }, (response: FeedPost) => {
+        subscriber.next(response);
+        subscriber.complete();
+      });
+    });
   }
 
   ngOnDestroy(): void {

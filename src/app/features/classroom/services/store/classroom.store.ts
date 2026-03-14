@@ -2,6 +2,7 @@ import { inject } from '@angular/core';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { ClassroomFeedItem, ChatMessage } from '../../types/classroom-types';
 import { ClassroomApi } from '../classroom-api';
+import { ClassroomSocketService } from '../classroom-socket';
 import { Toast } from '@core/services/toast';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap, tap } from 'rxjs';
@@ -23,7 +24,7 @@ const initialState: ClassroomState = {
 export const ClassroomStore = signalStore(
   { providedIn: 'root' },
   withState<ClassroomState>(initialState),
-  withMethods((store, api = inject(ClassroomApi), toast = inject(Toast)) => ({
+  withMethods((store, api = inject(ClassroomApi), socket = inject(ClassroomSocketService), toast = inject(Toast)) => ({
     loadFeed: rxMethod<string>(
       pipe(
         switchMap((id) => {
@@ -58,11 +59,9 @@ export const ClassroomStore = signalStore(
     publishPost: (content: string, attachmentUrls?: string[]) => {
       const id = store.selectedSectionId();
       if (!id) return;
-      return api.publishPost({
-        sectionCourseId: id,
+      return socket.publishPost(id, {
         content,
         attachmentUrl: attachmentUrls?.[0],
-        attachments: attachmentUrls,
       }).pipe(
         tap({
           next: () => toast.success('Publicado correctamente'),
@@ -73,12 +72,9 @@ export const ClassroomStore = signalStore(
     sendMessage: (content: string) => {
       const id = store.selectedSectionId();
       if (!id) return;
-      return api.sendChatMessage(id, content).pipe(
+      return socket.sendMessage(id, content).pipe(
         tap({
-          next: (msg) => {
-            const current = store.chatMessages();
-            patchState(store, { chatMessages: [...current, msg] });
-          }
+          next: () => void 0,
         })
       );
     },

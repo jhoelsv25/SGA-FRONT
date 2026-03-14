@@ -7,7 +7,6 @@ import { Textarea } from '@shared/widgets/ui/textarea/textarea';
 import { Card } from '@shared/adapters/ui/card/card';
 import { Skeleton } from '@shared/widgets/ui/skeleton/skeleton';
 import { ClassroomStore } from '../../services/store/classroom.store';
-import { ClassroomSocketService } from '../../services/classroom-socket';
 
 @Component({
   selector: 'sga-classroom-timeline',
@@ -18,7 +17,6 @@ import { ClassroomSocketService } from '../../services/classroom-socket';
 })
 export default class Timeline {
   public readonly store = inject(ClassroomStore);
-  private readonly socket = inject(ClassroomSocketService);
   
   public postContent = signal('');
   public attachments = signal<{ url: string; name: string }[]>([]);
@@ -46,14 +44,7 @@ export default class Timeline {
     if (this.postContent() || this.attachments().length > 0) {
       const urls = this.attachments().map((a) => a.url);
       this.store.publishPost(this.postContent(), urls.length ? urls : undefined)?.subscribe({
-        next: (res: { id: string }) => {
-          this.socket.notifyNewPost(sectionId, {
-            ...res,
-            type: this.isAssignment() ? 'assignment' : 'post',
-            metadata: { attachments: this.attachments() },
-            author: { name: 'Yo', role: 'Docente' }
-          });
-          
+        next: () => {
           this.postContent.set('');
           this.attachments.set([]);
           this.isAssignment.set(false);
