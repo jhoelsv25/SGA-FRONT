@@ -5,7 +5,13 @@ import { RouterLink } from '@angular/router';
 
 import { AuthApi } from '@auth/services/api/auth-api';
 import { AuthFacade } from '@auth/services/store/auth.acede';
-import type { AccountAuditLog, AccountUserDetail } from '@auth/types/auth-type';
+import type {
+  AccountAuditLog,
+  AccountEmailLog,
+  AccountSession,
+  AccountUserDetail,
+  AccountUserPreferences,
+} from '@auth/types/auth-type';
 import { LayoutStore } from '@core/stores/layout.store';
 import type { ThemeConfig } from '@core/types/layout-types';
 import { Card } from '@shared/adapters/ui/card/card';
@@ -58,18 +64,20 @@ type ToggleKey =
         <sga-card class="h-fit overflow-hidden">
           <div class="border-border/70 border-b px-5 py-4">
             <p class="text-sm font-semibold text-foreground">Areas de configuracion</p>
-            <p class="mt-1 text-xs text-muted-foreground">Cada bloque responde a una fuente de datos distinta.</p>
+            <p class="mt-1 text-xs text-muted-foreground">Preferencias, seguridad y actividad del usuario.</p>
           </div>
 
-          <nav class="space-y-1 p-3">
+          <nav class="space-y-2 p-3">
             @for (section of sections(); track section.id) {
               <button
                 type="button"
-                class="flex w-full items-start gap-3 rounded-[1.25rem] px-3 py-3 text-left transition"
+                class="group flex w-full items-start gap-3 rounded-[1.25rem] border border-transparent px-3 py-3 text-left transition"
                 [class.bg-primary]="activeSection() === section.id"
                 [class.text-primary-foreground]="activeSection() === section.id"
+                [class.border-primary/30]="activeSection() === section.id"
                 [class.bg-background]="activeSection() !== section.id"
                 [class.text-foreground]="activeSection() !== section.id"
+                [class.hover:border-border]="activeSection() !== section.id"
                 [class.hover:bg-muted]="activeSection() !== section.id"
                 (click)="activeSection.set(section.id)"
               >
@@ -82,7 +90,7 @@ type ToggleKey =
                 >
                   <i [class]="section.icon"></i>
                 </span>
-                <span class="min-w-0">
+                <span class="min-w-0 flex-1">
                   <span class="block text-sm font-semibold">{{ section.label }}</span>
                   <span
                     class="mt-1 block text-xs leading-5"
@@ -92,6 +100,17 @@ type ToggleKey =
                     {{ section.description }}
                   </span>
                 </span>
+                @if (section.count !== null) {
+                  <span
+                    class="mt-0.5 inline-flex rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]"
+                    [class.bg-primary-foreground/15]="activeSection() === section.id"
+                    [class.text-primary-foreground]="activeSection() === section.id"
+                    [class.bg-muted]="activeSection() !== section.id"
+                    [class.text-muted-foreground]="activeSection() !== section.id"
+                  >
+                    {{ section.count }}
+                  </span>
+                }
               </button>
             }
           </nav>
@@ -181,7 +200,7 @@ type ToggleKey =
             <sga-card>
               <div class="border-border/70 border-b p-6">
                 <h2 class="text-xl font-semibold text-foreground">Notificaciones</h2>
-                <p class="mt-1 text-sm text-muted-foreground">Preferencias operativas del panel actual.</p>
+                <p class="mt-1 text-sm text-muted-foreground">Preferencias persistidas en base de datos.</p>
               </div>
 
               <div class="space-y-4 p-6">
@@ -206,6 +225,10 @@ type ToggleKey =
                     </span>
                   </button>
                 }
+
+                <div class="rounded-[1.25rem] border border-border bg-background/80 px-4 py-3 text-xs text-muted-foreground">
+                  Los cambios se guardan automaticamente en tu cuenta.
+                </div>
               </div>
             </sga-card>
           }
@@ -226,6 +249,39 @@ type ToggleKey =
                       <p class="mt-1 text-xs text-muted-foreground">{{ item.helper }}</p>
                     </div>
                   }
+
+                  <div class="rounded-[1.5rem] border border-border bg-background/80 p-4">
+                    <div class="flex items-center justify-between">
+                      <p class="text-sm font-semibold text-foreground">Ultimos correos enviados</p>
+                      <span class="text-xs text-muted-foreground">{{ emailLogs().length }}</span>
+                    </div>
+                    @if (loadingEmailLogs()) {
+                      <p class="mt-3 text-xs text-muted-foreground">Cargando historial...</p>
+                    } @else if (emailLogs().length === 0) {
+                      <p class="mt-3 text-xs text-muted-foreground">No hay correos registrados.</p>
+                    } @else {
+                      <div class="mt-3 space-y-3">
+                        @for (log of emailLogs(); track log.id) {
+                          <div class="rounded-xl border border-border bg-card px-3 py-3">
+                            <div class="flex items-center justify-between gap-2">
+                              <p class="text-sm font-semibold text-foreground">{{ log.subject }}</p>
+                              <span
+                                class="rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]"
+                                [class.bg-emerald-500/10]="log.status === 'sent'"
+                                [class.text-emerald-600]="log.status === 'sent'"
+                                [class.bg-destructive/10]="log.status !== 'sent'"
+                                [class.text-destructive]="log.status !== 'sent'"
+                              >
+                                {{ log.status === 'sent' ? 'enviado' : 'fallido' }}
+                              </span>
+                            </div>
+                            <p class="mt-1 text-xs text-muted-foreground">{{ log.recipient }}</p>
+                            <p class="mt-1 text-xs text-muted-foreground">{{ formatDate(log.createdAt) }}</p>
+                          </div>
+                        }
+                      </div>
+                    }
+                  </div>
                 </div>
 
                 <div class="rounded-[1.75rem] border border-primary/15 bg-primary/5 p-5">
@@ -329,6 +385,41 @@ type ToggleKey =
                   </div>
                 }
               </div>
+
+              <div class="border-border/70 border-t p-6">
+                <div class="flex items-center justify-between">
+                  <p class="text-sm font-semibold text-foreground">Sesiones registradas</p>
+                  <span class="text-xs text-muted-foreground">{{ sessions().length }}</span>
+                </div>
+                @if (loadingSessions()) {
+                  <p class="mt-3 text-xs text-muted-foreground">Cargando sesiones...</p>
+                } @else if (sessions().length === 0) {
+                  <p class="mt-3 text-xs text-muted-foreground">No hay sesiones activas registradas.</p>
+                } @else {
+                  <div class="mt-4 grid gap-3 lg:grid-cols-2">
+                    @for (session of sessions(); track session.id) {
+                      <div class="rounded-[1.25rem] border border-border bg-background/80 p-4">
+                        <div class="flex items-center justify-between gap-2">
+                          <p class="text-sm font-semibold text-foreground">Sesion</p>
+                          <span
+                            class="rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]"
+                            [class.bg-emerald-500/10]="isSessionActive(session)"
+                            [class.text-emerald-600]="isSessionActive(session)"
+                            [class.bg-muted]="!isSessionActive(session)"
+                            [class.text-muted-foreground]="!isSessionActive(session)"
+                          >
+                            {{ isSessionActive(session) ? 'activa' : 'expirada' }}
+                          </span>
+                        </div>
+                        <p class="mt-2 text-xs text-muted-foreground">{{ session.userAgent }}</p>
+                        <p class="mt-1 text-xs text-muted-foreground">IP {{ session.ipAddress }}</p>
+                        <p class="mt-1 text-xs text-muted-foreground">Ultima actividad: {{ formatDate(session.lastActive) }}</p>
+                        <p class="mt-1 text-xs text-muted-foreground">Expira: {{ formatDate(session.expiresAt) }}</p>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
             </sga-card>
           }
         </div>
@@ -346,8 +437,14 @@ export default class AccountSettingsPage {
   protected readonly activeSection = signal<SettingsSectionId>('general');
   protected readonly loadingUser = signal(false);
   protected readonly loadingAudit = signal(false);
+  protected readonly loadingSessions = signal(false);
+  protected readonly loadingEmailLogs = signal(false);
+  protected readonly loadingPreferences = signal(false);
   protected readonly userDetail = signal<AccountUserDetail | null>(null);
   protected readonly userAudit = signal<AccountAuditLog[]>([]);
+  protected readonly userSessions = signal<AccountSession[]>([]);
+  protected readonly userEmailLogs = signal<AccountEmailLog[]>([]);
+  protected readonly userPreferences = signal<AccountUserPreferences | null>(null);
   protected readonly currentTheme = computed(() => this.layout.currentTheme());
   protected readonly currentUser = computed(() => this.authFacade.getCurrentUser());
   protected readonly modules = computed(() => this.authFacade.getModules());
@@ -380,13 +477,13 @@ export default class AccountSettingsPage {
     newDeviceAlerts: true,
   });
   protected readonly sections = computed(() => [
-    { id: 'general' as SettingsSectionId, label: 'General', description: 'Cuenta, rol y datos personales.', icon: 'fa-solid fa-user' },
-    { id: 'appearance' as SettingsSectionId, label: 'Apariencia', description: 'Tema y entorno visual local.', icon: 'fa-solid fa-palette' },
-    { id: 'notifications' as SettingsSectionId, label: 'Notificaciones', description: 'Preferencias operativas del panel.', icon: 'fa-solid fa-bell' },
-    { id: 'email' as SettingsSectionId, label: 'Correo', description: 'Canales de contacto institucionales.', icon: 'fa-solid fa-envelope' },
-    { id: 'security' as SettingsSectionId, label: 'Seguridad', description: 'Estado de acceso y control.', icon: 'fa-solid fa-shield-halved' },
-    { id: 'logs' as SettingsSectionId, label: 'Logs', description: 'Auditoria reciente del usuario.', icon: 'fa-solid fa-clipboard-list' },
-    { id: 'sessions' as SettingsSectionId, label: 'Sesiones', description: 'Ultima actividad y datos de sesion.', icon: 'fa-solid fa-laptop' },
+    { id: 'general' as SettingsSectionId, label: 'General', description: 'Cuenta, rol y datos personales.', icon: 'fa-solid fa-user', count: null },
+    { id: 'appearance' as SettingsSectionId, label: 'Apariencia', description: 'Tema y entorno visual local.', icon: 'fa-solid fa-palette', count: null },
+    { id: 'notifications' as SettingsSectionId, label: 'Notificaciones', description: 'Preferencias persistidas.', icon: 'fa-solid fa-bell', count: null },
+    { id: 'email' as SettingsSectionId, label: 'Correo', description: 'Historial real de envio.', icon: 'fa-solid fa-envelope', count: this.userEmailLogs().length },
+    { id: 'security' as SettingsSectionId, label: 'Seguridad', description: 'Estado de acceso y control.', icon: 'fa-solid fa-shield-halved', count: null },
+    { id: 'logs' as SettingsSectionId, label: 'Logs', description: 'Auditoria reciente del usuario.', icon: 'fa-solid fa-clipboard-list', count: this.userAudit().length },
+    { id: 'sessions' as SettingsSectionId, label: 'Sesiones', description: 'Accesos activos y expirados.', icon: 'fa-solid fa-laptop', count: this.userSessions().length },
   ]);
   protected readonly themeOptions = computed(() => [
     { value: 'light' as ThemeConfig, label: 'Claro', description: 'Para oficinas con mucha luz y jornadas largas.' },
@@ -510,6 +607,9 @@ export default class AccountSettingsPage {
     ];
   });
 
+  protected readonly sessions = computed(() => this.userSessions());
+  protected readonly emailLogs = computed(() => this.userEmailLogs());
+
   constructor() {
     toObservable(this.currentUser)
       .pipe(
@@ -562,6 +662,90 @@ export default class AccountSettingsPage {
         this.userAudit.set(response?.data ?? []);
         this.loadingAudit.set(false);
       });
+
+    toObservable(this.currentUser)
+      .pipe(
+        tap((user) => {
+          if (user?.id) {
+            this.loadingSessions.set(true);
+          } else {
+            this.userSessions.set([]);
+          }
+        }),
+        switchMap((user) => {
+          if (!user?.id) {
+            this.loadingSessions.set(false);
+            return of(null);
+          }
+
+          return this.authApi.getCurrentUserSessions(user.id, 6).pipe(
+            catchError(() => of(null)),
+          );
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((response) => {
+        this.userSessions.set(response?.data ?? []);
+        this.loadingSessions.set(false);
+      });
+
+    toObservable(this.currentUser)
+      .pipe(
+        tap((user) => {
+          if (user?.id) {
+            this.loadingEmailLogs.set(true);
+          } else {
+            this.userEmailLogs.set([]);
+          }
+        }),
+        switchMap((user) => {
+          if (!user?.id) {
+            this.loadingEmailLogs.set(false);
+            return of(null);
+          }
+
+          return this.authApi.getCurrentUserEmailLogs(user.id, 6).pipe(
+            catchError(() => of(null)),
+          );
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((response) => {
+        this.userEmailLogs.set(response?.data ?? []);
+        this.loadingEmailLogs.set(false);
+      });
+
+    toObservable(this.currentUser)
+      .pipe(
+        tap((user) => {
+          if (user?.id) {
+            this.loadingPreferences.set(true);
+          } else {
+            this.userPreferences.set(null);
+          }
+        }),
+        switchMap((user) => {
+          if (!user?.id) {
+            this.loadingPreferences.set(false);
+            return of(null);
+          }
+
+          return this.authApi.getUserPreferences(user.id).pipe(
+            catchError(() => of(null)),
+          );
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((response) => {
+        this.userPreferences.set(response);
+        if (response?.preferences) {
+          this.preferences.update((state) => ({
+            ...state,
+            ...response.preferences,
+          }));
+        }
+        this.loadingPreferences.set(false);
+      });
   }
 
   protected setTheme(target: ThemeConfig) {
@@ -575,6 +759,19 @@ export default class AccountSettingsPage {
       ...state,
       [key]: !state[key],
     }));
+
+    const userId = this.currentUser()?.id;
+    if (!userId) return;
+
+    const payload = this.preferences();
+    this.authApi.updateUserPreferences(userId, payload).subscribe({
+      next: (response) => {
+        this.userPreferences.set(response);
+      },
+      error: () => {
+        // Non-blocking: keep local state even if persistence fails.
+      },
+    });
   }
 
   private formatDate(value?: string | null, fallback = 'No registrado') {
@@ -599,5 +796,11 @@ export default class AccountSettingsPage {
       default:
         return 'fa-solid fa-pen';
     }
+  }
+
+  protected isSessionActive(session: AccountSession) {
+    const date = new Date(session.expiresAt);
+    if (Number.isNaN(date.getTime())) return false;
+    return date.getTime() > Date.now();
   }
 }

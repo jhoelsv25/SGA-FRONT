@@ -2,7 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import {
   AccountAuditResponse,
+  AccountEmailLogResponse,
+  AccountSessionResponse,
   AccountUserDetail,
+  AccountUserPreferences,
   AuthResponse,
   LoginCredentials,
   RefreshTokenResponse,
@@ -64,6 +67,29 @@ export class AuthApi {
         limit,
       },
     });
+  }
+
+  getCurrentUserSessions(userId: string, limit = 6, activeOnly = false): Observable<AccountSessionResponse> {
+    return this.http.get<AccountSessionResponse>(`sessions/user/${userId}`, {
+      params: {
+        limit,
+        active: activeOnly,
+      },
+    });
+  }
+
+  getCurrentUserEmailLogs(userId: string, limit = 6): Observable<AccountEmailLogResponse> {
+    return this.http.get<AccountEmailLogResponse>(`email-logs/user/${userId}`, {
+      params: { limit },
+    });
+  }
+
+  getUserPreferences(userId: string): Observable<AccountUserPreferences> {
+    return this.http.get<AccountUserPreferences>(`user-preferences/${userId}`);
+  }
+
+  updateUserPreferences(userId: string, preferences: Record<string, any>): Observable<AccountUserPreferences> {
+    return this.http.patch<AccountUserPreferences>(`user-preferences/${userId}`, { preferences });
   }
 
   checkToken(): Observable<AuthResponse> {

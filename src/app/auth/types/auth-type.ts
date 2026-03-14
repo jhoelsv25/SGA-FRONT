@@ -114,6 +114,44 @@ export interface AccountAuditResponse {
   totalPages: number;
 }
 
+export interface AccountSession {
+  id: string;
+  sessionToken: string;
+  expiresAt: string;
+  lastActive: string;
+  userAgent: string;
+  ipAddress: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AccountSessionResponse {
+  data: AccountSession[];
+  total: number;
+}
+
+export interface AccountEmailLog {
+  id: string;
+  recipient: string;
+  subject: string;
+  body: string;
+  status: 'sent' | 'failed';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AccountEmailLogResponse {
+  data: AccountEmailLog[];
+  total: number;
+}
+
+export interface AccountUserPreferences {
+  id: string;
+  preferences: Record<string, any>;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface RoleResponse {
   role: RoleAuth;
   modules: Module[];
