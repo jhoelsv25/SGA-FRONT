@@ -41,7 +41,7 @@ export interface CurrentUserPerson {
 }
 
 export interface CurrentUserProfile {
-  type: 'admin' | 'director' | 'teacher' | 'student' | 'guardian' | 'user';
+  type: 'admin' | 'superadmin' | 'director' | 'subdirector' | 'teacher' | 'student' | 'guardian' | 'ugel' | 'guest' | 'user';
   roleLabel: string;
   code?: string;
   institution?: string | null;

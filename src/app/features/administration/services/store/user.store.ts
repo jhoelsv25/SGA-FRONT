@@ -89,7 +89,7 @@ export const UserStore = signalStore(
       return api.delete(id).pipe(
         tap({
           next: () => {
-            const filteredUsers = store.users().filter((u) => u.id !== +id);
+            const filteredUsers = store.users().filter((u) => u.id !== id);
             patchState(store, { users: filteredUsers, loading: false });
             toast.success('User deleted successfully');
           },

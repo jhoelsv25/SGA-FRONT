@@ -1,5 +1,5 @@
 import { DialogModalService } from '@shared/widgets/dialog-modal';
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 import { DataSource } from '@shared/widgets/data-source/data-source';
 import { HeaderDetail } from '@shared/widgets/header-detail/header-detail';
@@ -9,6 +9,7 @@ import { UserForm } from '../components/user-form/user-form';
 import { USER_HEADER_CONFIG } from '../config/header.config';
 import { USER_COLUMN } from '../config/column.config';
 import { USER_ACTIONS } from '../config/action.config';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'sga-users',
@@ -16,7 +17,7 @@ import { USER_ACTIONS } from '../config/action.config';
   templateUrl: './users.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class UsersPage {
+export default class UsersPage implements OnInit {
   private dialog = inject(DialogModalService);
   private store = inject(UserStore);
 
@@ -43,11 +44,18 @@ export default class UsersPage {
     this.store.loadAll({ page: p.page, size: p.size });
   }
 
+  ngOnInit() {
+    this.store.loadAll({ page: this.pagination().page, size: this.pagination().size });
+  }
+
   private openForm(current?: User | null) {
-    this.dialog.open(UserForm, {
+    const ref = this.dialog.open(UserForm, {
       data: { current: current ?? null },
       panelClass: 'dialog-top',
       width: '520px',
+    });
+    ref.closed.pipe(take(1)).subscribe(() => {
+      this.store.loadAll({ page: this.pagination().page, size: this.pagination().size });
     });
   }
 }

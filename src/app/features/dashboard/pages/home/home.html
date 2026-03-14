@@ -11,68 +11,74 @@
 
   <!-- Tarjetas de resumen -->
   <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-    <sga-card>
-      <div class="p-5 flex items-center gap-4">
-        <div class="w-12 h-12 rounded-lg bg-primary-100 dark:bg-primary-900 flex items-center justify-center">
-          <i class="fas fa-user-graduate text-xl text-primary-600 dark:text-primary-400"></i>
-        </div>
-        <div>
-          <p class="text-sm text-neutral-500 dark:text-neutral-400">Estudiantes</p>
-          @if (studentLoading()) {
-            <div class="h-7 w-16 bg-neutral-200 dark:bg-neutral-700 rounded animate-pulse"></div>
-          } @else {
-            <p class="text-2xl font-bold text-neutral-800 dark:text-neutral-100">{{ studentCount() }}</p>
-          }
-        </div>
-      </div>
-    </sga-card>
+    @if (dashboardLoading()) {
+      @for (item of [1,2,3,4]; track item) {
+        <sga-card>
+          <div class="p-5 flex items-center gap-4">
+            <div class="h-12 w-12 rounded-lg bg-neutral-200 dark:bg-neutral-700 animate-pulse"></div>
+            <div class="space-y-2">
+              <div class="h-3 w-24 bg-neutral-200 dark:bg-neutral-700 rounded animate-pulse"></div>
+              <div class="h-6 w-16 bg-neutral-200 dark:bg-neutral-700 rounded animate-pulse"></div>
+            </div>
+          </div>
+        </sga-card>
+      }
+    } @else {
+      @for (metric of dashboard()?.summary ?? []; track metric.id) {
+        <sga-card>
+          <div class="p-5 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-lg flex items-center justify-center" [class]="metric.color">
+              <i [class]="metric.icon" class="text-xl"></i>
+            </div>
+            <div>
+              <p class="text-sm text-neutral-500 dark:text-neutral-400">{{ metric.label }}</p>
+              <p class="text-2xl font-bold text-neutral-800 dark:text-neutral-100">{{ metric.value }}</p>
+              @if (metric.helper) {
+                <p class="text-xs text-neutral-400">{{ metric.helper }}</p>
+              }
+            </div>
+          </div>
+        </sga-card>
+      }
+    }
+  </section>
 
+  <!-- Grafico resumen -->
+  <section class="mb-8">
     <sga-card>
-      <div class="p-5 flex items-center gap-4">
-        <div class="w-12 h-12 rounded-lg bg-info-100 dark:bg-info-900 flex items-center justify-center">
-          <i class="fas fa-chalkboard-teacher text-xl text-info-600 dark:text-info-400"></i>
+      <div class="p-5">
+        <div class="mb-4">
+          <h2 class="text-lg font-semibold text-neutral-800 dark:text-neutral-100">Indicadores</h2>
+          <p class="text-sm text-neutral-500 dark:text-neutral-400">Resumen visual segun tu rol.</p>
         </div>
-        <div>
-          <p class="text-sm text-neutral-500 dark:text-neutral-400">Docentes</p>
-          @if (teacherLoading()) {
-            <div class="h-7 w-16 bg-neutral-200 dark:bg-neutral-700 rounded animate-pulse"></div>
-          } @else {
-            <p class="text-2xl font-bold text-neutral-800 dark:text-neutral-100">{{ teacherCount() }}</p>
-          }
-        </div>
-      </div>
-    </sga-card>
-
-    <sga-card>
-      <div class="p-5 flex items-center gap-4">
-        <div class="w-12 h-12 rounded-lg bg-success-100 dark:bg-success-900 flex items-center justify-center">
-          <i class="fas fa-calendar-check text-xl text-success-600 dark:text-success-400"></i>
-        </div>
-        <div>
-          <p class="text-sm text-neutral-500 dark:text-neutral-400">Período Actual</p>
-          <p class="text-2xl font-bold text-neutral-800 dark:text-neutral-100">2026</p>
-        </div>
-      </div>
-    </sga-card>
-
-    <sga-card>
-      <div class="p-5 flex items-center gap-4">
-        <div class="w-12 h-12 rounded-lg bg-warning-100 dark:bg-warning-900 flex items-center justify-center">
-          <i class="fas fa-school text-xl text-warning-600 dark:text-warning-400"></i>
-        </div>
-        <div>
-          <p class="text-sm text-neutral-500 dark:text-neutral-400">Estado</p>
-          <p class="text-lg font-bold text-success-600 dark:text-success-400">Activo</p>
-        </div>
+        @if (chartData().length > 0) {
+          <ngx-charts-bar-vertical
+            class="block h-64 w-full"
+            [results]="chartData()"
+            [xAxis]="true"
+            [yAxis]="true"
+            [legend]="false"
+            [showXAxisLabel]="true"
+            [showYAxisLabel]="true"
+            [xAxisLabel]="'Secciones'"
+            [yAxisLabel]="'Total'"
+            [roundEdges]="true"
+            [animations]="true"
+          />
+        } @else {
+          <div class="rounded-xl border border-dashed border-base-200 dark:border-base-300 p-6 text-sm text-neutral-500 dark:text-neutral-400">
+            No hay datos suficientes para mostrar el grafico.
+          </div>
+        }
       </div>
     </sga-card>
   </section>
 
   <!-- Accesos rápidos -->
-  <section>
+  <section class="mb-8">
     <h2 class="text-lg font-semibold text-neutral-800 dark:text-neutral-100 mb-4">Accesos Rápidos</h2>
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-      @for (link of quickLinks(); track link.route) {
+      @for (link of dashboard()?.quickLinks ?? []; track link.id) {
         <a [routerLink]="link.route"
            class="group flex flex-col items-center gap-3 p-5 rounded-xl border border-base-200 dark:border-base-300 bg-base-100 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer">
           <div class="w-11 h-11 rounded-lg flex items-center justify-center transition-transform group-hover:scale-110"
@@ -84,4 +90,34 @@
       }
     </div>
   </section>
+
+  <!-- Secciones por rol -->
+  <section class="grid gap-5 lg:grid-cols-2">
+    @for (section of dashboard()?.sections ?? []; track section.id) {
+      <sga-card>
+        <div class="p-5 space-y-3">
+          <div>
+            <h3 class="text-base font-semibold text-neutral-800 dark:text-neutral-100">{{ section.title }}</h3>
+            @if (section.description) {
+              <p class="text-sm text-neutral-500 dark:text-neutral-400">{{ section.description }}</p>
+            }
+          </div>
+          <div class="space-y-2">
+            @for (item of section.items; track item.label) {
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-neutral-600 dark:text-neutral-300">{{ item.label }}</span>
+                <span class="font-semibold text-neutral-800 dark:text-neutral-100">{{ item.value }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      </sga-card>
+    }
+  </section>
+
+  @if (!dashboardLoading() && !(dashboard())) {
+    <div class="mt-6 rounded-xl border border-dashed border-base-200 dark:border-base-300 p-5 text-sm text-neutral-500 dark:text-neutral-400">
+      No se pudo cargar la informacion del dashboard. Verifica tu sesion o el backend.
+    </div>
+  }
 </div>
