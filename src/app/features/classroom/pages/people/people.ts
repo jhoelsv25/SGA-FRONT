@@ -1,12 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
+import { AuthFacade } from '@auth/services/store/auth.acede';
 import { ClassroomStore } from '../../services/store/classroom.store';
-import { ClassroomApi } from '../../services/classroom-api';
-import { EnrollmentApi } from '@features/academic-setting/enrollments/services/enrollment-api';
-
-export type TeacherRow = { id: string; firstName: string; lastName: string; email?: string };
-export type StudentRow = { id: string; name: string; code: string };
+import { ClassroomApi, type ClassroomStudentRow, type ClassroomTeacherRow } from '../../services/classroom-api';
 
 @Component({
   selector: 'sga-classroom-people',
@@ -19,12 +16,13 @@ export default class People implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly store = inject(ClassroomStore);
   private readonly classroomApi = inject(ClassroomApi);
-  private readonly enrollmentApi = inject(EnrollmentApi);
+  private readonly authFacade = inject(AuthFacade);
 
-  teachers = signal<TeacherRow[]>([]);
-  students = signal<StudentRow[]>([]);
+  teachers = signal<ClassroomTeacherRow[]>([]);
+  students = signal<ClassroomStudentRow[]>([]);
   loadingTeachers = signal(true);
   loadingStudents = signal(true);
+  profileType = signal(this.authFacade.getCurrentUser()?.profile?.type ?? 'user');
 
   ngOnInit(): void {
     const sectionCourseId =
@@ -32,29 +30,17 @@ export default class People implements OnInit {
       (this.route.parent?.snapshot?.paramMap?.get('id') ?? '');
     if (!sectionCourseId) return;
 
-    this.classroomApi.getTeachers(sectionCourseId).subscribe({
-      next: (list) => {
-        this.teachers.set(list ?? []);
+    this.classroomApi.getPeople(sectionCourseId).subscribe({
+      next: (response) => {
+        this.teachers.set(response?.teachers ?? []);
+        this.students.set(response?.students ?? []);
         this.loadingTeachers.set(false);
-      },
-      error: () => {
-        this.teachers.set([]);
-        this.loadingTeachers.set(false);
-      },
-    });
-
-    this.enrollmentApi.getAll({ sectionCourse: sectionCourseId }).subscribe({
-      next: (res) => {
-        const rows: StudentRow[] = (res.data ?? []).map((e) => ({
-          id: e.student.id,
-          name: `${e.student.firstName} ${e.student.lastName}`.trim() || e.student.studentCode,
-          code: e.student.studentCode ?? '',
-        }));
-        this.students.set(rows);
         this.loadingStudents.set(false);
       },
       error: () => {
+        this.teachers.set([]);
         this.students.set([]);
+        this.loadingTeachers.set(false);
         this.loadingStudents.set(false);
       },
     });

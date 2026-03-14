@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AuthFacade } from '@auth/services/store/auth.acede';
 import { Button } from '@shared/directives';
 import { Input } from '@shared/adapters/ui/input/input';
 import { Textarea } from '@shared/widgets/ui/textarea/textarea';
@@ -17,12 +18,19 @@ import { ClassroomStore } from '../../services/store/classroom.store';
 })
 export default class Timeline {
   public readonly store = inject(ClassroomStore);
+  private readonly authFacade = inject(AuthFacade);
   
   public postContent = signal('');
   public attachments = signal<{ url: string; name: string }[]>([]);
   public isAssignment = signal(false);
+  readonly profileType = computed(() => this.authFacade.getCurrentUser()?.profile?.type ?? 'user');
+  readonly canPublish = computed(() => {
+    const type = this.profileType();
+    return type === 'teacher' || type === 'admin' || type === 'director';
+  });
 
   onFileSelected(event: Event) {
+    if (!this.canPublish()) return;
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (file) {
@@ -38,6 +46,7 @@ export default class Timeline {
   }
 
   publish() {
+    if (!this.canPublish()) return;
     const sectionId = this.store.selectedSectionId();
     if (!sectionId) return;
 

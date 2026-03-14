@@ -52,6 +52,10 @@ export class ClassroomApi {
     );
   }
 
+  getPeople(sectionCourseId: string): Observable<ClassroomPeopleResponse> {
+    return this.http.get<ClassroomPeopleResponse>(`${this.baseUrl}/${sectionCourseId}/people`);
+  }
+
   /** Tareas/entregas del aula. Backend: GET classroom/:sectionCourseId/tasks */
   getTasks(sectionCourseId: string): Observable<ClassroomTask[]> {
     return this.http.get<ClassroomTask[]>(`${this.baseUrl}/${sectionCourseId}/tasks`);
@@ -66,9 +70,22 @@ export interface ClassroomTask {
   id: string;
   title: string;
   date: string;
-  status: 'pending' | 'delivered' | 'graded';
+  status: 'pending' | 'delivered' | 'graded' | 'late';
   points: number;
   grade?: number;
+  submissionSummary?: {
+    deliveredCount: number;
+    gradedCount: number;
+    pendingCount: number;
+  };
+  studentSubmissions?: Array<{
+    studentId?: string;
+    studentName: string;
+    status: 'pending' | 'delivered' | 'graded' | 'late';
+    score?: number;
+    submittedAt?: string;
+    feedback?: string;
+  }>;
 }
 
 export interface ClassroomGradeScore {
@@ -77,6 +94,24 @@ export interface ClassroomGradeScore {
   studentName: string;
   score: number;
   observation?: string;
+}
+
+export interface ClassroomTeacherRow {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email?: string;
+}
+
+export interface ClassroomStudentRow {
+  id: string;
+  name: string;
+  code: string;
+}
+
+export interface ClassroomPeopleResponse {
+  teachers: ClassroomTeacherRow[];
+  students: ClassroomStudentRow[];
 }
 
 export interface ClassroomGradeRecord {

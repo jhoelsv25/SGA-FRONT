@@ -1,32 +1,55 @@
-<div class="space-y-8 animate-in fade-in duration-300">
-  <div>
-    <h2 class="text-xl font-bold text-base-content">Personas de la clase</h2>
-    <p class="text-sm text-base-content/60 mt-1">Docentes y estudiantes de este curso.</p>
-  </div>
+<div class="space-y-8">
+  <section class="rounded-[2rem] border border-border bg-card p-6 shadow-sm">
+    <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <h2 class="text-2xl font-semibold tracking-tight text-foreground">Personas del aula</h2>
+        <p class="mt-2 text-sm text-muted-foreground">
+          @if (profileType() === 'student') {
+            Docente del curso y companeros visibles para tu aula.
+          } @else if (profileType() === 'guardian') {
+            Docente del curso y estudiantes vinculados a tu cuenta.
+          } @else {
+            Vista general de docentes y estudiantes del curso-seccion.
+          }
+        </p>
+      </div>
 
-  <div class="bg-base-100 rounded-2xl border border-base-200 shadow-sm overflow-hidden">
-    <div class="px-6 py-4 border-b border-base-200 bg-base-200/30">
-      <h3 class="font-semibold text-base-content flex items-center gap-2">
+      <div class="grid gap-3 sm:grid-cols-2">
+        <div class="rounded-xl border border-border bg-background/80 px-4 py-4">
+          <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Docentes</p>
+          <p class="mt-2 text-2xl font-semibold text-foreground">{{ teachers().length }}</p>
+        </div>
+        <div class="rounded-xl border border-border bg-background/80 px-4 py-4">
+          <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Estudiantes</p>
+          <p class="mt-2 text-2xl font-semibold text-foreground">{{ students().length }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="rounded-[2rem] border border-border bg-card shadow-sm overflow-hidden">
+    <div class="border-b border-border/70 px-6 py-4">
+      <h3 class="flex items-center gap-2 font-semibold text-foreground">
         <i class="fas fa-chalkboard-teacher text-primary"></i>
         Docentes
       </h3>
     </div>
     <div class="p-6">
       @if (loadingTeachers()) {
-        <p class="text-sm text-base-content/50 py-4">Cargando docentes...</p>
+        <p class="py-4 text-sm text-muted-foreground">Cargando docentes...</p>
       } @else if (teachers().length === 0) {
-        <p class="text-sm text-base-content/50 py-4">No hay docentes asignados a este curso.</p>
+        <p class="py-4 text-sm text-muted-foreground">No hay docentes asignados a este curso.</p>
       } @else {
         <ul class="grid gap-3 sm:grid-cols-2">
           @for (t of teachers(); track t.id) {
-            <li class="flex items-center gap-4 p-4 rounded-xl bg-base-100 border border-base-200 hover:border-primary/30 hover:bg-primary/5 transition-colors">
-              <div class="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold shrink-0">
+            <li class="flex items-center gap-4 rounded-xl border border-border bg-background/80 p-4 transition-colors hover:border-primary/30 hover:bg-primary/5">
+              <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 font-bold text-primary">
                 {{ t.firstName[0] || '' }}{{ t.lastName[0] || '' }}
               </div>
               <div class="min-w-0">
-                <p class="font-semibold text-base-content truncate">{{ t.firstName }} {{ t.lastName }}</p>
+                <p class="truncate font-semibold text-foreground">{{ t.firstName }} {{ t.lastName }}</p>
                 @if (t.email) {
-                  <p class="text-xs text-base-content/60 truncate">{{ t.email }}</p>
+                  <p class="truncate text-xs text-muted-foreground">{{ t.email }}</p>
                 }
               </div>
             </li>
@@ -36,29 +59,29 @@
     </div>
   </div>
 
-  <div class="bg-base-100 rounded-2xl border border-base-200 shadow-sm overflow-hidden">
-    <div class="px-6 py-4 border-b border-base-200 bg-base-200/30">
-      <h3 class="font-semibold text-base-content flex items-center gap-2">
+  <div class="rounded-[2rem] border border-border bg-card shadow-sm overflow-hidden">
+    <div class="border-b border-border/70 px-6 py-4">
+      <h3 class="flex items-center gap-2 font-semibold text-foreground">
         <i class="fas fa-user-graduate text-primary"></i>
         Estudiantes
       </h3>
     </div>
     <div class="p-6">
       @if (loadingStudents()) {
-        <p class="text-sm text-base-content/50 py-4">Cargando estudiantes...</p>
+        <p class="py-4 text-sm text-muted-foreground">Cargando estudiantes...</p>
       } @else if (students().length === 0) {
-        <p class="text-sm text-base-content/50 py-4">No hay estudiantes matriculados en este curso.</p>
+        <p class="py-4 text-sm text-muted-foreground">No hay estudiantes visibles para este curso.</p>
       } @else {
         <ul class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           @for (s of students(); track s.id) {
-            <li class="flex items-center gap-4 p-4 rounded-xl bg-base-100 border border-base-200 hover:border-primary/30 hover:bg-primary/5 transition-colors">
-              <div class="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold shrink-0">
+            <li class="flex items-center gap-4 rounded-xl border border-border bg-background/80 p-4 transition-colors hover:border-primary/30 hover:bg-primary/5">
+              <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 font-bold text-primary">
                 {{ s.name[0] || '?' }}
               </div>
               <div class="min-w-0">
-                <p class="font-semibold text-base-content truncate">{{ s.name }}</p>
+                <p class="truncate font-semibold text-foreground">{{ s.name }}</p>
                 @if (s.code) {
-                  <p class="text-xs text-base-content/60">{{ s.code }}</p>
+                  <p class="text-xs text-muted-foreground">{{ s.code }}</p>
                 }
               </div>
             </li>

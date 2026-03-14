@@ -1,66 +1,78 @@
 <div class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-12">
-  
-  <!-- Publishing Area -->
-  <sga-card class="shadow-sm">
-    <div class="p-6 pt-0 pt-6">
-      <div class="flex items-start gap-4">
-        <div class="w-10 h-10 rounded-full bg-primary/10 border-2 border-base-100 shadow-sm shrink-0 flex items-center justify-center font-bold text-primary">JP</div>
-        <div class="flex-1 space-y-4">
-          <sga-textarea
-            [ngModel]="postContent()"
-            (ngModelChange)="postContent.set($event)"
-            placeholder="Anuncia algo a tu clase..."
-            class="resize-none"
-            [rows]="3"
-          ></sga-textarea>
-          
-          <!-- Attachments Preview -->
-          @if (attachments().length > 0) {
-            <div class="flex flex-wrap gap-2 px-2">
-              @for (file of attachments(); track $index) {
-                <div class="flex items-center gap-2 bg-primary/5 px-3 py-1.5 rounded-lg border border-primary/20 text-[11px] font-bold text-primary group">
-                  <i class="fa-solid fa-paperclip"></i>
-                  <span class="max-w-[150px] truncate">{{ file.name }}</span>
-                  <button (click)="removeAttachment($index)" class="text-primary/50 hover:text-red-500 transition-colors">
-                    <i class="fa-solid fa-xmark"></i>
-                  </button>
-                </div>
-              }
-            </div>
-          }
+  @if (canPublish()) {
+    <sga-card class="shadow-sm">
+      <div class="p-6 pt-0 pt-6">
+        <div class="flex items-start gap-4">
+          <div class="w-10 h-10 rounded-full bg-primary/10 border-2 border-base-100 shadow-sm shrink-0 flex items-center justify-center font-bold text-primary">JP</div>
+          <div class="flex-1 space-y-4">
+            <sga-textarea
+              [ngModel]="postContent()"
+              (ngModelChange)="postContent.set($event)"
+              placeholder="Anuncia algo a tu clase..."
+              class="resize-none"
+              [rows]="3"
+            ></sga-textarea>
 
-          <div class="flex justify-between items-center">
-            <div class="flex items-center gap-2">
-              <!-- Hidden File Input -->
-              <input type="file" #fileInput class="hidden" (change)="onFileSelected($event)">
-              <button type="button" sgaButton variant="ghost" color="secondary" size="sm" (click)="fileInput.click()" title="Adjuntar archivo">
-                <i class="fa-solid fa-paperclip"></i>
-              </button>
+            @if (attachments().length > 0) {
+              <div class="flex flex-wrap gap-2 px-2">
+                @for (file of attachments(); track $index) {
+                  <div class="flex items-center gap-2 bg-primary/5 px-3 py-1.5 rounded-lg border border-primary/20 text-[11px] font-bold text-primary group">
+                    <i class="fa-solid fa-paperclip"></i>
+                    <span class="max-w-[150px] truncate">{{ file.name }}</span>
+                    <button (click)="removeAttachment($index)" class="text-primary/50 hover:text-red-500 transition-colors">
+                      <i class="fa-solid fa-xmark"></i>
+                    </button>
+                  </div>
+                }
+              </div>
+            }
+
+            <div class="flex justify-between items-center">
+              <div class="flex items-center gap-2">
+                <input type="file" #fileInput class="hidden" (change)="onFileSelected($event)">
+                <button type="button" sgaButton variant="ghost" color="secondary" size="sm" (click)="fileInput.click()" title="Adjuntar archivo">
+                  <i class="fa-solid fa-paperclip"></i>
+                </button>
+                <button
+                  type="button"
+                  sgaButton
+                  [color]="isAssignment() ? 'primary' : 'secondary'"
+                  [variant]="isAssignment() ? 'solid' : 'ghost'"
+                  size="sm"
+                  (click)="isAssignment.set(!isAssignment())"
+                >
+                  <i class="fa-solid fa-list-check mr-2"></i> Tarea
+                </button>
+              </div>
               <button
                 type="button"
                 sgaButton
-                [color]="isAssignment() ? 'primary' : 'secondary'"
-                [variant]="isAssignment() ? 'solid' : 'ghost'"
-                size="sm"
-                (click)="isAssignment.set(!isAssignment())"
+                color="primary"
+                [disabled]="!postContent() && attachments().length === 0"
+                (click)="publish()"
               >
-                <i class="fa-solid fa-list-check mr-2"></i> Tarea
+                Publicar
               </button>
             </div>
-            <button
-              type="button"
-              sgaButton
-              color="primary"
-              [disabled]="!postContent() && attachments().length === 0"
-              (click)="publish()"
-            >
-              Publicar
-            </button>
           </div>
         </div>
       </div>
-    </div>
-  </sga-card>
+    </sga-card>
+  } @else {
+    <section class="rounded-[2rem] border border-border bg-card p-6 shadow-sm">
+      <div class="flex items-start gap-4">
+        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+          <i class="fa-solid fa-bullhorn"></i>
+        </div>
+        <div>
+          <h2 class="text-lg font-semibold text-foreground">Muro del aula</h2>
+          <p class="mt-1 text-sm text-muted-foreground">
+            Puedes revisar publicaciones, materiales y tareas del curso. La creacion de anuncios esta disponible para docentes y personal de gestion.
+          </p>
+        </div>
+      </div>
+    </section>
+  }
 
   <!-- Feed Area -->
   <div class="space-y-6">

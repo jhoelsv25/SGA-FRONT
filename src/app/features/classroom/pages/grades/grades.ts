@@ -10,6 +10,15 @@ import {
 } from '../../services/classroom-api';
 import { ClassroomStore } from '../../services/store/classroom.store';
 
+type StudentHistoryItem = {
+  recordId: string;
+  assessment: string;
+  date: string;
+  score: number;
+  total: number;
+  observation: string | undefined;
+};
+
 @Component({
   selector: 'sga-classroom-grades',
   standalone: true,
@@ -56,8 +65,22 @@ export default class Grades implements OnInit {
     return type === 'teacher' || type === 'admin' || type === 'director';
   });
   readonly studentOptions = computed(() => {
-    const record = this.selectedRecord();
-    return record?.scores ?? [];
+    const map = new Map<string, { studentId: string; studentName: string; assessments: number }>();
+
+    for (const record of this.records()) {
+      for (const score of record.scores) {
+        if (!score.studentId) continue;
+
+        const current = map.get(score.studentId);
+        map.set(score.studentId, {
+          studentId: score.studentId,
+          studentName: score.studentName,
+          assessments: (current?.assessments ?? 0) + 1,
+        });
+      }
+    }
+
+    return Array.from(map.values()).sort((left, right) => left.studentName.localeCompare(right.studentName));
   });
   readonly selectedStudent = computed(() => {
     const studentId = this.selectedStudentId();
@@ -66,10 +89,10 @@ export default class Grades implements OnInit {
   });
   readonly selectedStudentHistory = computed(() => {
     const student = this.selectedStudent();
-    if (!student) return [];
+    if (!student) return [] as StudentHistoryItem[];
 
     return this.records()
-      .map((record) => {
+      .map<StudentHistoryItem | null>((record) => {
         const score = record.scores.find((item) => item.studentId === student.studentId);
         if (!score) return null;
         return {
@@ -81,12 +104,18 @@ export default class Grades implements OnInit {
           observation: score.observation,
         };
       })
-      .filter(Boolean);
+      .filter((item): item is StudentHistoryItem => item !== null);
   });
   readonly selectedStudentAverage = computed(() => {
     const history = this.selectedStudentHistory();
     if (!history.length) return 0;
-    return history.reduce((acc, item) => acc + item!.score, 0) / history.length;
+    return history.reduce((acc, item) => acc + item.score, 0) / history.length;
+  });
+  readonly selectedStudentCompletion = computed(() => {
+    const history = this.selectedStudentHistory();
+    const totalAssessments = this.summary().assessments;
+    if (!history.length || totalAssessments === 0) return 0;
+    return Math.round((history.length / totalAssessments) * 100);
   });
 
   ngOnInit(): void {
@@ -104,7 +133,7 @@ export default class Grades implements OnInit {
         this.records.set(response?.data ?? []);
         this.summary.set(response?.summary ?? { assessments: 0, scores: 0, average: 0 });
         this.selectedRecordId.set(response?.data?.[0]?.id ?? null);
-        this.selectedStudentId.set(response?.data?.[0]?.scores?.[0]?.studentId ?? null);
+        this.selectedStudentId.set(this.getDefaultStudentId(response?.data ?? []));
         this.loading.set(false);
       },
       error: () => {
@@ -119,8 +148,6 @@ export default class Grades implements OnInit {
 
   selectRecord(id: string) {
     this.selectedRecordId.set(id);
-    const nextRecord = this.records().find((item) => item.id === id);
-    this.selectedStudentId.set(nextRecord?.scores?.[0]?.studentId ?? null);
   }
 
   selectStudent(studentId: string) {
@@ -132,5 +159,14 @@ export default class Grades implements OnInit {
     if (ratio >= 0.85) return 'success';
     if (ratio >= 0.65) return 'info';
     return 'danger';
+  }
+
+  private getDefaultStudentId(records: ClassroomGradeRecord[]) {
+    for (const record of records) {
+      const studentId = record.scores[0]?.studentId;
+      if (studentId) return studentId;
+    }
+
+    return null;
   }
 }
