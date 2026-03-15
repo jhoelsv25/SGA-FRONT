@@ -139,7 +139,6 @@ const FA_TO_ZARD: Record<string, ZardIcon> = {
   'fa-laptop': 'monitor',
   'fa-tablet-screen-button': 'tablet',
   'fa-mobile-screen-button': 'smartphone',
-  'fa-users-cog': 'settings',
   'fa-sitemap': 'layers-2',
   'fa-layer-group': 'layers',
   'fa-th': 'layout-dashboard',
@@ -160,20 +159,12 @@ const FA_TO_ZARD: Record<string, ZardIcon> = {
   'fa-spinner': 'loader-circle',
   'fa-circle': 'circle',
   'fa-circle-check': 'circle-check',
-  'fa-circle-info': 'circle-alert',
-  'fa-file-lines': 'file-text',
-  'fa-file-export': 'file-text',
   'fa-door-open': 'move-right',
   'fa-link': 'move-right',
   'fa-people-roof': 'users',
   'fa-money-bill-wave': 'dollar-sign',
   'fa-microchip': 'terminal',
-  'fa-bullhorn': 'bell',
   'fa-signal': 'activity',
-  'fa-clipboard-check': 'clipboard',
-  'fa-clipboard-list': 'clipboard',
-  'fa-file-invoice-dollar': 'credit-card',
-  'fa-comment-medical': 'mail',
 };
 
 export function toZardIcon(icon: string): ZardIcon {

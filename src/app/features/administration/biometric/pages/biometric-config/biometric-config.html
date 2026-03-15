@@ -1,0 +1,72 @@
+<div class="space-y-6">
+  <sga-header-detail
+    [config]="{
+      title: 'Biométrico ZKTeco',
+      subtitle: 'Configura la IP y el puerto del dispositivo de asistencia.',
+      showFilters: false,
+      showActions: false,
+      showSelection: false
+    }"
+  />
+
+  <div class="rounded-2xl border border-border bg-card p-6 shadow-sm">
+    <div class="grid gap-4 md:grid-cols-2">
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">IP del dispositivo</label>
+        <sga-input type="text" placeholder="192.168.1.106" [formControl]="form.controls.ip" />
+      </div>
+
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">Puerto</label>
+        <sga-input type="number" placeholder="4370" [formControl]="form.controls.port" />
+      </div>
+
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">Timeout (ms)</label>
+        <sga-input type="number" placeholder="5000" [formControl]="form.controls.timeout" />
+      </div>
+
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">Inport</label>
+        <sga-input type="number" placeholder="5200" [formControl]="form.controls.inport" />
+      </div>
+    </div>
+
+    <div class="mt-4 flex items-center gap-2">
+      <sga-checkbox
+        [checked]="form.controls.isActive.value ?? false"
+        (changeOutput)="form.controls.isActive.setValue($event)"
+      >
+        Activar dispositivo
+      </sga-checkbox>
+    </div>
+
+    @if (error()) {
+      <div class="mt-4 rounded-lg border border-destructive/20 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+        {{ error() }}
+      </div>
+    }
+
+    @if (success()) {
+      <div class="mt-4 rounded-lg border border-success/20 bg-success/10 px-3 py-2 text-sm text-success">
+        {{ success() }}
+      </div>
+    }
+
+    <div class="mt-6 flex items-center gap-3">
+      <button
+        sgaButton
+        variant="solid"
+        color="primary"
+        size="md"
+        (click)="save()"
+        [disabled]="saving()"
+      >
+        {{ saving() ? 'Guardando...' : 'Guardar configuración' }}
+      </button>
+      <button sgaButton variant="outline" color="secondary" size="md" (click)="load()" [disabled]="loading()">
+        {{ loading() ? 'Cargando...' : 'Recargar' }}
+      </button>
+    </div>
+  </div>
+</div>

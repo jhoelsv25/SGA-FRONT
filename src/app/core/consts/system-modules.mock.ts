@@ -567,6 +567,14 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         permissions: ['view_audit_log'],
         visibility: Visibility.PUBLIC,
       },
+           {
+        id: 'bimetrico',
+        icon: 'fa-file-search',
+        label: 'Bimetrico',
+        route: '/administration/bimetric',
+        permissions: ['view_bimetrico'],
+        visibility: Visibility.PUBLIC,
+      },
     ],
   },
 ];

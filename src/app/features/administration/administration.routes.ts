@@ -44,6 +44,12 @@ export default [
     data: { permissions: ['view_audit_log'] },
   },
   {
+    path: 'biometric',
+    loadComponent: () => import('./biometric/pages/biometric-config/biometric-config'),
+    title: 'Biométrico',
+    data: { permissions: ['manage_institution'] },
+  },
+  {
     path: '',
     redirectTo: 'institution',
     pathMatch: 'full'
