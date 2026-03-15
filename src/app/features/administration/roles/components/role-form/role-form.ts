@@ -2,8 +2,8 @@ import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ZardButtonComponent } from '@shared/components/button';
-import { ZardIconComponent } from '@shared/components/icon';
+import { Button } from '@shared/directives';
+import { Input } from '@shared/adapters/ui/input/input';
 import { ZardInputDirective } from '@shared/components/input';
 import { ZardInputGroupComponent } from '@shared/components/input-group';
 import { ZardSwitchComponent } from '@shared/components/switch';
@@ -20,8 +20,8 @@ interface RoleFormData {
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    ZardButtonComponent,
-    ZardIconComponent,
+    Button,
+    Input,
     ZardInputDirective,
     ZardInputGroupComponent,
     ZardSwitchComponent,

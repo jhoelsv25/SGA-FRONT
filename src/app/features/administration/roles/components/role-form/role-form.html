@@ -1,7 +1,7 @@
 <section class="relative space-y-4">
   <header class="relative flex justify-between space-y-1.5 bg-base-200/20 items-center">
     <div class="flex items-center gap-2">
-      <z-icon zType="info" class="w-4 h-4" />
+      <i class="fas fa-info-circle w-4 h-4 text-base-content/60"></i>
       <span class="flex flex-col gap-1">
         <h2 class="text-2xl font-semibold leading-none text-base-content tracking-tight">
           {{ title }}
@@ -10,8 +10,8 @@
       </span>
     </div>
 
-    <button type="button" z-button zType="ghost" zSize="sm" (click)="close()">
-      <z-icon zType="x" />
+    <button type="button" sgaButton variant="ghost" size="sm" (click)="close()">
+      <i class="fas fa-times"></i>
     </button>
   </header>
 
@@ -23,15 +23,11 @@
           class="text-xs font-bold uppercase tracking-wider text-base-content/50 ml-1"
           >Nombre del Rol</label
         >
-        <z-input-group>
-          <input
-            id="role-name"
-            z-input
-            type="text"
-            formControlName="name"
-            placeholder="Ej: Administrador de Académico"
-          />
-        </z-input-group>
+        <sga-input
+          id="role-name"
+          formControlName="name"
+          placeholder="Ej: Administrador de Académico"
+        />
       </div>
 
       <div class="space-y-2">
@@ -68,9 +64,9 @@
   <div
     class="flex items-center gap-2 justify-end pt-6 border-t border-base-200 bg-base-200/50 sm:space-x-2"
   >
-    <button type="button" z-button zType="outline" (click)="close()">Cancelar</button>
-    <button type="submit" z-button zType="default" form="role-form" [disabled]="form.invalid">
-      <z-icon zType="save" class="mr-2 h-4 w-4" />
+    <button type="button" sgaButton variant="outline" (click)="close()">Cancelar</button>
+    <button type="submit" sgaButton color="primary" form="role-form" [disabled]="form.invalid">
+      <i class="fas fa-save mr-2 h-4 w-4"></i>
       {{ current ? 'Actualizar' : 'Crear' }} Rol
     </button>
   </div>
