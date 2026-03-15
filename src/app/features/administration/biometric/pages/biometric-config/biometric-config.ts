@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { BiometricConfigApi, type BiometricConfig } from '@features/administration/services/api/biometric-config-api';
+import { BiometricConfigApi, type BiometricConfig, type BiometricStatus } from '@features/administration/services/api/biometric-config-api';
 import { HeaderDetail } from '@shared/widgets/header-detail/header-detail';
 import { Input } from '@shared/adapters/ui/input/input';
 import { Checkbox } from '@shared/widgets/ui/checkbox/checkbox';
@@ -22,6 +22,8 @@ export default class BiometricConfigPage {
   saving = signal(false);
   error = signal<string | null>(null);
   success = signal<string | null>(null);
+  status = signal<BiometricStatus | null>(null);
+  checking = signal(false);
 
   form = this.fb.group({
     ip: ['', [Validators.required]],
@@ -33,6 +35,7 @@ export default class BiometricConfigPage {
 
   constructor() {
     this.load();
+    this.checkStatus();
   }
 
   load() {
@@ -51,6 +54,20 @@ export default class BiometricConfigPage {
     });
   }
 
+  checkStatus() {
+    this.checking.set(true);
+    this.api.status().subscribe({
+      next: (data) => {
+        this.status.set(data);
+        this.checking.set(false);
+      },
+      error: () => {
+        this.status.set(null);
+        this.checking.set(false);
+      },
+    });
+  }
+
   save() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -65,6 +82,7 @@ export default class BiometricConfigPage {
     this.api.update(payload).subscribe({
       next: () => {
         this.success.set('Configuración guardada correctamente.');
+        this.checkStatus();
         this.saving.set(false);
       },
       error: () => {

@@ -123,6 +123,7 @@ const FA_TO_ZARD: Record<string, ZardIcon> = {
   'fa-briefcase': 'folder',
   'fa-building': 'square-library',
   'fa-id-badge': 'badge-check',
+  'fa-fingerprint': 'badge-check',
   'fa-receipt': 'file-text',
   'fa-save': 'save',
   'fa-right-from-bracket': 'log-out',

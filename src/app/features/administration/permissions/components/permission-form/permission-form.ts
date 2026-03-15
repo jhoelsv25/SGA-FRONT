@@ -37,7 +37,7 @@ export class PermissionForm implements OnInit {
       name: [this.current?.name ?? '', [Validators.required, Validators.minLength(3)]],
       slug: [this.current?.slug ?? '', [Validators.required]],
       module: [this.current?.module ?? '', [Validators.required]],
-      scope: [this.current?.scope ?? 'global', [Validators.required]],
+      scope: [this.current?.scope ?? 'shared', [Validators.required]],
       description: [this.current?.description ?? ''],
     });
   }

@@ -13,23 +13,28 @@
     </div>
 
     <button type="button" sgaButton color="primary" variant="outline" (click)="openManualDialog()">
-      <i class="fas fa-plus mr-2"></i>
+      <z-icon zType="plus" class="h-4 w-4 mr-2" />
       Registro manual
     </button>
 
     <button type="button" sgaButton color="primary" variant="outline" (click)="openImportDialog()">
-      <i class="fas fa-file-import mr-2"></i>
+      <z-icon zType="file-text" class="h-4 w-4 mr-2" />
       Importar Excel
     </button>
 
     <button type="button" sgaButton color="primary" variant="outline" (click)="downloadTemplate()">
-      <i class="fas fa-download mr-2"></i>
+      <z-icon zType="arrow-down" class="h-4 w-4 mr-2" />
       Plantilla Excel
     </button>
 
     <button type="button" sgaButton color="secondary" variant="outline" (click)="loadTeachers()">
-      <i class="fas fa-sync-alt mr-2"></i>
+      <z-icon zType="loader-circle" class="h-4 w-4 mr-2" />
       Recargar
+    </button>
+
+    <button type="button" sgaButton color="primary" variant="outline" (click)="syncBiometricNow()">
+      <z-icon zType="activity" class="h-4 w-4 mr-2" />
+      {{ syncingBiometric() ? 'Sincronizando...' : 'Sincronizar biométrico' }}
     </button>
 
     <div class="ml-auto flex items-center gap-2">
@@ -45,9 +50,9 @@
         aria-label="Guardar asistencia manual"
       >
         @if (saving()) {
-          <i class="fas fa-spinner fa-spin mr-2"></i>
+          <z-icon zType="loader-circle" class="h-4 w-4 mr-2 animate-spin" />
         } @else {
-          <i class="fas fa-save"></i>
+          <z-icon zType="save" class="h-4 w-4" />
         }
       </button>
 
@@ -62,9 +67,9 @@
         class="!h-10 !w-10 !px-0 flex items-center justify-center"
       >
         @if (deleting()) {
-          <i class="fas fa-spinner fa-spin mr-2"></i>
+          <z-icon zType="loader-circle" class="h-4 w-4 mr-2 animate-spin" />
         } @else {
-          <i class="fas fa-trash"></i>
+          <z-icon zType="trash" class="h-4 w-4" />
         }
       </button>
     </div>

@@ -13,6 +13,7 @@ import {
 } from '@features/teachers/types/teacher-attendance-types';
 import { Button } from '@shared/directives';
 import { HeaderDetail } from '@shared/widgets/header-detail/header-detail';
+import { ZardIconComponent } from '@shared/components/icon';
 import { ImportDialog } from '@shared/widgets/import-dialog/import-dialog';
 import { Input } from '@shared/adapters/ui/input/input';
 import { forkJoin, map } from 'rxjs';
@@ -46,7 +47,7 @@ const HEADER_CONFIG = {
 @Component({
   selector: 'sga-teacher-attendances',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderDetail, Input, Button],
+  imports: [CommonModule, FormsModule, HeaderDetail, Input, Button, ZardIconComponent],
   templateUrl: './teacher-attendances.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -57,7 +58,7 @@ export default class TeacherAttendancesPage implements OnInit {
   private readonly excel = inject(ExcelService);
   private readonly toast = inject(Toast);
 
-  readonly headerConfig = HEADER_CONFIG;
+  readonly headerConfig = { ...HEADER_CONFIG, showActions: false, showFilters: false, showSelection: false };
   readonly attendanceDate = signal(new Date().toISOString().slice(0, 10));
   readonly teachers = signal<{ id: string; teacherCode: string; specialization: string }[]>([]);
   readonly rows = signal<TeacherAttendanceRow[]>([]);
@@ -66,6 +67,7 @@ export default class TeacherAttendancesPage implements OnInit {
   readonly deleting = signal(false);
   readonly bulkDeleteMode = signal(false);
   readonly rowSyncing = signal<Set<string>>(new Set());
+  readonly syncingBiometric = signal(false);
 
   ngOnInit(): void {
     this.loadTeachers();
@@ -480,6 +482,24 @@ export default class TeacherAttendancesPage implements OnInit {
   private loadAttendancesByDate(): void {
     if (this.teachers().length === 0) return;
 
+    this.syncingBiometric.set(true);
+    this.teacherAttendanceApi.syncBiometric(this.attendanceDate()).subscribe({
+      next: () => {
+        this.syncingBiometric.set(false);
+        this.fetchAttendances();
+      },
+      error: () => {
+        this.syncingBiometric.set(false);
+        this.fetchAttendances();
+      },
+    });
+  }
+
+  syncBiometricNow(): void {
+    this.loadAttendancesByDate();
+  }
+
+  private fetchAttendances(): void {
     this.teacherAttendanceApi.getAll({ date: this.attendanceDate() }).subscribe({
       next: (res) => {
         const selectedAttendanceIds = new Set(

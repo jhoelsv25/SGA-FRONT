@@ -11,6 +11,13 @@ export interface BiometricConfig {
   isActive: boolean;
 }
 
+export interface BiometricStatus {
+  connected: boolean;
+  ip: string | null;
+  port: number | null;
+  checkedAt: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class BiometricConfigApi {
   private readonly http = inject(HttpClient);
@@ -22,5 +29,9 @@ export class BiometricConfigApi {
 
   update(payload: BiometricConfig): Observable<BiometricConfig> {
     return this.http.put<BiometricConfig>(BiometricConfigApi.basePath, payload);
+  }
+
+  status(): Observable<BiometricStatus> {
+    return this.http.get<BiometricStatus>(`${BiometricConfigApi.basePath}/status`);
   }
 }

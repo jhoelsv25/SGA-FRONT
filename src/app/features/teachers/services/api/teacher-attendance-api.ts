@@ -37,4 +37,8 @@ export class TeacherAttendanceApi {
   delete(id: string): Observable<{ message: string }> {
     return this.http.delete<{ message: string }>(`${this.baseUrl}/${id}`);
   }
+
+  syncBiometric(date: string): Observable<{ message: string; processed: number }> {
+    return this.http.post<{ message: string; processed: number }>(`${this.baseUrl}/sync-biometric`, { date });
+  }
 }

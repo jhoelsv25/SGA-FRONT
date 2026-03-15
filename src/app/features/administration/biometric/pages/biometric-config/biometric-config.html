@@ -10,6 +10,45 @@
   />
 
   <div class="rounded-2xl border border-border bg-card p-6 shadow-sm">
+    <div class="mb-4 flex flex-wrap items-center gap-3 rounded-xl border border-border bg-muted/20 px-4 py-3">
+      <div
+        class="flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold"
+        [class.bg-success/15]="status()?.connected"
+        [class.text-success]="status()?.connected"
+        [class.bg-destructive/15]="status() && !status()?.connected"
+        [class.text-destructive]="status() && !status()?.connected"
+        [class.bg-muted]="!status()"
+        [class.text-muted-foreground]="!status()"
+      >
+        <span class="h-2 w-2 rounded-full"
+          [class.bg-success]="status()?.connected"
+          [class.bg-destructive]="status() && !status()?.connected"
+          [class.bg-muted-foreground]="!status()"
+        ></span>
+        <span>
+          @if (!status()) { Sin datos }
+          @else { {{ status()?.connected ? 'Conectado' : 'Sin conexión' }} }
+        </span>
+      </div>
+      <div class="text-xs text-muted-foreground">
+        Última verificación:
+        <span class="font-medium text-foreground">
+          {{ status()?.checkedAt ? (status()?.checkedAt | date:'short') : '--' }}
+        </span>
+      </div>
+      <button
+        sgaButton
+        variant="ghost"
+        color="secondary"
+        size="sm"
+        class="ml-auto"
+        (click)="checkStatus()"
+        [disabled]="checking()"
+      >
+        {{ checking() ? 'Verificando...' : 'Revisar conexión' }}
+      </button>
+    </div>
+
     <div class="grid gap-4 md:grid-cols-2">
       <div>
         <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">IP del dispositivo</label>
