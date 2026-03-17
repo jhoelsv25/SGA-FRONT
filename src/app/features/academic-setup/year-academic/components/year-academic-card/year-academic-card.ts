@@ -1,13 +1,14 @@
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardCardComponent } from '@/shared/components/card';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Card } from '@shared/adapters/ui/card/card';
-import { Button } from '@shared/directives';
 import { YearAcademic, AcademicYearStatus, Modality } from '../../types/year-academi-types';
+
 
 @Component({
   selector: 'sga-year-academic-card',
   standalone: true,
-  imports: [CommonModule, Card, Button],
+  imports: [CommonModule, ZardCardComponent, ZardButtonComponent],
   templateUrl: './year-academic-card.html',
   styleUrls: ['./year-academic-card.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

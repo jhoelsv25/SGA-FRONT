@@ -1,13 +1,15 @@
+import { ListToolbarComponent } from '@/shared/widgets/list-toolbar/list-toolbar';
+import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
+import { DropdownOptionComponent, DropdownItem } from '@/shared/widgets/dropdown-option/dropdown-option';
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardInputDirective } from '@/shared/components/input';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal, computed, input } from '@angular/core';
 import { CommonModule, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import { ListToolbar } from '@shared/widgets/ui/list-toolbar';
+
 import { DataSource, SgaTemplate } from '@shared/widgets/data-source/data-source';
-import { Input } from '@shared/adapters/ui/input/input';
-import { Select, type SelectOption } from '@shared/adapters/ui/select/select';
-import { Button } from '@shared/directives';
 import { Toast } from '@core/services/toast';
 
 import { AttendanceApi } from '../../../academic-setting/attendances/services/attendance-api';
@@ -18,15 +20,16 @@ import { EnrollmentApi } from '../../../academic-setting/enrollments/services/en
 import type { SectionCourse } from '@features/organization/section-courses/types/section-course-types';
 import { DataSourceColumn } from '@core/types/data-source-types';
 import { AttendanceImportDialog } from '../../components/attendance-import-dialog/attendance-import-dialog';
-import { Dropdown, DropdownItem } from '@shared/adapters/ui/dropdown/dropdown';
+import { ZardDropdownMenuComponent } from '@/shared/components/dropdown';
 import { UiFiltersService } from '@core/services/ui-filters.service';
 
 type StudentRow = { id: string; name: string; studentCode: string; status: AttendanceStatus };
 
+
 @Component({
   selector: 'sga-attendance-register',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgClass, ListToolbar, DataSource, SgaTemplate, Input, Select, Button, Dropdown],
+  imports: [CommonModule, FormsModule, NgClass, DataSource, SgaTemplate, ZardInputDirective, SelectOptionComponent, ZardButtonComponent, DropdownOptionComponent, ListToolbarComponent],
   templateUrl: './attendance-register.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -51,8 +54,7 @@ export default class AttendanceRegisterPage implements OnInit {
     { key: 'studentCode', label: 'Código', width: '120px' },
     { key: 'name', label: 'Estudiante', sortable: true },
     { key: 'status', label: 'Estado', width: '150px', type: 'custom', customTemplate: 'statusTemplate' },
-    { key: 'id', label: 'Marcar Asistencia', width: '200px', type: 'custom', customTemplate: 'actionsTemplate' },
-  ];
+    { key: 'id', label: 'Marcar Asistencia', width: '200px', type: 'custom', customTemplate: 'actionsTemplate' }];
 
   public canSave = computed(() => this.selectedSectionCourse() && this.students().length > 0);
   public hasActiveFilters = computed(() => Boolean(this.selectedSectionCourse() || this.filters.attendanceRegisterDate()));

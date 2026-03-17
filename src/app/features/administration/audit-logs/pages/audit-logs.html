@@ -22,8 +22,8 @@
 
           <div class="flex items-center gap-3 w-full lg:w-auto relative z-10">
             <button 
-              sgaButton 
-              variant="ghost" 
+              z-button 
+              zType="ghost" 
               (click)="refresh()" 
               class="rounded-xl h-12 px-5 border border-base-200 bg-base-100 hover:bg-base-200 font-bold text-sm">
               <i class="fas fa-sync-alt mr-2" [class.fa-spin]="store.loading()"></i>
@@ -38,7 +38,7 @@
           [action]="actionFilter()"
           (searchChanged)="updateSearch($event)"
           (actionChanged)="updateAction($event)"
-        />
+         />
       </div>
 
       <!-- LIST CONTAINER -->
@@ -54,13 +54,8 @@
           } @empty {
             @if (!store.loading()) {
               <div class="py-24 animate-in fade-in zoom-in duration-500">
-                <sga-empty-state
-                  title="No se encontraron registros"
-                  description="No hay registros que coincidan con los criterios."
-                  iconClass="fas fa-receipt"
-                  actionLabel="Limpiar Filtros"
-                  (action)="clearFilters()"
-                />
+                <z-empty zIcon="target" zTitle="No se encontraron registros" zDescription="No hay registros que coincidan con los criterios.">
+    </z-empty>
               </div>
             }
           }
@@ -82,8 +77,8 @@
         @if (store.nextCursor()) {
            <div class="p-10 bg-base-200/10 border-t border-base-200 flex items-center justify-center">
              <button 
-                sgaButton 
-                variant="solid" 
+                z-button 
+                zType="default" 
                 [disabled]="store.loading()"
                 (click)="loadMore()"
                 class="rounded-2xl h-14 px-12 font-black uppercase tracking-widest text-[11px] shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all">

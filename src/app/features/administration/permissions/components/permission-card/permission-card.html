@@ -23,11 +23,11 @@
 
   <!-- Subtle Actions -->
   <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 pr-1">
-    <button sgaButton variant="ghost" size="sm" class="h-8 w-8 p-0 rounded-lg hover:bg-primary/10 hover:text-primary transition-colors" 
+    <button z-button zType="ghost" zSize="sm" class="h-8 w-8 p-0 rounded-lg hover:bg-primary/10 hover:text-primary transition-colors" 
             (click)="$event.stopPropagation(); edit.emit(permission)">
       <i class="fas fa-edit text-[10px]"></i>
     </button>
-    <button sgaButton variant="ghost" size="sm" class="h-8 w-8 p-0 rounded-lg text-error hover:bg-error/10 transition-colors" 
+    <button z-button zType="ghost" zSize="sm" class="h-8 w-8 p-0 rounded-lg text-error hover:bg-error/10 transition-colors" 
             (click)="$event.stopPropagation(); delete.emit(permission)">
       <i class="fas fa-trash-can text-[10px]"></i>
     </button>

@@ -1,4 +1,4 @@
-<sga-card
+<z-card
   class="group flex flex-col h-full transition-all duration-300 border border-base-200/80 overflow-hidden bg-base-100 rounded-4xl shadow-sm"
 >
   <div class="flex flex-col space-y-1.5 p-6 pb-3 border-b border-base-200/50 bg-base-200/10">
@@ -18,9 +18,9 @@
         (keydown.space)="$event.preventDefault(); $event.stopPropagation()"
       >
         <button
-          sgaButton
-          variant="ghost"
-          size="sm"
+          z-button
+          zType="ghost"
+          zSize="sm"
           class="rounded-lg h-8 w-8 p-0 hover:bg-base-200/60"
           (click)="edit.emit(gradeLevel()); $event.stopPropagation()"
           title="Editar"
@@ -28,9 +28,9 @@
           <i class="fas fa-edit text-xs"></i>
         </button>
         <button
-          sgaButton
-          variant="ghost"
-          size="sm"
+          z-button
+          zType="ghost"
+          zSize="sm"
           class="rounded-lg h-8 w-8 p-0 text-error hover:bg-error/10"
           (click)="delete.emit(gradeLevel()); $event.stopPropagation()"
           title="Eliminar"
@@ -75,9 +75,9 @@
       }
 
       <button
-        sgaButton
-        variant="outline"
-        size="sm"
+        z-button
+        zType="outline"
+        zSize="sm"
         class="w-full mt-3 gap-2 rounded-3xl border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50 py-2.5 transition-all"
         (click)="viewSections.emit(gradeLevel()); $event.stopPropagation()"
       >
@@ -86,4 +86,4 @@
       </button>
     </div>
   </div>
-</sga-card>
+</z-card>

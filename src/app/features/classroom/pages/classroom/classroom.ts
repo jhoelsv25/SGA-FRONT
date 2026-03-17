@@ -1,17 +1,18 @@
+import { ZardButtonComponent } from '@/shared/components/button';
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
-import { Button } from '@shared/directives';
 import { ClassroomStore } from '../../services/store/classroom.store';
 import { ClassroomSocketService } from '../../services/classroom-socket';
 import { SectionCourseApi } from '@features/organization/section-courses/services/section-course-api';
 import type { ClassroomFeedItem } from '../../types/classroom-types';
 
+
 @Component({
   selector: 'sga-classroom',
   standalone: true,
-  imports: [CommonModule, RouterModule, Button],
+  imports: [CommonModule, RouterModule, ZardButtonComponent],
   templateUrl: './classroom.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

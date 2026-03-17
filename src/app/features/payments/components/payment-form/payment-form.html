@@ -1,34 +1,34 @@
 <form [formGroup]="form" class="grid gap-4" (ngSubmit)="submit()">
   <header class="flex items-center justify-between mb-4">
     <h2 class="text-lg font-semibold">{{ current ? 'Editar pago' : 'Nuevo pago' }}</h2>
-    <button type="button" sgaButton color="secondary" variant="ghost" shape="pill" (click)="close()">
+    <button type="button" z-button zColor="secondary" zType="ghost" zShape="circle" (click)="close()">
       <i class="fas fa-times"></i>
     </button>
   </header>
   <div class="grid gap-4">
     <div>
       <label class="label-form" for="studentId">ID Estudiante</label>
-      <sga-input id="studentId" formControlName="studentId" placeholder="ID del estudiante" />
+      <input z-input w-full id="studentId" formControlName="studentId" placeholder="ID del estudiante"  />
     </div>
     <div>
       <label class="label-form" for="concept">Concepto</label>
-      <sga-input id="concept" formControlName="concept" placeholder="Concepto del pago" />
+      <input z-input w-full id="concept" formControlName="concept" placeholder="Concepto del pago"  />
     </div>
     <div>
       <label class="label-form" for="amount">Monto</label>
-      <sga-input id="amount" type="number" formControlName="amount" placeholder="0.00" />
+      <input z-input w-full id="amount" type="number" formControlName="amount" placeholder="0.00"  />
     </div>
     <div>
       <label class="label-form" for="dueDate">Fecha de vencimiento</label>
-      <sga-input id="dueDate" type="date" formControlName="dueDate" placeholder="Fecha de vencimiento" />
+      <input z-input w-full id="dueDate" type="date" formControlName="dueDate" placeholder="Fecha de vencimiento"  />
     </div>
     <div>
       <label class="label-form" for="reference">Referencia</label>
-      <sga-input id="reference" formControlName="reference" placeholder="Número de referencia (opcional)" />
+      <input z-input w-full id="reference" formControlName="reference" placeholder="Número de referencia (opcional)"  />
     </div>
   </div>
   <footer class="flex justify-end gap-2 mt-4">
-    <button type="button" sgaButton color="secondary" variant="outline" (click)="close()">Cancelar</button>
-    <button type="submit" sgaButton color="primary" [disabled]="form.invalid">Guardar</button>
+    <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">Cancelar</button>
+    <button type="submit" z-button zColor="primary" [disabled]="form.invalid">Guardar</button>
   </footer>
 </form>

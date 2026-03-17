@@ -1,4 +1,4 @@
-import type { TemplateRef, Type, ViewContainerRef } from '@angular/core';
+import { type ViewContainerRef, type TemplateRef, type Type } from '@angular/core';
 
 import type { ZardIcon } from '@/shared/components/icon/icons';
 

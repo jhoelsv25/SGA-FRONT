@@ -5,6 +5,7 @@ import { AuthFacade } from '@auth/services/store/auth.acede';
 import { ClassroomStore } from '../../services/store/classroom.store';
 import { ClassroomApi, type ClassroomStudentRow, type ClassroomTeacherRow } from '../../services/classroom-api';
 
+
 @Component({
   selector: 'sga-classroom-people',
   standalone: true,

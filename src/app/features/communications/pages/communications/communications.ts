@@ -7,6 +7,7 @@ import { CommunicationStore } from '../../services/store/communication.store';
 import { Communication } from '../../types/communication-types';
 import { CommunicationForm } from '../../components/communication-form/communication-form';
 
+
 @Component({
   selector: 'sga-communications',
   imports: [HeaderDetail, DataSource],

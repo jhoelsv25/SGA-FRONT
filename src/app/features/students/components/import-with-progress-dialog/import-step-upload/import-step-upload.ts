@@ -1,11 +1,12 @@
+import { ZardButtonComponent } from '@/shared/components/button';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Button } from '@shared/directives';
+
 
 @Component({
   selector: 'sga-import-step-upload',
   standalone: true,
-  imports: [CommonModule, Button],
+  imports: [CommonModule, ZardButtonComponent],
   templateUrl: './import-step-upload.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

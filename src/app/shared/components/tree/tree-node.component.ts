@@ -1,3 +1,4 @@
+import { ZardCheckboxComponent } from '@/shared/components/checkbox';
 import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -12,7 +13,7 @@ import { FormsModule } from '@angular/forms';
 
 import type { ClassValue } from 'clsx';
 
-import { ZardCheckboxComponent } from '@/shared/components/checkbox/checkbox.component';
+
 import { ZardIconComponent } from '@/shared/components/icon';
 import { mergeClasses } from '@/shared/utils/merge-classes';
 

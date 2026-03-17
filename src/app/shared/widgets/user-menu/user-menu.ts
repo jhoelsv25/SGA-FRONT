@@ -1,13 +1,5 @@
-import {
-  Component,
-  ElementRef,
-  HostListener,
-  inject,
-  input,
-  output,
-  signal,
-} from "@angular/core";
-import { ZardIconComponent, toZardIcon, type ZardIcon } from "@/shared/components/icon";
+import { Component, ElementRef, HostListener, inject, input, output, signal } from '@angular/core';
+import { ZardIconComponent, type ZardIcon } from "@/shared/components/icon";
 
 export interface UserMenuAction {
   label: string;
@@ -26,6 +18,7 @@ export interface UserMenuStat {
   label: string;
   value: string | number;
 }
+
 
 @Component({
   selector: 'sga-user-menu',
@@ -60,7 +53,7 @@ export class UserMenu {
   actionSelected = output<UserMenuAction>();
 
   resolveIcon(icon?: string): ZardIcon {
-    return toZardIcon(icon || '');
+    return (icon || 'circle') as ZardIcon;
   }
 
 

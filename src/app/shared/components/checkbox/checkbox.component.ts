@@ -7,6 +7,7 @@ import {
   input,
   output,
   signal,
+  effect,
   ViewEncapsulation,
 } from '@angular/core';
 import { type ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -15,7 +16,6 @@ import type { ClassValue } from 'clsx';
 
 import { ZardIdDirective } from '@/shared/core';
 import { mergeClasses, noopFn } from '@/shared/utils/merge-classes';
-
 import {
   checkboxLabelVariants,
   checkboxVariants,
@@ -79,6 +79,13 @@ export class ZardCheckboxComponent implements ControlValueAccessor {
   readonly zType = input<ZardCheckboxTypeVariants>('default');
   readonly zSize = input<ZardCheckboxSizeVariants>('default');
   readonly zShape = input<ZardCheckboxShapeVariants>('default');
+  readonly zChecked = input(false, { transform: booleanAttribute });
+
+  constructor() {
+    effect(() => {
+      this.checked.set(this.zChecked());
+    });
+  }
 
   private onChange: OnChangeType = noopFn;
   private onTouched: OnTouchedType = noopFn;

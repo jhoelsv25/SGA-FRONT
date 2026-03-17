@@ -1,28 +1,20 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  computed,
-  inject,
-  OnInit,
-  signal,
-} from '@angular/core';
+import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardInputDirective } from '@/shared/components/input';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, inject, OnInit, signal, input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Input } from '@shared/adapters/ui/input/input';
-import { Select } from '@shared/adapters/ui/select/select';
-import { SectionSelect, TeacherSelect, CourseSelect, YearAcademicSelect } from '@shared/widgets/selects';
-import { Button } from '@shared/directives';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
 import { SectionCourseStore } from '../../services/store/section-course.store';
 import type { SectionCourse, SectionCourseCreate } from '../../types/section-course-types';
 import { Observable } from 'rxjs';
 import { MODALITY_OPTIONS, STATUS_OPTIONS } from '../../config/form.constants';
 
+
 @Component({
   selector: 'sga-section-course-form',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, Input, Select, SectionSelect, TeacherSelect, CourseSelect, YearAcademicSelect, Button],
+  imports: [ReactiveFormsModule, CommonModule, ZardInputDirective, SelectOptionComponent, ZardButtonComponent],
   templateUrl: './section-course-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

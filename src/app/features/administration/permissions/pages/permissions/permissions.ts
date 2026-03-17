@@ -1,24 +1,25 @@
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardEmptyComponent } from '@/shared/components/empty';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PermissionStore } from '../../../services/store/permission.store';
 import { Permission } from '../../../services/api/permission-api';
 
-import { Button } from '@shared/directives';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { PermissionCardComponent } from '../../components/permission-card/permission-card';
 import { PermissionForm } from '../../components/permission-form/permission-form';
-import { EmptyState } from '@shared/widgets/ui/empty-state/empty-state';
 
 interface ModuleGroup {
   name: string;
   permissions: Permission[];
 }
 
+
 @Component({
   selector: 'sga-permissions',
   standalone: true,
-  imports: [CommonModule, FormsModule, Button, PermissionCardComponent, EmptyState],
+  imports: [CommonModule, FormsModule, ZardButtonComponent, PermissionCardComponent, ZardEmptyComponent],
   templateUrl: './permissions.html',
   styles: [`
     :host { display: block; padding: 1.5rem; }

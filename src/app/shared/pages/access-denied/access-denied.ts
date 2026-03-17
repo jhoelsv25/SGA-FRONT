@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthFacade } from '@auth/services/store/auth.acede';
 
+
 @Component({
   selector: 'sga-access-denied',
   imports: [],

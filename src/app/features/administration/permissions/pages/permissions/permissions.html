@@ -19,7 +19,7 @@
           class="w-full pl-11 pr-4 py-2.5 rounded-2xl bg-base-200/50 border-none focus:ring-2 focus:ring-primary/20 text-sm transition-all"
         >
       </div>
-      <button sgaButton (click)="openCreateDialog()" class="rounded-2xl px-5">
+      <button z-button (click)="openCreateDialog()" class="rounded-2xl px-5">
         <i class="fas fa-plus mr-2"></i> Nuevo
       </button>
     </div>
@@ -53,14 +53,9 @@
           </div>
         </div>
       } @empty {
-        <sga-empty-state
-          class="col-span-full"
-          title="No se encontraron resultados"
-          description="Ajusta tu búsqueda o crea un nuevo permiso."
-          iconClass="fas fa-search"
-          [actionLabel]="searchTerm() ? 'Limpiar' : 'Crear'"
-          (action)="searchTerm() ? searchTerm.set('') : openCreateDialog()"
-        />
+        <z-empty zIcon="search" zTitle="No se encontraron resultados" zDescription="Ajusta tu búsqueda o crea un nuevo permiso.">
+      <button z-button (click)="searchTerm() ? searchTerm.set('') : openCreateDialog()" class="mt-4">{{ searchTerm() ? 'Limpiar' : 'Crear' }}</button>
+    </z-empty>
       }
     }
   </div>

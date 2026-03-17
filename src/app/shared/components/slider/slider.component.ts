@@ -26,7 +26,6 @@ import { filter, fromEvent, map, Subject, switchMap, takeUntil, tap } from 'rxjs
 
 import { mergeClasses } from '@/shared/utils/merge-classes';
 import { clamp, convertValueToPercentage, roundToStep } from '@/shared/utils/number';
-
 import {
   sliderOrientationVariants,
   sliderRangeVariants,

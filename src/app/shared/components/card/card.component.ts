@@ -1,3 +1,4 @@
+import { ZardButtonComponent } from '@/shared/components/button';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -11,14 +12,13 @@ import {
 
 import type { ClassValue } from 'clsx';
 
-import { ZardButtonComponent } from '@/shared/components/button/button.component';
 import { ZardIdDirective, ZardStringTemplateOutletDirective } from '@/shared/core';
 import { mergeClasses } from '@/shared/utils/merge-classes';
 
 import { cardBodyVariants, cardFooterVariants, cardHeaderVariants, cardVariants } from './card.variants';
 
 @Component({
-  selector: 'z-card, sga-card',
+  selector: 'z-card',
   imports: [ZardStringTemplateOutletDirective, ZardButtonComponent, ZardIdDirective],
   template: `
     <ng-container zardId="card" #z="zardId">

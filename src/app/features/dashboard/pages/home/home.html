@@ -13,7 +13,7 @@
   <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
     @if (dashboardLoading()) {
       @for (item of [1,2,3,4]; track item) {
-        <sga-card>
+        <z-card>
           <div class="p-5 flex items-center gap-4">
             <div class="h-12 w-12 rounded-lg bg-neutral-200 dark:bg-neutral-700 animate-pulse"></div>
             <div class="space-y-2">
@@ -21,11 +21,11 @@
               <div class="h-6 w-16 bg-neutral-200 dark:bg-neutral-700 rounded animate-pulse"></div>
             </div>
           </div>
-        </sga-card>
+        </z-card>
       }
     } @else {
       @for (metric of dashboard()?.summary ?? []; track metric.id) {
-        <sga-card>
+        <z-card>
           <div class="p-5 flex items-center gap-4">
             <div class="w-12 h-12 rounded-lg flex items-center justify-center" [class]="metric.color">
               <i [class]="metric.icon" class="text-xl"></i>
@@ -38,14 +38,14 @@
               }
             </div>
           </div>
-        </sga-card>
+        </z-card>
       }
     }
   </section>
 
   <!-- Grafico resumen -->
   <section class="mb-8">
-    <sga-card>
+    <z-card>
       <div class="p-5">
         <div class="mb-4">
           <h2 class="text-lg font-semibold text-neutral-800 dark:text-neutral-100">Indicadores</h2>
@@ -64,14 +64,14 @@
             [yAxisLabel]="'Total'"
             [roundEdges]="true"
             [animations]="true"
-          />
+           />
         } @else {
           <div class="rounded-xl border border-dashed border-base-200 dark:border-base-300 p-6 text-sm text-neutral-500 dark:text-neutral-400">
             No hay datos suficientes para mostrar el grafico.
           </div>
         }
       </div>
-    </sga-card>
+    </z-card>
   </section>
 
   <!-- Accesos rápidos -->
@@ -94,7 +94,7 @@
   <!-- Secciones por rol -->
   <section class="grid gap-5 lg:grid-cols-2">
     @for (section of dashboard()?.sections ?? []; track section.id) {
-      <sga-card>
+      <z-card>
         <div class="p-5 space-y-3">
           <div>
             <h3 class="text-base font-semibold text-neutral-800 dark:text-neutral-100">{{ section.title }}</h3>
@@ -111,7 +111,7 @@
             }
           </div>
         </div>
-      </sga-card>
+      </z-card>
     }
   </section>
 

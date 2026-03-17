@@ -1,15 +1,16 @@
-import { Component, inject, signal } from '@angular/core';
+import { ZardDatePickerComponent } from '@/shared/components/date-picker';
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardInputDirective } from '@/shared/components/input';
+import { Component, inject, signal, input } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLinkWithHref } from '@angular/router';
 import { format } from 'date-fns';
 import { AuthApi } from '@auth/services/api/auth-api';
-import { Button } from '@shared/directives';
-import { Input } from '@shared/adapters/ui/input/input';
-import { DatePicker } from '@shared/widgets/ui/date-picker/date-picker';
+
 
 @Component({
   selector: 'sga-forgot-form',
-  imports: [RouterLinkWithHref, ReactiveFormsModule, Button, Input, DatePicker],
+  imports: [RouterLinkWithHref, ReactiveFormsModule, ZardButtonComponent, ZardInputDirective, ZardDatePickerComponent],
   templateUrl: './forgot-form.html',
 })
 export class ForgotForm {

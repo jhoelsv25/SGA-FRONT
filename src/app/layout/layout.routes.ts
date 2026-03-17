@@ -95,7 +95,5 @@ export default [
         path: '',
         pathMatch: 'full',
         redirectTo: 'dashboard',
-      },
-    ],
-  },
-] as Routes;
+      }],
+  }] as Routes;

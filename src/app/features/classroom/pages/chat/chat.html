@@ -4,10 +4,10 @@
     <div>
       <h3 class="font-bold text-base-content">Chat de la clase</h3>
       <p class="text-xs text-base-content/60 flex items-center gap-2 mt-0.5">
-        <sga-badge color="success" variant="subtle" size="sm">
+        <z-badge zColor="success" zType="secondary" zSize="sm">
           <span class="w-1.5 h-1.5 rounded-full bg-current animate-pulse mr-1"></span>
           En línea
-        </sga-badge>
+        </z-badge>
       </p>
     </div>
   </div>
@@ -46,21 +46,18 @@
   <!-- Chat Input -->
   <div class="p-4 bg-base-100 border-t border-base-200">
     <div class="flex items-center gap-2 bg-base-200/50 rounded-2xl px-3 py-2 border border-base-300 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all">
-      <sga-input
+      <input z-input w-full
         type="text"
         [ngModel]="newMessage()"
         (ngModelChange)="newMessage.set($event)"
         (keyup.enter)="sendMessage()"
         placeholder="Escribe un mensaje..."
         class="border-0 bg-transparent shadow-none ring-0 w-full"
-      />
+       />
       <button
         type="button"
-        sgaButton
-        variant="solid"
-        color="primary"
-        size="sm"
-        shape="square"
+        z-button zType="secondary" size="icon-sm" class="shrink-0"
+        zColor="primary"
         [disabled]="!newMessage().trim() || sending()"
         (click)="sendMessage()"
         [attr.aria-label]="'Enviar mensaje'"

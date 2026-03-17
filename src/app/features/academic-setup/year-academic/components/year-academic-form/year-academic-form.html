@@ -8,10 +8,10 @@
     </div>
     <button
       type="button"
-      sgaButton
-      color="secondary"
-      variant="ghost"
-      shape="pill"
+      z-button
+      zColor="secondary"
+      zType="ghost"
+      zShape="circle"
       (click)="onClose()"
     >
       <i class="fas fa-times"></i>
@@ -20,102 +20,95 @@
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <div class="col-span-full flex flex-col gap-1">
       <label class="label-form text-base-content/70 font-medium text-sm" for="institution">Institución Educativa</label>
-      <sga-select
+      <z-select-option
         id="institution"
         [options]="institutions()"
         formControlName="institution"
-        placeholder="Seleccionar institución"
-      />
+        placeholder="Seleccionar institución"></z-select-option>
     </div>
     <div class="flex flex-col gap-1">
       <label class="label-form text-base-content/70 font-medium text-sm" for="year">Año</label>
-      <sga-input
+      <input z-input w-full
         id="year"
         type="number"
         formControlName="year"
         placeholder="Ej: 2025"
-      />
+       />
     </div>
     <div class="flex flex-col gap-1">
       <label class="label-form text-base-content/70 font-medium text-sm" for="name">Nombre</label>
-      <sga-input id="name" type="text" formControlName="name" placeholder="Nombre del año académico" />
+      <input z-input w-full id="name" type="text" formControlName="name" placeholder="Nombre del año académico"  />
     </div>
     <div class="flex flex-col gap-1">
       <label class="label-form text-base-content/70 font-medium text-sm" for="startDate">Fecha de inicio</label>
-      <sga-date-picker
+      <z-date-picker
         id="startDate"
         formControlName="startDate"
-        [placeholder]="'Seleccionar fecha de inicio'"
-      />
+        [placeholder]="'Seleccionar fecha de inicio'"></z-date-picker>
     </div>
     <div class="flex flex-col gap-1">
       <label class="label-form text-base-content/70 font-medium text-sm" for="endDate">Fecha de fin</label>
-      <sga-date-picker
+      <z-date-picker
         id="endDate"
         formControlName="endDate"
-        [placeholder]="'Seleccionar fecha de fin'"
-      />
+        [placeholder]="'Seleccionar fecha de fin'"></z-date-picker>
     </div>
     <div class="flex flex-col gap-1">
       <label class="label-form text-base-content/70 font-medium text-sm" for="modality">Modalidad</label>
-      <sga-select
+      <z-select-option
         id="modality"
         [options]="modalities"
         formControlName="modality"
-        placeholder="Seleccionar modalidad"
-      />
+        placeholder="Seleccionar modalidad"></z-select-option>
     </div>
     <div class="flex flex-col gap-1">
       <label class="label-form text-base-content/70 font-medium text-sm" for="gradingSystem">Sistema de calificación</label>
-      <sga-select
+      <z-select-option
         id="gradingSystem"
         [options]="gradingSystems"
         formControlName="gradingSystem"
-        placeholder="Seleccionar sistema"
-      />
+        placeholder="Seleccionar sistema"></z-select-option>
     </div>
     <div class="flex flex-col gap-1">
       <label class="label-form text-base-content/70 font-medium text-sm" for="passingDate">Fecha de cierre de actas</label>
-      <sga-date-picker
+      <z-date-picker
         id="passingDate"
         formControlName="passingDate"
-        [placeholder]="'Seleccionar fecha de cierre'"
-      />
+        [placeholder]="'Seleccionar fecha de cierre'"></z-date-picker>
     </div>
     <div class="flex flex-col gap-1">
       <label class="label-form text-base-content/70 font-medium text-sm" for="passingGrade">Nota mínima aprobatoria</label>
-      <sga-input
+      <input z-input w-full
         id="passingGrade"
         type="number"
         formControlName="passingGrade"
         placeholder="Nota mínima"
-      />
+       />
     </div>
     <div class="flex flex-col gap-1">
       <label class="label-form text-base-content/70 font-medium text-sm" for="academicCalendarUrl">Calendario académico (URL)</label>
-      <sga-input
+      <input z-input w-full
         id="academicCalendarUrl"
         type="text"
         formControlName="academicCalendarUrl"
         placeholder="https://..."
-      />
+       />
     </div>
     <div class="flex flex-col gap-1">
       <label class="label-form text-base-content/70 font-medium text-sm" for="status">Estado</label>
-      <sga-select
+      <z-select-option
         id="status"
         [options]="statuses"
         formControlName="status"
-        placeholder="Seleccionar estado"
-      />
+        placeholder="Seleccionar estado"></z-select-option>
     </div>
   </div>
   <footer class="flex items-center justify-end gap-2 mt-6 pt-4 border-t border-base-200">
-    <button type="button" sgaButton color="secondary" variant="outline" (click)="onClose()">
+    <button type="button" z-button zColor="secondary" zType="outline" (click)="onClose()">
       <i class="fas fa-times"></i>
       Cancelar
     </button>
-    <button type="submit" sgaButton color="primary" [disabled]="form.invalid || saving()">
+    <button type="submit" z-button zColor="primary" [disabled]="form.invalid || saving()">
       <i class="fas fa-check"></i>
       {{ saving() ? 'Guardando...' : 'Guardar' }}
     </button>

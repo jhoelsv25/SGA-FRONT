@@ -1,4 +1,4 @@
-<sga-card
+<z-card
   class="group flex flex-col h-full transition-all duration-300 border border-base-200/80 overflow-hidden bg-base-100 rounded-4xl shadow-sm"
 >
   <div
@@ -19,9 +19,9 @@
         (keydown.space)="$event.preventDefault(); $event.stopPropagation()"
       >
         <button
-          sgaButton
-          variant="ghost"
-          size="sm"
+          z-button
+          zType="ghost"
+          zSize="sm"
           class="rounded-full h-9 w-9 p-0 hover:bg-base-200/60"
           (click)="edit.emit(course()); $event.stopPropagation()"
           title="Editar"
@@ -29,9 +29,9 @@
           <i class="fas fa-edit text-xs"></i>
         </button>
         <button
-          sgaButton
-          variant="ghost"
-          size="sm"
+          z-button
+          zType="ghost"
+          zSize="sm"
           class="rounded-full h-9 w-9 p-0 text-error hover:bg-error/10"
           (click)="delete.emit(course()); $event.stopPropagation()"
           title="Eliminar"
@@ -93,4 +93,4 @@
       }
     </div>
   </div>
-</sga-card>
+</z-card>

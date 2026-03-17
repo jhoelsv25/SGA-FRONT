@@ -1,48 +1,48 @@
 <form [formGroup]="form" class="grid gap-4" (ngSubmit)="submit()">
   <header class="flex items-center justify-between mb-4">
     <h2 class="text-lg font-semibold">{{ current ? 'Editar observación' : 'Nueva observación' }}</h2>
-    <button type="button" sgaButton color="secondary" variant="ghost" shape="pill" (click)="close()">
+    <button type="button" z-button zColor="secondary" zType="ghost" zShape="circle" (click)="close()">
       <i class="fas fa-times"></i>
     </button>
   </header>
   <div class="grid grid-cols-1 gap-4">
     <div>
       <label class="label-form" for="student">Estudiante</label>
-      <sga-select id="student" [options]="studentOptions" formControlName="student" placeholder="Seleccionar estudiante" />
+      <z-select-option id="student" [options]="studentOptions" formControlName="student" placeholder="Seleccionar estudiante"></z-select-option>
     </div>
     <div class="grid grid-cols-2 gap-4">
       <div>
         <label class="label-form" for="teacher">Docente</label>
-        <sga-teacher-select id="teacher" formControlName="teacher" placeholder="Seleccionar docente" />
+        <z-select-option id="teacher" formControlName="teacher" placeholder="Seleccionar docente"></z-select-option>
       </div>
       <div>
         <label class="label-form" for="date">Fecha</label>
-        <sga-input id="date" type="date" formControlName="date" />
+        <input z-input w-full id="date" type="date" formControlName="date"  />
       </div>
     </div>
     <div>
       <label class="label-form" for="type">Tipo</label>
-      <sga-select id="type" [options]="typeOptions" formControlName="type" />
+      <z-select-option id="type" [options]="typeOptions" formControlName="type"></z-select-option>
     </div>
     <div>
       <label class="label-form" for="observation">Observación</label>
-      <sga-input id="observation" formControlName="observation" placeholder="Descripción de la observación" />
+      <input z-input w-full id="observation" formControlName="observation" placeholder="Descripción de la observación"  />
     </div>
     <div>
       <label class="label-form" for="followUp">Seguimiento</label>
-      <sga-input id="followUp" formControlName="followUp" placeholder="Opcional" />
+      <input z-input w-full id="followUp" formControlName="followUp" placeholder="Opcional"  />
     </div>
     <div>
       <label class="label-form" for="referral">Derivación</label>
-      <sga-input id="referral" formControlName="referral" placeholder="Opcional" />
+      <input z-input w-full id="referral" formControlName="referral" placeholder="Opcional"  />
     </div>
     <label class="flex items-center gap-2 cursor-pointer">
-      <input type="checkbox" formControlName="isConfidential" class="checkbox checkbox-sm" />
+      <input type="checkbox" formControlName="isConfidential" class="checkbox checkbox-sm"  />
       <span>Confidencial</span>
     </label>
   </div>
   <footer class="flex justify-end gap-2 mt-4">
-    <button type="button" sgaButton color="secondary" variant="outline" (click)="close()">Cancelar</button>
-    <button type="submit" sgaButton color="primary" [disabled]="form.invalid">Guardar</button>
+    <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">Cancelar</button>
+    <button type="submit" z-button zColor="primary" [disabled]="form.invalid">Guardar</button>
   </footer>
 </form>

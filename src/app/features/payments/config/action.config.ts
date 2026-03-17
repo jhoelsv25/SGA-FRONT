@@ -28,5 +28,4 @@ export const PAYMENT_ACTIONS: ActionConfig[] = [
     icon: 'fas fa-trash',
     typeAction: 'row',
     color: 'danger',
-  },
-];
+  }];

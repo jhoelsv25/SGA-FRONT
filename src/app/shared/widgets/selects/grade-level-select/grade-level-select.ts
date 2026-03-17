@@ -1,47 +1,42 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  ElementRef,
-  forwardRef,
-  HostListener,
-  inject,
-  input,
-  output,
-  signal,
-  viewChild,
-} from '@angular/core';
+import { ZardSelectComponent, ZardSelectItemComponent } from '@/shared/components/select';
+import { SelectOption } from '@/shared/widgets/select-option/select-option';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, forwardRef, HostListener, inject, input, output, signal, viewChild, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { GradeLevelApi } from '@features/academic-setup/grade-levels/services/api/grade-level-api';
-import type { GradeLevel } from '@features/academic-setup/grade-levels/types/grade-level-types';
+import { GradeLevelApi } from "@features/academic-setup/grade-levels/services/api/grade-level-api";
+import type { GradeLevel } from "@features/academic-setup/grade-levels/types/grade-level-types";
 
-function getGradeLevelLabel(g: GradeLevel): string {
+function getLabel(g: GradeLevel): string {
   return g.name ?? g.id;
 }
 
-function getGradeLevelSubtitle(g: GradeLevel): string {
+function getSubtitle(g: GradeLevel): string {
   const parts: string[] = [];
   if (g.level) parts.push(g.level);
   if (g.maxCapacity != null) parts.push(`Cap: ${g.maxCapacity}`);
   return parts.join(' · ');
 }
 
-function getGradeLevelInitials(g: GradeLevel): string {
+function getInitials(g: GradeLevel): string {
   return (g.name ?? g.id).slice(0, 2).toUpperCase();
 }
+
 
 @Component({
   selector: 'sga-grade-level-select',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ZardSelectComponent, ZardSelectItemComponent],
   templateUrl: './grade-level-select.html',
   providers: [
     { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => GradeLevelSelect), multi: true },
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GradeLevelSelect implements ControlValueAccessor {
+export class GradeLevelSelect implements ControlValueAccessor, OnInit {
+  ngOnInit() {
+    this.loadItems();
+  }
+
   private api = inject(GradeLevelApi);
 
   placeholder = input<string>('Seleccionar grado / nivel');
@@ -68,7 +63,7 @@ export class GradeLevelSelect implements ControlValueAccessor {
         g.name?.toLowerCase().includes(term) ||
         g.level?.toLowerCase().includes(term) ||
         String(g.gradeNumber ?? '').includes(term) ||
-        String(g.maxCapacity ?? '').includes(term)
+        String(g.maxCapacity ?? '').includes(term),
     );
   });
 
@@ -76,9 +71,9 @@ export class GradeLevelSelect implements ControlValueAccessor {
   private _onChange: (value: string | null) => void = () => {};
   private _onTouched = () => {};
 
-  getLabel = getGradeLevelLabel;
-  getSubtitle = getGradeLevelSubtitle;
-  getInitials = getGradeLevelInitials;
+  getLabel = getLabel;
+  getSubtitle = getSubtitle;
+  getInitials = getInitials;
 
   onSearchInput(e: Event) {
     this.searchTerm.set((e.target as HTMLInputElement).value);
@@ -95,10 +90,24 @@ export class GradeLevelSelect implements ControlValueAccessor {
     }
   }
 
-  onOptionKeyDown(e: KeyboardEvent, g: GradeLevel) {
+  onOptionKeyDown(e: KeyboardEvent, g: any) {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       this.selectItem(g);
+    }
+  }
+
+  onZardSelectionChange(val: string | string[]) {
+    const id = Array.isArray(val) ? val[0] : val;
+    if (!id) {
+      this.clearSelection();
+      return;
+    }
+    const found = this.allItems().find((x) => x.id === id);
+    if (found) {
+      this.selectItem(found);
+    } else {
+      this.writeValue(id);
     }
   }
 

@@ -1,19 +1,19 @@
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Button } from '@shared/directives';
-import { Input } from '@shared/adapters/ui/input/input';
-import { Select } from '@shared/adapters/ui/select/select';
-import { Checkbox } from '@shared/widgets/ui/checkbox/checkbox';
-import { SubjectAreaSelect, GradeLevelSelect } from '@shared/widgets/selects';
+import { FormsModule, ReactiveFormsModule, Validators, FormBuilder, FormGroup } from '@angular/forms';
+import { Component, OnInit, inject, signal, input, ChangeDetectionStrategy } from '@angular/core';
+import { SelectOptionComponent } from '@/shared/widgets/select-option/select-option';
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardInputDirective } from '@/shared/components/input';
+import { ZardCheckboxComponent } from '@/shared/components/checkbox';
 import { CourseStore } from '../../services/store/course.store';
-import type { Course } from '../../types/course-types';
-import type { SelectOption } from '@shared/adapters/ui/select/select';
+import { Course } from '../../types/course-types';
+
+export type LocalSelectOption = { value: string | number | boolean; label: string; [key: string]: any };
 
 @Component({
   selector: 'sga-course-form',
   standalone: true,
-  imports: [ReactiveFormsModule, Button, Input, Select, Checkbox, SubjectAreaSelect, GradeLevelSelect],
+  imports: [ReactiveFormsModule, ZardButtonComponent, ZardInputDirective, SelectOptionComponent, ZardCheckboxComponent],
   templateUrl: './course-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -27,10 +27,9 @@ export class CourseForm implements OnInit {
   current: Course | null = null;
   saving = signal(false);
 
-  mandatoryOptions: SelectOption[] = [
+  mandatoryOptions: LocalSelectOption[] = [
     { value: true, label: 'Sí' },
-    { value: false, label: 'No' },
-  ];
+    { value: false, label: 'No' }];
 
   ngOnInit(): void {
     this.current = this.data?.current ?? null;
@@ -55,7 +54,7 @@ export class CourseForm implements OnInit {
 
   submit(): void {
     if (this.form.invalid || this.saving()) return;
-    const v = this.form.getRawValue() as {
+    const v = this.form.getRawValue() as { 
       code: string;
       name: string;
       description: string;
@@ -67,7 +66,7 @@ export class CourseForm implements OnInit {
       syllabusUrl: string;
       subjectArea: string;
       grade: string;
-    };
+     };
     const payload = {
       code: v.code,
       name: v.name,

@@ -1,16 +1,16 @@
+import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardInputDirective } from '@/shared/components/input';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Button } from '@shared/directives';
-import { Input } from '@shared/adapters/ui/input/input';
-import { Select } from '@shared/adapters/ui/select/select';
-import { GradeLevelSelect, YearAcademicSelect } from '@shared/widgets/selects';
 import { SectionStore } from '../../services/store/section.store';
 import { Section, SectionCreate } from '../../types/section-types';
+
 @Component({
   selector: 'sga-section-form',
   standalone: true,
-  imports: [ReactiveFormsModule, Button, Select, Input, GradeLevelSelect, YearAcademicSelect],
+  imports: [ReactiveFormsModule, ZardButtonComponent, SelectOptionComponent, ZardInputDirective],
   templateUrl: './section-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -25,8 +25,7 @@ export class SectionForm implements OnInit {
   shiftOptions = [
     { value: 'morning', label: 'Mañana' },
     { value: 'afternoon', label: 'Tarde' },
-    { value: 'evening', label: 'Noche' },
-  ];
+    { value: 'evening', label: 'Noche' }];
 
   ngOnInit() {
     this.current = this.data?.current ?? null;

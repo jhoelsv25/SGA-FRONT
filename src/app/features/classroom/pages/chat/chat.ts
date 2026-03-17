@@ -1,17 +1,18 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardInputDirective } from '@/shared/components/input';
+import { ZardBadgeComponent } from '@/shared/components/badge';
+import { ChangeDetectionStrategy, Component, inject, signal, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Button } from '@shared/directives';
-import { Input } from '@shared/adapters/ui/input/input';
-import { Badge } from '@shared/widgets/ui/badge/badge';
 import { ClassroomStore } from '../../services/store/classroom.store';
 import { AuthStore } from '@auth/services/store/auth.store';
 import type { ChatMessage } from '../../types/classroom-types';
 
+
 @Component({
   selector: 'sga-classroom-chat',
   standalone: true,
-  imports: [CommonModule, FormsModule, Button, Input, Badge],
+  imports: [CommonModule, FormsModule, ZardButtonComponent, ZardInputDirective, ZardBadgeComponent],
   templateUrl: './chat.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

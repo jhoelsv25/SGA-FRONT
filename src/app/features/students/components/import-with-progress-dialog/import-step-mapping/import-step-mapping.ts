@@ -1,6 +1,6 @@
+import { ZardButtonComponent } from '@/shared/components/button';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Button } from '@shared/directives';
 
 export interface FieldOption {
   key: string;
@@ -8,10 +8,11 @@ export interface FieldOption {
   required: boolean;
 }
 
+
 @Component({
   selector: 'sga-import-step-mapping',
   standalone: true,
-  imports: [CommonModule, Button],
+  imports: [CommonModule, ZardButtonComponent],
   templateUrl: './import-step-mapping.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -1,3 +1,4 @@
+import { ZardButtonComponent } from '@/shared/components/button';
 import { OverlayModule } from '@angular/cdk/overlay';
 import {
   BasePortalOutlet,
@@ -27,7 +28,6 @@ import { mergeClasses, noopFn } from '@/shared/utils/merge-classes';
 
 import type { ZardSheetRef } from './sheet-ref';
 import { sheetVariants, type ZardSheetVariants } from './sheet.variants';
-import { ZardButtonComponent } from '@/shared/components/button/button.component';
 import { ZardIconComponent } from '@/shared/components/icon/icon.component';
 import type { ZardIcon } from '@/shared/components/icon/icons';
 

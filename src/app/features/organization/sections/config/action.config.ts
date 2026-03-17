@@ -28,5 +28,4 @@ export const SECTION_ACTIONS: ActionConfig[] = [
     icon: 'fas fa-trash',
     typeAction: 'row',
     color: 'danger',
-  },
-];
+  }];

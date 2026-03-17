@@ -13,5 +13,4 @@ export const COLUMN_CONFIG_INSTITUTION = [
   { key: 'email', label: 'Email', sortable: true },
   { key: 'status', label: 'Estado', sortable: true },
   { key: 'logoUrl', label: 'Logo', sortable: false },
-  { key: 'description', label: 'Descripción', sortable: false },
-];
+  { key: 'description', label: 'Descripción', sortable: false }];

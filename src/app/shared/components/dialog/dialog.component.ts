@@ -1,3 +1,4 @@
+import { ZardButtonComponent } from '@/shared/components/button';
 import { OverlayModule } from '@angular/cdk/overlay';
 import {
   BasePortalOutlet,
@@ -28,7 +29,6 @@ import { mergeClasses, noopFn } from '@/shared/utils/merge-classes';
 import type { ZardDialogRef } from './dialog-ref';
 import { ZardDialogService } from './dialog.service';
 import { dialogVariants } from './dialog.variants';
-import { ZardButtonComponent } from '@/shared/components/button/button.component';
 import { ZardIconComponent } from '@/shared/components/icon/icon.component';
 import type { ZardIcon } from '@/shared/components/icon/icons';
 
@@ -52,11 +52,11 @@ export class ZardDialogOptions<T, U> {
   zOnCancel?: EventEmitter<T> | OnClickCallback<T> = noopFn;
   zOnOk?: EventEmitter<T> | OnClickCallback<T> = noopFn;
   zTitle?: string | TemplateRef<T>;
-  zHeight?: string;
-  zMaxHeight?: string;
-  zMinHeight?: string;
   zViewContainerRef?: ViewContainerRef;
   zWidth?: string;
+  zHeight?: string;
+  zMinHeight?: string;
+  zMaxHeight?: string;
 }
 
 @Component({
@@ -156,7 +156,6 @@ export class ZardDialogOptions<T, U> {
   host: {
     '[class]': 'classes()',
     '[style.width]': 'config.zWidth ? config.zWidth : null',
-    '[style.max-width]': 'config.zWidth ? "min(calc(100% - 2rem), " + config.zWidth + ")" : null',
     '[style.height]': 'config.zHeight ? config.zHeight : null',
     '[style.min-height]': 'config.zMinHeight ? config.zMinHeight : null',
     '[style.max-height]': 'config.zMaxHeight ? config.zMaxHeight : null',

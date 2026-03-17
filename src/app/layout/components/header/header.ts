@@ -1,19 +1,12 @@
 import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  OnDestroy,
-  OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthFacade } from '@auth/services/store/auth.acede';
 import { LayoutStore } from '@core/stores/layout.store';
 import { ZardIconComponent } from '@shared/components/icon';
 import { UserMenu, UserMenuAction, UserMenuDetail, UserMenuStat } from '@shared/widgets/user-menu/user-menu';
 import { Subject } from 'rxjs';
+
 
 @Component({
   selector: 'sga-header',
@@ -54,8 +47,7 @@ export class Header implements OnInit, OnDestroy {
         label: 'Módulos',
         value: `${modules.length} habilitados`,
         icon: 'fa-grid-2',
-      },
-    ];
+      }];
 
     if (profile?.institution) {
       details.push({
@@ -90,8 +82,7 @@ export class Header implements OnInit, OnDestroy {
     return [
       { label: 'Módulos', value: this.modules().length },
       { label: 'Cursos', value: 0 },
-      { label: 'Prom.', value: 'N/A' },
-    ];
+      { label: 'Prom.', value: 'N/A' }];
   });
 
   ngOnInit() {

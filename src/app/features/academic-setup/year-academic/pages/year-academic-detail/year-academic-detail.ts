@@ -1,28 +1,23 @@
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardSkeletonComponent } from '@/shared/components/skeleton';
+import { ZardEmptyComponent } from '@/shared/components/empty';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { Button } from '@shared/directives';
 
 import type { Period, PeriodStatus } from '@features/academic-setup/periods/types/period-types';
 import { PeriodCardComponent } from '@features/academic-setup/periods/components/period-card/period-card';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { PeriodForm } from '@features/academic-setup/periods/components/period-form/period-form';
 import { PeriodApi } from '@features/academic-setup/periods/services/period-api';
-import { EmptyState } from '@shared/widgets/ui/empty-state/empty-state';
-import { Skeleton } from '@shared/widgets/ui/skeleton/skeleton';
 import { YearAcademicApi } from '../../services/api/year-academic-api';
 import type { YearAcademic, YearAcademicPeriod } from '../../types/year-academi-types';
+
 
 @Component({
   selector: 'sga-year-academic-detail',
   standalone: true,
-  imports: [
-    CommonModule,
-    Button,
-    PeriodCardComponent,
-    EmptyState,
-    Skeleton,
-  ],
+  imports: [CommonModule, ZardButtonComponent, PeriodCardComponent, ZardEmptyComponent, ZardSkeletonComponent],
   templateUrl: './year-academic-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -1,8 +1,10 @@
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardInputDirective } from '@/shared/components/input';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal, input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ConfirmDialog } from '@core/services/confirm-dialog';
+import { DialogConfirmService } from '@shared/widgets/dialog-confirm';
 import { ExcelService } from '@core/services/excel.service';
 import { Toast } from '@core/services/toast';
 import { TeacherAttendanceManualForm } from '@features/teachers/components/teacher-attendance-manual-form/teacher-attendance-manual-form';
@@ -11,10 +13,8 @@ import {
   TeacherAttendance,
   TeacherAttendanceStatus,
 } from '@features/teachers/types/teacher-attendance-types';
-import { Button } from '@shared/directives';
 import { HeaderDetail } from '@shared/widgets/header-detail/header-detail';
 import { ImportDialog } from '@shared/widgets/import-dialog/import-dialog';
-import { Input } from '@shared/adapters/ui/input/input';
 import { forkJoin, map } from 'rxjs';
 
 type TeacherAttendanceRow = {
@@ -33,8 +33,7 @@ const ATTENDANCE_COLUMNS = [
   { key: 'teacherCode', label: 'Codigo docente' },
   { key: 'status', label: 'Estado' },
   { key: 'checkInTime', label: 'Hora entrada' },
-  { key: 'observations', label: 'Observaciones' },
-];
+  { key: 'observations', label: 'Observaciones' }];
 
 const HEADER_CONFIG = {
   title: 'Asistencia de Docentes',
@@ -43,17 +42,18 @@ const HEADER_CONFIG = {
   showFilters: false,
 };
 
+
 @Component({
   selector: 'sga-teacher-attendances',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderDetail, Input, Button],
+  imports: [CommonModule, FormsModule, HeaderDetail, ZardInputDirective, ZardButtonComponent],
   templateUrl: './teacher-attendances.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class TeacherAttendancesPage implements OnInit {
   private readonly teacherAttendanceApi = inject(TeacherAttendanceApi);
   private readonly dialog = inject(DialogModalService);
-  private readonly confirmDialog = inject(ConfirmDialog);
+  private readonly confirmDialog = inject(DialogConfirmService);
   private readonly excel = inject(ExcelService);
   private readonly toast = inject(Toast);
 
@@ -165,8 +165,7 @@ export default class TeacherAttendancesPage implements OnInit {
             status,
             checkInTime: this.normalizeTime(currentRow.checkInTime),
             observations: currentRow.observations || undefined,
-          },
-        ],
+          }],
       })
       .subscribe({
         next: () => {
@@ -268,8 +267,8 @@ export default class TeacherAttendancesPage implements OnInit {
       icon: 'fa-solid fa-triangle-exclamation',
       title: 'Eliminar asistencia',
       message: `Se eliminará la asistencia de ${row.teacherLabel}. Esta acción no se puede deshacer.`,
-      acceptButtonProps: { label: 'Eliminar', color: 'danger', variant: 'solid', size: 'md' },
-      rejectButtonProps: { label: 'Cancelar', color: 'secondary', variant: 'outline', size: 'md' },
+      acceptButtonProps: { label: 'Eliminar', color: 'danger', zType: 'default', size: 'default' },
+      rejectButtonProps: { label: 'Cancelar', color: 'secondary', zType: 'outline', size: 'default' },
     });
 
     if (!confirmed) {
@@ -303,8 +302,8 @@ export default class TeacherAttendancesPage implements OnInit {
       icon: 'fa-solid fa-triangle-exclamation',
       title: 'Eliminar asistencia',
       message: `Se eliminará la asistencia de ${row.teacherLabel}. Esta acción no se puede deshacer.`,
-      acceptButtonProps: { label: 'Eliminar', color: 'danger', variant: 'solid', size: 'md' },
-      rejectButtonProps: { label: 'Cancelar', color: 'secondary', variant: 'outline', size: 'md' },
+      acceptButtonProps: { label: 'Eliminar', color: 'danger', zType: 'default', size: 'default' },
+      rejectButtonProps: { label: 'Cancelar', color: 'secondary', zType: 'outline', size: 'default' },
     });
 
     if (!confirmed) return;
@@ -343,8 +342,8 @@ export default class TeacherAttendancesPage implements OnInit {
       icon: 'fa-solid fa-triangle-exclamation',
       title: 'Eliminar asistencias',
       message: `Se eliminarán ${deletable.length} asistencias. Esta acción no se puede deshacer.`,
-      acceptButtonProps: { label: 'Eliminar', color: 'danger', variant: 'solid', size: 'md' },
-      rejectButtonProps: { label: 'Cancelar', color: 'secondary', variant: 'outline', size: 'md' },
+      acceptButtonProps: { label: 'Eliminar', color: 'danger', zType: 'default', size: 'default' },
+      rejectButtonProps: { label: 'Cancelar', color: 'secondary', zType: 'outline', size: 'default' },
     });
 
     if (!confirmed) return;
@@ -515,8 +514,7 @@ export default class TeacherAttendancesPage implements OnInit {
                 markedForDelete: bulkMode
                   ? true
                   : selectedAttendanceIds.has(existing.id),
-              },
-            ];
+              }];
           }),
         );
         this.syncBulkModeFromSelection();

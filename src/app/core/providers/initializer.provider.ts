@@ -1,9 +1,4 @@
-import {
-  EnvironmentProviders,
-  makeEnvironmentProviders,
-  inject,
-  provideAppInitializer,
-} from '@angular/core';
+import { EnvironmentProviders, makeEnvironmentProviders, inject, provideAppInitializer } from '@angular/core';
 import { AuthFacade } from '@auth/services/store/auth.acede';
 import { firstValueFrom } from 'rxjs';
 
@@ -24,6 +19,5 @@ export function provideInitializer(): EnvironmentProviders {
           console.error('❌ [AppInitializer] Auth initialization failed:', err);
           return true; // Retornar true incluso si falla, para no bloquear la app
         });
-    }),
-  ]);
+    })]);
 }

@@ -1,13 +1,14 @@
+import { ZardToastComponent } from '@/shared/components/toast';
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
-import { Toast } from '@shared/widgets/ui/toast/toast';
 import { AuthInitializer } from '@auth/services/auth-initializer';
 import { AuthFacade } from '@auth/services/store/auth.acede';
 
+
 @Component({
   selector: 'sga-root',
-  imports: [RouterOutlet, Toast],
-  template: ` <sga-toast />
+  imports: [RouterOutlet, ZardToastComponent],
+  template: ` <z-toast />
     <router-outlet />`,
 })
 export class App {

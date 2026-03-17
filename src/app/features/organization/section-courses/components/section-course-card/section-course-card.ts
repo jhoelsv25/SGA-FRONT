@@ -1,14 +1,15 @@
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardCardComponent } from '@/shared/components/card';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Card } from '@shared/adapters/ui/card/card';
-import { Button } from '@shared/directives';
 import type { SectionCourse } from '../../types/section-course-types';
 import { MODALITY_LABELS } from '../../config/form.constants';
+
 
 @Component({
   selector: 'sga-section-course-card',
   standalone: true,
-  imports: [CommonModule, Card, Button],
+  imports: [CommonModule, ZardCardComponent, ZardButtonComponent],
   templateUrl: './section-course-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

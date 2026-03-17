@@ -1,5 +1,5 @@
 <div class="flex flex-col gap-6 animate-in fade-in duration-500">
-  <sga-list-toolbar
+  <z-list-toolbar
     title="Registro de Calificaciones"
     description="Registra notas por evaluación con validación rápida de estado"
     icon="fas fa-pen-square"
@@ -11,34 +11,32 @@
       
       <div class="flex flex-col gap-1.5">
         <label for="section-course-select" class="text-[11px] font-bold text-base-content/60 uppercase">Curso / Sección</label>
-        <sga-select
+        <z-select-option
           id="section-course-select"
           [options]="sectionCourseOptions()"
           [value]="selectedSectionCourse()"
           (valueChange)="onSectionCourseChange($event)"
-          placeholder="Seleccione uno..."
-        />
+          placeholder="Seleccione uno..."></z-select-option>
       </div>
 
       <div class="flex flex-col gap-1.5">
         <label for="assessment-select" class="text-[11px] font-bold text-base-content/60 uppercase">Evaluación</label>
-        <sga-select
+        <z-select-option
           id="assessment-select"
           [options]="filteredAssessments()"
           [value]="selectedAssessment()"
           (valueChange)="onAssessmentChange($event)"
           [disabled]="!selectedSectionCourse()"
-          placeholder="Seleccione..."
-        />
+          placeholder="Seleccione..."></z-select-option>
       </div>
     </div>
 
     <div list-toolbar-actions>
       <button
-        sgaButton
-        variant="ghost"
-        color="secondary"
-        shape="pill"
+        z-button
+        zType="ghost"
+        zColor="secondary"
+        zShape="circle"
         [disabled]="!hasActiveFilters()"
         (click)="clearFilters()"
       >
@@ -46,9 +44,9 @@
         Limpiar
       </button>
       <button
-        sgaButton
-        color="primary"
-        shape="pill"
+        z-button
+        zColor="primary"
+        zShape="circle"
         [disabled]="!canSave() || store.loading()"
         (click)="saveScores()"
       >
@@ -60,7 +58,7 @@
         Guardar Notas
       </button>
     </div>
-  </sga-list-toolbar>
+  </z-list-toolbar>
 
   <div class="flex flex-wrap items-center gap-2 px-1">
     @if (selectedSectionLabel()) {
@@ -96,13 +94,13 @@
     >
       <ng-template sgaTemplate="scoreTemplate" let-row>
         <div class="flex items-center gap-2">
-          <sga-input
+          <input z-input w-full
             type="number"
             class="w-24"
             [(ngModel)]="row.score"
             [min]="0"
             [max]="20"
-          />
+           />
           <span class="text-xs font-bold" [ngClass]="row.score < 11 ? 'text-error' : 'text-success'">
             {{ row.score < 11 ? 'Desaprobado' : 'Aprobado' }}
           </span>
@@ -110,10 +108,10 @@
       </ng-template>
 
       <ng-template sgaTemplate="observationTemplate" let-row>
-        <sga-input
+        <input z-input w-full
           placeholder="Opcional..."
           [(ngModel)]="row.observation"
-        />
+         />
       </ng-template>
     </sga-data-source>
   }

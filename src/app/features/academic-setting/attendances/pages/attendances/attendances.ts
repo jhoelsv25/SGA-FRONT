@@ -1,10 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import * as XLSX from 'xlsx';
-import { CommonModule, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Input } from '@shared/adapters/ui/input/input';
-import { Select } from '@shared/adapters/ui/select/select';
-import type { SelectOption } from '@shared/adapters/ui/select/select';
+import { CommonModule, NgClass, NgIf, NgFor, NgSwitch } from '@angular/common';
+import { Component, OnInit, inject, signal, input, ChangeDetectionStrategy } from '@angular/core';
+import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
+import { ZardInputDirective } from '@/shared/components/input';
 import { AttendanceApi } from '../../services/attendance-api';
 import { AttendanceStore } from '../../services/store/attendance.store';
 import { AttendanceStatus } from '../../types/attendance-types';
@@ -14,10 +13,11 @@ import { EnrollmentApi } from '../../../enrollments/services/enrollment-api';
 
 type StudentRow = { id: string; name: string; studentCode: string; status: AttendanceStatus };
 
+
 @Component({
   selector: 'sga-attendances',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgClass, Input, Select],
+  imports: [CommonModule, FormsModule, NgClass, ZardInputDirective, SelectOptionComponent],
   templateUrl: './attendances.html',
   styleUrl: './attendances.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -44,8 +44,7 @@ export default class Attendances implements OnInit {
             label: sc.course?.name && sc.section?.name
               ? `${sc.course.name} - ${sc.section.name}`
               : String(sc.id).slice(0, 12) + '...',
-          })),
-        ]);
+          }))]);
       },
     });
   }

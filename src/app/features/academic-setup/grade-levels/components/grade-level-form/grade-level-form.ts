@@ -1,17 +1,18 @@
+import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardInputDirective } from '@/shared/components/input';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal, input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Button } from '@shared/directives';
-import { Input } from '@shared/adapters/ui/input/input';
-import { Select } from '@shared/adapters/ui/select/select';
 import { GradeLevelStore } from '../../services/store/grade-level.store';
 import { GradeLevel, GradeLevelCreate } from '../../types/grade-level-types';
 import { InstitutionApi } from '@features/administration/services/api/institution-api';
 
+
 @Component({
   selector: 'sga-grade-level-form',
   standalone: true,
-  imports: [ReactiveFormsModule, Button, Select, Input],
+  imports: [ReactiveFormsModule, ZardButtonComponent, SelectOptionComponent, ZardInputDirective],
   templateUrl: './grade-level-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -30,8 +31,7 @@ export class GradeLevelForm implements OnInit {
   levelOptions = [
     { value: 'primary', label: 'Primaria' },
     { value: 'secondary', label: 'Secundaria' },
-    { value: 'higher', label: 'Superior' },
-  ];
+    { value: 'higher', label: 'Superior' }];
 
   ngOnInit() {
     this.current = this.data?.current ?? null;

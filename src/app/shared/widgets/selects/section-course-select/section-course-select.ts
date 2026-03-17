@@ -1,16 +1,6 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  ElementRef,
-  forwardRef,
-  HostListener,
-  inject,
-  input,
-  output,
-  signal,
-  viewChild,
-} from '@angular/core';
+import { ZardSelectComponent, ZardSelectItemComponent } from '@/shared/components/select';
+import { SelectOption } from '@/shared/widgets/select-option/select-option';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, forwardRef, HostListener, inject, input, output, signal, viewChild, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { SectionCourseApi } from '@features/organization/section-courses/services/section-course-api';
@@ -30,7 +20,9 @@ function getSectionCourseInitials(sc: SectionCourse): string {
 
 function getSectionCourseSubtitle(sc: SectionCourse): string {
   const parts: string[] = [];
-  const teacher = sc.teacher as { person?: { firstName?: string; lastName?: string }; teacherCode?: string } | undefined;
+  const teacher = sc.teacher as
+    | { person?: { firstName?: string; lastName?: string }; teacherCode?: string }
+    | undefined;
   if (teacher?.person?.firstName || teacher?.person?.lastName) {
     parts.push(`${teacher.person?.firstName ?? ''} ${teacher.person?.lastName ?? ''}`.trim());
   } else if (teacher?.teacherCode) {
@@ -40,17 +32,22 @@ function getSectionCourseSubtitle(sc: SectionCourse): string {
   return parts.join(' · ') || '—';
 }
 
+
 @Component({
   selector: 'sga-section-course-select',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ZardSelectComponent, ZardSelectItemComponent],
   templateUrl: './section-course-select.html',
   providers: [
     { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => SectionCourseSelect), multi: true },
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SectionCourseSelect implements ControlValueAccessor {
+export class SectionCourseSelect implements ControlValueAccessor, OnInit {
+  ngOnInit() {
+    this.loadItems();
+  }
+
   private api = inject(SectionCourseApi);
 
   placeholder = input<string>('Seleccionar curso y sección');
@@ -78,7 +75,7 @@ export class SectionCourseSelect implements ControlValueAccessor {
       (sc) =>
         sc.course?.name?.toLowerCase().includes(term) ||
         sc.section?.name?.toLowerCase().includes(term) ||
-        sc.id?.toLowerCase().includes(term)
+        sc.id?.toLowerCase().includes(term),
     );
   });
 
@@ -109,6 +106,20 @@ export class SectionCourseSelect implements ControlValueAccessor {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       this.selectItem(sc);
+    }
+  }
+
+  onZardSelectionChange(val: string | string[]) {
+    const id = Array.isArray(val) ? val[0] : val;
+    if (!id) {
+      this.clearSelection();
+      return;
+    }
+    const found = this.allItems().find((x) => x.id === id);
+    if (found) {
+      this.selectItem(found);
+    } else {
+      this.writeValue(id);
     }
   }
 

@@ -1,14 +1,15 @@
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardInputDirective } from '@/shared/components/input';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Button } from '@shared/directives';
-import { Input } from '@shared/adapters/ui/input/input';
 import { UserStore } from '../../../services/store/user.store';
 import { User, UserCreate } from '../../types/user-types';
 
+
 @Component({
   selector: 'sga-user-form',
-  imports: [ReactiveFormsModule, Button, Input],
+  imports: [ReactiveFormsModule, ZardButtonComponent, ZardInputDirective],
   templateUrl: './user-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

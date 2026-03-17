@@ -1,43 +1,42 @@
 <form [formGroup]="form" class="grid gap-4" (ngSubmit)="submit()">
   <header class="flex items-center justify-between mb-4">
     <h2 class="text-lg font-semibold">{{ current ? 'Editar horario' : 'Nuevo horario' }}</h2>
-    <button type="button" sgaButton color="secondary" variant="ghost" shape="pill" (click)="close()">
+    <button type="button" z-button zColor="secondary" zType="ghost" zShape="circle" (click)="close()">
       <i class="fas fa-times"></i>
     </button>
   </header>
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <div class="md:col-span-2">
       <label class="label-form" for="sectionCourse">Curso - Sección</label>
-      <sga-section-course-select
+      <z-select-option
         id="sectionCourse"
         formControlName="sectionCourse"
         placeholder="Seleccionar curso y sección"
-        (selectionChange)="onSectionCourseSelect($event)"
-      />
+        (selectionChange)="onSectionCourseSelect($event)"></z-select-option>
     </div>
     <div>
       <label class="label-form" for="dayOfWeek">Día</label>
-      <sga-select id="dayOfWeek" [options]="dayOptions" formControlName="dayOfWeek" />
+      <z-select-option id="dayOfWeek" [options]="dayOptions" formControlName="dayOfWeek"></z-select-option>
     </div>
     <div>
       <label class="label-form" for="classroom">Aula</label>
-      <sga-input id="classroom" formControlName="classroom" placeholder="Ej: Aula 006" />
+      <input z-input w-full id="classroom" formControlName="classroom" placeholder="Ej: Aula 006"  />
     </div>
     <div>
       <label class="label-form" for="startAt">Hora inicio</label>
-      <sga-input id="startAt" type="time" formControlName="startAt" />
+      <input z-input w-full id="startAt" type="time" formControlName="startAt"  />
     </div>
     <div>
       <label class="label-form" for="endAt">Hora fin</label>
-      <sga-input id="endAt" type="time" formControlName="endAt" />
+      <input z-input w-full id="endAt" type="time" formControlName="endAt"  />
     </div>
     <div class="md:col-span-2">
       <label class="label-form" for="description">Descripción</label>
-      <sga-input id="description" formControlName="description" placeholder="Opcional" />
+      <input z-input w-full id="description" formControlName="description" placeholder="Opcional"  />
     </div>
   </div>
   <footer class="flex justify-end gap-2 mt-4">
-    <button type="button" sgaButton color="secondary" variant="outline" (click)="close()">Cancelar</button>
-    <button type="submit" sgaButton color="primary" [disabled]="form.invalid">Guardar</button>
+    <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">Cancelar</button>
+    <button type="submit" z-button zColor="primary" [disabled]="form.invalid">Guardar</button>
   </footer>
 </form>

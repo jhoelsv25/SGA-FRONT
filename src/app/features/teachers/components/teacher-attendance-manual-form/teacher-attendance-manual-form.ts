@@ -1,22 +1,24 @@
+export type LocalSelectOption = { value: string | number; label: string; [key: string]: any };
+import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardInputDirective } from '@/shared/components/input';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Toast } from '@core/services/toast';
 import { TeacherAttendanceApi } from '@features/teachers/services/api/teacher-attendance-api';
 import { TeacherAttendanceStatus } from '@features/teachers/types/teacher-attendance-types';
-import { Button } from '@shared/directives';
-import { Input } from '@shared/adapters/ui/input/input';
-import { Select, SelectOption } from '@shared/adapters/ui/select/select';
 
 interface ManualAttendanceDialogData {
   date: string;
   teachers: { id: string; teacherCode: string; specialization: string }[];
 }
 
+
 @Component({
   selector: 'sga-teacher-attendance-manual-form',
   standalone: true,
-  imports: [ReactiveFormsModule, Button, Input, Select],
+  imports: [ReactiveFormsModule, ZardButtonComponent, ZardInputDirective, SelectOptionComponent],
   templateUrl: './teacher-attendance-manual-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -29,20 +31,18 @@ export class TeacherAttendanceManualForm {
 
   loading = false;
 
-  teacherOptions: SelectOption[] = [
+  teacherOptions: LocalSelectOption[] = [
     { value: '', label: 'Seleccione docente...' },
     ...this.data.teachers.map((t) => ({
       value: t.id,
       label: `${t.teacherCode} - ${t.specialization}`,
-    })),
-  ];
+    }))];
 
-  statusOptions: SelectOption[] = [
+  statusOptions: LocalSelectOption[] = [
     { value: 'present' satisfies TeacherAttendanceStatus, label: 'Presente' },
     { value: 'late' satisfies TeacherAttendanceStatus, label: 'Tardanza' },
     { value: 'absent' satisfies TeacherAttendanceStatus, label: 'Falta' },
-    { value: 'excused' satisfies TeacherAttendanceStatus, label: 'Justificado' },
-  ];
+    { value: 'excused' satisfies TeacherAttendanceStatus, label: 'Justificado' }];
 
   form = this.fb.group({
     teacherId: ['', [Validators.required]],
@@ -96,8 +96,7 @@ export class TeacherAttendanceManualForm {
             status,
             checkInTime,
             observations: observations || undefined,
-          },
-        ],
+          }],
       })
       .subscribe({
         next: (res) => {

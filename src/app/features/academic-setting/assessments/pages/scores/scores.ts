@@ -1,12 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { ListToolbarComponent } from '@/shared/widgets/list-toolbar/list-toolbar';
+import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardInputDirective } from '@/shared/components/input';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import { ListToolbar } from '@shared/widgets/ui/list-toolbar';
+
 import { DataSource, SgaTemplate } from '@shared/widgets/data-source/data-source';
-import { Input } from '@shared/adapters/ui/input/input';
-import { Select, type SelectOption } from '@shared/adapters/ui/select/select';
-import { Button } from '@shared/directives';
 
 import { AssessmentStore } from '../../services/store/assessment.store';
 import { EnrollmentApi } from '../../../enrollments/services/enrollment-api';
@@ -23,10 +24,11 @@ type ScoreRow = {
   observation: string;
 };
 
+
 @Component({
   selector: 'sga-assessment-scores',
   standalone: true,
-  imports: [CommonModule, FormsModule, ListToolbar, DataSource, SgaTemplate, Input, Select, Button],
+  imports: [CommonModule, FormsModule, DataSource, SgaTemplate, ZardInputDirective, SelectOptionComponent, ZardButtonComponent, ListToolbarComponent],
   templateUrl: './scores.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -46,8 +48,7 @@ export default class AssessmentScoresPage implements OnInit {
     { key: 'studentCode', label: 'Código', width: '120px' },
     { key: 'studentName', label: 'Estudiante', sortable: true },
     { key: 'score', label: 'Calificación', width: '150px', type: 'custom', customTemplate: 'scoreTemplate' },
-    { key: 'observation', label: 'Observación', type: 'custom', customTemplate: 'observationTemplate' },
-  ];
+    { key: 'observation', label: 'Observación', type: 'custom', customTemplate: 'observationTemplate' }];
 
   public canSave = computed(() => this.selectedAssessment() && this.studentScores().length > 0);
   public hasActiveFilters = computed(() => Boolean(this.selectedSectionCourse() || this.selectedAssessment()));

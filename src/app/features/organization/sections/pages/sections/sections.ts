@@ -1,3 +1,7 @@
+import { ListToolbarComponent } from '@/shared/widgets/list-toolbar/list-toolbar';
+import { DropdownOptionComponent, DropdownItem } from '@/shared/widgets/dropdown-option/dropdown-option';
+import { ZardSkeletonComponent } from '@/shared/components/skeleton';
+import { ZardEmptyComponent } from '@/shared/components/empty';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -7,17 +11,16 @@ import type { Section } from '../../types/section-types';
 import { SectionForm } from '../../components/section-form/section-form';
 import { CommonModule } from '@angular/common';
 import { SectionCardComponent } from '../../components/section-card/section-card';
-import { EmptyState } from '@shared/widgets/ui/empty-state/empty-state';
-import { Skeleton } from '@shared/widgets/ui/skeleton/skeleton';
-import { ListToolbar } from '@shared/widgets/ui/list-toolbar';
-import { Dropdown } from '@shared/adapters/ui/dropdown/dropdown';
+
+import { ZardDropdownMenuComponent } from '@/shared/components/dropdown';
 import { PermissionCheckStore } from '@core/stores/permission-check.store';
-import { ConfirmDialog } from '@core/services/confirm-dialog';
+import { DialogConfirmService } from '@shared/widgets/dialog-confirm';
+
 
 @Component({
   selector: 'sga-sections',
   standalone: true,
-  imports: [CommonModule, SectionCardComponent, EmptyState, Skeleton, ListToolbar, Dropdown],
+  imports: [CommonModule, SectionCardComponent, ZardEmptyComponent, ZardSkeletonComponent, DropdownOptionComponent, ListToolbarComponent],
   templateUrl: './sections.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -26,7 +29,7 @@ export default class SectionsPage implements OnInit {
   private store = inject(SectionStore);
   private route = inject(ActivatedRoute);
   private permissionStore = inject(PermissionCheckStore);
-  private confirmDialog = inject(ConfirmDialog);
+  private confirmDialog = inject(DialogConfirmService);
 
   readonly skeletonItems = [1, 2, 3, 4];
   searchTerm = signal('');
@@ -85,8 +88,8 @@ export default class SectionsPage implements OnInit {
         title: 'Eliminar sección',
         icon: 'fa-solid fa-trash',
         message: `¿Estás seguro de eliminar la sección "${section.name}"? Esta acción no se puede deshacer.`,
-        acceptButtonProps: { label: 'Eliminar', color: 'danger', variant: 'solid' },
-        rejectButtonProps: { label: 'Cancelar', variant: 'outline' },
+        acceptButtonProps: { label: 'Eliminar', color: 'danger', zType: 'default' },
+        rejectButtonProps: { label: 'Cancelar', zType: 'outline' },
       })
       .then((confirmed) => {
         if (confirmed) {

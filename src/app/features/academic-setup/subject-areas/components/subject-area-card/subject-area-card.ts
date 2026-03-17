@@ -1,13 +1,14 @@
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardCardComponent } from '@/shared/components/card';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Card } from '@shared/adapters/ui/card/card';
-import { Button } from '@shared/directives';
 import type { SubjectArea, SubjectAreaType, StatusType } from '../../types/subject-area-types';
+
 
 @Component({
   selector: 'sga-subject-area-card',
   standalone: true,
-  imports: [CommonModule, Card, Button],
+  imports: [CommonModule, ZardCardComponent, ZardButtonComponent],
   templateUrl: './subject-area-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

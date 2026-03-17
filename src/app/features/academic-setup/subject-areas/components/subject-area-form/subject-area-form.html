@@ -8,10 +8,10 @@
     </div>
     <button
       type="button"
-      sgaButton
-      color="secondary"
-      variant="ghost"
-      shape="pill"
+      z-button
+      zColor="secondary"
+      zType="ghost"
+      zShape="circle"
       (click)="onClose()"
     >
       <i class="fas fa-times"></i>
@@ -20,46 +20,46 @@
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <div>
       <label class="label-form" for="code">Código</label>
-      <sga-input id="code" type="text" formControlName="code" placeholder="Código de área" />
+      <input z-input w-full id="code" type="text" formControlName="code" placeholder="Código de área"  />
     </div>
     <div>
       <label class="label-form" for="name">Nombre</label>
-      <sga-input id="name" type="text" formControlName="name" placeholder="Nombre de área" />
+      <input z-input w-full id="name" type="text" formControlName="name" placeholder="Nombre de área"  />
     </div>
     <div class="md:col-span-2">
       <label class="label-form" for="description">Descripción</label>
-      <sga-input
+      <input z-input w-full
         id="description"
         type="text"
         formControlName="description"
         placeholder="Descripción"
-      />
+       />
     </div>
     <div>
       <label class="label-form" for="type">Tipo</label>
-      <sga-select
+      <z-select-option
         id="type"
         [options]="types"
         formControlName="type"
         placeholder="Seleccionar tipo"
-      ></sga-select>
+      ></z-select-option>
     </div>
     <div>
       <label class="label-form" for="status">Estado</label>
-      <sga-select
+      <z-select-option
         id="status"
         [options]="statuses"
         formControlName="status"
         placeholder="Seleccionar estado"
-      ></sga-select>
+      ></z-select-option>
     </div>
   </div>
   <footer class="flex items-center justify-end gap-2 mt-6">
-    <button type="button" sgaButton color="secondary" variant="outline" (click)="onClose()">
+    <button type="button" z-button zColor="secondary" zType="outline" (click)="onClose()">
       <i class="fas fa-times"></i>
       Cancelar
     </button>
-    <button type="submit" sgaButton color="primary" [disabled]="form.invalid || saving()">
+    <button type="submit" z-button zColor="primary" [disabled]="form.invalid || saving()">
       <i class="fas fa-check"></i>
       {{ saving() ? 'Guardando...' : 'Guardar' }}
     </button>

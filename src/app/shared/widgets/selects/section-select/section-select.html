@@ -1,106 +1,28 @@
-<div #hostRef class="relative w-full" [class]="effectiveDisabled() ? 'pointer-events-none opacity-50' : ''">
-  <div
-    class="flex items-center justify-between w-full h-10 px-3 py-2 text-sm border rounded-xl cursor-pointer transition-all duration-200 outline-none bg-transparent border-base-300 hover:border-base-400 hover:bg-base-100/50"
-    [class.border-primary]="isOpen()"
-    [class.ring-2]="isOpen()"
-    [class.ring-primary/20]="isOpen()"
-    role="combobox"
-    tabindex="0"
-    [attr.aria-expanded]="isOpen()"
-    aria-controls="section-select-options"
-    (click)="isOpen() ? closeDropdown() : openDropdown()"
-    (keydown)="onTriggerKeyDown($event)"
-  >
-    <div class="flex items-center gap-2 flex-1 min-w-0">
-      @if (selectedSection(); as s) {
+<z-select
+  [class]="effectiveDisabled() ? 'pointer-events-none opacity-50' : ''"
+  [zDisabled]="effectiveDisabled()"
+  [zPlaceholder]="placeholder()"
+  [zValue]="selectedItem()?.id || ''"
+  (zSelectionChange)="onZardSelectionChange($event)"
+>
+  @for (item of filteredItems(); track item.id) {
+    <z-select-item [zValue]="item.id">
+      <div class="flex items-center gap-2">
         <div
-          class="flex items-center justify-center w-6 h-6 rounded-full bg-primary/15 text-primary font-semibold text-xs shrink-0"
+          class="flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary font-semibold text-xs shrink-0"
         >
-          {{ getSectionInitials(s) }}
+          {{ getInitials(item) }}
         </div>
-        <span class="truncate font-medium tracking-tight text-base-content">{{ getSectionLabel(s) }}</span>
-      } @else {
-        <span class="flex-1 text-left truncate tracking-tight text-base-content/50 font-normal">{{ placeholder() }}</span>
-      }
-    </div>
-    <div class="flex items-center gap-1 shrink-0">
-      @if (selectedSection()) {
-        <button
-          type="button"
-          class="flex items-center justify-center w-5 h-5 text-base-content/40 hover:text-base-content hover:bg-base-200 rounded transition-colors duration-200"
-          (click)="clearSelection($event)"
-          tabindex="-1"
-        >
-          <i class="fas fa-times text-xs"></i>
-        </button>
-      }
-      <div
-        class="flex items-center justify-center w-5 h-5 text-base-content/40 transition-transform duration-200"
-        [class.rotate-180]="isOpen()"
-      >
-        <i class="fas fa-chevron-down text-xs"></i>
-      </div>
-    </div>
-  </div>
-
-  @if (isOpen()) {
-    <div
-      id="section-select-options"
-      class="absolute top-11 left-0 right-0 z-50 bg-base-100 border border-base-200 rounded-xl shadow-lg max-h-72 overflow-hidden"
-    >
-      <div class="p-3 border-b border-base-200">
-        <div class="relative">
-          <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40 text-xs pointer-events-none"></i>
-          <input
-            type="text"
-            class="w-full pl-9 pr-3 py-2 text-sm border-0 border-b border-base-200 bg-transparent text-base-content placeholder:text-base-content/40 outline-none transition-colors duration-200 focus:ring-0"
-            placeholder="Buscar sección..."
-            (input)="onSearchInput($event)"
-            (click)="$event.stopPropagation()"
-          />
+        <div class="flex flex-col min-w-0">
+          <span class="font-medium text-sm">{{ getLabel(item) }}</span>
         </div>
       </div>
-
-      <div class="max-h-48 overflow-y-auto py-1">
-        @if (loading() && allSections().length === 0) {
-          <div class="px-3 py-4 text-center text-base-content/50 text-sm italic flex flex-col items-center gap-2">
-            <i class="fas fa-spinner fa-spin text-lg"></i>
-            <span>Cargando secciones...</span>
-          </div>
-        } @else if (filteredSections().length === 0) {
-          <div class="px-3 py-4 text-center text-base-content/50 text-sm italic">
-            {{ searchTerm() ? 'No se encontraron resultados para "' + searchTerm() + '"' : 'No hay secciones disponibles' }}
-          </div>
-        } @else {
-          @for (s of filteredSections(); track s.id) {
-            <div
-              class="flex items-center gap-2 px-3 py-2.5 text-sm cursor-pointer transition-colors duration-150 font-medium tracking-tight text-base-content rounded-md mx-1 hover:bg-base-200"
-              role="option"
-              tabindex="0"
-              [attr.aria-selected]="selectedSection()?.id === s.id"
-              [class.bg-primary/10]="selectedSection()?.id === s.id"
-              [class.text-primary]="selectedSection()?.id === s.id"
-              (click)="selectSection(s)"
-              (keydown)="onOptionKeyDown($event, s)"
-            >
-              <div
-                class="flex items-center justify-center w-8 h-8 rounded-full bg-primary/15 text-primary font-semibold text-xs shrink-0"
-              >
-                {{ getSectionInitials(s) }}
-              </div>
-              <div class="flex-1 min-w-0 flex flex-col">
-                <span class="font-medium">{{ getSectionLabel(s) }}</span>
-                <small class="text-base-content/50 text-xs mt-0.5 truncate">{{ getSectionSubtitle(s) }}</small>
-              </div>
-              @if (selectedSection()?.id === s.id) {
-                <div class="ml-2 text-primary shrink-0">
-                  <i class="fas fa-check text-base"></i>
-                </div>
-              }
-            </div>
-          }
-        }
-      </div>
-    </div>
+    </z-select-item>
+  } @empty {
+    <z-select-item zValue="" [zDisabled]="true">
+      <span class="text-muted-foreground italic">{{
+        loading() ? 'Cargando...' : 'No hay datos'
+      }}</span>
+    </z-select-item>
   }
-</div>
+</z-select>

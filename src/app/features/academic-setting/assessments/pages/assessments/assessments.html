@@ -1,5 +1,5 @@
 <div class="p-6 space-y-4">
-  <sga-list-toolbar
+  <z-list-toolbar
     title="Evaluaciones"
     description="Gestión de evaluaciones y criterios de calificación"
     icon="fas fa-file-alt"
@@ -9,16 +9,16 @@
     (searchChange)="onSearch($event)"
   >
     <div list-toolbar-actions>
-      <button sgaButton variant="ghost" color="secondary" shape="pill" [disabled]="!hasListSearch()" (click)="clearFilters()">
+      <button z-button zType="ghost" zColor="secondary" zShape="circle" [disabled]="!hasListSearch()" (click)="clearFilters()">
         <i class="fas fa-filter-circle-xmark mr-2"></i>
         Limpiar Filtros
       </button>
-      <button sgaButton color="primary" shape="pill" (click)="onCreate()">
+      <button z-button zColor="primary" zShape="circle" (click)="onCreate()">
         <i class="fas fa-plus mr-2"></i>
         Nueva Evaluación
       </button>
-    </div>
-  </sga-list-toolbar>
+    
+    </div></z-list-toolbar>
 
   <div class="flex items-center justify-between px-1">
     <p class="text-sm text-base-content/60">Administra evaluaciones, pesos y fechas en un solo lugar.</p>
@@ -35,5 +35,5 @@
     [actions]="rowActions()"
     (actionClick)="onRowAction($event)"
     (pageChange)="onPageChange($event)"
-  />
+   />
 </div>

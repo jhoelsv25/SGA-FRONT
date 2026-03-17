@@ -29,5 +29,4 @@ export default [
     path: '',
     redirectTo: 'list',
     pathMatch: 'full',
-  },
-] as Routes;
+  }] as Routes;

@@ -27,9 +27,7 @@ const route: Routes = [
         path: '',
         redirectTo: 'login',
         pathMatch: 'full',
-      },
-    ],
-  },
-];
+      }],
+  }];
 
 export default route;

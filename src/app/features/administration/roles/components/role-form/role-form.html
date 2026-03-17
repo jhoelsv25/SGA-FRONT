@@ -10,7 +10,7 @@
       </span>
     </div>
 
-    <button type="button" sgaButton variant="ghost" size="sm" (click)="close()">
+    <button type="button" z-button zType="ghost" zSize="sm" (click)="close()">
       <i class="fas fa-times"></i>
     </button>
   </header>
@@ -23,11 +23,11 @@
           class="text-xs font-bold uppercase tracking-wider text-base-content/50 ml-1"
           >Nombre del Rol</label
         >
-        <sga-input
+        <input z-input w-full
           id="role-name"
           formControlName="name"
           placeholder="Ej: Administrador de Académico"
-        />
+         />
       </div>
 
       <div class="space-y-2">
@@ -64,8 +64,8 @@
   <div
     class="flex items-center gap-2 justify-end pt-6 border-t border-base-200 bg-base-200/50 sm:space-x-2"
   >
-    <button type="button" sgaButton variant="outline" (click)="close()">Cancelar</button>
-    <button type="submit" sgaButton color="primary" form="role-form" [disabled]="form.invalid">
+    <button type="button" z-button zType="outline" (click)="close()">Cancelar</button>
+    <button type="submit" z-button zColor="primary" form="role-form" [disabled]="form.invalid">
       <i class="fas fa-save mr-2 h-4 w-4"></i>
       {{ current ? 'Actualizar' : 'Crear' }} Rol
     </button>

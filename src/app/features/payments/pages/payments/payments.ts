@@ -1,19 +1,21 @@
+import { ListToolbarComponent } from '@/shared/widgets/list-toolbar/list-toolbar';
+import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
+import { ZardButtonComponent } from '@/shared/components/button';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 import { DataSource } from '@shared/widgets/data-source/data-source';
-import { ListToolbar } from '@shared/widgets/ui/list-toolbar';
-import { Select, SelectOption } from '@shared/adapters/ui/select/select';
-import { Button } from '@shared/directives';
+
 import { PaymentStore } from '../../services/store/payment.store';
 import { Payment } from '../../types/payment-types';
 import { PaymentForm } from '../../components/payment-form/payment-form';
 import { UiFiltersService } from '@core/services/ui-filters.service';
 
+
 @Component({
   selector: 'sga-payments',
-  imports: [CommonModule, ListToolbar, Select, DataSource, Button],
+  imports: [CommonModule, SelectOptionComponent, DataSource, ZardButtonComponent, ListToolbarComponent],
   templateUrl: './payments.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -51,8 +53,7 @@ export default class PaymentsPage {
     { value: 'partial', label: 'Parcial' },
     { value: 'paid', label: 'Pagado' },
     { value: 'overdue', label: 'Vencido' },
-    { value: 'cancelled', label: 'Cancelado' },
-  ]);
+    { value: 'cancelled', label: 'Cancelado' }]);
 
   onSearch(value: string): void {
     this.filters.setPaymentSearch(value);

@@ -1,3 +1,5 @@
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardEmptyComponent } from '@/shared/components/empty';
 import { ChangeDetectionStrategy, Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -6,20 +8,12 @@ import { AuditStore } from '@features/administration/services/store/audit.store'
 import { AuditLog } from '@features/administration/services/api/audit-api';
 import { AuditLogItem } from '../components/audit-log-item/audit-log-item';
 import { AuditLogsFilters } from '../components/audit-logs-filters/audit-logs-filters';
-import { Button } from '@shared/directives';
-import { EmptyState } from '@shared/widgets/ui/empty-state/empty-state';
+
 
 @Component({
   selector: 'sga-audit-logs',
   standalone: true,
-  imports: [
-    CommonModule, 
-    FormsModule, 
-    AuditLogItem, 
-    AuditLogsFilters,
-    Button, 
-    EmptyState
-  ],
+  imports: [CommonModule, FormsModule, AuditLogItem, AuditLogsFilters, ZardButtonComponent, ZardEmptyComponent],
   templateUrl: './audit-logs.html',
   styles: [`
     :host { display: block; }

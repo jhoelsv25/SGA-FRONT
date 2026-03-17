@@ -50,7 +50,7 @@
             <p class="text-xs text-base-content/50">Descargue el formato base para su archivo</p>
           </div>
         </div>
-        <button sgaButton variant="outline" color="success" size="sm" shape="pill" (click)="downloadTemplate()">
+        <button z-button zType="outline" zColor="success" zSize="sm" zShape="circle" (click)="downloadTemplate()">
           <i class="fas fa-download mr-2"></i>
           Descargar Plantilla
         </button>
@@ -66,7 +66,7 @@
         <label class="btn btn-primary btn-wide rounded-full shadow-lg shadow-primary/20">
           <i class="fas fa-search mr-2"></i>
           Buscar Archivo
-          <input type="file" class="hidden" accept=".xlsx,.xls" (change)="onFileSelected($event)" />
+          <input type="file" class="hidden" accept=".xlsx,.xls" (change)="onFileSelected($event)"  />
         </label>
       </div>
     </div>
@@ -106,11 +106,11 @@
             }
         </div>
         <div class="p-6 bg-base-200/30 flex justify-end gap-3">
-            <button sgaButton variant="ghost" color="secondary" shape="pill" (click)="step.set('upload')">Atrás</button>
+            <button z-button zType="ghost" zColor="secondary" zShape="circle" (click)="step.set('upload')">Atrás</button>
             <button 
-                sgaButton 
-                color="primary" 
-                shape="pill" 
+                z-button 
+                zColor="primary" 
+                zShape="circle" 
                 [disabled]="!canStartImport()"
                 (click)="startImport()"
             >

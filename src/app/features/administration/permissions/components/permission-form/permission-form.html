@@ -1,4 +1,4 @@
-<sga-card class="flex flex-col h-full border-none shadow-none bg-transparent animate-in zoom-in-95 duration-200">
+<z-card class="flex flex-col h-full border-none shadow-none bg-transparent animate-in zoom-in-95 duration-200">
   <div class="flex flex-col space-y-1.5 p-6 pb-6 border-b border-base-200 bg-base-200/20 flex flex-row justify-between items-center space-y-0">
     <div>
       <h2 class="text-2xl font-semibold leading-none tracking-tight text-2xl font-bold text-base-content tracking-tight">{{ title }}</h2>
@@ -14,34 +14,34 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="space-y-2">
             <label for="permission-name" class="text-[10px] font-black uppercase tracking-widest text-base-content/40 ml-1 block">Nombre Descriptivo</label>
-            <sga-input 
+            <input z-input w-full 
               id="permission-name"
               formControlName="name" 
               placeholder="Ej: Crear Usuarios"
               customClass="mt-1 block"
-            ></sga-input>
+            >
         </div>
         
         <div class="space-y-2">
             <label for="permission-slug" class="text-[10px] font-black uppercase tracking-widest text-base-content/40 ml-1 block">Slug (Identificador)</label>
-            <sga-input 
+            <input z-input w-full 
               id="permission-slug"
               formControlName="slug" 
               placeholder="Ej: users:create"
               customClass="mt-1 block"
-            ></sga-input>
+            >
         </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="space-y-2">
             <label for="permission-module" class="text-[10px] font-black uppercase tracking-widest text-base-content/40 ml-1 block">Módulo Asociado</label>
-            <sga-input 
+            <input z-input w-full 
               id="permission-module"
               formControlName="module" 
               placeholder="Ej: users"
               customClass="mt-1 block"
-            ></sga-input>
+            >
         </div>
         
         <div class="space-y-2">
@@ -66,11 +66,11 @@
   </div>
 
   <div class="flex items-center p-6 pt-0 p-6 bg-base-200/50 border-t border-base-200 justify-end gap-3">
-    <button sgaButton variant="ghost" (click)="close()" type="button">
+    <button z-button zType="ghost" (click)="close()" type="button">
       Cancelar
     </button>
-    <button sgaButton color="primary" type="submit" form="permission-form" [disabled]="form.invalid">
+    <button z-button zColor="primary" type="submit" form="permission-form" [disabled]="form.invalid">
       <i class="fas fa-save mr-2"></i> {{ current ? 'Actualizar' : 'Crear' }} Permiso
     </button>
   </div>
-</sga-card>
+</z-card>

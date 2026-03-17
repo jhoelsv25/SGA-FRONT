@@ -1,9 +1,9 @@
+import { ZardButtonComponent } from '@/shared/components/button';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
-import { ChangeDetectionStrategy, Component, inject, signal, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, computed, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import * as XLSX from 'xlsx';
-import { Button } from '@shared/directives';
 import { Toast } from '@core/services/toast';
 import { AttendanceStatus } from '../../../academic-setting/attendances/types/attendance-types';
 
@@ -14,13 +14,13 @@ interface ImportData {
 const STEPS = [
   { id: 'upload', label: 'Archivo', icon: 'fa-cloud-upload-alt' },
   { id: 'mapping', label: 'Mapeo', icon: 'fa-columns' },
-  { id: 'done', label: 'Listo', icon: 'fa-check-circle' },
-] as const;
+  { id: 'done', label: 'Listo', icon: 'fa-check-circle' }] as const;
+
 
 @Component({
   selector: 'sga-attendance-import-dialog',
   standalone: true,
-  imports: [CommonModule, FormsModule, Button],
+  imports: [CommonModule, FormsModule, ZardButtonComponent],
   templateUrl: './attendance-import-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -38,16 +38,14 @@ export class AttendanceImportDialog {
   
   fieldOptions = [
     { key: 'code', label: 'Código / DNI', required: true, example: '20230001' },
-    { key: 'status', label: 'Estado (P, T, F, J)', required: true, example: 'P' },
-  ];
+    { key: 'status', label: 'Estado (P, T, F, J)', required: true, example: 'P' }];
 
   downloadTemplate(): void {
     const data = [
       { 'Código': '20230001', 'Estudiante': 'Juan Perez', 'Asistencia': 'P' },
       { 'Código': '20230002', 'Estudiante': 'Maria Lopez', 'Asistencia': 'T' },
       { 'Código': '20230003', 'Estudiante': 'Pedro Sanchez', 'Asistencia': 'F' },
-      { 'Código': '20230004', 'Estudiante': 'Ana Gomez', 'Asistencia': 'J' },
-    ];
+      { 'Código': '20230004', 'Estudiante': 'Ana Gomez', 'Asistencia': 'J' }];
     
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();

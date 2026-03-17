@@ -1,7 +1,7 @@
+import { ZardCardComponent } from '@/shared/components/card';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Card } from '@shared/adapters/ui/card/card';
-import { Checkbox } from '@shared/widgets/ui/checkbox/checkbox';
+import { ZardCheckboxComponent } from '@/shared/components/checkbox';
 import { SelectablePermissionComponent } from '../selectable-permission/selectable-permission';
 import { Permission } from '../../../services/api/permission-api';
 
@@ -11,12 +11,13 @@ interface PermissionGroup {
   permissions: Permission[];
 }
 
+
 @Component({
   selector: 'sga-permission-group-card',
   standalone: true,
-  imports: [CommonModule, Card, Checkbox, SelectablePermissionComponent],
+  imports: [CommonModule, ZardCardComponent, ZardCheckboxComponent, SelectablePermissionComponent],
   template: `
-    <sga-card class="module-card rounded-4xl border border-base-200 shadow-sm hover:shadow-xl hover:shadow-primary/5 hover:border-primary/20 transition-all duration-500 overflow-hidden bg-base-100 flex flex-col h-full">
+    <z-card class="module-card rounded-4xl border border-base-200 shadow-sm hover:shadow-xl hover:shadow-primary/5 hover:border-primary/20 transition-all duration-500 overflow-hidden bg-base-100 flex flex-col h-full">
       <!-- Module Header -->
       <div class="flex flex-col space-y-1.5 p-6 bg-base-200/5 border-b border-base-200 py-6 px-8 flex flex-row items-center justify-between">
         <div class="flex items-center gap-5">
@@ -31,11 +32,11 @@ interface PermissionGroup {
         
         <!-- eslint-disable-next-line @angular-eslint/template/label-has-associated-control -->
         <label class="flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-base-100 border border-base-200 cursor-pointer hover:border-primary/40 transition-all shadow-sm group">
-          <sga-checkbox 
-            [checked]="isFullyChecked()" 
-            (changeOutput)="toggleGroup.emit($event)"
+          <z-checkbox 
+            [zChecked]="isFullyChecked()" 
+            (checkChange)="toggleGroup.emit($event)"
             color="primary">
-          </sga-checkbox>
+          </z-checkbox>
           <span class="text-xs font-bold text-base-content/50 group-hover:text-primary transition-colors">Seleccionar Todo el Módulo</span>
         </label>
       </div>
@@ -52,7 +53,7 @@ interface PermissionGroup {
           }
         </div>
       </div>
-    </sga-card>
+    </z-card>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

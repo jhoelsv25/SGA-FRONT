@@ -5,8 +5,8 @@
     <div class="relative group">
       <!-- Back Button Floating -->
       <button 
-        sgaButton 
-        variant="ghost" 
+        z-button 
+        zType="ghost" 
         (click)="goBack()" 
         class="absolute -left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-2xl bg-base-100 shadow-xl border border-base-200 hover:bg-base-200 group-hover:-translate-x-2 transition-all">
         <i class="fas fa-arrow-left text-base-content/60"></i>
@@ -37,8 +37,8 @@
         <!-- Role Actions -->
         <div class="flex items-center gap-3 w-full lg:w-auto relative z-10">
           <button 
-            sgaButton 
-            color="primary" 
+            z-button 
+            zColor="primary" 
             (click)="savePermissions()" 
             [disabled]="store.loading()" 
             class="rounded-2xl px-8 h-14 text-base font-bold shadow-2xl shadow-primary/30 hover:scale-105 transition-all w-full lg:w-auto">
@@ -89,14 +89,9 @@
             (togglePermission)="togglePermission($event)">
           </sga-permission-group-card>
         } @empty {
-          <sga-empty-state
-            class="py-20"
-            title="No se encontraron permisos"
-            description="Intenta ajustar los criterios de búsqueda o limpia el filtro."
-            iconClass="fas fa-magnifying-glass"
-            [actionLabel]="searchTerm() ? 'Limpiar Búsqueda' : 'Volver'"
-            (action)="searchTerm() ? searchTerm.set('') : goBack()"
-          />
+          <z-empty zIcon="magnifying-glass" zTitle="No se encontraron permisos" zDescription="Intenta ajustar los criterios de búsqueda o limpia el filtro.">
+      <button z-button (click)="searchTerm() ? searchTerm.set('') : goBack()" class="mt-4">{{ searchTerm() ? 'Limpiar Búsqueda' : 'Volver' }}</button>
+    </z-empty>
         }
       </div>
     }

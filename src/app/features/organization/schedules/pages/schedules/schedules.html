@@ -1,5 +1,5 @@
 <div class="p-6 space-y-6">
-  <sga-list-toolbar
+  <z-list-toolbar
     title="Horarios"
     icon="fas fa-calendar-alt"
     description="Vista semanal de horarios por curso y sección"
@@ -10,18 +10,18 @@
     (refresh)="onRefresh()"
   >
     <div list-toolbar-actions class="flex items-center gap-2">
-      <sga-dropdown [items]="actionDropdownItems()">
+      <z-dropdown [items]="actionDropdownItems()">
         <button
-          sga-dropdown-trigger
+          dropdown-trigger
           class="flex items-center justify-center w-10 h-10 rounded-2xl border border-base-200 bg-base-100 hover:bg-base-200 transition-colors text-base-content/60 hover:text-primary"
           aria-label="Más acciones"
           type="button"
         >
           <i class="fas fa-ellipsis-h"></i>
         </button>
-      </sga-dropdown>
+      </z-dropdown>
     </div>
-  </sga-list-toolbar>
+  </z-list-toolbar>
 
   <sga-schedule-calendar
     [schedules]="filteredData()"
@@ -29,5 +29,5 @@
     (edit)="editSchedule($event)"
     (delete)="deleteSchedule($event)"
     (create)="openForm()"
-  />
+   />
 </div>

@@ -10,7 +10,7 @@
     (pageChange)="onPageChange($event)"
   >
     <div data-source-header class="sticky top-0 z-20 -mx-4 -mt-4 px-4 pt-4 pb-4 mb-4 bg-base-200 rounded-t-lg border-b border-base-300">
-      <sga-list-toolbar
+      <z-list-toolbar
         title="Lista de Estudiantes"
         icon="fas fa-user-graduate"
         description="Gestión de estudiantes"
@@ -21,18 +21,18 @@
         (refresh)="onRefresh()"
       >
         <div list-toolbar-actions class="flex items-center gap-2">
-          <sga-dropdown [items]="toolbarMoreItems()">
+          <z-dropdown [items]="toolbarMoreItems()">
             <button
-              sga-dropdown-trigger
+              dropdown-trigger
               type="button"
               class="flex h-9 w-9 items-center justify-center rounded-full border border-base-200 bg-base-100 text-base-content/70 transition hover:bg-base-200 hover:text-primary shadow-sm"
               aria-label="Más acciones"
             >
               <i class="fas fa-ellipsis-h"></i>
             </button>
-          </sga-dropdown>
-        </div>
-      </sga-list-toolbar>
+          </z-dropdown>
+    </div>
+  </z-list-toolbar>
     </div>
   </sga-data-source>
 </div>

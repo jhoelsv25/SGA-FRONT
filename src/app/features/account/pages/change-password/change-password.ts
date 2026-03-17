@@ -1,18 +1,19 @@
+import { ZardInputDirective } from '@/shared/components/input';
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardCardComponent } from '@/shared/components/card';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal, input } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
 import { AuthApi } from '@auth/services/api/auth-api';
 import { AuthFacade } from '@auth/services/store/auth.acede';
-import { Card } from '@shared/adapters/ui/card/card';
-import { Input } from '@shared/adapters/ui/input/input';
-import { Button } from '@shared/directives';
+
 
 @Component({
   selector: 'sga-account-change-password',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, Card, Input, Button],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, ZardCardComponent, ZardInputDirective, ZardButtonComponent],
   template: `
     <div class="space-y-6 p-4 md:p-6">
       <section class="rounded-[2rem] border border-border bg-card p-6 shadow-sm lg:p-8">
@@ -23,7 +24,7 @@ import { Button } from '@shared/directives';
       </section>
 
       <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
-        <sga-card class="overflow-hidden">
+        <z-card class="overflow-hidden">
           <div class="border-border/70 border-b p-6">
             <h2 class="text-xl font-semibold text-foreground">Actualizar credenciales</h2>
             <p class="mt-1 text-sm text-muted-foreground">Usa una contrasena nueva y evita repetir claves antiguas.</p>
@@ -32,17 +33,17 @@ import { Button } from '@shared/directives';
           <form [formGroup]="form" class="space-y-5 p-6" (ngSubmit)="submit()">
             <div class="space-y-1">
               <label class="text-sm font-medium text-foreground" for="currentPassword">Contrasena actual</label>
-              <sga-input id="currentPassword" type="password" formControlName="currentPassword" placeholder="Ingresa tu contrasena actual" />
+              <z-input id="currentPassword" type="password" formControlName="currentPassword" placeholder="Ingresa tu contrasena actual" />
             </div>
 
             <div class="space-y-1">
               <label class="text-sm font-medium text-foreground" for="newPassword">Nueva contrasena</label>
-              <sga-input id="newPassword" type="password" formControlName="newPassword" placeholder="Minimo 6 caracteres" />
+              <z-input id="newPassword" type="password" formControlName="newPassword" placeholder="Minimo 6 caracteres" />
             </div>
 
             <div class="space-y-1">
               <label class="text-sm font-medium text-foreground" for="confirmPassword">Confirmar nueva contrasena</label>
-              <sga-input id="confirmPassword" type="password" formControlName="confirmPassword" placeholder="Repite la nueva contrasena" />
+              <z-input id="confirmPassword" type="password" formControlName="confirmPassword" placeholder="Repite la nueva contrasena" />
             </div>
 
             @if (error()) {
@@ -64,14 +65,14 @@ import { Button } from '@shared/directives';
               >
                 Volver a configuracion
               </a>
-              <button type="submit" sgaButton color="primary" [disabled]="form.invalid || loading()">
+              <button type="submit" z-button color="primary" [disabled]="form.invalid || loading()">
                 {{ loading() ? 'Actualizando...' : 'Actualizar contrasena' }}
               </button>
             </div>
           </form>
-        </sga-card>
+        </z-card>
 
-        <sga-card>
+        <z-card>
           <div class="border-border/70 border-b p-6">
             <h2 class="text-lg font-semibold text-foreground">Resumen</h2>
           </div>
@@ -84,7 +85,7 @@ import { Button } from '@shared/directives';
               </div>
             }
           </div>
-        </sga-card>
+        </z-card>
       </div>
     </div>
   `,
@@ -111,8 +112,7 @@ export default class AccountChangePasswordPage {
     {
       label: 'Correo',
       value: this.currentUser()?.email || this.currentUser()?.person?.email || 'Sin correo',
-    },
-  ]);
+    }]);
 
   protected readonly form = this.fb.group({
     currentPassword: ['', [Validators.required, Validators.minLength(6)]],

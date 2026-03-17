@@ -1,17 +1,18 @@
+export type LocalSelectOption = { value: string | number; label: string; [key: string]: any };
+import { GuardianApi } from '@/features/students/services/api/guardian-api';
+import { StudentApi } from '@/features/students/services/api/student-api';
+import { StudentGuardian } from '@/features/students/types/guardian-types';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Button } from '@shared/directives';
-import { Select } from '@shared/adapters/ui/select/select';
-import { GuardianApi } from '../../services/api/guardian-api';
-import { StudentApi } from '../../services/api/student-api';
-import { StudentGuardian } from '../../types/guardian-types';
-import type { SelectOption } from '@shared/adapters/ui/select/select';
+import { FormsModule, ReactiveFormsModule, Validators, FormBuilder } from '@angular/forms';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
+import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
+import { ZardButtonComponent } from '@/shared/components/button';
+
 
 @Component({
   selector: 'sga-student-guardian-form',
   standalone: true,
-  imports: [ReactiveFormsModule, Button, Select],
+  imports: [ReactiveFormsModule, ZardButtonComponent, SelectOptionComponent],
   templateUrl: './student-guardian-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -32,16 +33,16 @@ export class StudentGuardianForm implements OnInit {
   });
 
   current: StudentGuardian | null = null;
-  studentOptions: SelectOption[] = [];
-  guardianOptions: SelectOption[] = [];
+  studentOptions: LocalSelectOption[] = [];
+  guardianOptions: LocalSelectOption[] = [];
 
   ngOnInit(): void {
     this.current = this.data?.current ?? null;
     if (this.current) {
       const sg = this.current;
       this.form.patchValue({
-        student: (sg.student as { id?: string })?.id ?? null,
-        guardian: (sg.guardian as { id?: string })?.id ?? null,
+        student: (sg.student as {  id?: string  })?.id ?? null,
+        guardian: (sg.guardian as {  id?: string  })?.id ?? null,
         isPrimary: sg.isPrimary,
         pickupAuthorization: sg.pickupAuthorization,
         emergencyContact: sg.emergencyContact,
@@ -52,11 +53,11 @@ export class StudentGuardianForm implements OnInit {
     this.studentApi.getAll({}).subscribe({
       next: (res) => {
         this.studentOptions = (res.data ?? []).map((s) => {
-          const p = (s as { person?: { firstName?: string; lastName?: string } }).person;
+          const p = (s as {  person?: { firstName?: string; lastName?: string  } }).person;
           const label =
-            (s as { name?: string }).name ??
+            (s as {  name?: string  }).name ??
             (p ? `${p.firstName ?? ''} ${p.lastName ?? ''}`.trim() : null) ??
-            (s as { studentCode?: string }).studentCode ??
+            (s as {  studentCode?: string  }).studentCode ??
             s.id;
           return { value: s.id, label: label || s.id };
         });
@@ -66,9 +67,9 @@ export class StudentGuardianForm implements OnInit {
     this.api.getAll({}).subscribe({
       next: (res) => {
         this.guardianOptions = (res.data ?? []).map((g) => {
-          const person = (g as { person?: { firstName?: string; lastName?: string } }).person;
+          const person = (g as {  person?: { firstName?: string; lastName?: string  } }).person;
           const namePart = person ? `${person.firstName ?? ''} ${person.lastName ?? ''}`.trim() : '';
-          const occ = (g as { occupation?: string }).occupation;
+          const occ = (g as {  occupation?: string  }).occupation;
           const label = namePart || occ || g.id;
           return { value: g.id, label };
         });

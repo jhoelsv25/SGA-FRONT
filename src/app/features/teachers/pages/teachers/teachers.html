@@ -1,6 +1,6 @@
 <div class="p-6 space-y-4">
   <div class="relative z-30">
-  <sga-list-toolbar
+  <z-list-toolbar
     title="Docentes"
     icon="fas fa-chalkboard-teacher"
     description="Gestión completa de docentes"
@@ -10,16 +10,17 @@
     (refresh)="onRefresh()"
   >
     <div list-toolbar-actions class="flex items-center gap-2">
-      <sga-dropdown [items]="toolbarMoreItems()">
+      <z-dropdown [items]="toolbarMoreItems()">
         <button
-          sga-dropdown-trigger
+          dropdown-trigger
           type="button"
           class="flex h-9 w-9 items-center justify-center rounded-full border border-base-200 bg-base-100 text-base-content/70 transition hover:bg-base-200 hover:text-primary shadow-sm"
           aria-label="Más acciones"
         >
           <i class="fas fa-ellipsis-h"></i>
         </button>
-      </sga-dropdown>
+      </z-dropdown>
+    
     </div>
 
     <div list-toolbar-filter class="space-y-3 p-1">
@@ -27,53 +28,49 @@
 
       <div class="grid gap-2">
         <p class="text-xs font-medium text-base-content/70">Tipo de contrato</p>
-        <sga-select
+        <z-select-option
           [options]="contractTypeOptions"
           [value]="filterContractType()"
           [searchable]="false"
-          [customClass]="'!border-base-200/50 !bg-base-100/70 !shadow-none hover:!border-base-200'"
-          (valueChange)="onFilterContractType($event)"
-        />
+          [class]="'!border-base-200/50 !bg-base-100/70 !shadow-none hover:!border-base-200'"
+          (valueChange)="onFilterContractType($event)"></z-select-option>
       </div>
 
       <div class="grid gap-2">
         <p class="text-xs font-medium text-base-content/70">Régimen laboral</p>
-        <sga-select
+        <z-select-option
           [options]="laborRegimeOptions"
           [value]="filterLaborRegime()"
           [searchable]="false"
-          [customClass]="'!border-base-200/50 !bg-base-100/70 !shadow-none hover:!border-base-200'"
-          (valueChange)="onFilterLaborRegime($event)"
-        />
+          [class]="'!border-base-200/50 !bg-base-100/70 !shadow-none hover:!border-base-200'"
+          (valueChange)="onFilterLaborRegime($event)"></z-select-option>
       </div>
 
       <div class="grid gap-2">
         <p class="text-xs font-medium text-base-content/70">Carga laboral</p>
-        <sga-select
+        <z-select-option
           [options]="workloadTypeOptions"
           [value]="filterWorkloadType()"
           [searchable]="false"
-          [customClass]="'!border-base-200/50 !bg-base-100/70 !shadow-none hover:!border-base-200'"
-          (valueChange)="onFilterWorkloadType($event)"
-        />
+          [class]="'!border-base-200/50 !bg-base-100/70 !shadow-none hover:!border-base-200'"
+          (valueChange)="onFilterWorkloadType($event)"></z-select-option>
       </div>
 
       <div class="grid gap-2">
         <p class="text-xs font-medium text-base-content/70">Estado laboral</p>
-        <sga-select
+        <z-select-option
           [options]="employmentStatusOptions"
           [value]="filterEmploymentStatus()"
           [searchable]="false"
-          [customClass]="'!border-base-200/50 !bg-base-100/70 !shadow-none hover:!border-base-200'"
-          (valueChange)="onFilterEmploymentStatus($event)"
-        />
+          [class]="'!border-base-200/50 !bg-base-100/70 !shadow-none hover:!border-base-200'"
+          (valueChange)="onFilterEmploymentStatus($event)"></z-select-option>
       </div>
 
       <button
         type="button"
-        sgaButton
-        variant="outline"
-        size="sm"
+        z-button
+        zType="outline"
+        zSize="sm"
         class="w-full"
         [disabled]="filterCount() === 0"
         (click)="clearFilters()"
@@ -81,7 +78,7 @@
         Limpiar filtros
       </button>
     </div>
-  </sga-list-toolbar>
+  </z-list-toolbar>
   </div>
 
   <div class="relative z-10">
@@ -95,6 +92,6 @@
     (actionClick)="onRowAction($event)"
     (sortChange)="onSort($event)"
     (pageChange)="onPageChange($event)"
-  />
+   />
   </div>
 </div>

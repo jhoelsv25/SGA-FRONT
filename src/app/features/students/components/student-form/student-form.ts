@@ -1,18 +1,19 @@
-import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { Button } from '@shared/directives';
-import { Input } from '@shared/adapters/ui/input/input';
-import { Select } from '@shared/adapters/ui/select/select';
+export type LocalSelectOption = { value: string | number; label: string; [key: string]: any };
 import { StudentStore } from '../../services/store/student.store';
 import { Student, StudentCreate } from '../../types/student-types';
-import type { SelectOption } from '@shared/adapters/ui/select/select';
+import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
+import { FormsModule, ReactiveFormsModule, Validators, FormBuilder, FormGroup } from '@angular/forms';
+import { CommonModule, NgClass, NgIf, NgFor, NgSwitch } from '@angular/common';
+import { Component, OnInit, inject, signal, input, ChangeDetectionStrategy } from '@angular/core';
+import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardInputDirective } from '@/shared/components/input';
+
 
 @Component({
   selector: 'sga-student-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, Button, Input, Select],
+  imports: [CommonModule, ReactiveFormsModule, ZardButtonComponent, ZardInputDirective, SelectOptionComponent],
   templateUrl: './student-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -27,17 +28,15 @@ export class StudentForm implements OnInit {
   saving = signal(false);
   activeTab = signal<'personal' | 'user' | 'academic'>('personal');
 
-  docTypeOptions: SelectOption[] = [
+  docTypeOptions: LocalSelectOption[] = [
     { value: 'DNI', label: 'DNI' },
     { value: 'CE', label: 'C.E.' },
-    { value: 'PASSPORT', label: 'Pasaporte' },
-  ];
+    { value: 'PASSPORT', label: 'Pasaporte' }];
 
-  genderOptions: SelectOption[] = [
+  genderOptions: LocalSelectOption[] = [
     { value: 'M', label: 'Masculino' },
     { value: 'F', label: 'Femenino' },
-    { value: 'O', label: 'Otro' },
-  ];
+    { value: 'O', label: 'Otro' }];
 
   ngOnInit() {
     this.current = this.data?.current ?? null;

@@ -1,17 +1,6 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  forwardRef,
-  HostListener,
-  inject,
-  input,
-  OnDestroy,
-  OnInit,
-  output,
-  signal,
-  viewChild,
-} from '@angular/core';
+import { ZardSelectComponent, ZardSelectItemComponent } from '@/shared/components/select';
+import { SelectOption } from '@/shared/widgets/select-option/select-option';
+import { ChangeDetectionStrategy, Component, ElementRef, forwardRef, HostListener, inject, input, OnDestroy, OnInit, output, signal, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Subject } from 'rxjs';
@@ -19,7 +8,7 @@ import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { TeacherApi } from '@features/teachers/services/api/teacher-api';
 import type { Teacher } from '@features/teachers/types/teacher-types';
 
-function getTeacherLabel(t: Teacher): string {
+function getLabel(t: Teacher): string {
   const person = t.person as { firstName?: string; lastName?: string } | undefined;
   if (person?.firstName || person?.lastName) {
     return `${person.firstName ?? ''} ${person.lastName ?? ''}`.trim() || t.teacherCode;
@@ -27,7 +16,7 @@ function getTeacherLabel(t: Teacher): string {
   return t.teacherCode ?? t.specialization ?? t.id;
 }
 
-function getTeacherInitials(t: Teacher): string {
+function getInitials(t: Teacher): string {
   const person = t.person as { firstName?: string; lastName?: string } | undefined;
   if (person?.firstName && person?.lastName) {
     return `${person.firstName[0]}${person.lastName[0]}`.toUpperCase();
@@ -36,10 +25,11 @@ function getTeacherInitials(t: Teacher): string {
   return (t.teacherCode ?? t.id).slice(0, 2).toUpperCase();
 }
 
+
 @Component({
   selector: 'sga-teacher-select',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ZardSelectComponent, ZardSelectItemComponent],
   templateUrl: './teacher-select.html',
   providers: [
     { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => TeacherSelect), multi: true },
@@ -61,10 +51,10 @@ export class TeacherSelect implements OnInit, OnDestroy, ControlValueAccessor {
   hostRef = viewChild<ElementRef<HTMLElement>>('hostRef');
 
   isOpen = signal(false);
-  teachers = signal<Teacher[]>([]);
+  allItems = signal<Teacher[]>([]);
   loading = signal(false);
   searchTerm = signal('');
-  selectedTeacher = signal<Teacher | null>(null);
+  selectedItem = signal<Teacher | null>(null);
   page = signal(1);
   hasMore = signal(true);
   total = signal(0);
@@ -74,8 +64,8 @@ export class TeacherSelect implements OnInit, OnDestroy, ControlValueAccessor {
   private _onTouched = () => {};
   private searchSubject = new Subject<string>();
 
-  getTeacherLabel = getTeacherLabel;
-  getTeacherInitials = getTeacherInitials;
+  getLabel = getLabel;
+  getInitials = getInitials;
 
   ngOnInit() {
     this.searchSubject
@@ -83,8 +73,8 @@ export class TeacherSelect implements OnInit, OnDestroy, ControlValueAccessor {
       .subscribe((term) => {
         this.searchTerm.set(term);
         this.page.set(1);
-        this.teachers.set([]);
-        this.loadTeachers(1, term);
+        this.allItems.set([]);
+        this.loadItems(1, term);
       });
   }
 
@@ -112,18 +102,18 @@ export class TeacherSelect implements OnInit, OnDestroy, ControlValueAccessor {
   onOptionKeyDown(e: KeyboardEvent, t: Teacher) {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      this.selectTeacher(t);
+      this.selectItem(t);
     }
   }
 
-  loadTeachers(page: number, search?: string) {
+  loadItems(page: number, search?: string) {
     if (this.loading()) return;
     this.loading.set(true);
     this.api.getAll({ page, size: 15, search: search || undefined }).subscribe({
       next: (res) => {
         const data = res.data ?? [];
-        const current = page === 1 ? data : [...this.teachers(), ...data];
-        this.teachers.set(current);
+        const current = page === 1 ? data : [...this.allItems(), ...data];
+        this.allItems.set(current);
         this.hasMore.set(current.length < (res.total ?? 0));
         this.total.set(res.total ?? 0);
         this.loading.set(false);
@@ -139,14 +129,29 @@ export class TeacherSelect implements OnInit, OnDestroy, ControlValueAccessor {
     if (scrollTop + clientHeight >= scrollHeight - 20) {
       const next = this.page() + 1;
       this.page.set(next);
-      this.loadTeachers(next, this.searchTerm() || undefined);
+      this.loadItems(next, this.searchTerm() || undefined);
     }
   }
 
   openDropdown() {
     if (this.effectiveDisabled()) return;
     this.isOpen.set(true);
-    if (this.teachers().length === 0) this.loadTeachers(1);
+    if (this.allItems().length === 0) this.loadItems(1);
+  }
+
+  
+  onZardSelectionChange(val: string | string[]) {
+    const id = Array.isArray(val) ? val[0] : val;
+    if (!id) {
+      this.clearSelection();
+      return;
+    }
+    const found = this.allItems().find((x) => x.id === id);
+    if (found) {
+      this.selectItem(found);
+    } else {
+      this.writeValue(id);
+    }
   }
 
   closeDropdown() {
@@ -154,8 +159,8 @@ export class TeacherSelect implements OnInit, OnDestroy, ControlValueAccessor {
     this._onTouched();
   }
 
-  selectTeacher(t: Teacher) {
-    this.selectedTeacher.set(t);
+  selectItem(t: Teacher) {
+    this.selectedItem.set(t);
     this._value = t.id;
     this._onChange(t.id);
     this.valueChange.emit(t.id);
@@ -164,7 +169,7 @@ export class TeacherSelect implements OnInit, OnDestroy, ControlValueAccessor {
 
   clearSelection(e?: Event) {
     e?.stopPropagation();
-    this.selectedTeacher.set(null);
+    this.selectedItem.set(null);
     this._value = null;
     this._onChange(null);
     this.valueChange.emit(null);
@@ -173,14 +178,14 @@ export class TeacherSelect implements OnInit, OnDestroy, ControlValueAccessor {
   writeValue(id: string | null): void {
     this._value = id;
     if (!id) {
-      this.selectedTeacher.set(null);
+      this.selectedItem.set(null);
       return;
     }
-    const found = this.teachers().find((t) => t.id === id);
-    if (found) this.selectedTeacher.set(found);
+    const found = this.allItems().find((t) => t.id === id);
+    if (found) this.selectedItem.set(found);
     else {
       this.api.getById(id).subscribe({
-        next: (res) => this.selectedTeacher.set(res.data ?? null),
+        next: (res) => this.selectedItem.set(res.data ?? null),
       });
     }
   }

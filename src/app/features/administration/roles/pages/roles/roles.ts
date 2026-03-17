@@ -1,18 +1,19 @@
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardEmptyComponent } from '@/shared/components/empty';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RoleStore } from '../../../services/store/role.store';
-import { Button } from '@shared/directives';
 import { Role } from '../../../services/api/role-api';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { RoleCardComponent } from '../../components/role-card/role-card';
 import { RoleForm } from '../../components/role-form/role-form';
 import { Router } from '@angular/router';
-import { EmptyState } from '@shared/widgets/ui/empty-state/empty-state';
+
 
 @Component({
   selector: 'sga-roles',
   standalone: true,
-  imports: [CommonModule, Button, RoleCardComponent, EmptyState],
+  imports: [CommonModule, ZardButtonComponent, RoleCardComponent, ZardEmptyComponent],
   templateUrl: './roles.html',
   styles: [`
     :host { display: block; padding: 1.5rem; }

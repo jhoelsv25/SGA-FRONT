@@ -19,6 +19,7 @@ type StudentHistoryItem = {
   observation: string | undefined;
 };
 
+
 @Component({
   selector: 'sga-classroom-grades',
   standalone: true,

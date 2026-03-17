@@ -1,23 +1,24 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Permission } from '../../../services/api/permission-api';
-import { Checkbox } from '@shared/widgets/ui/checkbox/checkbox';
+import { ZardCheckboxComponent } from '@/shared/components/checkbox';
+
 
 @Component({
   selector: 'sga-selectable-permission',
   standalone: true,
-  imports: [CommonModule, Checkbox],
+  imports: [CommonModule, ZardCheckboxComponent],
   template: `
     <!-- eslint-disable-next-line @angular-eslint/template/label-has-associated-control -->
     <label class="group flex items-center gap-3.5 p-3 rounded-2xl bg-base-200/20 border border-base-200/50 hover:bg-base-100 hover:border-primary/20 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 cursor-pointer h-full relative overflow-hidden">
       <div class="absolute top-0 right-0 w-16 h-16 bg-primary/5 rounded-full -mr-8 -mt-8 blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
       
-      <sga-checkbox 
-        [checked]="checked()" 
-        (changeOutput)="toggled.emit($event)"
+      <z-checkbox 
+        [zChecked]="checked()" 
+        (checkChange)="toggled.emit($event)"
         color="primary"
         class="relative z-10">
-      </sga-checkbox>
+      </z-checkbox>
 
       <!-- Icon -->
       <div class="w-9 h-9 rounded-xl bg-primary/5 text-primary/40 flex items-center justify-center shrink-0 group-hover:bg-primary/10 group-hover:text-primary transition-all duration-500 border border-primary/5 relative z-10">

@@ -13,11 +13,10 @@
   </div>
 
   <div class="min-w-[200px]">
-    <sga-select 
+    <z-select-option 
       [options]="actionOptions()"
       [placeholder]="'Todas las Acciones'"
       [ngModel]="action()"
-      (ngModelChange)="actionChanged.emit($event)"
-    />
+      (ngModelChange)="actionChanged.emit($event)"></z-select-option>
   </div>
 </div>

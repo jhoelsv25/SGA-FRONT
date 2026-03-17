@@ -1,12 +1,12 @@
-import { ButtonColor, ButtonSize, ButtonVariant } from '@shared/directives/button';
+import { ZardButtonTypeVariants, ZardButtonSizeVariants } from '@/shared/components/button/button.variants';
 
 export type DialogPosition = 'center' | 'top-center' | 'bottom-center' | 'left' | 'right';
 
 export type ButtonProps = {
   label?: string;
-  color?: ButtonColor;
-  variant?: ButtonVariant;
-  size?: ButtonSize;
+  color?: string;
+  zType?: ZardButtonTypeVariants;
+  size?: ZardButtonSizeVariants;
   disabled?: boolean;
   icon?: string;
 };

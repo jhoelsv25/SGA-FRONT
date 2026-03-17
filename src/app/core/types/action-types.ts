@@ -1,4 +1,4 @@
-import { ButtonColor, ButtonShape, ButtonSize, ButtonVariant } from '@shared/directives/button';
+import { ZardButtonTypeVariants, ZardButtonSizeVariants, ZardButtonShapeVariants } from '@/shared/components/button/button.variants';
 
 export interface ActionContext<T = unknown> {
   row?: T;
@@ -11,10 +11,10 @@ export type ActionConfig = {
   label: string;
   icon?: string;
 
-  color: ButtonColor;
-  variant?: ButtonVariant;
-  size?: ButtonSize;
-  shape?: ButtonShape;
+  color: string;
+  variant?: ZardButtonTypeVariants;
+  size?: ZardButtonSizeVariants;
+  shape?: ZardButtonShapeVariants;
   showLabel?: boolean;
 
   visible?: boolean | ((ctx: ActionContext) => boolean);

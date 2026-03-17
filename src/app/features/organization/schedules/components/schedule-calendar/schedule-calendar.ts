@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Schedule } from '../../types/schedule-types';
 import { DAY_ORDER, DAY_LABELS, HOUR_END, HOUR_START, SLOTS_PER_HOUR } from '../../config/schedule.constants';
 
+
 @Component({
   selector: 'sga-schedule-calendar',
   standalone: true,
@@ -86,8 +87,7 @@ export class ScheduleCalendarComponent {
       'from-info/90 to-info/70',
       'from-success/90 to-success/70',
       'from-warning/90 to-warning/70',
-      'from-secondary/90 to-secondary/70',
-    ];
+      'from-secondary/90 to-secondary/70'];
     return colors[hash % colors.length] ?? 'from-primary/90 to-primary/70';
   }
 

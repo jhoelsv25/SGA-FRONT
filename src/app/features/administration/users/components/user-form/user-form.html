@@ -1,36 +1,36 @@
 <form [formGroup]="form" class="grid gap-4" (ngSubmit)="submit()">
   <header class="flex items-center justify-between mb-4">
     <h2 class="text-lg font-semibold">{{ current ? 'Editar usuario' : 'Nuevo usuario' }}</h2>
-    <button type="button" sgaButton color="secondary" variant="ghost" shape="pill" (click)="close()">
+    <button type="button" z-button zColor="secondary" zType="ghost" zShape="circle" (click)="close()">
       <i class="fas fa-times"></i>
     </button>
   </header>
   <div class="grid gap-4">
     <div>
       <label class="label-form" for="username">Usuario</label>
-      <sga-input id="username" formControlName="username" placeholder="Nombre de usuario" />
+      <input z-input w-full id="username" formControlName="username" placeholder="Nombre de usuario"  />
     </div>
     <div class="grid grid-cols-2 gap-4">
       <div>
         <label class="label-form" for="firstName">Nombre</label>
-        <sga-input id="firstName" formControlName="firstName" placeholder="Nombre" />
+        <input z-input w-full id="firstName" formControlName="firstName" placeholder="Nombre"  />
       </div>
       <div>
         <label class="label-form" for="lastName">Apellido</label>
-        <sga-input id="lastName" formControlName="lastName" placeholder="Apellido" />
+        <input z-input w-full id="lastName" formControlName="lastName" placeholder="Apellido"  />
       </div>
     </div>
     <div>
       <label class="label-form" for="email">Email</label>
-      <sga-input id="email" type="email" formControlName="email" placeholder="correo@ejemplo.com" />
+      <input z-input w-full id="email" type="email" formControlName="email" placeholder="correo@ejemplo.com"  />
     </div>
     <div>
       <label class="label-form" for="password">Contraseña {{ current ? '(dejar vacío para no cambiar)' : '' }}</label>
-      <sga-input id="password" type="password" formControlName="password" placeholder="Contraseña" />
+      <input z-input w-full id="password" type="password" formControlName="password" placeholder="Contraseña"  />
     </div>
   </div>
   <footer class="flex justify-end gap-2 mt-4">
-    <button type="button" sgaButton color="secondary" variant="outline" (click)="close()">Cancelar</button>
-    <button type="submit" sgaButton color="primary" [disabled]="form.invalid">Guardar</button>
+    <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">Cancelar</button>
+    <button type="submit" z-button zColor="primary" [disabled]="form.invalid">Guardar</button>
   </footer>
 </form>

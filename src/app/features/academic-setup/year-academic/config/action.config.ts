@@ -21,5 +21,4 @@ export const YEAR_ACADEMIC_ACTIONS: ActionConfig[] = [
     icon: 'fas fa-trash',
     typeAction: 'row',
     color: 'danger',
-  },
-];
+  }];

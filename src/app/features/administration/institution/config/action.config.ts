@@ -21,5 +21,4 @@ export const ACTION_CONFIG_INSTITUTION: ActionConfig[] = [
     icon: 'fas fa-trash',
     typeAction: 'row',
     color: 'danger',
-  },
-];
+  }];

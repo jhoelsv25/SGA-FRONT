@@ -1,3 +1,4 @@
+import { ZardEmptyComponent } from '@/shared/components/empty';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { HeaderDetail } from '@shared/widgets/header-detail/header-detail';
@@ -7,13 +8,13 @@ import { InstitutionForm } from '../../components/institution-form/institution-f
 import { CommonModule } from '@angular/common';
 import { InstitutionCardComponent } from '../../components/institution-card/institution-card';
 import { InstitutionSkeleton } from '../../components/institution-skeleton/institution-skeleton';
-import { EmptyState } from '@shared/widgets/ui/empty-state/empty-state';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
+
 
 @Component({
   selector: 'sga-institution',
   standalone: true,
-  imports: [CommonModule, HeaderDetail, InstitutionCardComponent, InstitutionSkeleton, EmptyState],
+  imports: [CommonModule, HeaderDetail, InstitutionCardComponent, InstitutionSkeleton, ZardEmptyComponent],
   templateUrl: './institution.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

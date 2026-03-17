@@ -31,5 +31,4 @@ export const ASSESSMENT_ACTIONS: ActionConfig[] = [
     typeAction: 'row',
     permissions: ['manage_assessment'],
     color: 'danger',
-  },
-];
+  }];

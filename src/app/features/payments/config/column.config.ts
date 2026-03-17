@@ -7,5 +7,4 @@ export const PAYMENT_COLUMN: DataSourceColumn[] = [
   { key: 'paidAmount', label: 'Pagado', type: 'number' },
   { key: 'dueDate', label: 'Vencimiento', sortable: true, type: 'date' },
   { key: 'status', label: 'Estado', sortable: true },
-  { key: 'paidAt', label: 'Fecha de pago', type: 'datetime' },
-];
+  { key: 'paidAt', label: 'Fecha de pago', type: 'datetime' }];

@@ -5,8 +5,8 @@ const STEPS = [
   { id: 'upload', label: 'Archivo', icon: 'fa-cloud-upload-alt' },
   { id: 'mapping', label: 'Mapeo', icon: 'fa-columns' },
   { id: 'importing', label: 'Importando', icon: 'fa-spinner' },
-  { id: 'done', label: 'Listo', icon: 'fa-check-circle' },
-] as const;
+  { id: 'done', label: 'Listo', icon: 'fa-check-circle' }] as const;
+
 
 @Component({
   selector: 'sga-import-step-indicator',

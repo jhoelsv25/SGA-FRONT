@@ -1,17 +1,18 @@
+import { ListToolbarComponent } from '@/shared/widgets/list-toolbar/list-toolbar';
+import { ZardButtonComponent } from '@/shared/components/button';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 import { DataSource } from '@shared/widgets/data-source/data-source';
-import { ListToolbar } from '@shared/widgets/ui/list-toolbar';
-import { Button } from '@shared/directives';
 import { AssessmentStore } from '../../services/store/assessment.store';
 import { ASSESSMENT_COLUMNS } from '../../config/column.config';
 import { ASSESSMENT_ACTIONS } from '../../config/action.config';
 import { AssessmentFiltersService } from '../../services/assessment-filters.service';
+
 @Component({
   selector: 'sga-assessments',
   standalone: true,
-  imports: [CommonModule, ListToolbar, DataSource, Button],
+  imports: [CommonModule, ListToolbarComponent, DataSource, ZardButtonComponent],
   templateUrl: './assessments.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

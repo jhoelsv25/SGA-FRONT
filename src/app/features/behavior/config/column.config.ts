@@ -5,5 +5,4 @@ export const BEHAVIOR_COLUMN: DataSourceColumn[] = [
   { key: 'type', label: 'Tipo', sortable: true },
   { key: 'severity', label: 'Severidad', sortable: true },
   { key: 'date', label: 'Fecha', sortable: true, type: 'date' },
-  { key: 'description', label: 'Descripción', truncate: true, truncateLength: 60 },
-];
+  { key: 'description', label: 'Descripción', truncate: true, truncateLength: 60 }];

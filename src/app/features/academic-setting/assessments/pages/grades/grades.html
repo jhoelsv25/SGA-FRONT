@@ -1,5 +1,5 @@
 <div class="flex flex-col gap-6 animate-in fade-in duration-500">
-  <sga-list-toolbar
+  <z-list-toolbar
     title="Notas Finales"
     description="Consolidado final con edición rápida de calificaciones y observaciones"
     icon="fas fa-chart-line"
@@ -11,23 +11,22 @@
       
       <div class="flex flex-col gap-1.5">
         <label for="grades-assessment-select" class="text-[11px] font-bold text-base-content/60 uppercase">Evaluación</label>
-        <sga-select
+        <z-select-option
           id="grades-assessment-select"
           [options]="assessmentOptions()"
           [value]="selectedAssessmentId()"
           (valueChange)="onAssessmentChange($event)"
           placeholder="Seleccione..."
-          [searchable]="true"
-        />
+          [searchable]="true"></z-select-option>
       </div>
     </div>
 
     <div list-toolbar-actions>
       <button
-        sgaButton
-        variant="ghost"
-        color="secondary"
-        shape="pill"
+        z-button
+        zType="ghost"
+        zColor="secondary"
+        zShape="circle"
         [disabled]="!hasActiveFilters()"
         (click)="clearFilters()"
       >
@@ -35,9 +34,9 @@
         Limpiar
       </button>
       <button
-        sgaButton
-        color="primary"
-        shape="pill"
+        z-button
+        zColor="primary"
+        zShape="circle"
         [disabled]="!selectedAssessmentId() || assessmentStore.loading()"
         (click)="saveGrades()"
       >
@@ -49,7 +48,7 @@
         Guardar Cambios
       </button>
     </div>
-  </sga-list-toolbar>
+  </z-list-toolbar>
 
   <div class="flex flex-wrap items-center gap-2 px-1">
     @if (selectedAssessmentId()) {

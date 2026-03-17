@@ -1,15 +1,16 @@
-import { Component, inject, signal } from '@angular/core';
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardInputDirective } from '@/shared/components/input';
+import { Component, inject, signal, input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLinkWithHref } from '@angular/router';
 import { AuthFacade } from '@auth/services/store/auth.acede';
-import { Button } from '@shared/directives';
-import { Input } from '@shared/adapters/ui/input/input';
-import { Checkbox } from '@shared/widgets/ui/checkbox/checkbox';
+import { ZardCheckboxComponent } from '@/shared/components/checkbox';
 import { ZardIconComponent } from '@shared/components/icon';
+
 
 @Component({
   selector: 'sga-login-form',
-  imports: [ReactiveFormsModule, RouterLinkWithHref, Button, Input, Checkbox, ZardIconComponent],
+  imports: [ReactiveFormsModule, RouterLinkWithHref, ZardButtonComponent, ZardInputDirective, ZardCheckboxComponent, ZardIconComponent],
   templateUrl: './login-form.html',
 })
 export class LoginForm {

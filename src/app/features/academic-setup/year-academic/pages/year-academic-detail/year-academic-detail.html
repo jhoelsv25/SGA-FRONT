@@ -1,12 +1,12 @@
 <div class="p-6">
   @if (loading()) {
-    <sga-skeleton [customClass]="'h-24 w-full rounded-xl mb-6'" />
-    <sga-skeleton [customClass]="'h-64 w-full rounded-xl'" />
+    <z-skeleton [class]="'h-24 w-full rounded-xl mb-6'"></z-skeleton>
+    <z-skeleton [class]="'h-64 w-full rounded-xl'"></z-skeleton>
   } @else {
     @let y = year();
     @if (y) {
       <div class="mb-6 flex flex-wrap items-center gap-4">
-        <button sgaButton variant="ghost" size="sm" (click)="goBack()">
+        <button z-button zType="ghost" zSize="sm" (click)="goBack()">
           <i class="fas fa-arrow-left mr-2"></i>
           Volver a años
         </button>
@@ -37,20 +37,15 @@
               <span class="text-base-content/50 font-normal ml-2">({{ periods().length }})</span>
             }
           </h2>
-          <button sgaButton color="primary" size="sm" (click)="openPeriodForm()">
+          <button z-button zColor="primary" zSize="sm" (click)="openPeriodForm()">
             <i class="fas fa-plus mr-2"></i>
             Crear período
           </button>
         </div>
 
         @if (periods().length === 0) {
-          <sga-empty-state
-            iconClass="fas fa-layer-group"
-            title="Sin períodos"
-            description="Este año académico aún no tiene períodos. Crea el primero para organizar el curso."
-            actionLabel="Crear período"
-            (action)="openPeriodForm()"
-          />
+          <z-empty zIcon="layer-group" zTitle="Sin períodos" zDescription="Este año académico aún no tiene períodos. Crea el primero para organizar el curso.">
+    </z-empty>
         } @else {
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in duration-300">
             @for (period of periods(); track period.id) {
@@ -58,7 +53,7 @@
                 [period]="period"
                 (edit)="editPeriod(period)"
                 (delete)="deletePeriod(period)"
-              />
+               />
             }
           </div>
         }

@@ -1,14 +1,15 @@
+import { ZardCardComponent } from '@/shared/components/card';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { SectionCourseApi } from '@features/organization/section-courses/services/section-course-api';
-import { Card } from '@shared/adapters/ui/card/card';
 import type { SectionCourse } from '@features/organization/section-courses/types/section-course-types';
+
 
 @Component({
   selector: 'sga-classroom-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, Card],
+  imports: [CommonModule, RouterModule, ZardCardComponent],
   template: `
     <div class="p-6 md:p-8 max-w-[1920px] mx-auto w-full">
       <div class="mb-8">
@@ -19,7 +20,7 @@ import type { SectionCourse } from '@features/organization/section-courses/types
       @if (loading()) {
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           @for (item of [1,2,3,4,5,6]; track item) {
-            <sga-card class="animate-pulse">
+            <z-card class="animate-pulse">
               <div class="flex flex-col space-y-1.5 p-6">
                 <div class="h-6 bg-base-200 rounded w-2/3 mb-2"></div>
                 <div class="h-4 bg-base-200 rounded w-1/3"></div>
@@ -30,7 +31,7 @@ import type { SectionCourse } from '@features/organization/section-courses/types
               <div class="flex items-center p-6 pt-0">
                 <div class="h-10 bg-base-200 rounded w-full"></div>
               </div>
-            </sga-card>
+            </z-card>
           }
         </div>
       } @else if (courses().length === 0) {
@@ -44,7 +45,7 @@ import type { SectionCourse } from '@features/organization/section-courses/types
       } @else {
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           @for (course of courses(); track course.id) {
-            <sga-card class="group hover:border-primary/50 transition-colors flex flex-col h-full bg-base-100/50 backdrop-blur-sm relative overflow-hidden">
+            <z-card class="group hover:border-primary/50 transition-colors flex flex-col h-full bg-base-100/50 backdrop-blur-sm relative overflow-hidden">
               <div class="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
               
               <div class="flex flex-col space-y-1.5 p-6 relative z-10 pb-4">
@@ -79,7 +80,7 @@ import type { SectionCourse } from '@features/organization/section-courses/types
                   Ingresar al Aula <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
                 </a>
               </div>
-            </sga-card>
+            </z-card>
           }
         </div>
       }

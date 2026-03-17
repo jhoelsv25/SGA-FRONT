@@ -1,14 +1,16 @@
+import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
+import { ZardDatePickerComponent } from '@/shared/components/date-picker';
+import { ZardButtonComponent } from '@/shared/components/button';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FilterField } from '@core/types/filter-types';
-import { Button } from '@shared/directives';
-import { DatePicker } from '@shared/widgets/ui/date-picker/date-picker';
-import { Select } from '@shared/adapters/ui/select/select';
+
+
 
 @Component({
   selector: 'sga-filter-dialog',
-  imports: [CommonModule, FormsModule, Select, DatePicker, Button],
+  imports: [CommonModule, FormsModule, SelectOptionComponent, ZardDatePickerComponent, ZardButtonComponent],
   templateUrl: './filter-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

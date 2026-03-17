@@ -7,6 +7,7 @@ import { EnrollmentStore } from '../../services/store/enrollment.store';
 import { Enrollment } from '../../types/enrollment-types';
 import { EnrollmentForm } from '../../components/enrollment-form/enrollment-form';
 
+
 @Component({
   selector: 'sga-enrollments',
   standalone: true,

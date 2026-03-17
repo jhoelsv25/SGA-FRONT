@@ -1,7 +1,7 @@
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardCardComponent } from '@/shared/components/card';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Card } from '@shared/adapters/ui/card/card';
-import { Button } from '@shared/directives';
 import type { Section } from '../../types/section-types';
 
 const SHIFT_LABELS: Record<string, string> = {
@@ -10,10 +10,11 @@ const SHIFT_LABELS: Record<string, string> = {
   evening: 'Noche',
 };
 
+
 @Component({
   selector: 'sga-section-card',
   standalone: true,
-  imports: [CommonModule, Card, Button],
+  imports: [CommonModule, ZardCardComponent, ZardButtonComponent],
   templateUrl: './section-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -1,3 +1,5 @@
+import { ListToolbarComponent } from '@/shared/widgets/list-toolbar/list-toolbar';
+import { DropdownOptionComponent, DropdownItem } from '@/shared/widgets/dropdown-option/dropdown-option';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
@@ -5,16 +7,17 @@ import { ScheduleStore } from '../../services/store/schedule.store';
 import { Schedule } from '../../types/schedule-types';
 import { ScheduleForm } from '../../components/schedule-form/schedule-form';
 import { ScheduleCalendarComponent } from '../../components/schedule-calendar/schedule-calendar';
-import { ListToolbar } from '@shared/widgets/ui/list-toolbar';
-import { Dropdown } from '@shared/adapters/ui/dropdown/dropdown';
+
+import { ZardDropdownMenuComponent } from '@/shared/components/dropdown';
 import { PermissionCheckStore } from '@core/stores/permission-check.store';
-import { ConfirmDialog } from '@core/services/confirm-dialog';
+import { DialogConfirmService } from '@shared/widgets/dialog-confirm';
 import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'sga-schedules',
   standalone: true,
-  imports: [CommonModule, ScheduleCalendarComponent, ListToolbar, Dropdown],
+  imports: [CommonModule, ScheduleCalendarComponent, DropdownOptionComponent, ListToolbarComponent],
   templateUrl: './schedules.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -22,7 +25,7 @@ export default class SchedulesPage {
   private dialog = inject(DialogModalService);
   private store = inject(ScheduleStore);
   private permissionStore = inject(PermissionCheckStore);
-  private confirmDialog = inject(ConfirmDialog);
+  private confirmDialog = inject(DialogConfirmService);
 
   searchTerm = signal('');
 
@@ -79,8 +82,8 @@ export default class SchedulesPage {
         title: 'Eliminar horario',
         icon: 'fa-solid fa-trash',
         message: `¿Estás seguro de eliminar "${schedule.title}"? Esta acción no se puede deshacer.`,
-        acceptButtonProps: { label: 'Eliminar', color: 'danger', variant: 'solid' },
-        rejectButtonProps: { label: 'Cancelar', variant: 'outline' },
+        acceptButtonProps: { label: 'Eliminar', color: 'danger', zType: 'default' },
+        rejectButtonProps: { label: 'Cancelar', zType: 'outline' },
       })
       .then((confirmed) => {
         if (confirmed) this.store.delete(schedule.id);

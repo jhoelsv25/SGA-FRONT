@@ -1,4 +1,4 @@
-<sga-card
+<z-card
   class="group flex flex-col h-full hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-base-200/80 overflow-hidden bg-base-100 cursor-pointer rounded-4xl shadow-sm hover:border-primary/30"
   (click)="viewDetail.emit(year())"
 >
@@ -24,9 +24,9 @@
         (keydown.space)="$event.preventDefault(); $event.stopPropagation()"
       >
         <button
-          sgaButton
-          variant="ghost"
-          size="sm"
+          z-button
+          zType="ghost"
+          zSize="sm"
           class="rounded-full h-9 w-9 p-0 hover:bg-base-200/60"
           (click)="createPeriod.emit(year()); $event.stopPropagation()"
           title="Crear período"
@@ -34,9 +34,9 @@
           <i class="fas fa-layer-group text-xs"></i>
         </button>
         <button
-          sgaButton
-          variant="ghost"
-          size="sm"
+          z-button
+          zType="ghost"
+          zSize="sm"
           class="rounded-full h-9 w-9 p-0 hover:bg-base-200/60"
           (click)="edit.emit(year()); $event.stopPropagation()"
           title="Editar"
@@ -44,9 +44,9 @@
           <i class="fas fa-edit text-xs"></i>
         </button>
         <button
-          sgaButton
-          variant="ghost"
-          size="sm"
+          z-button
+          zType="ghost"
+          zSize="sm"
           class="rounded-full h-9 w-9 p-0 text-error hover:bg-error/10"
           (click)="delete.emit(year()); $event.stopPropagation()"
           title="Eliminar"
@@ -116,9 +116,9 @@
       </div>
 
       <button
-        sgaButton
-        variant="outline"
-        size="sm"
+        z-button
+        zType="outline"
+        zSize="sm"
         class="w-full mt-3 gap-2 rounded-3xl border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50 py-2.5 transition-all"
         (click)="createPeriod.emit(year()); $event.stopPropagation()"
       >
@@ -127,4 +127,4 @@
       </button>
     </div>
   </div>
-</sga-card>
+</z-card>

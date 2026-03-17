@@ -1,15 +1,16 @@
+import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardInputDirective } from '@/shared/components/input';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Button } from '@shared/directives';
-import { Input } from '@shared/adapters/ui/input/input';
-import { Select } from '@shared/adapters/ui/select/select';
 import { InstitutionStore } from '../../../services/store/institution.store';
 import { Institution } from '../../types/institution-types';
 
+
 @Component({
   selector: 'sga-institution-form',
-  imports: [ReactiveFormsModule, Button, Select, Input],
+  imports: [ReactiveFormsModule, ZardButtonComponent, SelectOptionComponent, ZardInputDirective],
   templateUrl: './institution-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -29,14 +30,12 @@ export class InstitutionForm implements OnInit {
   public managementTypes = [
     { value: 'publica', label: 'Pública' },
     { value: 'privada', label: 'Privada' },
-    { value: 'mixta', label: 'Mixta' },
-  ];
+    { value: 'mixta', label: 'Mixta' }];
 
   public statuses = [
     { value: 'activa', label: 'Activa' },
     { value: 'inactiva', label: 'Inactiva' },
-    { value: 'cerrada', label: 'Cerrada' },
-  ];
+    { value: 'cerrada', label: 'Cerrada' }];
 
   constructor() {
     this.institutionForm = this.fb.group({

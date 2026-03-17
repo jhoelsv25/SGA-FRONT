@@ -1,11 +1,11 @@
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardEmptyComponent } from '@/shared/components/empty';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, effect, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { RoleStore } from '../../../services/store/role.store';
 import { PermissionApi, Permission } from '../../../services/api/permission-api';
-import { Button } from '@shared/directives';
-import { EmptyState } from '@shared/widgets/ui/empty-state/empty-state';
 import { PermissionGroupCardComponent } from '../../components/permission-group-card/permission-group-card';
 import { getModuleIcon } from '../../utils/icons.util';
 
@@ -15,10 +15,11 @@ interface PermissionGroup {
   permissions: Permission[];
 }
 
+
 @Component({
   selector: 'sga-role-permissions',
   standalone: true,
-  imports: [CommonModule, Button, RouterModule, FormsModule, EmptyState, PermissionGroupCardComponent],
+  imports: [CommonModule, ZardButtonComponent, RouterModule, FormsModule, ZardEmptyComponent, PermissionGroupCardComponent],
   templateUrl: './role-permissions.html',
   styles: [`
     :host { display: block; padding: 1.5rem; }

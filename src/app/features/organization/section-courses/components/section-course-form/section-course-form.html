@@ -3,10 +3,10 @@
     <h2 class="text-lg font-semibold">{{ title() }}</h2>
     <button
       type="button"
-      sgaButton
-      color="secondary"
-      variant="ghost"
-      shape="pill"
+      z-button
+      zColor="secondary"
+      zType="ghost"
+      zShape="circle"
       (click)="onClose()"
     >
       <i class="fas fa-times"></i>
@@ -15,60 +15,56 @@
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <div>
       <label class="label-form" for="section">Sección</label>
-      <sga-section-select
+      <z-select-option
         id="section"
         formControlName="section"
-        placeholder="Seleccionar sección"
-      />
+        placeholder="Seleccionar sección"></z-select-option>
     </div>
     <div>
       <label class="label-form" for="course">Curso</label>
-      <sga-course-select id="course" formControlName="course" placeholder="Seleccionar curso" />
+      <z-select-option id="course" formControlName="course" placeholder="Seleccionar curso"></z-select-option>
     </div>
     <div>
       <label class="label-form" for="academicYear">Año académico</label>
-      <sga-year-academic-select id="academicYear" formControlName="academicYear" placeholder="Seleccionar año" />
+      <z-select-option id="academicYear" formControlName="academicYear" placeholder="Seleccionar año"></z-select-option>
     </div>
     <div>
       <label class="label-form" for="teacher">Docente</label>
-      <sga-teacher-select
+      <z-select-option
         id="teacher"
         formControlName="teacher"
-        placeholder="Seleccionar docente"
-      />
+        placeholder="Seleccionar docente"></z-select-option>
     </div>
     <div>
       <label class="label-form" for="modality">Modalidad</label>
-      <sga-select
+      <z-select-option
         id="modality"
         [options]="modalityOptions"
         formControlName="modality"
-        [searchable]="false"
-      />
+        [searchable]="false"></z-select-option>
     </div>
     <div>
       <label class="label-form" for="maxStudents">Máx. estudiantes</label>
-      <sga-input id="maxStudents" type="number" formControlName="maxStudents" />
+      <input z-input w-full id="maxStudents" type="number" formControlName="maxStudents"  />
     </div>
     <div>
       <label class="label-form" for="enrolledStudents">Matriculados</label>
-      <sga-input id="enrolledStudents" type="number" formControlName="enrolledStudents" />
+      <input z-input w-full id="enrolledStudents" type="number" formControlName="enrolledStudents"  />
     </div>
     <div class="md:col-span-2">
       <label class="label-form" for="status">Estado</label>
-      <sga-select
+      <z-select-option
         id="status"
         [options]="statusOptions"
         formControlName="status"
-        [searchable]="false"
-      />
+        [searchable]="false"></z-select-option>
     </div>
   </div>
   <footer class="flex justify-end gap-2 mt-4">
-    <button type="button" sgaButton color="secondary" variant="outline" (click)="onClose()">
+    <button type="button" z-button zColor="secondary" zType="outline" (click)="onClose()">
       Cancelar
     </button>
-    <button type="submit" sgaButton color="primary" [disabled]="form.invalid || saving()">
+    <button type="submit" z-button zColor="primary" [disabled]="form.invalid || saving()">
       {{ saving() ? 'Guardando...' : 'Guardar' }}
     </button>
   </footer>

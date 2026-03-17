@@ -1,16 +1,17 @@
-import { ChangeDetectionStrategy, Component, inject, signal, computed } from '@angular/core';
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardEmptyComponent } from '@/shared/components/empty';
+import { ChangeDetectionStrategy, Component, inject, signal, computed, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SessionStore } from '@features/administration/services/store/session.store';
 import { Session } from '@features/administration/services/api/session-api';
 import { SessionCardComponent } from '../../components/session-card/session-card';
-import { Button } from '@shared/directives';
-import { EmptyState } from '@shared/widgets/ui/empty-state/empty-state';
+
 
 @Component({
   selector: 'sga-sessions',
   standalone: true,
-  imports: [CommonModule, FormsModule, SessionCardComponent, Button, EmptyState],
+  imports: [CommonModule, FormsModule, SessionCardComponent, ZardButtonComponent, ZardEmptyComponent],
   template: `
     <div class="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-700 p-6">
       <!-- HEADER CARD -->
@@ -39,8 +40,8 @@ import { EmptyState } from '@shared/widgets/ui/empty-state/empty-state';
 
         <div class="flex items-center gap-3 w-full lg:w-auto relative z-10">
           <button 
-            sgaButton 
-            variant="ghost" 
+            z-button 
+            zType="ghost" 
             (click)="refresh()" 
             class="rounded-2xl h-14 px-6 border border-base-200 bg-base-100 hover:bg-base-200 font-bold">
             <i class="fas fa-sync-alt mr-2" [class.fa-spin]="store.loading()"></i>
@@ -80,13 +81,15 @@ import { EmptyState } from '@shared/widgets/ui/empty-state/empty-state';
               </sga-session-card>
             } @empty {
               <div class="col-span-full py-20">
-                <sga-empty-state
-                  title="No hay sesiones activas"
-                  [description]="searchTerm() ? 'No hay resultados para la búsqueda actual.' : 'No se encontraron registros de sesiones en el sistema.'"
-                  iconClass="fas fa-fingerprint"
-                  [actionLabel]="searchTerm() ? 'Limpiar Búsqueda' : ''"
-                  (action)="searchTerm.set('')"
-                />
+                <z-empty
+                  zTitle="No hay sesiones activas"
+                  zDescription="No se encontraron registros de sesiones en el sistema."
+                  zIcon="shield"
+                >
+                  @if (searchTerm()) {
+                    <button z-button zType="outline" class="mt-4" (click)="searchTerm.set('')">Limpiar Búsqueda</button>
+                  }
+                </z-empty>
               </div>
             }
           </div>

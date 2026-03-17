@@ -1,14 +1,15 @@
+import { ZardCardComponent } from '@/shared/components/card';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { AuthFacade } from '@auth/services/store/auth.acede';
-import { Card } from '@shared/adapters/ui/card/card';
+
 
 @Component({
   selector: 'sga-account-profile',
   standalone: true,
-  imports: [CommonModule, RouterLink, Card],
+  imports: [CommonModule, RouterLink, ZardCardComponent],
   template: `
     <div class="space-y-6 p-4 md:p-6">
       <section class="rounded-[2rem] border border-border bg-card p-6 shadow-sm lg:p-8">
@@ -60,7 +61,7 @@ import { Card } from '@shared/adapters/ui/card/card';
       </section>
 
       <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
-        <sga-card>
+        <z-card>
           <div class="border-border/70 border-b p-6">
             <h2 class="text-xl font-semibold text-foreground">Datos personales</h2>
             <p class="mt-1 text-sm text-muted-foreground">Informacion principal de la cuenta autenticada.</p>
@@ -74,10 +75,10 @@ import { Card } from '@shared/adapters/ui/card/card';
               </div>
             }
           </div>
-        </sga-card>
+        </z-card>
 
         <div class="space-y-6">
-          <sga-card>
+          <z-card>
             <div class="border-border/70 border-b p-6">
               <h2 class="text-lg font-semibold text-foreground">Resumen</h2>
             </div>
@@ -90,9 +91,9 @@ import { Card } from '@shared/adapters/ui/card/card';
                 </div>
               }
             </div>
-          </sga-card>
+          </z-card>
 
-          <sga-card>
+          <z-card>
             <div class="border-border/70 border-b p-6">
               <h2 class="text-lg font-semibold text-foreground">Accesos</h2>
             </div>
@@ -120,7 +121,7 @@ import { Card } from '@shared/adapters/ui/card/card';
                 <i class="fa-solid fa-lock text-muted-foreground"></i>
               </a>
             </div>
-          </sga-card>
+          </z-card>
         </div>
       </div>
     </div>
@@ -174,13 +175,11 @@ export default class AccountProfilePage {
       { label: 'Codigo', value: user?.code || user?.profile?.code || 'No registrado' },
       { label: 'Telefono', value: person?.mobile || person?.phone || 'No registrado' },
       { label: 'Direccion', value: person?.address || 'No registrada' },
-      { label: 'Ubicacion', value: this.location() },
-    ];
+      { label: 'Ubicacion', value: this.location() }];
   });
   protected readonly summaryRows = computed(() => [
     { label: 'Institucion', value: this.user()?.profile?.institution || 'No asignada' },
     { label: 'Perfil', value: this.profileLabel() },
     { label: 'Modulos', value: `${this.modules().length}` },
-    { label: 'Estado', value: this.user()?.isActive ? 'Activo' : 'Inactivo' },
-  ]);
+    { label: 'Estado', value: this.user()?.isActive ? 'Activo' : 'Inactivo' }]);
 }

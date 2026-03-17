@@ -1,13 +1,14 @@
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardCardComponent } from '@/shared/components/card';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Card } from '@shared/adapters/ui/card/card';
-import { Button } from '@shared/directives';
 import { Role } from '../../../services/api/role-api';
+
 
 @Component({
   selector: 'sga-role-card',
   standalone: true,
-  imports: [CommonModule, Card, Button],
+  imports: [CommonModule, ZardCardComponent, ZardButtonComponent],
   templateUrl: './role-card.html',
   styleUrls: ['./role-card.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -20,7 +20,7 @@
           type="button"
           class="flex items-center gap-2 px-3 py-2 text-sm bg-base-100 dark:bg-base-200 border border-base-300 rounded-lg text-neutral-700 dark:text-neutral-300 hover:bg-base-200 dark:hover:bg-base-300 transition"
         >
-          <z-icon zType="settings" class="h-4 w-4 text-neutral-500" />
+          <z-icon zType="settings" class="h-4 w-4 text-neutral-500"  />
           <span>Filtros</span>
 
           <!-- @if (activeFiltersCount() > 0) {
@@ -39,20 +39,20 @@
         (click)="onRefresh()"
         class="flex items-center gap-2 px-3 py-2 text-sm bg-base-100 dark:bg-base-200 border border-base-300 rounded-lg text-neutral-700 dark:text-neutral-300 hover:bg-base-200 dark:hover:bg-base-300 transition"
       >
-        <z-icon zType="loader-circle" class="h-4 w-4 text-neutral-500" />
+        <z-icon zType="loader-circle" class="h-4 w-4 text-neutral-500"  />
       </button>
 
       @if (headerConfig().showActions) {
-        <sga-dropdown [items]="actionDropdownItems()">
+        <z-dropdown [items]="actionDropdownItems()">
           <button
             dropdown-trigger
             class="flex items-center justify-center px-3 py-2 bg-base-100 dark:bg-base-200 border border-base-300 rounded-lg text-neutral-600 dark:text-neutral-300 hover:bg-base-200 dark:hover:bg-base-300 transition"
             aria-label="Más acciones"
             type="button"
           >
-            <z-icon zType="ellipsis" class="h-4 w-4" />
+            <z-icon zType="ellipsis" class="h-4 w-4"  />
           </button>
-        </sga-dropdown>
+        </z-dropdown>
       }
     </div>
   </div>

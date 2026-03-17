@@ -1,16 +1,18 @@
+import { ListToolbarComponent } from '@/shared/widgets/list-toolbar/list-toolbar';
+import { ZardButtonComponent } from '@/shared/components/button';
 import { ChangeDetectionStrategy, Component, inject, OnInit, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { ListToolbar } from '@shared/widgets/ui/list-toolbar';
 import { DataSource, SgaTemplate } from '@shared/widgets/data-source/data-source';
 import { AttendanceStore } from '../../../academic-setting/attendances/services/store/attendance.store';
 import { DataSourceColumn } from '@core/types/data-source-types';
 import { UiFiltersService } from '@core/services/ui-filters.service';
 
+
 @Component({
   selector: 'sga-attendance-reports',
   standalone: true,
-  imports: [CommonModule, ListToolbar, DataSource, SgaTemplate],
+  imports: [CommonModule, ListToolbarComponent, DataSource, SgaTemplate, ZardButtonComponent],
   templateUrl: './attendance-reports.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -23,8 +25,7 @@ export default class AttendanceReportsPage implements OnInit {
     { key: 'date', label: 'Fecha', sortable: true, type: 'date' },
     { key: 'studentName', label: 'Estudiante', sortable: true },
     { key: 'status', label: 'Estado', sortable: true, type: 'custom', customTemplate: 'statusTemplate' },
-    { key: 'sessionType', label: 'Sesión' },
-  ];
+    { key: 'sessionType', label: 'Sesión' }];
 
   data = computed(() => {
     const term = this.searchTerm().trim().toLowerCase();

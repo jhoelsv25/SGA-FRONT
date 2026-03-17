@@ -1,40 +1,37 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  ElementRef,
-  forwardRef,
-  HostListener,
-  inject,
-  input,
-  output,
-  signal,
-  viewChild,
-} from '@angular/core';
+import { ZardSelectComponent, ZardSelectItemComponent } from '@/shared/components/select';
+import { SelectOption } from '@/shared/widgets/select-option/select-option';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, forwardRef, HostListener, inject, input, output, signal, viewChild, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { YearAcademicApi } from '@features/academic-setup/year-academic/services/api/year-academic-api';
 import type { YearAcademic } from '@features/academic-setup/year-academic/types/year-academi-types';
 
-function getYearAcademicLabel(y: YearAcademic): string {
+function getLabel(y: YearAcademic): string {
   return y.name ?? String(y.year ?? y.id);
 }
 
-function getYearAcademicInitials(y: YearAcademic): string {
-  return String(y.year ?? y.name ?? y.id).slice(0, 2).toUpperCase();
+function getInitials(y: YearAcademic): string {
+  return String(y.year ?? y.name ?? y.id)
+    .slice(0, 2)
+    .toUpperCase();
 }
+
 
 @Component({
   selector: 'sga-year-academic-select',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ZardSelectComponent, ZardSelectItemComponent],
   templateUrl: './year-academic-select.html',
   providers: [
     { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => YearAcademicSelect), multi: true },
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class YearAcademicSelect implements ControlValueAccessor {
+export class YearAcademicSelect implements ControlValueAccessor, OnInit {
+  ngOnInit() {
+    this.loadItems();
+  }
+
   private api = inject(YearAcademicApi);
 
   placeholder = input<string>('Seleccionar año académico');
@@ -60,7 +57,9 @@ export class YearAcademicSelect implements ControlValueAccessor {
       (y) =>
         y.name?.toLowerCase().includes(term) ||
         String(y.year ?? '').includes(term) ||
-        String(y.status ?? '').toLowerCase().includes(term)
+        String(y.status ?? '')
+          .toLowerCase()
+          .includes(term),
     );
   });
 
@@ -68,8 +67,8 @@ export class YearAcademicSelect implements ControlValueAccessor {
   private _onChange: (value: string | null) => void = () => {};
   private _onTouched = () => {};
 
-  getLabel = getYearAcademicLabel;
-  getInitials = getYearAcademicInitials;
+  getLabel = getLabel;
+  getInitials = getInitials;
 
   onSearchInput(e: Event) {
     this.searchTerm.set((e.target as HTMLInputElement).value);
@@ -86,10 +85,24 @@ export class YearAcademicSelect implements ControlValueAccessor {
     }
   }
 
-  onOptionKeyDown(e: KeyboardEvent, y: YearAcademic) {
+  onOptionKeyDown(e: KeyboardEvent, y: any) {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       this.selectItem(y);
+    }
+  }
+
+  onZardSelectionChange(val: string | string[]) {
+    const id = Array.isArray(val) ? val[0] : val;
+    if (!id) {
+      this.clearSelection();
+      return;
+    }
+    const found = this.allItems().find((x) => x.id === id);
+    if (found) {
+      this.selectItem(found);
+    } else {
+      this.writeValue(id);
     }
   }
 

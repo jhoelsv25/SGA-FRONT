@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 import { CommonModule } from '@angular/common';
 import { Session } from '../../../services/api/session-api';
 
+
 @Component({
   selector: 'sga-session-card',
   standalone: true,

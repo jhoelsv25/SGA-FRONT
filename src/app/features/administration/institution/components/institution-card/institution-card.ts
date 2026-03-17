@@ -1,13 +1,14 @@
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardCardComponent } from '@/shared/components/card';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Card } from '@shared/adapters/ui/card/card';
-import { Button } from '@shared/directives';
 import { Institution } from '../../types/institution-types';
+
 
 @Component({
   selector: 'sga-institution-card',
   standalone: true,
-  imports: [CommonModule, Card, Button],
+  imports: [CommonModule, ZardCardComponent, ZardButtonComponent],
   templateUrl: './institution-card.html',
   styleUrls: ['./institution-card.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

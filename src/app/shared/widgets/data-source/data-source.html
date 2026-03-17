@@ -15,10 +15,10 @@
       <!-- Delete Button -->
       <button
         type="button"
-        appButton
-        color="danger"
-        variant="solid"
-        size="sm"
+        z-button
+        zColor="danger"
+        zType="default"
+        zSize="sm"
         [disabled]="!hasSelection()"
         title="Eliminar seleccionados"
         (click)="onMassDelete()"
@@ -33,17 +33,15 @@
       @if (hasSelection() && filteredMassActions().length > 0) {
         <div class="w-px h-6 bg-base-300 dark:bg-base-200"></div>
       }
-
       <!-- Dynamic Mass Actions -->
       @if (hasSelection()) {
         @for (action of filteredMassActions(); track action.key) {
           @if (isVisible(action)) {
             <button
               type="button"
-              sgaButton
-              [color]="action.color || 'primary'"
-              [variant]="action.variant || 'outline'"
-              [size]="action.size || 'sm'"
+              z-button
+              [zType]="action.variant || 'outline'"
+              [zSize]="action.size || 'default'"
               [disabled]="isDisabled(action)"
               [title]="action.label"
               (click)="executeMassAction(action)"
@@ -65,7 +63,7 @@
 
     <!-- Search -->
     <div class="flex items-center gap-2 w-full md:w-auto md:min-w-[300px]">
-      <sga-search (searchChange)="onLocalSearch($event)" />
+      <input z-input type="search" (input)="onLocalSearch($any($event.target).value)"  />
     </div>
   </header>
   }
@@ -96,27 +94,10 @@
             <!-- Select All -->
             @if (config().selectable && config().multiSelect) {
               <th class="w-12 px-4 py-3">
-                <label class="inline-flex items-center cursor-pointer group">
-                  <input
-                    type="checkbox"
-                    class="sr-only"
-                    [checked]="allSelected()"
-                    [indeterminate]="partialSelected()"
-                    (change)="toggleAll()"
-                  />
-                  <div
-                    class="w-5 h-5 border-2 rounded flex items-center justify-center transition-all"
-                    [class.bg-primary-500]="allSelected() || partialSelected()"
-                    [class.border-primary-500]="allSelected() || partialSelected()"
-                    [class.border-neutral-400]="!allSelected() && !partialSelected()"
-                  >
-                    @if (allSelected()) {
-                      <i class="fas fa-check text-white text-xs"></i>
-                    } @else if (partialSelected()) {
-                      <i class="fas fa-minus text-white text-xs"></i>
-                    }
-                  </div>
-                </label>
+                <z-checkbox
+                  [zChecked]="allSelected()"
+                  (checkChange)="toggleAll()"
+                ></z-checkbox>
               </th>
             } @else {
               <th class="w-10"></th>
@@ -162,11 +143,8 @@
                 "
                 class="px-4 py-8"
               >
-                <sga-empty-state
-                  [title]="emptyStateTitle()"
-                  [description]="emptyStateDescription()"
-                  [iconClass]="emptyStateIcon()"
-                />
+                <z-empty [zIcon]="'folder-open'" [zTitle]="emptyStateTitle()" [zDescription]="emptyStateDescription()">
+    </z-empty>
               </td>
             </tr>
           } @else {
@@ -179,31 +157,10 @@
                 <!-- Selection -->
                 @if (config().selectable) {
                   <td class="px-4 py-3">
-                    <label class="inline-flex items-center cursor-pointer group">
-                      <input
-                        [type]="config().multiSelect ? 'checkbox' : 'radio'"
-                        class="sr-only"
-                        [checked]="isSelected(row)"
-                        (change)="toggleRow(row)"
-                        (click)="$event.stopPropagation()"
-                      />
-                      <div
-                        class="w-5 h-5 border-2 flex items-center justify-center transition-all"
-                        [class.rounded]="config().multiSelect"
-                        [class.rounded-full]="!config().multiSelect"
-                        [class.bg-primary-500]="isSelected(row)"
-                        [class.border-primary-500]="isSelected(row)"
-                        [class.border-neutral-400]="!isSelected(row)"
-                      >
-                        @if (isSelected(row)) {
-                          @if (config().multiSelect) {
-                            <i class="fas fa-check text-white text-xs"></i>
-                          } @else {
-                            <div class="w-2.5 h-2.5 bg-primary-500 rounded-full"></div>
-                          }
-                        }
-                      </div>
-                    </label>
+                    <z-checkbox
+                      [zChecked]="isSelected(row)"
+                      (checkChange)="toggleRow(row)"
+                    ></z-checkbox>
                   </td>
                 }
 
@@ -235,15 +192,16 @@
 
                         @case ('boolean') {
                           @if (col.editable) {
-                            <sga-checkbox
-                              [checked]="isRowPropertyTruthy(row, col.key)"
-                              [label]="
+                            <z-checkbox
+                              [zChecked]="isRowPropertyTruthy(row, col.key)"
+                              (checkChange)="onBooleanToggle($event, col, row)"
+                            >
+                              {{
                                 col.booleanLabels?.[
                                   isRowPropertyTruthy(row, col.key) ? 'true' : 'false'
                                 ] || ''
-                              "
-                              (changeOutput)="onBooleanToggle($event, col, row)"
-                            />
+                              }}
+                            </z-checkbox>
                           } @else {
                             <span
                               class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
@@ -316,7 +274,7 @@
                               (blur)="saveCellEdit(row, col)"
                               (keydown.enter)="saveCellEdit(row, col); $event.preventDefault()"
                               (keydown.escape)="cancelCellEdit(); $event.preventDefault()"
-                            />
+                             />
                           } @else {
                             <span [class.truncate]="col.truncate" [title]="col.editable && col.onSave ? 'Doble clic para editar' : ''">
                               {{ formatCell(row, col) }}
@@ -380,23 +338,9 @@
 <!-- Pagination -->
 @if (config().pagination) {
   <div class="sticky bottom-0 left-0 w-full">
-    @if (isCursorPagination() && cursorPagination()) {
-      <sga-load-more-pagination
-        [loadedCount]="cursorPagination()!.loadedCount"
-        [hasNext]="cursorPagination()!.hasNext"
-        [nextCursor]="cursorPagination()!.nextCursor"
-        [loading]="loading()"
-        (loadMore)="onLoadMoreCursor($event)"
-      />
-    } @else {
-      <sga-pagination
-        [total]="totalCount()"
-        [size]="getSize()"
-        [page]="getPage()"
-        [useParams]="true"
-        [sizeOptions]="[10, 20, 50, 100]"
-        (pageChange)="pageChange.emit($event)"
-      />
-    }
+    <z-pagination
+      [zTotal]="Math.ceil(totalCount() / getSize())"
+      [zPageIndex]="getPage()"
+      (zPageIndexChange)="onPaginationChange($event)"></z-pagination>
   </div>
 }

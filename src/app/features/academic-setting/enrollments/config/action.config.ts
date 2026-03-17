@@ -28,5 +28,4 @@ export const ENROLLMENT_ACTIONS: ActionConfig[] = [
     icon: 'fas fa-trash',
     typeAction: 'row',
     color: 'danger',
-  },
-];
+  }];

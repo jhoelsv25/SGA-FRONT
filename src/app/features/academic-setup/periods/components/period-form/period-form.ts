@@ -1,10 +1,10 @@
+import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
+import { ZardDatePickerComponent } from '@/shared/components/date-picker';
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardInputDirective } from '@/shared/components/input';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Button } from '@shared/directives';
-import { Input } from '@shared/adapters/ui/input/input';
-import { DatePicker } from '@shared/widgets/ui/date-picker/date-picker';
-import { Select } from '@shared/adapters/ui/select/select';
 import { PeriodStore } from '../../services/store/period.store';
 import { PeriodStatus } from '../../types/period-types';
 import type { Period } from '../../types/period-types';
@@ -13,13 +13,13 @@ const STATUS_OPTIONS = [
   { value: PeriodStatus.PLANNED, label: 'Planificado' },
   { value: PeriodStatus.IN_PROGRESS, label: 'En curso' },
   { value: PeriodStatus.COMPLETED, label: 'Completado' },
-  { value: PeriodStatus.CANCELLED, label: 'Cancelado' },
-];
+  { value: PeriodStatus.CANCELLED, label: 'Cancelado' }];
+
 
 @Component({
   selector: 'sga-period-form',
   standalone: true,
-  imports: [ReactiveFormsModule, Button, Input, DatePicker, Select],
+  imports: [ReactiveFormsModule, ZardButtonComponent, ZardInputDirective, ZardDatePickerComponent, SelectOptionComponent],
   templateUrl: './period-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -1,35 +1,37 @@
+import { ListToolbarComponent } from '@/shared/widgets/list-toolbar/list-toolbar';
+import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
+import { DropdownOptionComponent, DropdownItem } from '@/shared/widgets/dropdown-option/dropdown-option';
+import { ZardSkeletonComponent } from '@/shared/components/skeleton';
+import { ZardEmptyComponent } from '@/shared/components/empty';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
-import { ConfirmDialog } from '@core/services/confirm-dialog';
+import { DialogConfirmService } from '@shared/widgets/dialog-confirm';
 import { CourseStore } from '../../services/store/course.store';
 import type { Course } from '../../types/course-types';
 import { CourseForm } from '../../components/course-form/course-form';
 import { CommonModule } from '@angular/common';
 import { CourseCardComponent } from '../../components/course-card/course-card';
-import { EmptyState } from '@shared/widgets/ui/empty-state/empty-state';
-import { Skeleton } from '@shared/widgets/ui/skeleton/skeleton';
-import { ListToolbar } from '@shared/widgets/ui/list-toolbar';
-import { Dropdown } from '@shared/adapters/ui/dropdown/dropdown';
-import { Select } from '@shared/adapters/ui/select/select';
+
+import { ZardDropdownMenuComponent } from '@/shared/components/dropdown';
 import { PermissionCheckStore } from '@core/stores/permission-check.store';
 
 const TYPE_OPTIONS = [
   { value: '', label: 'Todos' },
   { value: 'mandatory', label: 'Obligatorios' },
-  { value: 'elective', label: 'Electivos' },
-];
+  { value: 'elective', label: 'Electivos' }];
+
 
 @Component({
   selector: 'sga-courses',
   standalone: true,
-  imports: [CommonModule, CourseCardComponent, EmptyState, Skeleton, ListToolbar, Dropdown, Select],
+  imports: [CommonModule, CourseCardComponent, ZardEmptyComponent, ZardSkeletonComponent, DropdownOptionComponent, SelectOptionComponent, ListToolbarComponent],
   templateUrl: './courses.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class CoursesPage {
   private dialog = inject(DialogModalService);
-  private confirmDialog = inject(ConfirmDialog);
+  private confirmDialog = inject(DialogConfirmService);
   private store = inject(CourseStore);
   private permissionStore = inject(PermissionCheckStore);
 
@@ -101,8 +103,8 @@ export default class CoursesPage {
         title: 'Eliminar curso',
         icon: 'fa-solid fa-trash',
         message: `¿Estás seguro de eliminar "${course.name}"? Esta acción no se puede deshacer.`,
-        acceptButtonProps: { label: 'Eliminar', color: 'danger', variant: 'solid' },
-        rejectButtonProps: { label: 'Cancelar', variant: 'outline' },
+        acceptButtonProps: { label: 'Eliminar', color: 'danger', zType: 'default' },
+        rejectButtonProps: { label: 'Cancelar', zType: 'outline' },
       })
       .then((confirmed) => {
         if (confirmed) {

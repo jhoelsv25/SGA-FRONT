@@ -8,7 +8,7 @@
   >
     <!-- Standard Toolbar -->
     <div data-source-header class="sticky top-0 z-20 -mx-4 -mt-4 px-4 pt-4 pb-4 mb-4 bg-base-200 rounded-t-lg border-b border-base-300">
-      <sga-list-toolbar
+      <z-list-toolbar
         title="Registro de Asistencia"
         icon="fas fa-clipboard-check"
         description="Seleccione el curso y fecha para marcar la asistencia"
@@ -20,53 +20,52 @@
           <h4 class="text-[10px] font-bold text-base-content/40 uppercase tracking-[0.2em] mb-1">Configuración</h4>
           <div class="flex flex-col gap-1.5">
             <label for="attendance-date-select" class="text-[11px] font-bold text-base-content/60 uppercase">Fecha de Asistencia</label>
-            <sga-input
+            <input z-input w-full
               id="attendance-date-select"
               type="date"
               [ngModel]="attendanceDate()"
               (ngModelChange)="attendanceDate.set($event); onDateChange()"
-            />
+             />
           </div>
           <div class="flex flex-col gap-1.5">
             <label for="section-course-select" class="text-[11px] font-bold text-base-content/60 uppercase">Curso / Sección</label>
-            <sga-select
+            <z-select-option
               id="section-course-select"
               [options]="sectionCourseOptions()"
               [value]="selectedSectionCourse()"
               (valueChange)="onSectionCourseChange($event)"
-              placeholder="Seleccione uno..."
-            />
+              placeholder="Seleccione uno..."></z-select-option>
           </div>
         </div>
 
         <!-- Actions in Toolbar Menu (Dropdown) -->
         <div list-toolbar-actions>
           <button
-            sgaButton
-            variant="ghost"
-            color="secondary"
-            shape="pill"
+            z-button
+            zType="ghost"
+            zColor="secondary"
+            zShape="circle"
             [disabled]="!hasActiveFilters()"
             (click)="clearFilters()"
             title="Limpiar filtros"
           >
             <i class="fas fa-filter-circle-xmark"></i>
           </button>
-          <sga-dropdown [items]="toolbarActions()">
+          <z-dropdown [items]="toolbarActions()">
             <button
-              sga-dropdown-trigger
-              sgaButton
-              variant="ghost"
-              color="secondary"
-              shape="pill"
+              dropdown-trigger
+              z-button
+              zType="ghost"
+              zColor="secondary"
+              zShape="circle"
               class="w-10 h-10 p-0"
               title="Más acciones"
             >
               <i class="fas fa-ellipsis-v text-sm"></i>
             </button>
-          </sga-dropdown>
+          </z-dropdown>
         </div>
-      </sga-list-toolbar>
+      </z-list-toolbar>
     </div>
 
     <!-- Custom Cell Templates -->

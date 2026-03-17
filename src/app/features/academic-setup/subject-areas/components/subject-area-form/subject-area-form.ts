@@ -1,18 +1,19 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardInputDirective } from '@/shared/components/input';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal, input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
-import { Input } from '@shared/adapters/ui/input/input';
-import { Select } from '@shared/adapters/ui/select/select';
-import { Button } from '@shared/directives';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
 import { SubjectArea, SubjectAreaType, StatusType } from '../../types/subject-area-types';
 import { SubjectAreaStore } from '../../services/store/subject-area.store';
 
+
 @Component({
   selector: 'sga-subject-area-form',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, Input, Select, Button],
+  imports: [ReactiveFormsModule, CommonModule, ZardInputDirective, SelectOptionComponent, ZardButtonComponent],
   templateUrl: './subject-area-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -39,14 +40,12 @@ export class SubjectAreaForm implements OnInit {
   types = [
     { value: SubjectAreaType.CORE, label: 'Troncal' },
     { value: SubjectAreaType.ELECTIVE, label: 'Electiva' },
-    { value: SubjectAreaType.OPTIONAL, label: 'Opcional' },
-  ];
+    { value: SubjectAreaType.OPTIONAL, label: 'Opcional' }];
   statuses = [
     { value: StatusType.ACTIVE, label: 'Activo' },
     { value: StatusType.INACTIVE, label: 'Inactivo' },
     { value: StatusType.PENDING, label: 'Pendiente' },
-    { value: StatusType.SUSPENDED, label: 'Suspendido' },
-  ];
+    { value: StatusType.SUSPENDED, label: 'Suspendido' }];
 
   ngOnInit() {
     this.current = this.data?.current ?? null;

@@ -47,5 +47,4 @@ export default [
     path: '',
     redirectTo: 'years',
     pathMatch: 'full',
-  },
-] as Routes;
+  }] as Routes;

@@ -1,3 +1,7 @@
+import { ListToolbarComponent } from '@/shared/widgets/list-toolbar/list-toolbar';
+import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
+import { DropdownOptionComponent, DropdownItem } from '@/shared/widgets/dropdown-option/dropdown-option';
+import { ZardButtonComponent } from '@/shared/components/button';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -11,9 +15,9 @@ import { TeacherStore } from '@features/teachers/services/store/teacher.store';
 import { Teacher, TeacherCreate, TeacherParams } from '@features/teachers/types/teacher-types';
 import { DataSource } from '@shared/widgets/data-source/data-source';
 import { ImportDialog } from '@shared/widgets/import-dialog/import-dialog';
-import { Dropdown, DropdownItem } from '@shared/adapters/ui/dropdown/dropdown';
-import { ListToolbar } from '@shared/widgets/ui/list-toolbar';
-import { Select, SelectOption } from '@shared/adapters/ui/select/select';
+import { ZardDropdownMenuComponent } from '@/shared/components/dropdown';
+import { ZardSelectComponent } from '@/shared/components/select';
+
 
 const EXCEL_COLUMNS = [
   { key: 'teacherCode', label: 'Codigo docente' },
@@ -31,8 +35,7 @@ const EXCEL_COLUMNS = [
   { key: 'teachingLevel', label: 'Nivel ensenanza' },
   { key: 'employmentStatus', label: 'Estado laboral' },
   { key: 'institution', label: 'ID institucion' },
-  { key: 'person', label: 'ID persona' },
-];
+  { key: 'person', label: 'ID persona' }];
 
 function parseNumber(v: unknown, fallback = 0): number {
   const n = Number(v);
@@ -59,10 +62,11 @@ function normalizeQueryValue(value: string | null): string {
   return value;
 }
 
+
 @Component({
   selector: 'sga-teachers',
   standalone: true,
-  imports: [ListToolbar, Select, DataSource, Dropdown],
+  imports: [SelectOptionComponent, DataSource, DropdownOptionComponent, ListToolbarComponent, ZardButtonComponent],
   templateUrl: './teachers.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -87,8 +91,7 @@ export default class TeachersPage implements OnInit {
   pagination = computed(() => this.store.pagination());
   rowActions = computed<ActionConfig[]>(() => [
     { key: 'edit', label: 'Editar', icon: 'fas fa-edit', typeAction: 'row', color: 'primary' as const },
-    { key: 'delete', label: 'Eliminar', icon: 'fas fa-trash', typeAction: 'row', color: 'danger' as const },
-  ]);
+    { key: 'delete', label: 'Eliminar', icon: 'fas fa-trash', typeAction: 'row', color: 'danger' as const }]);
   filterCount = computed(() => {
     let count = 0;
     if (this.filterContractType()) count++;
@@ -103,25 +106,21 @@ export default class TeachersPage implements OnInit {
     { value: 'full_time', label: 'Tiempo completo' },
     { value: 'part_time', label: 'Medio tiempo' },
     { value: 'temporary', label: 'Temporal' },
-    { value: 'permanent', label: 'Permanente' },
-  ];
+    { value: 'permanent', label: 'Permanente' }];
   laborRegimeOptions: SelectOption[] = [
     { value: '', label: 'Todos' },
     { value: 'public', label: 'Público' },
-    { value: 'private', label: 'Privado' },
-  ];
+    { value: 'private', label: 'Privado' }];
   workloadTypeOptions: SelectOption[] = [
     { value: '', label: 'Todos' },
     { value: '20_hours', label: '20 horas' },
     { value: '30_hours', label: '30 horas' },
-    { value: '40_hours', label: '40 horas' },
-  ];
+    { value: '40_hours', label: '40 horas' }];
   employmentStatusOptions: SelectOption[] = [
     { value: '', label: 'Todos' },
     { value: 'active', label: 'Activo' },
     { value: 'inactive', label: 'Inactivo' },
-    { value: 'on_leave', label: 'Licencia' },
-  ];
+    { value: 'on_leave', label: 'Licencia' }];
   toolbarMoreItems = computed<DropdownItem[]>(() => [
     {
       label: 'Agregar docente',
@@ -148,8 +147,7 @@ export default class TeachersPage implements OnInit {
       label: 'Importar Excel',
       icon: 'fas fa-file-import',
       action: () => this.openImport(),
-    },
-  ]);
+    }]);
 
   ngOnInit(): void {
     const query = this.route.snapshot.queryParamMap;

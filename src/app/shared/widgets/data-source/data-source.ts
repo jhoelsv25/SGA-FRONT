@@ -1,19 +1,9 @@
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardInputDirective } from '@/shared/components/input';
+import { ZardEmptyComponent } from '@/shared/components/empty';
+import { ZardPaginationComponent } from '@/shared/components/pagination';
 import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  input,
-  output,
-  signal,
-  OnInit,
-  OnDestroy,
-  ContentChildren,
-  QueryList,
-  TemplateRef,
-  Directive,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal, OnInit, OnDestroy, ContentChildren, QueryList, TemplateRef, Directive } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { PermissionCheckStore } from '@core/stores/permission-check.store';
@@ -25,20 +15,10 @@ import {
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 
 import { CellFormatter } from '@core/services/cell-formated';
-
 import { CursorPagination } from '@core/types/pagination-types';
-import { Button } from '@shared/directives';
-import { Checkbox } from '@shared/widgets/ui/checkbox/checkbox';
-import { LoadMorePagination } from '@shared/widgets/ui/pagination/load-more-pagination';
-import { Pagination } from '@shared/widgets/ui/pagination/pagination';
-import { Search } from '@shared/widgets/ui/search/search';
-import { EmptyState } from '@shared/widgets/ui/empty-state/empty-state';
+import { ZardCheckboxComponent } from '@/shared/components/checkbox';
 
-import {
-  getActionMenuItemClasses,
-  getColumnClasses,
-  getRowClasses,
-} from '@shared/utils/data-source';
+import { getActionMenuItemClasses, getColumnClasses, getRowClasses } from '@/shared/utils/data-source';
 
 @Directive({
   selector: '[sgaTemplate]',
@@ -49,14 +29,16 @@ export class SgaTemplate {
   public templateRef = inject(TemplateRef<unknown>);
 }
 
+
 @Component({
   selector: 'sga-data-source',
   standalone: true,
-  imports: [CommonModule, FormsModule, Pagination, LoadMorePagination, Checkbox, Button, Search, EmptyState],
+  imports: [CommonModule, FormsModule, ZardPaginationComponent, ZardCheckboxComponent, ZardButtonComponent, ZardEmptyComponent, ZardInputDirective],
   templateUrl: './data-source.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DataSource implements OnInit, OnDestroy {
+  Math = Math;
   @ContentChildren(SgaTemplate) templates!: QueryList<SgaTemplate>;
 
   getTemplate(name: string | undefined): TemplateRef<unknown> | null {
@@ -333,6 +315,10 @@ export class DataSource implements OnInit, OnDestroy {
     this.searchOutput.emit(term);
   }
 
+  onPaginationChange(page: number): void {
+    this.pageChange.emit({ page, size: this.getSize() });
+  }
+
   // =========================
   // INLINE EDIT (text/number)
   // =========================
@@ -478,7 +464,7 @@ export class DataSource implements OnInit, OnDestroy {
     });
   }
 
-  // Handler para sga-checkbox en columnas booleanas
+  // Handler para z-checkbox en columnas booleanas
   onBooleanToggle(checked: boolean, col: DataSourceColumn, row: unknown): void {
     // Usa onToggle si está definido, como indica el tipo DataSourceColumn
     if (typeof col.onToggle === 'function') {

@@ -1,33 +1,33 @@
-<sga-header-detail [config]="headerConfig" />
+<sga-header-detail [config]="headerConfig"  />
 
 <div class="rounded-2xl border border-base-200 bg-base-100 p-4 md:p-5 shadow-sm">
   <div class="mb-4 flex flex-wrap items-end gap-3">
     <div>
       <label for="teacher-attendance-date" class="mb-1 block text-sm font-medium text-base-content/70">Fecha</label>
-      <sga-input
+      <input z-input w-full
         id="teacher-attendance-date"
         type="date"
         [ngModel]="attendanceDate()"
         (ngModelChange)="onDateChange($event)"
-      />
+       />
     </div>
 
-    <button type="button" sgaButton color="primary" variant="outline" (click)="openManualDialog()">
+    <button type="button" z-button zColor="primary" zType="outline" (click)="openManualDialog()">
       <i class="fas fa-plus mr-2"></i>
       Registro manual
     </button>
 
-    <button type="button" sgaButton color="primary" variant="outline" (click)="openImportDialog()">
+    <button type="button" z-button zColor="primary" zType="outline" (click)="openImportDialog()">
       <i class="fas fa-file-import mr-2"></i>
       Importar Excel
     </button>
 
-    <button type="button" sgaButton color="primary" variant="outline" (click)="downloadTemplate()">
+    <button type="button" z-button zColor="primary" zType="outline" (click)="downloadTemplate()">
       <i class="fas fa-download mr-2"></i>
       Plantilla Excel
     </button>
 
-    <button type="button" sgaButton color="secondary" variant="outline" (click)="loadTeachers()">
+    <button type="button" z-button zColor="secondary" zType="outline" (click)="loadTeachers()">
       <i class="fas fa-sync-alt mr-2"></i>
       Recargar
     </button>
@@ -35,10 +35,10 @@
     <div class="ml-auto flex items-center gap-2">
       <button
         type="button"
-        sgaButton
-        color="success"
-        variant="outline"
-        size="sm"
+        z-button
+        zColor="success"
+        zType="outline"
+        zSize="sm"
         [disabled]="saving() || loading()"
         (click)="saveManual()"
         class="!h-9"
@@ -53,9 +53,9 @@
 
       <button
         type="button"
-        sgaButton
-        color="danger"
-        variant="outline"
+        z-button
+        zColor="danger"
+        zType="outline"
         [disabled]="deleting() || loading() || !bulkDeleteMode() || !hasDeleteSelections()"
         (click)="deleteSelected()"
         aria-label="Eliminar seleccionados"
@@ -83,7 +83,7 @@
                   [checked]="allSelected()"
                   [indeterminate]="partialSelected()"
                   (change)="toggleAllSelection()"
-                />
+                 />
                 <div
                   class="w-5 h-5 border-2 rounded flex items-center justify-center transition-all"
                   [class.bg-primary-500]="allSelected() || partialSelected()"
@@ -139,7 +139,7 @@
                     class="sr-only"
                     [checked]="row.markedForDelete"
                     (change)="toggleDelete(row.attendanceId, $event.target.checked)"
-                  />
+                   />
                   <div
                     class="w-5 h-5 border-2 rounded flex items-center justify-center transition-all"
                     [class.bg-primary-500]="row.markedForDelete"
@@ -187,26 +187,26 @@
                 </div>
               </td>
               <td class="px-3 py-2">
-                <sga-input
+                <input z-input w-full
                   type="time"
                   [ngModel]="row.checkInTime.slice(0, 5)"
                   (ngModelChange)="updateCheckInTime(row.teacherId, $event)"
-                />
+                 />
               </td>
               <td class="px-3 py-2">
-                <sga-input
+                <input z-input w-full
                   [ngModel]="row.observations"
                   (ngModelChange)="updateObservations(row.teacherId, $event)"
                   placeholder="Observaciones"
-                />
+                 />
               </td>
               <td class="w-12 px-3 py-2 text-center align-middle">
                 <button
                   type="button"
-                  sgaButton
-                  color="danger"
-                  variant="ghost"
-                  size="sm"
+                  z-button
+                  zColor="danger"
+                  zType="ghost"
+                  zSize="sm"
                   class="!h-9 !w-9 !px-0 flex items-center justify-center"
                   [disabled]="isRowDeleteDisabled(row.teacherId)"
                   (click)="deleteRow(row.teacherId)"

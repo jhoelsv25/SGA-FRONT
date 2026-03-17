@@ -1,7 +1,7 @@
+import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardDialogRef } from '@shared/components/dialog';
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, signal, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Button } from '@shared/directives';
 import { StudentApi } from '../../services/api/student-api';
 import { StudentsImportSocketService } from '../../services/students-import.socket';
 import { ExcelService } from '@core/services/excel.service';
@@ -16,21 +16,13 @@ const FIELD_OPTIONS = [
   { key: 'name', label: 'Nombre', required: true },
   { key: 'email', label: 'Email', required: true },
   { key: 'age', label: 'Edad', required: false },
-  { key: 'grade', label: 'Grado', required: false },
-] as const;
+  { key: 'grade', label: 'Grado', required: false }] as const;
+
 
 @Component({
   selector: 'sga-import-with-progress-dialog',
   standalone: true,
-  imports: [
-    CommonModule,
-    Button,
-    ImportStepIndicator,
-    ImportStepUpload,
-    ImportStepMapping,
-    ImportStepImporting,
-    ImportStepDone,
-  ],
+  imports: [CommonModule, ZardButtonComponent, ImportStepIndicator, ImportStepUpload, ImportStepMapping, ImportStepImporting, ImportStepDone],
   templateUrl: './import-with-progress-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

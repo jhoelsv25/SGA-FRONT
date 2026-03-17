@@ -7,5 +7,4 @@ export const SECTION_COLUMN: DataSourceColumn[] = [
   { key: 'tutor', label: 'Tutor' },
   { key: 'classroom', label: 'Aula' },
   { key: 'availableSlots', label: 'Cupos disponibles', type: 'number' },
-  { key: 'status', label: 'Estado' },
-];
+  { key: 'status', label: 'Estado' }];

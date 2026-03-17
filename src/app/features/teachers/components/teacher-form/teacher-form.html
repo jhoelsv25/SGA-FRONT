@@ -1,7 +1,7 @@
 <form [formGroup]="form" class="grid gap-4" (ngSubmit)="submit()">
   <header class="mb-4 flex items-center justify-between">
     <h2 class="text-lg font-semibold">{{ current ? 'Editar docente' : 'Nuevo docente' }}</h2>
-    <button type="button" sgaButton color="secondary" variant="ghost" shape="pill" (click)="close()">
+    <button type="button" z-button zColor="secondary" zType="ghost" zShape="circle" (click)="close()">
       <i class="fas fa-times"></i>
     </button>
   </header>
@@ -9,80 +9,80 @@
   <div class="grid max-h-[65vh] gap-4 overflow-y-auto pr-1">
     <div>
       <label class="label-form" for="teacherCode">Código docente</label>
-      <sga-input id="teacherCode" formControlName="teacherCode" placeholder="T20250001" />
+      <input z-input w-full id="teacherCode" formControlName="teacherCode" placeholder="T20250001"  />
     </div>
     <div>
       <label class="label-form" for="specialization">Especialidad</label>
-      <sga-input id="specialization" formControlName="specialization" placeholder="Matemáticas" />
+      <input z-input w-full id="specialization" formControlName="specialization" placeholder="Matemáticas"  />
     </div>
     <div>
       <label class="label-form" for="professionalTitle">Título profesional</label>
-      <sga-input id="professionalTitle" formControlName="professionalTitle" placeholder="Lic. en Educación" />
+      <input z-input w-full id="professionalTitle" formControlName="professionalTitle" placeholder="Lic. en Educación"  />
     </div>
     <div>
       <label class="label-form" for="university">Universidad</label>
-      <sga-input id="university" formControlName="university" placeholder="Universidad Nacional" />
+      <input z-input w-full id="university" formControlName="university" placeholder="Universidad Nacional"  />
     </div>
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
       <div>
         <label class="label-form" for="graduationYear">Año de graduación</label>
-        <sga-input id="graduationYear" type="number" formControlName="graduationYear" />
+        <input z-input w-full id="graduationYear" type="number" formControlName="graduationYear"  />
       </div>
       <div>
         <label class="label-form" for="professionalLicense">Licencia profesional</label>
-        <sga-input id="professionalLicense" formControlName="professionalLicense" placeholder="123456" />
+        <input z-input w-full id="professionalLicense" formControlName="professionalLicense" placeholder="123456"  />
       </div>
     </div>
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
       <div>
         <label class="label-form" for="contractType">Tipo de contrato</label>
-        <sga-select id="contractType" [options]="contractTypeOptions" formControlName="contractType" [searchable]="false" />
+        <z-select-option id="contractType" [options]="contractTypeOptions" formControlName="contractType" [searchable]="false"></z-select-option>
       </div>
       <div>
         <label class="label-form" for="laborRegime">Régimen laboral</label>
-        <sga-select id="laborRegime" [options]="laborRegimeOptions" formControlName="laborRegime" [searchable]="false" />
+        <z-select-option id="laborRegime" [options]="laborRegimeOptions" formControlName="laborRegime" [searchable]="false"></z-select-option>
       </div>
     </div>
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
       <div>
         <label class="label-form" for="hireDate">Fecha de contratación</label>
-        <sga-input id="hireDate" type="date" formControlName="hireDate" />
+        <input z-input w-full id="hireDate" type="date" formControlName="hireDate"  />
       </div>
       <div>
         <label class="label-form" for="terminationDate">Fecha de término (opcional)</label>
-        <sga-input id="terminationDate" type="date" formControlName="terminationDate" />
+        <input z-input w-full id="terminationDate" type="date" formControlName="terminationDate"  />
       </div>
     </div>
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
       <div>
         <label class="label-form" for="workloadType">Carga laboral</label>
-        <sga-select id="workloadType" [options]="workloadTypeOptions" formControlName="workloadType" [searchable]="false" />
+        <z-select-option id="workloadType" [options]="workloadTypeOptions" formControlName="workloadType" [searchable]="false"></z-select-option>
       </div>
       <div>
         <label class="label-form" for="weeklyHours">Horas semanales</label>
-        <sga-input id="weeklyHours" type="number" formControlName="weeklyHours" />
+        <input z-input w-full id="weeklyHours" type="number" formControlName="weeklyHours"  />
       </div>
     </div>
     <div>
       <label class="label-form" for="teachingLevel">Nivel de enseñanza</label>
-      <sga-input id="teachingLevel" formControlName="teachingLevel" placeholder="Secundaria" />
+      <input z-input w-full id="teachingLevel" formControlName="teachingLevel" placeholder="Secundaria"  />
     </div>
     <div>
       <label class="label-form" for="employmentStatus">Estado laboral</label>
-      <sga-select id="employmentStatus" [options]="employmentStatusOptions" formControlName="employmentStatus" [searchable]="false" />
+      <z-select-option id="employmentStatus" [options]="employmentStatusOptions" formControlName="employmentStatus" [searchable]="false"></z-select-option>
     </div>
     <div>
       <label class="label-form" for="institution">ID institución (UUID)</label>
-      <sga-input id="institution" formControlName="institution" placeholder="xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx" />
+      <input z-input w-full id="institution" formControlName="institution" placeholder="xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"  />
     </div>
     <div>
       <label class="label-form" for="person">ID persona (UUID)</label>
-      <sga-input id="person" formControlName="person" placeholder="xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx" />
+      <input z-input w-full id="person" formControlName="person" placeholder="xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"  />
     </div>
   </div>
 
   <footer class="mt-4 flex justify-end gap-2">
-    <button type="button" sgaButton color="secondary" variant="outline" (click)="close()">Cancelar</button>
-    <button type="submit" sgaButton color="primary" [disabled]="form.invalid">Guardar</button>
+    <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">Cancelar</button>
+    <button type="submit" z-button zColor="primary" [disabled]="form.invalid">Guardar</button>
   </footer>
 </form>

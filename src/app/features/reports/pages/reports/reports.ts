@@ -7,6 +7,7 @@ import { ReportStore } from '../../services/store/report.store';
 import { Report } from '../../types/report-types';
 import { ReportForm } from '../../components/report-form/report-form';
 
+
 @Component({
   selector: 'sga-reports',
   imports: [HeaderDetail, DataSource],

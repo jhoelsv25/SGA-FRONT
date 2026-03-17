@@ -1,19 +1,21 @@
+import { ListToolbarComponent } from '@/shared/widgets/list-toolbar/list-toolbar';
+import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
+import { ZardButtonComponent } from '@/shared/components/button';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 import { DataSource } from '@shared/widgets/data-source/data-source';
-import { ListToolbar } from '@shared/widgets/ui/list-toolbar';
-import { Select, SelectOption } from '@shared/adapters/ui/select/select';
-import { Button } from '@shared/directives';
+
 import { BehaviorStore } from '../../services/store/behavior.store';
 import { Behavior } from '../../types/behavior-types';
 import { BehaviorForm } from '../../components/behavior-form/behavior-form';
 import { UiFiltersService } from '@core/services/ui-filters.service';
 
+
 @Component({
   selector: 'sga-behaviors',
-  imports: [CommonModule, ListToolbar, Select, DataSource, Button],
+  imports: [CommonModule, SelectOptionComponent, DataSource, ZardButtonComponent, ListToolbarComponent],
   templateUrl: './behaviors.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -55,16 +57,14 @@ export default class BehaviorsPage {
     { value: 'incident', label: 'Incidente' },
     { value: 'achievement', label: 'Logro' },
     { value: 'observation', label: 'Observación' },
-    { value: 'other', label: 'Otro' },
-  ]);
+    { value: 'other', label: 'Otro' }]);
 
   severityOptions = computed<SelectOption[]>(() => [
     { value: '', label: 'Todas' },
     { value: 'low', label: 'Baja' },
     { value: 'medium', label: 'Media' },
     { value: 'high', label: 'Alta' },
-    { value: 'critical', label: 'Crítica' },
-  ]);
+    { value: 'critical', label: 'Crítica' }]);
 
   onSearch(value: string): void {
     this.filters.setBehaviorSearch(value);

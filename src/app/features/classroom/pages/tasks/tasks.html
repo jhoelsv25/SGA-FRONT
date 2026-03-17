@@ -93,7 +93,7 @@
                 placeholder="https://enlace-de-tu-entrega.com"
                 [ngModel]="getSubmissionDraft(task.id).linkUrl"
                 (ngModelChange)="updateSubmissionDraft(task.id, { linkUrl: $event })"
-              />
+               />
               <div class="flex flex-wrap items-center gap-3">
                 <input type="file" #taskFileInput class="hidden" (change)="onTaskFileSelected(task.id, $event)">
                 <button
@@ -176,14 +176,14 @@
                               placeholder="Puntaje"
                               [ngModel]="getReviewDraft(submission.submissionId).score"
                               (ngModelChange)="updateReviewDraft(submission.submissionId, { score: $event })"
-                            />
+                             />
                             <input
                               type="text"
                               class="h-10 rounded-lg border border-border bg-card px-3 text-sm text-foreground outline-none transition focus:border-primary"
                               placeholder="Retroalimentacion"
                               [ngModel]="getReviewDraft(submission.submissionId).feedback"
                               (ngModelChange)="updateReviewDraft(submission.submissionId, { feedback: $event })"
-                            />
+                             />
                             <button
                               type="button"
                               class="inline-flex h-10 items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition disabled:opacity-60"

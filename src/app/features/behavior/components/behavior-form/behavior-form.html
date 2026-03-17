@@ -1,34 +1,34 @@
 <form [formGroup]="form" class="grid gap-4" (ngSubmit)="submit()">
   <header class="flex items-center justify-between mb-4">
     <h2 class="text-lg font-semibold">{{ current ? 'Editar registro' : 'Nuevo registro de conducta' }}</h2>
-    <button type="button" sgaButton color="secondary" variant="ghost" shape="pill" (click)="close()">
+    <button type="button" z-button zColor="secondary" zType="ghost" zShape="circle" (click)="close()">
       <i class="fas fa-times"></i>
     </button>
   </header>
   <div class="grid gap-4">
     <div>
       <label class="label-form" for="studentId">ID Estudiante</label>
-      <sga-input id="studentId" formControlName="studentId" placeholder="ID del estudiante" />
+      <input z-input w-full id="studentId" formControlName="studentId" placeholder="ID del estudiante"  />
     </div>
     <div>
       <label class="label-form" for="type">Tipo</label>
-      <sga-select id="type" formControlName="type" [options]="typeOptions" placeholder="Seleccionar tipo" />
+      <z-select-option id="type" formControlName="type" [options]="typeOptions" placeholder="Seleccionar tipo"></z-select-option>
     </div>
     <div>
       <label class="label-form" for="severity">Severidad</label>
-      <sga-select id="severity" formControlName="severity" [options]="severityOptions" placeholder="Seleccionar severidad" />
+      <z-select-option id="severity" formControlName="severity" [options]="severityOptions" placeholder="Seleccionar severidad"></z-select-option>
     </div>
     <div>
       <label class="label-form" for="date">Fecha</label>
-      <sga-input id="date" type="date" formControlName="date" placeholder="Fecha" />
+      <input z-input w-full id="date" type="date" formControlName="date" placeholder="Fecha"  />
     </div>
     <div>
       <label class="label-form" for="description">Descripción</label>
-      <sga-input id="description" formControlName="description" placeholder="Descripción del registro" />
+      <input z-input w-full id="description" formControlName="description" placeholder="Descripción del registro"  />
     </div>
   </div>
   <footer class="flex justify-end gap-2 mt-4">
-    <button type="button" sgaButton color="secondary" variant="outline" (click)="close()">Cancelar</button>
-    <button type="submit" sgaButton color="primary" [disabled]="form.invalid">Guardar</button>
+    <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">Cancelar</button>
+    <button type="submit" z-button zColor="primary" [disabled]="form.invalid">Guardar</button>
   </footer>
 </form>

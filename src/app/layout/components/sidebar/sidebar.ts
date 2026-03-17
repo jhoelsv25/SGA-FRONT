@@ -1,13 +1,13 @@
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardInputDirective } from '@/shared/components/input';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, HostListener, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, HostListener, inject, OnDestroy, OnInit, signal, input } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { AuthFacade } from '@auth/services/store/auth.acede';
 import { Module } from '@auth/types/auth-type';
 import { LayoutStore } from '@core/stores/layout.store';
 import { filter, Subject, takeUntil } from 'rxjs';
-import { ZardButtonComponent } from '@shared/components/button';
-import { ZardIconComponent, type ZardIcon, toZardIcon } from '@shared/components/icon';
-import { ZardInputDirective } from '@shared/components/input';
+import { ZardIconComponent, type ZardIcon } from '@shared/components/icon';
 import { ZardPopoverDirective } from '@shared/components/popover/popover.component';
 import { UserMenu, UserMenuAction, UserMenuDetail, UserMenuStat } from '@shared/widgets/user-menu/user-menu';
 
@@ -24,18 +24,11 @@ export interface MenuItem {
   expanded?: boolean;
 }
 
+
 @Component({
   selector: 'sga-sidebar',
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,
-    UserMenu,
-    ZardButtonComponent,
-    ZardIconComponent,
-    ZardInputDirective,
-    ZardPopoverDirective,
-  ],
+  imports: [CommonModule, RouterModule, UserMenu, ZardButtonComponent, ZardIconComponent, ZardInputDirective, ZardPopoverDirective],
   templateUrl: './sidebar.html',
   styleUrls: ['./sidebar.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -92,7 +85,7 @@ export class Sidebar implements OnInit, OnDestroy {
 
   private normalizeIcon(icon: string): ZardIcon {
     if (!icon) return 'circle';
-    return toZardIcon(icon);
+    return icon as ZardIcon;
   }
 
   // --- Permissions ---
@@ -270,8 +263,7 @@ export class Sidebar implements OnInit, OnDestroy {
         label: 'Módulos',
         value: `${modules.length} habilitados`,
         icon: 'fa-solid fa-grid-2',
-      },
-    ];
+      }];
 
     if (profile?.institution) {
       details.push({
@@ -288,8 +280,7 @@ export class Sidebar implements OnInit, OnDestroy {
         ['teachingLevel', 'Nivel', 'fa-solid fa-layer-group'],
         ['studentType', 'Tipo', 'fa-solid fa-user-graduate'],
         ['relationship', 'Relación', 'fa-solid fa-people-roof'],
-        ['occupation', 'Ocupación', 'fa-solid fa-briefcase'],
-      ];
+        ['occupation', 'Ocupación', 'fa-solid fa-briefcase']];
 
       for (const [key, label, icon] of extraDetailEntries) {
         const value = detailMap[key];
@@ -354,39 +345,34 @@ export class Sidebar implements OnInit, OnDestroy {
       return [
         { label: 'Módulos', value: modulesCount },
         { label: 'Usuarios', value: stats?.students ?? 0 },
-        { label: 'Prom.', value: stats?.average ?? 'N/A' },
-      ];
+        { label: 'Prom.', value: stats?.average ?? 'N/A' }];
     }
 
     if (roleKey.includes('director')) {
       return [
         { label: 'Cursos', value: stats?.courses ?? 0 },
         { label: 'Alumnos', value: stats?.students ?? 0 },
-        { label: 'Prom.', value: stats?.average ?? '0.0' },
-      ];
+        { label: 'Prom.', value: stats?.average ?? '0.0' }];
     }
 
     if (roleKey.includes('docente') || roleKey.includes('teacher')) {
       return [
         { label: 'Cursos', value: stats?.courses ?? 0 },
         { label: 'Alumnos', value: stats?.students ?? 0 },
-        { label: 'Prom.', value: stats?.average ?? '0.0' },
-      ];
+        { label: 'Prom.', value: stats?.average ?? '0.0' }];
     }
 
     if (roleKey.includes('student') || roleKey.includes('alumno')) {
       return [
         { label: 'Cursos', value: stats?.courses ?? 0 },
         { label: 'Asist.', value: stats?.students ?? 0 },
-        { label: 'Prom.', value: stats?.average ?? '0.0' },
-      ];
+        { label: 'Prom.', value: stats?.average ?? '0.0' }];
     }
 
     return [
       { label: 'Módulos', value: modulesCount },
       { label: 'Cursos', value: stats?.courses ?? 0 },
-      { label: 'Prom.', value: stats?.average ?? '0.0' },
-    ];
+      { label: 'Prom.', value: stats?.average ?? '0.0' }];
   });
 
   private mapStatLabel(key: string): string {
@@ -443,8 +429,7 @@ export class Sidebar implements OnInit, OnDestroy {
               : 'Tema del Sistema',
         icon: 'theme-' + theme,
         type: 'theme',
-      },
-    ];
+      }];
   });
 
   onUserMenuAction(action: UserMenuAction) {

@@ -24,10 +24,10 @@
           <div class="relative">
             <button
               type="button"
-              sgaButton
-              variant="ghost"
-              color="secondary"
-              size="sm"
+              z-button
+              zType="ghost"
+              zColor="secondary"
+              zSize="sm"
               shape="square"
               (click)="showNotificationPanel.set(!showNotificationPanel())"
               title="Notificaciones"
@@ -43,7 +43,7 @@
               <div class="absolute right-0 top-full mt-2 w-80 max-h-96 overflow-auto rounded-2xl bg-base-100 border border-base-200 shadow-xl z-50 py-2">
                 <div class="flex items-center justify-between px-4 py-2 border-b border-base-200">
                   <span class="text-sm font-bold text-base-content">Notificaciones</span>
-                  <button type="button" sgaButton variant="ghost" size="xs" (click)="clearNotifications()">
+                  <button type="button" z-button zType="ghost" zSize="xs" (click)="clearNotifications()">
                     <i class="fas fa-times"></i>
                   </button>
                 </div>

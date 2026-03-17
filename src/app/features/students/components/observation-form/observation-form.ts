@@ -1,19 +1,19 @@
-import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Button } from '@shared/directives';
-import { Input } from '@shared/adapters/ui/input/input';
-import { Select } from '@shared/adapters/ui/select/select';
-import { TeacherSelect } from '@shared/widgets/selects';
+export type LocalSelectOption = { value: string | number; label: string; [key: string]: any };
 import { ObservationApi } from '../../services/api/observation-api';
 import { StudentApi } from '../../services/api/student-api';
 import { StudentObservation } from '../../types/observation-types';
-import type { SelectOption } from '@shared/adapters/ui/select/select';
+import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
+import { FormsModule, ReactiveFormsModule, Validators, FormBuilder } from '@angular/forms';
+import { Component, OnInit, inject, input, ChangeDetectionStrategy } from '@angular/core';
+import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardInputDirective } from '@/shared/components/input';
+
 
 @Component({
   selector: 'sga-observation-form',
   standalone: true,
-  imports: [ReactiveFormsModule, Button, Select, Input, TeacherSelect],
+  imports: [ReactiveFormsModule, ZardButtonComponent, SelectOptionComponent, ZardInputDirective],
   templateUrl: './observation-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -36,21 +36,20 @@ export class ObservationForm implements OnInit {
   });
 
   current: StudentObservation | null = null;
-  studentOptions: SelectOption[] = [];
+  studentOptions: LocalSelectOption[] = [];
 
-  typeOptions: SelectOption[] = [
+  typeOptions: LocalSelectOption[] = [
     { value: 'behavioral', label: 'Conducta' },
     { value: 'academic', label: 'Académico' },
-    { value: 'social', label: 'Social' },
-  ];
+    { value: 'social', label: 'Social' }];
 
   ngOnInit(): void {
     this.current = this.data?.current ?? null;
     if (this.current) {
       const o = this.current;
       this.form.patchValue({
-        student: (o.student as { id?: string })?.id ?? null,
-        teacher: (o.teacher as { id?: string })?.id ?? null,
+        student: (o.student as {  id?: string  })?.id ?? null,
+        teacher: (o.teacher as {  id?: string  })?.id ?? null,
         date: o.date?.slice(0, 10) ?? new Date().toISOString().slice(0, 10),
         type: o.type,
         observation: o.observation,
@@ -63,11 +62,11 @@ export class ObservationForm implements OnInit {
     this.studentApi.getAll({}).subscribe({
       next: (res) => {
         this.studentOptions = (res.data ?? []).map((s) => {
-          const p = (s as { person?: { firstName?: string; lastName?: string } }).person;
+          const p = (s as {  person?: { firstName?: string; lastName?: string  } }).person;
           const label =
-            (s as { name?: string }).name ??
+            (s as {  name?: string  }).name ??
             (p ? `${p.firstName ?? ''} ${p.lastName ?? ''}`.trim() : null) ??
-            (s as { studentCode?: string }).studentCode ??
+            (s as {  studentCode?: string  }).studentCode ??
             s.id;
           return { value: s.id, label: label || s.id };
         });

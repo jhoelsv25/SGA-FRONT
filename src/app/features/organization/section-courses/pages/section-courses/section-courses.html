@@ -1,8 +1,8 @@
 <div class="p-6 space-y-6">
-  <sga-list-toolbar
-    title="Cursos por Sección"
+  <z-list-toolbar
+    zTitle="Cursos por Sección"
     icon="fas fa-chalkboard-teacher"
-    description="Asignación de cursos a secciones"
+    zDescription="Asignación de cursos a secciones"
     [searchPlaceholder]="'Buscar por curso o sección...'"
     [filterCount]="0"
     [showFilter]="false"
@@ -10,25 +10,25 @@
     (refresh)="onRefresh()"
   >
     <div list-toolbar-actions class="flex items-center gap-2">
-      <sga-dropdown [items]="actionDropdownItems()">
+      <z-dropdown [items]="actionDropdownItems()">
         <button
-          sga-dropdown-trigger
+          dropdown-trigger
           class="flex items-center justify-center w-10 h-10 rounded-2xl border border-base-200 bg-base-100 hover:bg-base-200 transition-colors text-base-content/60 hover:text-primary"
           aria-label="Más acciones"
           type="button"
         >
           <i class="fas fa-ellipsis-h"></i>
         </button>
-      </sga-dropdown>
+      </z-dropdown>
     </div>
-  </sga-list-toolbar>
+  </z-list-toolbar>
 
   <div
     class="grid grid-cols-1 mt-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500"
   >
     @if (loading() && !data().length) {
       @for (i of skeletonItems; track i) {
-        <sga-skeleton [customClass]="'h-[220px] w-full rounded-4xl border border-base-200'" />
+        <z-skeleton [class]="'h-[220px] w-full rounded-4xl border border-base-200'"></z-skeleton>
       }
     } @else {
       @for (sc of filteredData(); track sc.id) {
@@ -36,16 +36,11 @@
           [sectionCourse]="sc"
           (edit)="editSectionCourse(sc)"
           (delete)="deleteSectionCourse(sc)"
-        />
+         />
       } @empty {
         <div class="col-span-full">
-          <sga-empty-state
-            iconClass="fas fa-chalkboard-teacher"
-            title="Sin asignaciones"
-            description="Aún no hay cursos asignados a secciones. Crea la primera asignación."
-            actionLabel="Asignar curso a sección"
-            (action)="createFromEmpty()"
-          />
+          <z-empty zIcon="chalkboard-teacher" zTitle="Sin asignaciones" zDescription="Aún no hay cursos asignados a secciones. Crea la primera asignación.">
+    </z-empty>
         </div>
       }
     }

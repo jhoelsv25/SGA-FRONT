@@ -15,8 +15,7 @@ function shouldSkipRefresh(url: string): boolean {
     'auth/refresh-token',
     'auth/logout',
     'auth/forgot-password',
-    'auth/reset-password',
-  ];
+    'auth/reset-password'];
   return skipPaths.some((path) => url.includes(path));
 }
 

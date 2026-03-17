@@ -1,13 +1,14 @@
+import { ZardCardComponent } from '@/shared/components/card';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthFacade } from '@auth/services/store/auth.acede';
 import { DashboardStore } from '@features/dashboard/application/dashboard.store';
-import { Card } from '@shared/adapters/ui/card/card';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+
 
 @Component({
   selector: 'sga-home',
-  imports: [Card, RouterLink, NgxChartsModule],
+  imports: [ZardCardComponent, RouterLink, NgxChartsModule],
   templateUrl: './home.html',
   styleUrl: './home.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,25 +1,19 @@
+import { DropdownOptionComponent, DropdownItem } from '@/shared/widgets/dropdown-option/dropdown-option';
 import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  input,
-  output,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 
 import { PermissionCheckStore } from '@core/stores/permission-check.store';
 import { HeaderConfig } from '@core/types/header-types';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 
-import { Dropdown } from '@shared/adapters/ui/dropdown/dropdown';
+import { ZardDropdownMenuComponent } from '@/shared/components/dropdown';
 import { ZardIconComponent } from '@shared/components/icon';
+
 
 @Component({
   selector: 'sga-header-detail',
   standalone: true,
-  imports: [CommonModule, Dropdown, ZardIconComponent],
+  imports: [CommonModule, DropdownOptionComponent, ZardIconComponent],
   templateUrl: './header-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -1,19 +1,19 @@
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Button } from '@shared/directives';
-import { Input } from '@shared/adapters/ui/input/input';
-import { Select } from '@shared/adapters/ui/select/select';
-import { SectionSelect, YearAcademicSelect } from '@shared/widgets/selects';
+import { FormsModule, ReactiveFormsModule, Validators, FormBuilder } from '@angular/forms';
+import { Component, OnInit, inject, input, ChangeDetectionStrategy } from '@angular/core';
+import { SelectOptionComponent } from '@/shared/widgets/select-option/select-option';
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardInputDirective } from '@/shared/components/input';
 import { EnrollmentStore } from '../../services/store/enrollment.store';
-import { Enrollment } from '../../types/enrollment-types';
 import { StudentApi } from '@features/students/services/api/student-api';
-import type { SelectOption } from '@shared/adapters/ui/select/select';
+import { Enrollment } from '../../types/enrollment-types';
+
+export type LocalSelectOption = { value: string | number | boolean; label: string; [key: string]: any };
 
 @Component({
   selector: 'sga-enrollment-form',
   standalone: true,
-  imports: [ReactiveFormsModule, Button, Select, Input, SectionSelect, YearAcademicSelect],
+  imports: [ReactiveFormsModule, ZardButtonComponent, SelectOptionComponent, ZardInputDirective],
   templateUrl: './enrollment-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -35,20 +35,18 @@ export class EnrollmentForm implements OnInit {
   });
 
   current: Enrollment | null = null;
-  studentOptions: SelectOption[] = [];
+  studentOptions: LocalSelectOption[] = [];
 
-  typeOptions: SelectOption[] = [
+  typeOptions: LocalSelectOption[] = [
     { value: 'new', label: 'Nuevo' },
     { value: 'returning', label: 'Reinscripción' },
-    { value: 'transfer', label: 'Traslado' },
-  ];
+    { value: 'transfer', label: 'Traslado' }];
 
-  statusOptions: SelectOption[] = [
+  statusOptions: LocalSelectOption[] = [
     { value: 'enrolled', label: 'Matriculado' },
     { value: 'completed', label: 'Completado' },
     { value: 'dropped', label: 'Retirado' },
-    { value: 'graduated', label: 'Egresado' },
-  ];
+    { value: 'graduated', label: 'Egresado' }];
 
   ngOnInit(): void {
     this.current = this.data?.current ?? null;
@@ -68,7 +66,7 @@ export class EnrollmentForm implements OnInit {
       next: (res) => {
         this.studentOptions = (res.data ?? []).map((s) => ({
           value: s.id,
-          label: (s as { name?: string }).name ?? (`${(s as { firstName?: string }).firstName ?? ''} ${(s as { lastName?: string }).lastName ?? ''}`.trim() || s.id),
+          label: (s as {  name?: string  }).name ?? (`${(s as {  firstName?: string  }).firstName ?? ''} ${(s as {  lastName?: string  }).lastName ?? ''}`.trim() || s.id),
         }));
       },
     });

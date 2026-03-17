@@ -1,20 +1,22 @@
+import { ListToolbarComponent } from '@/shared/widgets/list-toolbar/list-toolbar';
+import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
+import { DropdownOptionComponent, DropdownItem } from '@/shared/widgets/dropdown-option/dropdown-option';
+import { ZardSkeletonComponent } from '@/shared/components/skeleton';
+import { ZardEmptyComponent } from '@/shared/components/empty';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
-import { ConfirmDialog } from '@core/services/confirm-dialog';
+import { DialogConfirmService } from '@shared/widgets/dialog-confirm';
 import { YearAcademicStore } from '../../services/store/year-academic.store';
 import { YearAcademic } from '../../types/year-academi-types';
 import { YearAcademicForm } from '../../components/year-academic-form/year-academic-form';
 import { CommonModule } from '@angular/common';
 import { YearAcademicCardComponent } from '../../components/year-academic-card/year-academic-card';
-import { EmptyState } from '@shared/widgets/ui/empty-state/empty-state';
-import { Skeleton } from '@shared/widgets/ui/skeleton/skeleton';
 import { PeriodForm } from '@features/academic-setup/periods/components/period-form/period-form';
-import { ListToolbar } from '@shared/widgets/ui/list-toolbar';
-import { Dropdown } from '@shared/adapters/ui/dropdown/dropdown';
-import { Select } from '@shared/adapters/ui/select/select';
+
+import { ZardDropdownMenuComponent } from '@/shared/components/dropdown';
 import { PermissionCheckStore } from '@core/stores/permission-check.store';
 
 const STATUS_OPTIONS = [
@@ -22,19 +24,19 @@ const STATUS_OPTIONS = [
   { value: 'planned', label: 'Planificado' },
   { value: 'ongoing', label: 'En curso' },
   { value: 'completed', label: 'Cerrado' },
-  { value: 'cancelled', label: 'Cancelado' },
-];
+  { value: 'cancelled', label: 'Cancelado' }];
+
 
 @Component({
   selector: 'sga-year-academic',
   standalone: true,
-  imports: [CommonModule, YearAcademicCardComponent, EmptyState, Skeleton, ListToolbar, Dropdown, Select],
+  imports: [CommonModule, YearAcademicCardComponent, ZardEmptyComponent, ZardSkeletonComponent, DropdownOptionComponent, SelectOptionComponent, ListToolbarComponent],
   templateUrl: './year-academic.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class YearAcademicComponent {
   private dialog = inject(DialogModalService);
-  private confirmDialog = inject(ConfirmDialog);
+  private confirmDialog = inject(DialogConfirmService);
   private store = inject(YearAcademicStore);
   private router = inject(Router);
   private permissionStore = inject(PermissionCheckStore);
@@ -140,8 +142,8 @@ export default class YearAcademicComponent {
         title: 'Eliminar año académico',
         icon: 'fa-solid fa-trash',
         message: `¿Estás seguro de eliminar "${year.name}"? Esta acción no se puede deshacer.`,
-        acceptButtonProps: { label: 'Eliminar', color: 'danger', variant: 'solid' },
-        rejectButtonProps: { label: 'Cancelar', variant: 'outline' },
+        acceptButtonProps: { label: 'Eliminar', color: 'danger', zType: 'default' },
+        rejectButtonProps: { label: 'Cancelar', zType: 'outline' },
       })
       .then((confirmed) => {
         if (confirmed) {

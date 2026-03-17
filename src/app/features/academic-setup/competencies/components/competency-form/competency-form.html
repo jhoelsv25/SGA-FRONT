@@ -8,10 +8,10 @@
     </div>
     <button
       type="button"
-      sgaButton
-      color="secondary"
-      variant="ghost"
-      shape="pill"
+      z-button
+      zColor="secondary"
+      zType="ghost"
+      zShape="circle"
       (click)="onClose()"
     >
       <i class="fas fa-times"></i>
@@ -20,41 +20,41 @@
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <div>
       <label class="label-form" for="code">Código</label>
-      <sga-input id="code" type="text" formControlName="code" placeholder="Código de competencia" />
+      <input z-input w-full id="code" type="text" formControlName="code" placeholder="Código de competencia"  />
     </div>
     <div>
       <label class="label-form" for="name">Nombre</label>
-      <sga-input id="name" type="text" formControlName="name" placeholder="Nombre de competencia" />
+      <input z-input w-full id="name" type="text" formControlName="name" placeholder="Nombre de competencia"  />
     </div>
     <div class="md:col-span-2">
       <label class="label-form" for="description">Descripción</label>
-      <sga-input
+      <input z-input w-full
         id="description"
         type="text"
         formControlName="description"
         placeholder="Descripción"
-      />
+       />
     </div>
     <div class="md:col-span-2">
       <label class="label-form" for="expectedAchievement">Nivel esperado</label>
-      <sga-input
+      <input z-input w-full
         id="expectedAchievement"
         type="text"
         formControlName="expectedAchievement"
         placeholder="Nivel esperado"
-      />
+       />
     </div>
     <div class="md:col-span-2">
       <label class="label-form" for="course">Curso</label>
-      <sga-course-select id="course" formControlName="course" placeholder="Seleccionar curso" />
+      <z-select-option id="course" formControlName="course" placeholder="Seleccionar curso"></z-select-option>
     </div>
   </div>
   <footer class="flex items-center justify-end gap-2 mt-6">
-    <button type="button" sgaButton color="secondary" variant="outline" (click)="onClose()">
+    <button type="button" z-button zColor="secondary" zType="outline" (click)="onClose()">
       <i class="fas fa-times"></i>
       Cancelar
     </button>
-    <button type="submit" sgaButton color="primary" [disabled]="form.invalid || saving()">
+    <button type="submit" z-button zColor="primary" [disabled]="form.invalid || saving()">
       <i class="fas fa-check"></i>
       {{ saving() ? 'Guardando...' : 'Guardar' }}
     </button>

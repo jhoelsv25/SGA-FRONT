@@ -2,7 +2,7 @@ import type { OverlayRef } from '@angular/cdk/overlay';
 import { isPlatformBrowser } from '@angular/common';
 import { EventEmitter, Inject, PLATFORM_ID } from '@angular/core';
 
-import { filter, fromEvent, ReplaySubject, Subject, takeUntil } from 'rxjs';
+import { filter, fromEvent, Subject, takeUntil } from 'rxjs';
 
 import type { ZardDialogComponent, ZardDialogOptions } from './dialog.component';
 
@@ -13,11 +13,11 @@ const enum eTriggerAction {
 
 export class ZardDialogRef<T = any, R = any, U = any> {
   private destroy$ = new Subject<void>();
+  private afterClosed$ = new Subject<R | undefined>();
   private isClosing = false;
   protected result?: R;
   componentInstance: T | null = null;
-  private readonly closedSubject = new ReplaySubject<R | undefined>(1);
-  readonly closed = this.closedSubject.asObservable();
+  public closed = this.afterClosed$.asObservable();
 
   constructor(
     private overlayRef: OverlayRef,
@@ -59,9 +59,6 @@ export class ZardDialogRef<T = any, R = any, U = any> {
     }
 
     setTimeout(() => {
-      this.closedSubject.next(this.result);
-      this.closedSubject.complete();
-
       if (this.overlayRef) {
         if (this.overlayRef.hasAttached()) {
           this.overlayRef.detachBackdrop();
@@ -69,6 +66,10 @@ export class ZardDialogRef<T = any, R = any, U = any> {
         this.overlayRef.dispose();
       }
 
+      if (!this.afterClosed$.closed) {
+        this.afterClosed$.next(this.result);
+        this.afterClosed$.complete();
+      }
       if (!this.destroy$.closed) {
         this.destroy$.next();
         this.destroy$.complete();

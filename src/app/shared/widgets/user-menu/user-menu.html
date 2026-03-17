@@ -11,7 +11,7 @@
           [src]="img"
           alt="Avatar"
           class="h-9 w-9 rounded-full border border-border object-cover shadow-sm"
-        />
+         />
       } @else {
         <div
           class="flex h-9 w-9 items-center justify-center rounded-full border border-primary/20 bg-primary text-xs font-bold text-primary-foreground"
@@ -33,7 +33,7 @@
         zType="chevron-up"
         class="h-3 w-3 shrink-0 text-muted-foreground transition-transform duration-300"
         [class.rotate-180]="open()"
-      />
+       />
     }
   </button>
 
@@ -60,7 +60,7 @@
           </div>
         </div>
       <div class="flex w-fit items-center gap-1.5 rounded-md border border-border bg-background px-2 py-1 text-[10px] font-mono text-muted-foreground">
-        <z-icon zType="badge-check" class="h-3 w-3" />
+        <z-icon zType="badge-check" class="h-3 w-3"  />
         <span>{{ code() }}</span>
       </div>
 
@@ -69,7 +69,7 @@
           @for (detail of details(); track $index) {
             <div class="flex items-center gap-2 rounded-lg border border-border/70 bg-background/70 px-2.5 py-2">
               <div class="text-primary/70 flex w-4 justify-center">
-                <z-icon [zType]="resolveIcon(detail.icon || 'fa-circle-info')" class="h-3 w-3" />
+                <z-icon [zType]="resolveIcon(detail.icon || 'fa-circle-info')" class="h-3 w-3"  />
               </div>
               <div class="min-w-0">
                 <p class="text-[9px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">{{ detail.label }}</p>
@@ -117,9 +117,9 @@
                 <z-icon
                   [zType]="resolveIcon(item.icon === 'theme-light' ? 'fa-sun' : item.icon === 'theme-dark' ? 'fa-moon' : 'fa-laptop')"
                   class="h-4 w-4"
-                />
+                 />
               } @else {
-                <z-icon [zType]="resolveIcon(item.icon || 'fa-circle-info')" class="h-4 w-4" />
+                <z-icon [zType]="resolveIcon(item.icon || 'fa-circle-info')" class="h-4 w-4"  />
               }
             </div>
             <span class="text-xs font-medium">{{ item.label }}</span>
@@ -133,7 +133,7 @@
           (click)="handleAction({ label: 'Cerrar Sesión', type: 'logout' })"
           class="flex w-full items-center justify-center gap-2 rounded-xl px-3 py-2 text-xs font-bold text-destructive transition-all hover:bg-destructive/10 active:scale-95"
         >
-          <z-icon zType="log-out" class="h-4 w-4" />
+          <z-icon zType="log-out" class="h-4 w-4"  />
           <span>Cerrar Sesión</span>
         </button>
       </div>

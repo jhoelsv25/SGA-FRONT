@@ -1,3 +1,20 @@
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ComponentRef,
+  computed,
+  ElementRef,
+  EmbeddedViewRef,
+  EventEmitter,
+  inject,
+  NgModule,
+  output,
+  TemplateRef,
+  Type,
+  viewChild,
+  ViewContainerRef,
+  ViewEncapsulation,
+} from '@angular/core';
 import { A11yModule } from '@angular/cdk/a11y';
 import { OverlayModule } from '@angular/cdk/overlay';
 import {
@@ -7,23 +24,8 @@ import {
   PortalModule,
   type TemplatePortal,
 } from '@angular/cdk/portal';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  type ComponentRef,
-  computed,
-  ElementRef,
-  type EmbeddedViewRef,
-  type EventEmitter,
-  inject,
-  NgModule,
-  output,
-  type TemplateRef,
-  type Type,
-  viewChild,
-  type ViewContainerRef,
-  ViewEncapsulation,
-} from '@angular/core';
+import { ZardButtonComponent } from '@/shared/components/button';
+
 
 import type { ClassValue } from 'clsx';
 
@@ -33,7 +35,6 @@ import { mergeClasses, noopFn } from '@/shared/utils/merge-classes';
 import type { ZardAlertDialogRef } from './alert-dialog-ref';
 import { ZardAlertDialogService } from './alert-dialog.service';
 import { alertDialogVariants } from './alert-dialog.variants';
-import { ZardButtonComponent } from '@/shared/components/button/button.component';
 
 export type OnClickCallback<T> = (instance: T) => false | void | object;
 

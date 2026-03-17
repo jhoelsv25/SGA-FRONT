@@ -1,17 +1,17 @@
+import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardInputDirective } from '@/shared/components/input';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal, input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Button } from '@shared/directives';
-import { Input } from '@shared/adapters/ui/input/input';
-import { Select } from '@shared/adapters/ui/select/select';
-import { SectionCourseSelect } from '@shared/widgets/selects';
 import { ScheduleStore } from '../../services/store/schedule.store';
 import { Schedule, ScheduleCreate } from '../../types/schedule-types';
+
 
 @Component({
   selector: 'sga-schedule-form',
   standalone: true,
-  imports: [ReactiveFormsModule, Button, Select, Input, SectionCourseSelect],
+  imports: [ReactiveFormsModule, ZardButtonComponent, SelectOptionComponent, ZardInputDirective],
   templateUrl: './schedule-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -32,8 +32,7 @@ export class ScheduleForm implements OnInit {
     { value: 'thursday', label: 'Jueves' },
     { value: 'friday', label: 'Viernes' },
     { value: 'saturday', label: 'Sábado' },
-    { value: 'sunday', label: 'Domingo' },
-  ];
+    { value: 'sunday', label: 'Domingo' }];
 
   ngOnInit() {
     this.current = this.data?.current ?? null;
@@ -56,8 +55,9 @@ export class ScheduleForm implements OnInit {
 
   }
 
-  onSectionCourseSelect(e: { id: string; label: string }) {
-    this.selectedSectionCourseLabel.set(e.label);
+  onSectionCourseSelect(e: unknown) {
+    const typed = e as { id: string; label: string };
+    this.selectedSectionCourseLabel.set(typed?.label ?? null);
   }
 
   private formatTime(v: string | Date): string {

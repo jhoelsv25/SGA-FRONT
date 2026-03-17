@@ -8,5 +8,4 @@ export const TEACHER_ACTIONS: ActionConfig[] = [
   { key: 'import', label: 'Importar', icon: 'fas fa-file-import', typeAction: 'header', color: 'primary' },
   { key: 'export', label: 'Exportar', icon: 'fas fa-file-export', typeAction: 'header', color: 'primary' },
   { key: 'edit', label: 'Editar', icon: 'fas fa-edit', typeAction: 'row', color: 'primary' },
-  { key: 'delete', label: 'Eliminar', icon: 'fas fa-trash', typeAction: 'row', color: 'danger' },
-];
+  { key: 'delete', label: 'Eliminar', icon: 'fas fa-trash', typeAction: 'row', color: 'danger' }];

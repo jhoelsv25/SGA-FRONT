@@ -22,8 +22,7 @@ export const routes: Routes = [
           return router.createUrlTree(['/dashboard']);
         }
         return router.createUrlTree(['/auth/login']);
-      },
-    ],
+      }],
     children: [],
   },
 
@@ -70,8 +69,6 @@ export const routes: Routes = [
           return router.createUrlTree(['/dashboard']);
         }
         return router.createUrlTree(['/auth/login']);
-      },
-    ],
+      }],
     children: [],
-  },
-];
+  }];

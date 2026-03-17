@@ -86,8 +86,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         route: '/academic-setup/competencies',
         permissions: ['view_competency', 'manage_competency'],
         visibility: Visibility.PUBLIC,
-      },
-    ],
+      }],
   },
 
   // ============================================
@@ -125,8 +124,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         route: '/organization/schedules',
         permissions: ['view_schedule', 'manage_schedule'],
         visibility: Visibility.PUBLIC,
-      },
-    ],
+      }],
   },
 
   // ============================================
@@ -172,8 +170,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         route: '/students/observations',
         permissions: ['view_observation', 'manage_observation'],
         visibility: Visibility.PUBLIC,
-      },
-    ],
+      }],
   },
 
   // ============================================
@@ -203,8 +200,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         route: '/teachers/attendances',
         permissions: ['view_teacher_attendance', 'manage_teacher_attendance'],
         visibility: Visibility.PUBLIC,
-      },
-    ],
+      }],
   },
 
   // ============================================
@@ -234,8 +230,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         route: '/attendance/reports',
         permissions: ['view_attendance'],
         visibility: Visibility.PUBLIC,
-      },
-    ],
+      }],
   },
 
   // ============================================
@@ -273,8 +268,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         route: '/assessments/grades',
         permissions: ['view_grade', 'manage_grade'],
         visibility: Visibility.PUBLIC,
-      },
-    ],
+      }],
   },
 
   // ============================================
@@ -304,8 +298,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         route: '/behavior/reports',
         permissions: ['view_behavior'],
         visibility: Visibility.PUBLIC,
-      },
-    ],
+      }],
   },
 
   // ============================================
@@ -376,8 +369,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         route: '/virtual-classroom/list',
         permissions: ['view_chat'],
         visibility: Visibility.PUBLIC,
-      },
-    ],
+      }],
   },
 
   // ============================================
@@ -416,8 +408,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         route: '/payments/history',
         permissions: ['view_payment'],
         visibility: Visibility.PUBLIC,
-      },
-    ],
+      }],
   },
 
   // ============================================
@@ -456,8 +447,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         route: '/communications/email-logs',
         permissions: ['view_email_log'],
         visibility: Visibility.PUBLIC,
-      },
-    ],
+      }],
   },
 
   // ============================================
@@ -503,8 +493,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         route: '/reports/financial',
         permissions: ['view_report'],
         visibility: Visibility.PUBLIC,
-      },
-    ],
+      }],
   },
 
   // ============================================
@@ -566,7 +555,5 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         route: '/administration/audit-logs',
         permissions: ['view_audit_log'],
         visibility: Visibility.PUBLIC,
-      },
-    ],
-  },
-];
+      }],
+  }];

@@ -72,7 +72,7 @@
                     [placeholder]="field.placeholder || 'Ingrese texto...'"
                     [value]="currentFilters()[field.key] || ''"
                     (input)="onFilterChange(field.key, $any($event.target).value)"
-                  />
+                   />
                 }
 
                 @case ('number') {
@@ -88,26 +88,23 @@
                         $any($event.target).value !== '' ? +$any($event.target).value : null
                       )
                     "
-                  />
+                   />
                 }
 
                 @case ('date') {
-                  <sga-date-picker
+                  <z-date-picker
                     [placeholder]="field.placeholder || 'Seleccionar fecha...'"
                     [value]="$any(currentFilters()[field.key]) || null"
                     (valueChange)="onFilterChange(field.key, $event)"
-                    [clearable]="true"
-                  />
+                    ></z-date-picker>
                 }
 
                 @case ('date-range') {
-                  <sga-date-picker
-                    [rangeMode]="true"
+                  <z-date-picker
                     [placeholder]="field.placeholder || 'Seleccionar rango...'"
-                    [value]="$any(currentFilters()[field.key]) || { start: null, end: null }"
+                    [value]="$any(currentFilters()[field.key]) || null"
                     (valueChange)="onFilterChange(field.key, $event)"
-                    [clearable]="true"
-                  />
+                    ></z-date-picker>
                 }
 
                 @case ('boolean') {
@@ -133,15 +130,12 @@
                 }
 
                 @case ('select') {
-                  <sga-select
+                  <z-select-option
                     [options]="field.options ?? []"
-                    [config]="{ keyField: 'value', labelField: 'label' }"
                     [value]="currentFilters()[field.key] ?? (field.multiple ? [] : null)"
                     (valueChange)="onFilterChange(field.key, $event)"
-                    [multiple]="field.multiple || false"
                     [placeholder]="field.placeholder || 'Seleccionar...'"
-                    [clearable]="true"
-                  />
+                    ></z-select-option>
                 }
               }
             </div>
@@ -155,13 +149,11 @@
       >
         <button
           type="button"
-          sgaButton
-          color="danger"
-          variant="ghost"
-          size="sm"
+          z-button
+          zType="ghost"
           (click)="onClear()"
           [disabled]="activeCount === 0"
-          class="w-full sm:w-auto justify-center sm:justify-start"
+          class="w-full sm:w-auto justify-center sm:justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
         >
           <i class="fas fa-times-circle mr-1.5"></i>
           <span>Limpiar filtros</span>
@@ -170,10 +162,9 @@
         <div class="flex items-center gap-2">
           <button
             type="button"
-            appButton
-            color="secondary"
-            variant="outline"
-            size="sm"
+            z-button
+            zType="outline"
+            zSize="sm"
             (click)="onClose()"
             class="flex-1 sm:flex-initial"
           >
@@ -181,10 +172,9 @@
           </button>
           <button
             type="button"
-            appButton
-            color="primary"
-            variant="solid"
-            size="sm"
+            z-button
+            zType="default"
+            zSize="sm"
             (click)="onApply()"
             class="flex-1 sm:flex-initial"
           >

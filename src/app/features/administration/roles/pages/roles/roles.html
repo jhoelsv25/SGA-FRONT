@@ -5,7 +5,7 @@
       <h1 class="text-2xl font-bold text-base-content tracking-tight">Gestión de Roles</h1>
       <p class="text-base-content/60 text-sm">Administra los perfiles de acceso y perimisos del sistema.</p>
     </div>
-    <button sgaButton color="primary" (click)="openCreateDialog()">
+    <button z-button zColor="primary" (click)="openCreateDialog()">
       <i class="fas fa-plus mr-2"></i> Nuevo Rol
     </button>
   </div>
@@ -25,14 +25,8 @@
           (deleteClicked)="deleteRole($event)"
         ></sga-role-card>
       } @empty {
-        <sga-empty-state
-          class="col-span-full"
-          title="Sin roles registrados"
-          description="Aún no has creado ningún rol. Define los perfiles de acceso para los usuarios del sistema."
-          iconClass="fas fa-shield-alt"
-          actionLabel="Crear nuevo rol"
-          (action)="openCreateDialog()"
-        />
+        <z-empty zIcon="shield-alt" zTitle="Sin roles registrados" zDescription="Aún no has creado ningún rol. Define los perfiles de acceso para los usuarios del sistema.">
+    </z-empty>
       }
     }
   </div>

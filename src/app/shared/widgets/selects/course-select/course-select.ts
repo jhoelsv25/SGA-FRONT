@@ -1,40 +1,35 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  ElementRef,
-  forwardRef,
-  HostListener,
-  inject,
-  input,
-  output,
-  signal,
-  viewChild,
-} from '@angular/core';
+import { ZardSelectComponent, ZardSelectItemComponent } from '@/shared/components/select';
+import { SelectOption } from '@/shared/widgets/select-option/select-option';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, forwardRef, HostListener, inject, input, output, signal, viewChild, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { CourseApi } from '@features/academic-setup/courses/services/course-api';
 import type { Course } from '@features/academic-setup/courses/types/course-types';
 
-function getCourseLabel(c: Course): string {
+function getLabel(c: Course): string {
   return `${c.code} - ${c.name}`;
 }
 
-function getCourseInitials(c: Course): string {
+function getInitials(c: Course): string {
   return (c.code ?? c.name ?? c.id).slice(0, 2).toUpperCase();
 }
+
 
 @Component({
   selector: 'sga-course-select',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ZardSelectComponent, ZardSelectItemComponent],
   templateUrl: './course-select.html',
   providers: [
     { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => CourseSelect), multi: true },
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CourseSelect implements ControlValueAccessor {
+export class CourseSelect implements ControlValueAccessor, OnInit {
+  ngOnInit() {
+    this.loadItems();
+  }
+
   private api = inject(CourseApi);
 
   placeholder = input<string>('Seleccionar curso');
@@ -60,7 +55,7 @@ export class CourseSelect implements ControlValueAccessor {
       (c) =>
         c.name?.toLowerCase().includes(term) ||
         c.code?.toLowerCase().includes(term) ||
-        c.description?.toLowerCase().includes(term)
+        c.description?.toLowerCase().includes(term),
     );
   });
 
@@ -68,8 +63,8 @@ export class CourseSelect implements ControlValueAccessor {
   private _onChange: (value: string | null) => void = () => {};
   private _onTouched = () => {};
 
-  getLabel = getCourseLabel;
-  getInitials = getCourseInitials;
+  getLabel = getLabel;
+  getInitials = getInitials;
 
   onSearchInput(e: Event) {
     this.searchTerm.set((e.target as HTMLInputElement).value);
@@ -86,10 +81,24 @@ export class CourseSelect implements ControlValueAccessor {
     }
   }
 
-  onOptionKeyDown(e: KeyboardEvent, c: Course) {
+  onOptionKeyDown(e: KeyboardEvent, c: any) {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       this.selectItem(c);
+    }
+  }
+
+  onZardSelectionChange(val: string | string[]) {
+    const id = Array.isArray(val) ? val[0] : val;
+    if (!id) {
+      this.clearSelection();
+      return;
+    }
+    const found = this.allItems().find((x) => x.id === id);
+    if (found) {
+      this.selectItem(found);
+    } else {
+      this.writeValue(id);
     }
   }
 

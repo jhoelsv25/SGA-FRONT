@@ -1,21 +1,22 @@
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardInputDirective } from '@/shared/components/input';
+import { ZardCardComponent } from '@/shared/components/card';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Button } from '@shared/directives';
-import { Input } from '@shared/adapters/ui/input/input';
 import { Permission } from '../../../services/api/permission-api';
-import { Card } from '@shared/adapters/ui/card/card';
 
 interface PermissionFormData {
   current: Permission | null;
   title?: string;
 }
 
+
 @Component({
   selector: 'sga-permission-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, Button, Input, Card],
+  imports: [CommonModule, ReactiveFormsModule, ZardButtonComponent, ZardInputDirective, ZardCardComponent],
   templateUrl: './permission-form.html',
   styleUrls: ['./permission-form.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,3 +1,5 @@
+import { ListToolbarComponent } from '@/shared/widgets/list-toolbar/list-toolbar';
+import { DropdownOptionComponent, DropdownItem } from '@/shared/widgets/dropdown-option/dropdown-option';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -11,8 +13,8 @@ import { ExcelService } from '@core/services/excel.service';
 import { ImportWithProgressDialog } from '../../components/import-with-progress-dialog/import-with-progress-dialog';
 import { STUDENT_COLUMN } from '../../config/column.config';
 import { STUDENT_ACTIONS } from '../../config/action.config';
-import { ListToolbar } from '@shared/widgets/ui/list-toolbar';
-import { Dropdown, DropdownItem } from '@shared/adapters/ui/dropdown/dropdown';
+
+import { ZardDropdownMenuComponent } from '@/shared/components/dropdown';
 import { PermissionCheckStore } from '@core/stores/permission-check.store';
 import { Toast } from '@core/services/toast';
 
@@ -20,10 +22,11 @@ const EXCEL_COLUMNS = STUDENT_COLUMN.map((c) => ({ key: c.key, label: c.label })
 
 type ImportResult = { created: number; errors: { row: number; message: string }[] } | null;
 
+
 @Component({
   selector: 'sga-students',
   standalone: true,
-  imports: [ListToolbar, DataSource, Dropdown],
+  imports: [DataSource, DropdownOptionComponent, ListToolbarComponent],
   templateUrl: './students.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

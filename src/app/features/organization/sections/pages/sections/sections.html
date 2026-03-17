@@ -1,8 +1,8 @@
 <div class="p-6 space-y-6">
-  <sga-list-toolbar
-    title="Secciones"
+  <z-list-toolbar
+    zTitle="Secciones"
     icon="fas fa-layer-group"
-    description="Gestionar secciones por grado y año académico"
+    zDescription="Gestionar secciones por grado y año académico"
     [searchPlaceholder]="'Buscar secciones por nombre...'"
     [filterCount]="0"
     [showFilter]="false"
@@ -10,25 +10,25 @@
     (refresh)="onRefresh()"
   >
     <div list-toolbar-actions class="flex items-center gap-2">
-      <sga-dropdown [items]="actionDropdownItems()">
+      <z-dropdown [items]="actionDropdownItems()">
         <button
-          sga-dropdown-trigger
+          dropdown-trigger
           class="flex items-center justify-center w-10 h-10 rounded-2xl border border-base-200 bg-base-100 hover:bg-base-200 transition-colors text-base-content/60 hover:text-primary"
           aria-label="Más acciones"
           type="button"
         >
           <i class="fas fa-ellipsis-h"></i>
         </button>
-      </sga-dropdown>
+      </z-dropdown>
     </div>
-  </sga-list-toolbar>
+  </z-list-toolbar>
 
   <div
     class="grid grid-cols-1 mt-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500"
   >
     @if (loading() && !data().length) {
       @for (i of skeletonItems; track i) {
-        <sga-skeleton [customClass]="'h-[220px] w-full rounded-4xl border border-base-200'" />
+        <z-skeleton [class]="'h-[220px] w-full rounded-4xl border border-base-200'"></z-skeleton>
       }
     } @else {
       @for (section of filteredData(); track section.id) {
@@ -36,16 +36,11 @@
           [section]="section"
           (edit)="editSection(section)"
           (delete)="deleteSection(section)"
-        />
+         />
       } @empty {
         <div class="col-span-full">
-          <sga-empty-state
-            iconClass="fas fa-layer-group"
-            title="Sin secciones"
-            description="Aún no hay secciones. Crea la primera y asígnala a un grado y año académico."
-            actionLabel="Crear primera sección"
-            (action)="createFromEmpty()"
-          />
+          <z-empty zIcon="layer-group" zTitle="Sin secciones" zDescription="Aún no hay secciones. Crea la primera y asígnala a un grado y año académico.">
+    </z-empty>
         </div>
       }
     }

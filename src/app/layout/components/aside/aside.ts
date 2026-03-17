@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { LayoutStore } from '@core/stores/layout.store';
 
+
 @Component({
   selector: 'sga-aside',
   imports: [],

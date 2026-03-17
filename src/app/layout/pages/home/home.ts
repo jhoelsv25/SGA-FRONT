@@ -6,6 +6,7 @@ import { NotificationService } from '@core/services/notification.service';
 import { Sidebar } from 'app/layout/components/sidebar/sidebar';
 import { ZardIconComponent } from '@shared/components/icon';
 
+
 @Component({
   selector: 'sga-home',
   standalone: true,

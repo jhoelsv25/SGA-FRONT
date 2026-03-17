@@ -9,6 +9,7 @@ import { OBSERVATION_HEADER_CONFIG, OBSERVATION_COLUMN, OBSERVATION_ACTIONS } fr
 import { ObservationForm } from '../../components/observation-form/observation-form';
 import { Toast } from '@core/services/toast';
 
+
 @Component({
   selector: 'sga-observations',
   standalone: true,

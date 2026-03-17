@@ -1,47 +1,42 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  ElementRef,
-  forwardRef,
-  HostListener,
-  inject,
-  input,
-  output,
-  signal,
-  viewChild,
-} from '@angular/core';
+import { ZardSelectComponent, ZardSelectItemComponent } from '@/shared/components/select';
+import { SelectOption } from '@/shared/widgets/select-option/select-option';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, forwardRef, HostListener, inject, input, output, signal, viewChild, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { SectionApi } from '@features/organization/sections/services/api/section-api';
 import type { Section } from '@features/organization/sections/types/section-types';
 
-function getSectionLabel(s: Section): string {
+function getLabel(s: Section): string {
   return s.name ?? s.id;
 }
 
-function getSectionSubtitle(s: Section): string {
+function getSubtitle(s: Section): string {
   const parts: string[] = [];
   if (s.shift) parts.push(s.shift);
   if (s.capacity != null) parts.push(String(s.capacity));
   return parts.join(' · ');
 }
 
-function getSectionInitials(s: Section): string {
+function getInitials(s: Section): string {
   return (s.name ?? s.id).slice(0, 2).toUpperCase();
 }
+
 
 @Component({
   selector: 'sga-section-select',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ZardSelectComponent, ZardSelectItemComponent],
   templateUrl: './section-select.html',
   providers: [
     { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => SectionSelect), multi: true },
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SectionSelect implements ControlValueAccessor {
+export class SectionSelect implements ControlValueAccessor, OnInit {
+  ngOnInit() {
+    this.loadItems();
+  }
+
   private api = inject(SectionApi);
 
   placeholder = input<string>('Seleccionar sección');
@@ -54,20 +49,20 @@ export class SectionSelect implements ControlValueAccessor {
   hostRef = viewChild<ElementRef<HTMLElement>>('hostRef');
 
   isOpen = signal(false);
-  allSections = signal<Section[]>([]);
+  allItems = signal<Section[]>([]);
   searchTerm = signal('');
-  selectedSection = signal<Section | null>(null);
+  selectedItem = signal<Section | null>(null);
   loading = signal(false);
 
-  filteredSections = computed(() => {
+  filteredItems = computed(() => {
     const term = this.searchTerm().toLowerCase().trim();
-    const list = this.allSections();
+    const list = this.allItems();
     if (!term) return list;
     return list.filter(
       (s) =>
         s.name?.toLowerCase().includes(term) ||
         s.shift?.toLowerCase().includes(term) ||
-        String(s.capacity ?? '').includes(term)
+        String(s.capacity ?? '').includes(term),
     );
   });
 
@@ -75,9 +70,9 @@ export class SectionSelect implements ControlValueAccessor {
   private _onChange: (value: string | null) => void = () => {};
   private _onTouched = () => {};
 
-  getSectionLabel = getSectionLabel;
-  getSectionSubtitle = getSectionSubtitle;
-  getSectionInitials = getSectionInitials;
+  getLabel = getLabel;
+  getSubtitle = getSubtitle;
+  getInitials = getInitials;
 
   onSearchInput(e: Event) {
     this.searchTerm.set((e.target as HTMLInputElement).value);
@@ -97,16 +92,16 @@ export class SectionSelect implements ControlValueAccessor {
   onOptionKeyDown(e: KeyboardEvent, s: Section) {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      this.selectSection(s);
+      this.selectItem(s);
     }
   }
 
-  loadSections() {
-    if (this.loading() || this.allSections().length > 0) return;
+  loadItems() {
+    if (this.loading() || this.allItems().length > 0) return;
     this.loading.set(true);
     this.api.getAll().subscribe({
       next: (res) => {
-        this.allSections.set(res.data ?? []);
+        this.allItems.set(res.data ?? []);
         this.loading.set(false);
       },
       error: () => this.loading.set(false),
@@ -116,7 +111,22 @@ export class SectionSelect implements ControlValueAccessor {
   openDropdown() {
     if (this.effectiveDisabled()) return;
     this.isOpen.set(true);
-    this.loadSections();
+    this.loadItems();
+  }
+
+  
+  onZardSelectionChange(val: string | string[]) {
+    const id = Array.isArray(val) ? val[0] : val;
+    if (!id) {
+      this.clearSelection();
+      return;
+    }
+    const found = this.allItems().find((x) => x.id === id);
+    if (found) {
+      this.selectItem(found);
+    } else {
+      this.writeValue(id);
+    }
   }
 
   closeDropdown() {
@@ -124,8 +134,8 @@ export class SectionSelect implements ControlValueAccessor {
     this._onTouched();
   }
 
-  selectSection(s: Section) {
-    this.selectedSection.set(s);
+  selectItem(s: Section) {
+    this.selectedItem.set(s);
     this._value = s.id;
     this._onChange(s.id);
     this.valueChange.emit(s.id);
@@ -134,7 +144,7 @@ export class SectionSelect implements ControlValueAccessor {
 
   clearSelection(e?: Event) {
     e?.stopPropagation();
-    this.selectedSection.set(null);
+    this.selectedItem.set(null);
     this._value = null;
     this._onChange(null);
     this.valueChange.emit(null);
@@ -143,14 +153,14 @@ export class SectionSelect implements ControlValueAccessor {
   writeValue(id: string | null): void {
     this._value = id;
     if (!id) {
-      this.selectedSection.set(null);
+      this.selectedItem.set(null);
       return;
     }
-    const found = this.allSections().find((s) => s.id === id);
-    if (found) this.selectedSection.set(found);
+    const found = this.allItems().find((s) => s.id === id);
+    if (found) this.selectedItem.set(found);
     else {
       this.api.getById(id).subscribe({
-        next: (res) => this.selectedSection.set(res.data ?? null),
+        next: (res) => this.selectedItem.set(res.data ?? null),
       });
     }
   }

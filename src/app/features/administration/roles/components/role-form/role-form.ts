@@ -1,10 +1,9 @@
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardInputDirective } from '@/shared/components/input';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Button } from '@shared/directives';
-import { Input } from '@shared/adapters/ui/input/input';
-import { ZardInputDirective } from '@shared/components/input';
 import { ZardInputGroupComponent } from '@shared/components/input-group';
 import { ZardSwitchComponent } from '@shared/components/switch';
 import { Role } from '../../../services/api/role-api';
@@ -14,18 +13,11 @@ interface RoleFormData {
   title?: string;
 }
 
+
 @Component({
   selector: 'sga-role-form',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    Button,
-    Input,
-    ZardInputDirective,
-    ZardInputGroupComponent,
-    ZardSwitchComponent,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, ZardButtonComponent, ZardInputDirective, ZardInputGroupComponent, ZardSwitchComponent],
   templateUrl: './role-form.html',
   styleUrls: ['./role-form.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -38,14 +38,14 @@
           accept=".xlsx,.xls,.csv"
           class="hidden"
           (change)="onFileSelected($event)"
-        />
+         />
       </label>
       <button
         type="button"
-        sgaButton
-        variant="outline"
-        color="primary"
-        size="sm"
+        z-button
+        zType="outline"
+        zColor="primary"
+        zSize="sm"
         (click)="onDownloadTemplate()"
       >
         <i class="fas fa-download mr-2"></i>

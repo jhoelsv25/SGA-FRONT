@@ -1,7 +1,8 @@
+import { ZardButtonComponent } from '@/shared/components/button';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Button } from '@shared/directives';
+
 import { ExcelService, type ExcelColumn } from '@core/services/excel.service';
 
 export interface ImportDialogData {
@@ -17,10 +18,11 @@ export interface ImportDialogData {
   importFile?: (file: File) => import('rxjs').Observable<{ created: number; errors?: { row: number; message: string }[] }>;
 }
 
+
 @Component({
   selector: 'sga-import-dialog',
   standalone: true,
-  imports: [CommonModule, Button],
+  imports: [CommonModule, ZardButtonComponent],
   templateUrl: './import-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

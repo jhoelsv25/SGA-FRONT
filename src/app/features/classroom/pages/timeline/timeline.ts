@@ -1,17 +1,18 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardInputDirective } from '@/shared/components/input';
+import { ZardCardComponent } from '@/shared/components/card';
+import { ZardSkeletonComponent } from '@/shared/components/skeleton';
+import { ChangeDetectionStrategy, Component, computed, inject, signal, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthFacade } from '@auth/services/store/auth.acede';
-import { Button } from '@shared/directives';
-import { Textarea } from '@shared/widgets/ui/textarea/textarea';
-import { Card } from '@shared/adapters/ui/card/card';
-import { Skeleton } from '@shared/widgets/ui/skeleton/skeleton';
 import { ClassroomStore } from '../../services/store/classroom.store';
+
 
 @Component({
   selector: 'sga-classroom-timeline',
   standalone: true,
-  imports: [CommonModule, FormsModule, Button, Textarea, Card, Skeleton],
+  imports: [CommonModule, FormsModule, ZardButtonComponent, ZardInputDirective, ZardCardComponent, ZardSkeletonComponent],
   templateUrl: './timeline.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -1,3 +1,7 @@
+import { ListToolbarComponent } from '@/shared/widgets/list-toolbar/list-toolbar';
+import { DropdownOptionComponent, DropdownItem } from '@/shared/widgets/dropdown-option/dropdown-option';
+import { ZardSkeletonComponent } from '@/shared/components/skeleton';
+import { ZardEmptyComponent } from '@/shared/components/empty';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
@@ -6,17 +10,16 @@ import type { SectionCourse } from '../../types/section-course-types';
 import { SectionCourseForm } from '../../components/section-course-form/section-course-form';
 import { CommonModule } from '@angular/common';
 import { SectionCourseCardComponent } from '../../components/section-course-card/section-course-card';
-import { EmptyState } from '@shared/widgets/ui/empty-state/empty-state';
-import { Skeleton } from '@shared/widgets/ui/skeleton/skeleton';
-import { ListToolbar } from '@shared/widgets/ui/list-toolbar';
-import { Dropdown } from '@shared/adapters/ui/dropdown/dropdown';
+
+import { ZardDropdownMenuComponent } from '@/shared/components/dropdown';
 import { PermissionCheckStore } from '@core/stores/permission-check.store';
-import { ConfirmDialog } from '@core/services/confirm-dialog';
+import { DialogConfirmService } from '@shared/widgets/dialog-confirm';
+
 
 @Component({
   selector: 'sga-section-courses',
   standalone: true,
-  imports: [CommonModule, SectionCourseCardComponent, EmptyState, Skeleton, ListToolbar, Dropdown],
+  imports: [CommonModule, SectionCourseCardComponent, ZardEmptyComponent, ZardSkeletonComponent, DropdownOptionComponent, ListToolbarComponent],
   templateUrl: './section-courses.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -24,7 +27,7 @@ export default class SectionCoursesPage {
   private dialog = inject(DialogModalService);
   private store = inject(SectionCourseStore);
   private permissionStore = inject(PermissionCheckStore);
-  private confirmDialog = inject(ConfirmDialog);
+  private confirmDialog = inject(DialogConfirmService);
 
   readonly skeletonItems = [1, 2, 3, 4];
   searchTerm = signal('');
@@ -82,8 +85,8 @@ export default class SectionCoursesPage {
         title: 'Eliminar asignación',
         icon: 'fa-solid fa-trash',
         message: `¿Estás seguro de eliminar la asignación "${label}"? Esta acción no se puede deshacer.`,
-        acceptButtonProps: { label: 'Eliminar', color: 'danger', variant: 'solid' },
-        rejectButtonProps: { label: 'Cancelar', variant: 'outline' },
+        acceptButtonProps: { label: 'Eliminar', color: 'danger', zType: 'default' },
+        rejectButtonProps: { label: 'Cancelar', zType: 'outline' },
       })
       .then((confirmed) => {
         if (confirmed) {

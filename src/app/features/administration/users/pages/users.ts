@@ -11,6 +11,7 @@ import { USER_COLUMN } from '../config/column.config';
 import { USER_ACTIONS } from '../config/action.config';
 import { take } from 'rxjs';
 
+
 @Component({
   selector: 'sga-users',
   imports: [HeaderDetail, DataSource],

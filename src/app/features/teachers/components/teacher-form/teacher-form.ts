@@ -1,9 +1,10 @@
+export type LocalSelectOption = { value: string | number; label: string; [key: string]: any };
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardInputDirective } from '@/shared/components/input';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
+import { ChangeDetectionStrategy, Component, inject, OnInit, input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Button } from '@shared/directives';
-import { Input } from '@shared/adapters/ui/input/input';
-import { Select, SelectOption } from '@shared/adapters/ui/select/select';
 import { TeacherStore } from '../../services/store/teacher.store';
 import {
   Teacher,
@@ -14,10 +15,11 @@ import {
   TeacherWorkloadType,
 } from '../../types/teacher-types';
 
+
 @Component({
   selector: 'sga-teacher-form',
   standalone: true,
-  imports: [ReactiveFormsModule, Button, Input, Select],
+  imports: [ReactiveFormsModule, ZardButtonComponent, ZardInputDirective, SelectOptionComponent],
   templateUrl: './teacher-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -32,26 +34,22 @@ export class TeacherForm implements OnInit {
   readonly uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   readonly currentYear = new Date().getFullYear();
 
-  contractTypeOptions: SelectOption[] = [
+  contractTypeOptions: LocalSelectOption[] = [
     { value: 'full_time' satisfies TeacherContractType, label: 'Tiempo completo' },
     { value: 'part_time' satisfies TeacherContractType, label: 'Medio tiempo' },
     { value: 'temporary' satisfies TeacherContractType, label: 'Temporal' },
-    { value: 'permanent' satisfies TeacherContractType, label: 'Permanente' },
-  ];
-  laborRegimeOptions: SelectOption[] = [
+    { value: 'permanent' satisfies TeacherContractType, label: 'Permanente' }];
+  laborRegimeOptions: LocalSelectOption[] = [
     { value: 'public' satisfies TeacherLaborRegime, label: 'Público' },
-    { value: 'private' satisfies TeacherLaborRegime, label: 'Privado' },
-  ];
-  workloadTypeOptions: SelectOption[] = [
+    { value: 'private' satisfies TeacherLaborRegime, label: 'Privado' }];
+  workloadTypeOptions: LocalSelectOption[] = [
     { value: '20_hours' satisfies TeacherWorkloadType, label: '20 horas' },
     { value: '30_hours' satisfies TeacherWorkloadType, label: '30 horas' },
-    { value: '40_hours' satisfies TeacherWorkloadType, label: '40 horas' },
-  ];
-  employmentStatusOptions: SelectOption[] = [
+    { value: '40_hours' satisfies TeacherWorkloadType, label: '40 horas' }];
+  employmentStatusOptions: LocalSelectOption[] = [
     { value: 'active' satisfies TeacherEmploymentStatus, label: 'Activo' },
     { value: 'inactive' satisfies TeacherEmploymentStatus, label: 'Inactivo' },
-    { value: 'on_leave' satisfies TeacherEmploymentStatus, label: 'Licencia' },
-  ];
+    { value: 'on_leave' satisfies TeacherEmploymentStatus, label: 'Licencia' }];
 
   private getEntityId(value: string | { id: string } | undefined): string {
     if (!value) return '';
@@ -65,17 +63,14 @@ export class TeacherForm implements OnInit {
       specialization: [this.current?.specialization ?? '', [Validators.required, Validators.maxLength(100)]],
       professionalTitle: [
         this.current?.professionalTitle ?? '',
-        [Validators.required, Validators.maxLength(100)],
-      ],
+        [Validators.required, Validators.maxLength(100)]],
       university: [this.current?.university ?? '', [Validators.required, Validators.maxLength(100)]],
       graduationYear: [
         this.current?.graduationYear ?? this.currentYear,
-        [Validators.required, Validators.min(1900), Validators.max(this.currentYear + 1)],
-      ],
+        [Validators.required, Validators.min(1900), Validators.max(this.currentYear + 1)]],
       professionalLicense: [
         this.current?.professionalLicense ?? '',
-        [Validators.required, Validators.maxLength(100)],
-      ],
+        [Validators.required, Validators.maxLength(100)]],
       contractType: [this.current?.contractType ?? 'full_time', [Validators.required]],
       laborRegime: [this.current?.laborRegime ?? 'public', [Validators.required]],
       hireDate: [this.current?.hireDate?.slice(0, 10) ?? new Date().toISOString().slice(0, 10), [Validators.required]],
@@ -86,12 +81,10 @@ export class TeacherForm implements OnInit {
       employmentStatus: [this.current?.employmentStatus ?? 'active', [Validators.required]],
       institution: [
         this.getEntityId(this.current?.institution),
-        [Validators.required, Validators.pattern(this.uuidPattern)],
-      ],
+        [Validators.required, Validators.pattern(this.uuidPattern)]],
       person: [
         this.getEntityId(this.current?.person),
-        [Validators.required, Validators.pattern(this.uuidPattern)],
-      ],
+        [Validators.required, Validators.pattern(this.uuidPattern)]],
     });
   }
 

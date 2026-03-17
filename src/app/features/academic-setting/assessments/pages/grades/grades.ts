@@ -1,11 +1,10 @@
+import { ListToolbarComponent } from '@/shared/widgets/list-toolbar/list-toolbar';
+import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
+import { ZardButtonComponent } from '@/shared/components/button';
 import { ChangeDetectionStrategy, Component, effect, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Select } from '@shared/adapters/ui/select/select';
-import type { SelectOption } from '@shared/adapters/ui/select/select';
 import { AssessmentStore } from '../../services/store/assessment.store';
-import { ListToolbar } from '@shared/widgets/ui/list-toolbar';
-import { Button } from '@shared/directives';
 import { type Assessment, type AssessmentScore } from '../../types/assessment-types';
 import { AssessmentFiltersService } from '../../services/assessment-filters.service';
 
@@ -14,7 +13,7 @@ type ScoreRow = Pick<AssessmentScore, 'enrollmentId' | 'score' | 'observation'> 
 @Component({
   selector: 'sga-grades',
   standalone: true,
-  imports: [CommonModule, FormsModule, Select, ListToolbar, Button],
+  imports: [CommonModule, FormsModule, SelectOptionComponent, ListToolbarComponent, ZardButtonComponent],
   templateUrl: './grades.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -39,8 +38,7 @@ export default class Grades implements OnInit {
         ...assessments.map((a: Assessment) => ({
           value: a.id,
           label: `${a.name} - ${a.sectionCourse?.course?.name ?? ''} (${a.sectionCourse?.id ?? ''})`,
-        })),
-      ]);
+        }))]);
 
       const options = this.assessmentOptions().filter((o) => o.value);
       if (options.length === 0) return;

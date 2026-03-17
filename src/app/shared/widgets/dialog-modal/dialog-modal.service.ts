@@ -1,5 +1,5 @@
-import { inject, Injectable } from '@angular/core';
-import type { TemplateRef, Type } from '@angular/core';
+import { Z_MODAL_DATA } from '@shared/components/dialog';
+import { inject, Injectable, type TemplateRef, type Type } from '@angular/core';
 
 import { ZardDialogService } from '@/shared/components/dialog/dialog.service';
 import type { ZardDialogRef } from '@/shared/components/dialog/dialog-ref';

@@ -6,7 +6,7 @@
     [showToolbar]="false"
   >
     <div data-source-header class="sticky top-0 z-20 -mx-4 -mt-4 px-4 pt-4 pb-4 mb-4 bg-base-200 rounded-t-lg border-b border-base-300">
-      <sga-list-toolbar
+      <z-list-toolbar
         title="Reportes de Asistencia"
         icon="fas fa-chart-line"
         description="Historial y reportes de asistencia de estudiantes"
@@ -16,12 +16,12 @@
         (searchChange)="onSearch($event)"
       >
         <div list-toolbar-actions>
-          <button sgaButton variant="ghost" color="secondary" shape="pill" [disabled]="!hasSearch()" (click)="clearFilters()">
+          <button z-button zType="ghost" zColor="secondary" zShape="circle" [disabled]="!hasSearch()" (click)="clearFilters()">
             <i class="fas fa-filter-circle-xmark mr-2"></i>
             Limpiar
           </button>
         </div>
-      </sga-list-toolbar>
+      </z-list-toolbar>
     </div>
 
     <!-- Custom Templates -->

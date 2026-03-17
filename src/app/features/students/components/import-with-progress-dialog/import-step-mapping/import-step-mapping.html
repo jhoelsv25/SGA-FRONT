@@ -45,11 +45,11 @@
       {{ rowCount() }} fila(s) a importar
     </p>
     <div class="flex gap-2">
-      <button type="button" sgaButton variant="outline" (click)="onCancel()">Cancelar</button>
+      <button type="button" z-button zType="outline" (click)="onCancel()">Cancelar</button>
       <button
         type="button"
-        sgaButton
-        color="primary"
+        z-button
+        zColor="primary"
         [disabled]="!canStartImport()"
         (click)="onStartImport()"
       >

@@ -1,3 +1,4 @@
+import { ZardCardComponent } from '@/shared/components/card';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
@@ -8,7 +9,6 @@ import { AuthFacade } from '@auth/services/store/auth.acede';
 import type { AccountAuditLog, AccountEmailLog, AccountSession, AccountUserDetail } from '@auth/types/auth-type';
 import { LayoutStore } from '@core/stores/layout.store';
 import type { ThemeConfig } from '@core/types/layout-types';
-import { Card } from '@shared/adapters/ui/card/card';
 import { catchError, of } from 'rxjs';
 
 type SettingsSectionId = 'general' | 'appearance' | 'notifications' | 'email' | 'security' | 'logs' | 'sessions';
@@ -22,10 +22,11 @@ type ToggleKey =
   | 'browserAlerts'
   | 'newDeviceAlerts';
 
+
 @Component({
   selector: 'sga-account-settings',
   standalone: true,
-  imports: [CommonModule, RouterLink, Card],
+  imports: [CommonModule, RouterLink, ZardCardComponent],
   template: `
     <div class="space-y-6 p-4 md:p-6">
       <section class="rounded-[2rem] border border-border bg-card p-6 shadow-sm lg:p-8">
@@ -54,7 +55,7 @@ type ToggleKey =
       </section>
 
       <div class="grid gap-6 xl:grid-cols-[240px_minmax(0,1fr)]">
-        <sga-card class="h-fit overflow-hidden">
+        <z-card class="h-fit overflow-hidden">
           <div class="border-border/70 border-b px-4 py-3">
             <p class="text-sm font-semibold text-foreground">Secciones</p>
           </div>
@@ -81,11 +82,11 @@ type ToggleKey =
               </button>
             }
           </nav>
-        </sga-card>
+        </z-card>
 
         <div class="space-y-6">
           @if (activeSection() === 'general') {
-            <sga-card>
+            <z-card>
               <div class="border-border/70 border-b p-6">
                 <h2 class="text-xl font-semibold text-foreground">General</h2>
                 <p class="mt-1 text-sm text-muted-foreground">Datos desde users/:id.</p>
@@ -118,11 +119,11 @@ type ToggleKey =
                   Cambiar contrasena
                 </a>
               </div>
-            </sga-card>
+            </z-card>
           }
 
           @if (activeSection() === 'appearance') {
-            <sga-card>
+            <z-card>
               <div class="border-border/70 border-b p-6">
                 <h2 class="text-xl font-semibold text-foreground">Apariencia</h2>
                 <p class="mt-1 text-sm text-muted-foreground">Preferencias locales del entorno.</p>
@@ -144,11 +145,11 @@ type ToggleKey =
                   </button>
                 }
               </div>
-            </sga-card>
+            </z-card>
           }
 
           @if (activeSection() === 'notifications') {
-            <sga-card>
+            <z-card>
               <div class="border-border/70 border-b p-6">
                 <h2 class="text-xl font-semibold text-foreground">Notificaciones</h2>
                 <p class="mt-1 text-sm text-muted-foreground">Preferencias guardadas en tu cuenta.</p>
@@ -181,11 +182,11 @@ type ToggleKey =
                   {{ preferenceStatus() }}
                 </div>
               </div>
-            </sga-card>
+            </z-card>
           }
 
           @if (activeSection() === 'email') {
-            <sga-card>
+            <z-card>
               <div class="border-border/70 border-b p-6">
                 <h2 class="text-xl font-semibold text-foreground">Correo</h2>
                 <p class="mt-1 text-sm text-muted-foreground">Contacto y ultimos envios.</p>
@@ -235,11 +236,11 @@ type ToggleKey =
                   }
                 </div>
               </div>
-            </sga-card>
+            </z-card>
           }
 
           @if (activeSection() === 'security') {
-            <sga-card>
+            <z-card>
               <div class="border-border/70 border-b p-6">
                 <h2 class="text-xl font-semibold text-foreground">Seguridad</h2>
                 <p class="mt-1 text-sm text-muted-foreground">Estado de acceso y control.</p>
@@ -262,11 +263,11 @@ type ToggleKey =
                   Ir a cambio de contrasena
                 </a>
               </div>
-            </sga-card>
+            </z-card>
           }
 
           @if (activeSection() === 'logs') {
-            <sga-card>
+            <z-card>
               <div class="border-border/70 border-b p-6">
                 <h2 class="text-xl font-semibold text-foreground">Logs y auditoria</h2>
                 <p class="mt-1 text-sm text-muted-foreground">Eventos recientes del usuario.</p>
@@ -294,11 +295,11 @@ type ToggleKey =
                   }
                 </div>
               }
-            </sga-card>
+            </z-card>
           }
 
           @if (activeSection() === 'sessions') {
-            <sga-card>
+            <z-card>
               <div class="border-border/70 border-b p-6">
                 <h2 class="text-xl font-semibold text-foreground">Sesiones</h2>
                 <p class="mt-1 text-sm text-muted-foreground">Estado operativo y accesos recientes.</p>
@@ -342,7 +343,7 @@ type ToggleKey =
                   </div>
                 }
               </div>
-            </sga-card>
+            </z-card>
           }
         </div>
       </div>
@@ -404,13 +405,11 @@ export default class AccountSettingsPage {
     { id: 'email' as SettingsSectionId, label: 'Correo', description: 'Historial de envios.', icon: 'fa-solid fa-envelope' },
     { id: 'security' as SettingsSectionId, label: 'Seguridad', description: 'Estado y control.', icon: 'fa-solid fa-shield-halved' },
     { id: 'logs' as SettingsSectionId, label: 'Logs', description: 'Auditoria reciente.', icon: 'fa-solid fa-clipboard-list' },
-    { id: 'sessions' as SettingsSectionId, label: 'Sesiones', description: 'Accesos activos.', icon: 'fa-solid fa-laptop' },
-  ]);
+    { id: 'sessions' as SettingsSectionId, label: 'Sesiones', description: 'Accesos activos.', icon: 'fa-solid fa-laptop' }]);
   protected readonly themeOptions = computed(() => [
     { value: 'light' as ThemeConfig, label: 'Claro', description: 'Entorno luminoso.' },
     { value: 'dark' as ThemeConfig, label: 'Oscuro', description: 'Reduce brillo.' },
-    { value: 'system' as ThemeConfig, label: 'Sistema', description: 'Respeta preferencia del dispositivo.' },
-  ]);
+    { value: 'system' as ThemeConfig, label: 'Sistema', description: 'Respeta preferencia del dispositivo.' }]);
   protected readonly generalRows = computed(() => {
     const user = this.accountUser();
     const person = user?.person;
@@ -423,8 +422,7 @@ export default class AccountSettingsPage {
       { label: 'Institucion', value: user?.profile?.institution || 'No asignada' },
       { label: 'Telefono', value: person?.mobile || person?.phone || 'No registrado' },
       { label: 'Direccion', value: person?.address || 'No registrada' },
-      { label: 'Ubicacion', value: location || 'No registrada' },
-    ];
+      { label: 'Ubicacion', value: location || 'No registrada' }];
   });
   protected readonly notificationRows = computed(() => [
     { key: 'digest' as ToggleKey, label: 'Resumen diario', description: 'Consolida pendientes y eventos.' },
@@ -432,8 +430,7 @@ export default class AccountSettingsPage {
     { key: 'incidents' as ToggleKey, label: 'Incidencias', description: 'Errores operativos o accesos fallidos.' },
     { key: 'approvals' as ToggleKey, label: 'Aprobaciones', description: 'Procesos que requieren accion.' },
     { key: 'browserAlerts' as ToggleKey, label: 'Avisos en el panel', description: 'Banners y alertas internas.' },
-    { key: 'newDeviceAlerts' as ToggleKey, label: 'Nuevo dispositivo', description: 'Aviso por accesos desconocidos.' },
-  ]);
+    { key: 'newDeviceAlerts' as ToggleKey, label: 'Nuevo dispositivo', description: 'Aviso por accesos desconocidos.' }]);
   protected readonly emailRows = computed(() => {
     const user = this.accountUser();
     const person = user?.person;
@@ -452,8 +449,7 @@ export default class AccountSettingsPage {
         label: 'Perfil de envio',
         value: user?.profile?.roleLabel || user?.role?.name || 'General',
         helper: 'Segmento institucional del usuario.',
-      },
-    ];
+      }];
   });
   protected readonly securityRows = computed(() => {
     const user = this.accountUser();
@@ -469,8 +465,7 @@ export default class AccountSettingsPage {
       {
         label: 'Intentos fallidos',
         description: `${user?.failedLoginAttempts ?? 0} intento(s).`,
-      },
-    ];
+      }];
   });
   protected readonly auditRows = computed(() =>
     this.userAudit().map((item) => ({
@@ -490,8 +485,7 @@ export default class AccountSettingsPage {
       { label: 'Usuario', value: user?.username || 'No definido' },
       { label: 'Rol', value: user?.role?.name || 'Sin rol' },
       { label: 'Modulos', value: `${this.modules().length}` },
-      { label: 'Tema', value: this.currentTheme() },
-    ];
+      { label: 'Tema', value: this.currentTheme() }];
   });
 
   constructor() {

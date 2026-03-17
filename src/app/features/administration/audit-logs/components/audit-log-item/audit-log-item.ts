@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, input, signal } from '@angular/core
 import { CommonModule } from '@angular/common';
 import { AuditLog } from '@features/administration/services/api/audit-api';
 
+
 @Component({
   selector: 'sga-audit-log-item',
   standalone: true,
