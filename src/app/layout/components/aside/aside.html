@@ -1,51 +1,61 @@
-<section class="h-full flex flex-col bg-base dark:bg-base" id="scrollbar">
-  <header
-    class="sticky top-0 z-20 flex items-center justify-between border-b border-base-300 dark:border-base-200 bg-base px-5 py-4 shadow-sm"
-  >
-    <div class="flex items-center gap-3">
-      @if (asideType() === "notifications") {
-        <div class="p-2 bg-primary-500/10 rounded-lg">
-          <i class="fas fa-bell text-primary-500 text-lg"></i>
-        </div>
-        <div>
-          <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
-            Notificaciones
-          </h2>
-          <p class="text-xs text-gray-500 dark:text-gray-400">
-            Mantente al día con tus actividades
-          </p>
-        </div>
-      } @else {
-        <div class="p-2 bg-primary-500/10 rounded-lg">
-          <i class="fas fa-calendar text-primary-500 text-lg"></i>
-        </div>
-        <div>
-          <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
-            Calendario
-          </h2>
-          <p class="text-xs text-gray-500 dark:text-gray-400">
-            Tus eventos y actividades
-          </p>
-        </div>
-      }
+<!-- Backdrop with smooth transition -->
+@if (isShowAside()) {
+<div class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] transition-opacity duration-300 animate-in fade-in"
+  (click)="closeAside()" aria-hidden="true">
+</div>
+}
+
+<section
+  class="fixed top-0 right-0 h-full w-full sm:max-w-md bg-background shadow-2xl z-[70] flex flex-col transition-all duration-500 ease-in-out border-l border-border"
+  [class.translate-x-0]="isShowAside()" [class.translate-x-full]="!isShowAside()"
+  [class.pointer-events-none]="!isShowAside()">
+
+  <!-- Content remains similar but with structural improvements -->
+  <header class="p-6 pb-2 flex items-center justify-between relative z-20">
+    <div class="flex items-center gap-4">
+      <div
+        class="size-10 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center shadow-lg shadow-primary/20 rotate-3 group-hover:rotate-0 transition-transform duration-500">
+        <z-icon zType="layers" class="size-5" />
+      </div>
+      <div>
+        <h2 class="text-sm font-black text-foreground uppercase tracking-[0.2em] inter">Centro de Actividad</h2>
+        <p class="text-[8px] font-black uppercase tracking-widest text-primary opacity-60">SGA Institutional Portal</p>
+      </div>
     </div>
-    <button
-      class="p-2 hover:bg-base-200 dark:hover:bg-base-300 rounded-lg transition-colors group"
-      (click)="toggleAside()"
-      aria-label="Cerrar panel"
-    >
-      <i
-        class="fas fa-times text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-200 text-lg"
-      ></i>
+    <button z-button zType="ghost" zShape="circle"
+      class="size-10 rounded-xl bg-card/50 hover:bg-card border border-border/5 shadow-sm active:scale-95 transition-all group"
+      (click)="closeAside()">
+      <z-icon zType="x" class="size-4 text-muted-foreground group-hover:text-foreground transition-colors" />
     </button>
   </header>
-  <main class="flex-1 overflow-y-auto">
-    @if (asideType() === "notifications") {
-      <!-- <app-notifications  /> -->
-    CALENDAR
-    } @else {
-    <!--   <app-calendar  /> -->
-    NOTIFICATIONS
-    }
+
+  <main class="flex-1 min-h-0 relative z-10 flex flex-col">
+    <z-tab-group class="h-full flex flex-col" zTabsPosition="top" zAlignTabs="center">
+      <z-tab label="Notificaciones">
+        <sga-aside-notifications class="h-full" />
+      </z-tab>
+      <z-tab label="Calendario">
+        <sga-aside-calendar class="h-full" />
+      </z-tab>
+      <z-tab label="Chats">
+        <sga-aside-chats class="h-full" />
+      </z-tab>
+    </z-tab-group>
   </main>
+
+  <footer class="p-4 bg-muted/20 backdrop-blur-xl border-t border-border/5 flex items-center justify-around">
+    <button z-button zType="ghost" zSize="icon" class="size-9 rounded-xl hover:bg-primary/5 group/foot"
+      title="Configuración">
+      <z-icon zType="settings"
+        class="size-4 text-muted-foreground/40 group-hover/foot:text-primary transition-colors" />
+    </button>
+    <button z-button zType="ghost" zSize="icon" class="size-9 rounded-xl hover:bg-primary/5 group/foot" title="Ayuda">
+      <z-icon zType="info" class="size-4 text-muted-foreground/40 group-hover/foot:text-primary transition-colors" />
+    </button>
+    <button z-button zType="ghost" zSize="icon" class="size-9 rounded-xl hover:bg-primary/5 group/foot"
+      title="Feedback">
+      <z-icon zType="message-circle"
+        class="size-4 text-muted-foreground/40 group-hover/foot:text-primary transition-colors" />
+    </button>
+  </footer>
 </section>

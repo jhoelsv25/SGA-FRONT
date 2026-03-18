@@ -1,15 +1,29 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthFacade } from '@auth/services/store/auth.acede';
 import { LayoutStore } from '@core/stores/layout.store';
+import { NotificationStore } from '@core/stores/notification.store';
 import { ZardIconComponent } from '@shared/components/icon';
-import { UserMenu, UserMenuAction, UserMenuDetail, UserMenuStat } from '@shared/widgets/user-menu/user-menu';
+import {
+  UserMenu,
+  UserMenuAction,
+  UserMenuDetail,
+  UserMenuStat,
+} from '@shared/widgets/user-menu/user-menu';
 import { Subject } from 'rxjs';
-
 
 @Component({
   selector: 'sga-header',
+  standalone: true,
   imports: [CommonModule, RouterModule, UserMenu, ZardIconComponent],
   templateUrl: './header.html',
   styleUrls: ['./header.css'],
@@ -20,6 +34,9 @@ export class Header implements OnInit, OnDestroy {
   private layout = inject(LayoutStore);
   private authFacade = inject(AuthFacade);
   private router = inject(Router);
+  public notificationStore = inject(NotificationStore);
+
+  public unreadNotifications = computed(() => this.notificationStore.unreadCount());
 
   public isShowAside = computed(() => this.layout.isShowAside());
   public isShowNav = computed(() => this.layout.isShowNav());
@@ -47,7 +64,8 @@ export class Header implements OnInit, OnDestroy {
         label: 'Módulos',
         value: `${modules.length} habilitados`,
         icon: 'fa-grid-2',
-      }];
+      },
+    ];
 
     if (profile?.institution) {
       details.push({
@@ -82,7 +100,8 @@ export class Header implements OnInit, OnDestroy {
     return [
       { label: 'Módulos', value: this.modules().length },
       { label: 'Cursos', value: 0 },
-      { label: 'Prom.', value: 'N/A' }];
+      { label: 'Prom.', value: 'N/A' },
+    ];
   });
 
   ngOnInit() {
