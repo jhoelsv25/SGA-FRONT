@@ -7,8 +7,6 @@ import { apiInterceptor } from '@core/interceptors/api.interceptor';
 import { errorInterceptor } from '@core/interceptors/error.interceptor';
 import { authInterceptor } from '@auth/interceptors/auth.interceptor';
 import { provideZard } from '@/shared/core/provider/providezard';
-import { provideAnimations } from '@angular/platform-browser/animations';
-
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
@@ -17,7 +15,6 @@ export const appConfig: ApplicationConfig = {
       withInterceptors([authInterceptor, apiInterceptor, errorInterceptor]),
       withFetch(),
     ),
-    provideAnimations(),
     provideZard(),
   ],
 };
