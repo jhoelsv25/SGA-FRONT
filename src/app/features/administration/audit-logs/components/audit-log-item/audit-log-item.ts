@@ -1,12 +1,14 @@
-import { ChangeDetectionStrategy, Component, input, signal } from '@angular/core';
+import { ZardBadgeComponent } from '@/shared/components/badge';
+import { ZardCardComponent } from '@/shared/components/card';
+import { ZardIconComponent, type ZardIcon } from '@/shared/components/icon';
+import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuditLog } from '@features/administration/services/api/audit-api';
-
 
 @Component({
   selector: 'sga-audit-log-item',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ZardIconComponent, ZardBadgeComponent, ZardCardComponent],
   templateUrl: './audit-log-item.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -14,50 +16,59 @@ export class AuditLogItem {
   log = input.required<AuditLog>();
   expanded = signal(false);
 
-  getActionIcon(): string {
+  readonly actionIcon = computed<ZardIcon>(() => {
     switch (this.log().action) {
-      case 'CREATE': return 'fas fa-plus';
-      case 'UPDATE': return 'fas fa-pen';
-      case 'DELETE': return 'fas fa-trash';
-      default: return 'fas fa-circle-info';
+      case 'CREATE':
+        return 'plus';
+      case 'UPDATE':
+        return 'file-text';
+      case 'DELETE':
+        return 'trash';
+      default:
+        return 'info';
     }
-  }
+  });
 
-  getActionClass(): string {
+  readonly actionClass = computed(() => {
     switch (this.log().action) {
-      case 'CREATE': return 'bg-success/10 text-success border border-success/20';
-      case 'UPDATE': return 'bg-info/10 text-info border border-info/20';
-      case 'DELETE': return 'bg-error/10 text-error border border-error/20';
-      default: return 'bg-base-200 text-base-content/50 border border-base-200';
+      case 'CREATE':
+        return 'bg-green-500/10 text-green-500 border-green-500/20';
+      case 'UPDATE':
+        return 'bg-blue-500/10 text-blue-500 border-blue-500/20';
+      case 'DELETE':
+        return 'bg-destructive/10 text-destructive border-destructive/20';
+      default:
+        return 'bg-muted text-muted-foreground border-border';
     }
-  }
+  });
 
-  getEntityClass(): string {
-    const entities: Record<string, string> = {
-      'users': 'text-blue-500 bg-blue-500/5 border-blue-500/10',
-      'roles': 'text-purple-500 bg-purple-500/5 border-purple-500/10',
-      'permissions': 'text-amber-500 bg-amber-500/5 border-amber-500/10',
-      'institution': 'text-emerald-500 bg-emerald-500/5 border-emerald-500/10',
+  readonly entityClass = computed(() => {
+    const ent = this.log().entity.toLowerCase();
+    const map: Record<string, string> = {
+      users: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
+      roles: 'bg-purple-500/10 text-purple-500 border-purple-500/20',
+      permissions: 'bg-amber-500/10 text-amber-500 border-amber-500/20',
+      institution: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
     };
-    return entities[this.log().entity.toLowerCase()] || 'text-base-content/40 bg-base-100 border-base-200';
-  }
+    return map[ent] || 'bg-muted text-muted-foreground border-border';
+  });
 
   getChanges() {
     if (!this.log().before || !this.log().after) return [];
-    
+
     const before = this.log().before;
     const after = this.log().after;
     const changes: { field: string; old: unknown; new: unknown }[] = [];
 
-    Object.keys(after).forEach(key => {
+    Object.keys(after).forEach((key) => {
       // Avoid technical fields if possible
       if (['updatedAt', 'password'].includes(key)) return;
-      
+
       if (JSON.stringify(before[key]) !== JSON.stringify(after[key])) {
         changes.push({
           field: key,
           old: before[key] ?? 'N/A',
-          new: after[key] ?? 'N/A'
+          new: after[key] ?? 'N/A',
         });
       }
     });

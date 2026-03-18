@@ -1,6 +1,5 @@
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardInputDirective } from '@/shared/components/input';
-import { ZardCardComponent } from '@/shared/components/card';
 import { ZardIconComponent } from '@/shared/components/icon';
 import { ZardFormImports } from '@/shared/components/form';
 import { ZardSelectImports } from '@/shared/components/select';
@@ -23,7 +22,6 @@ interface PermissionFormData {
     ReactiveFormsModule,
     ZardButtonComponent,
     ZardInputDirective,
-    ZardCardComponent,
     ZardIconComponent,
     ...ZardFormImports,
     ...ZardSelectImports,
