@@ -1,35 +1,44 @@
-<div class="group flex items-center gap-3 p-2.5 rounded-2xl bg-base-200/40 border border-transparent hover:bg-base-100 hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300">
-  <!-- Status/Icon Indicator -->
-  <div class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-content transition-all duration-500 shadow-sm border border-primary/5">
-    <i class="fas fa-fingerprint text-xs"></i>
+<div
+  class="group flex items-center gap-4 p-4 rounded-[2rem] bg-card/40 border border-border/10 backdrop-blur-xl hover:bg-card/60 hover:border-primary/20 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300">
+  <!-- Icon Section -->
+  <div
+    class="size-12 rounded-2xl flex items-center justify-center shrink-0 shadow-lg border border-border/10 bg-primary/10 text-primary transition-all duration-500 group-hover:bg-primary group-hover:text-primary-content">
+    <z-icon zType="shield" class="h-5 w-5" />
   </div>
 
-  <!-- Content -->
-  <div class="flex-1 min-w-0">
-    <div class="flex items-center gap-2">
-      <span class="text-sm font-bold text-base-content tracking-tight truncate group-hover:text-primary transition-colors">
-        {{ permission.name }}
+  <!-- Content Section -->
+  <div class="flex-1 min-w-0 space-y-0.5">
+    <div class="flex items-center gap-2 flex-wrap">
+      <span
+        class="text-sm font-black uppercase tracking-tight inter truncate group-hover:text-primary transition-colors">
+        {{ permission().name }}
       </span>
-      <span class="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded bg-primary/5 text-primary/60 border border-primary/10 shrink-0">
-        {{ permission.scope }}
+      <span
+        class="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-primary/5 text-primary/60 border border-primary/10 shrink-0">
+        {{ permission().scope }}
       </span>
     </div>
-    
-    <div class="flex items-center gap-1.5 mt-0.5">
-       <i class="fas fa-code text-[9px] text-base-content/20"></i>
-       <code class="text-[10px] font-mono text-base-content/40 truncate tracking-tighter">{{ permission.slug }}</code>
+
+    <div class="flex items-center gap-2 text-muted-foreground/40">
+      <z-icon zType="code" class="h-3 w-3" />
+      <code class="text-[10px] font-mono truncate tracking-tight">{{ permission().slug }}</code>
+      <span class="text-[10px]">•</span>
+      <span class="text-[10px] uppercase font-bold tracking-widest">{{ permission().module }}</span>
     </div>
   </div>
 
-  <!-- Subtle Actions -->
-  <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 pr-1">
-    <button z-button zType="ghost" zSize="sm" class="h-8 w-8 p-0 rounded-lg hover:bg-primary/10 hover:text-primary transition-colors" 
-            (click)="$event.stopPropagation(); edit.emit(permission)">
-      <i class="fas fa-edit text-[10px]"></i>
+  <!-- Actions -->
+  <div
+    class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
+    <button z-button zType="ghost" zSize="icon-sm"
+      class="rounded-xl hover:bg-primary/10 hover:text-primary transition-all" (click)="edit.emit(permission())"
+      title="Editar Permiso">
+      <z-icon zType="settings" class="h-4 w-4" />
     </button>
-    <button z-button zType="ghost" zSize="sm" class="h-8 w-8 p-0 rounded-lg text-error hover:bg-error/10 transition-colors" 
-            (click)="$event.stopPropagation(); delete.emit(permission)">
-      <i class="fas fa-trash-can text-[10px]"></i>
+    <button z-button zType="ghost" zSize="icon-sm"
+      class="rounded-xl text-destructive hover:bg-destructive/10 transition-all" (click)="confirmDelete()"
+      title="Eliminar Permiso">
+      <z-icon zType="trash" class="h-4 w-4" />
     </button>
   </div>
 </div>

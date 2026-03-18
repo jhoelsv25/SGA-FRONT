@@ -1,4 +1,5 @@
 import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardIconComponent } from '@/shared/components/icon';
 import { ZardEmptyComponent } from '@/shared/components/empty';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -9,27 +10,39 @@ import { RoleCardComponent } from '../../components/role-card/role-card';
 import { RoleForm } from '../../components/role-form/role-form';
 import { Router } from '@angular/router';
 
-
 @Component({
   selector: 'sga-roles',
   standalone: true,
-  imports: [CommonModule, ZardButtonComponent, RoleCardComponent, ZardEmptyComponent],
+  imports: [
+    CommonModule,
+    ZardButtonComponent,
+    RoleCardComponent,
+    ZardEmptyComponent,
+    ZardIconComponent,
+  ],
   templateUrl: './roles.html',
-  styles: [`
-    :host { display: block; padding: 1.5rem; }
-    .roles-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 1.5rem;
-    }
-  `],
+  styles: [
+    `
+      :host {
+        display: block;
+        padding: 1.5rem;
+      }
+      .roles-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        max-width: 80rem;
+        margin: 0 auto;
+      }
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class RolesComponent implements OnInit {
   private dialog = inject(DialogModalService);
   private router = inject(Router);
   public store = inject(RoleStore);
-  
+
   public roles = computed(() => this.store.roles());
   public loading = computed(() => this.store.loading());
 
@@ -67,8 +80,6 @@ export default class RolesComponent implements OnInit {
   }
 
   deleteRole(role: Role) {
-    if (confirm(`¿Estás seguro de eliminar el rol ${role.name}?`)) {
-        this.store.delete(role.id);
-    }
+    this.store.delete(role.id);
   }
 }

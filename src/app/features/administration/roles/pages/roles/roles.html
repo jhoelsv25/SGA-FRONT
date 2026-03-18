@@ -1,33 +1,29 @@
 <div class="flex flex-col gap-6">
-  <!-- Header -->
-  <div class="flex justify-between items-center bg-base-100 p-6 rounded-xl border border-base-200 shadow-sm animate-in fade-in slide-in-from-top-4 duration-500">
+  <header
+    class="flex justify-between items-center bg-base-100 p-6 rounded-xl border border-base-200 shadow-sm animate-in fade-in slide-in-from-top-4 duration-500">
     <div>
       <h1 class="text-2xl font-bold text-base-content tracking-tight">Gestión de Roles</h1>
       <p class="text-base-content/60 text-sm">Administra los perfiles de acceso y perimisos del sistema.</p>
     </div>
-    <button z-button zColor="primary" (click)="openCreateDialog()">
-      <i class="fas fa-plus mr-2"></i> Nuevo Rol
+    <button z-button zColor="primary" (click)="openCreateDialog()" class="gap-2">
+      <z-icon zType="plus" class="h-4 w-4" /> Nuevo Rol
     </button>
-  </div>
+  </header>
 
-  <!-- Lista de Roles -->
-  <div class="roles-grid animate-in fade-in slide-in-from-bottom-4 duration-500">
+  <div class="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
     @if (loading() && !roles().length) {
-      @for (i of [1,2,3,4]; track i) {
-        <div class="h-[240px] w-full rounded-2xl bg-base-200/50 animate-pulse border border-base-200"></div>
-      }
+    @for (i of [1,2,3,4]; track i) {
+    <div class="h-[240px] w-full rounded-2xl bg-base-200/50 animate-pulse border border-base-200"></div>
+    }
     } @else {
-      @for (role of roles(); track role.id) {
-        <sga-role-card
-          [role]="role"
-          (roleSelected)="selectRole($event)"
-          (editClicked)="editRole($event)"
-          (deleteClicked)="deleteRole($event)"
-        ></sga-role-card>
-      } @empty {
-        <z-empty zIcon="shield-alt" zTitle="Sin roles registrados" zDescription="Aún no has creado ningún rol. Define los perfiles de acceso para los usuarios del sistema.">
+    @for (role of roles(); track role.id) {
+    <sga-role-card [role]="role" (roleSelected)="selectRole($event)" (editClicked)="editRole($event)"
+      (deleteClicked)="deleteRole($event)"></sga-role-card>
+    } @empty {
+    <z-empty zIcon="shield-alt" zTitle="Sin roles registrados"
+      zDescription="Aún no has creado ningún rol. Define los perfiles de acceso para los usuarios del sistema.">
     </z-empty>
-      }
+    }
     }
   </div>
 </div>

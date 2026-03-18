@@ -1,15 +1,23 @@
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardInputDirective } from '@/shared/components/input';
+import { ZardIconComponent } from '@/shared/components/icon';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
-import { ChangeDetectionStrategy, Component, inject, OnInit, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserStore } from '../../../services/store/user.store';
 import { User, UserCreate } from '../../types/user-types';
 
+import { ZardFormImports } from '@/shared/components/form';
 
 @Component({
   selector: 'sga-user-form',
-  imports: [ReactiveFormsModule, ZardButtonComponent, ZardInputDirective],
+  imports: [
+    ReactiveFormsModule,
+    ZardButtonComponent,
+    ZardInputDirective,
+    ZardIconComponent,
+    ...ZardFormImports,
+  ],
   templateUrl: './user-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -37,8 +45,8 @@ export class UserForm implements OnInit {
     if (this.form.invalid) return;
     const v = this.form.value;
     if (this.current?.id) {
-      const payload: Record<string, unknown> = { ...v };
-      if (!payload['password']) delete payload['password'];
+      // No incluimos el password en la actualización por petición del usuario
+      const { password, ...payload } = v;
       this.store.update(String(this.current.id), payload).subscribe({
         next: () => this.ref.close(),
       });

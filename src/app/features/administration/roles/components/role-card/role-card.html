@@ -1,96 +1,111 @@
-<z-card 
-  class="role-card group transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 border-base-200 rounded-4xl overflow-hidden relative" 
-  [class.selected]="selected"
-  (click)="roleSelected.emit(role)"
->
-  <!-- Active/System Indicator Top Corner -->
-  <div class="absolute top-4 right-4 flex gap-1.5 z-10">
-    @if (role.isSystem) {
-      <div 
-        class="w-7 h-7 rounded-full bg-secondary/10 text-secondary flex items-center justify-center border border-secondary/20 shadow-sm"
-        title="Rol de Sistema"
-      >
-        <i class="fas fa-lock text-[10px]"></i>
-      </div>
-    }
-    <div 
-      class="w-7 h-7 rounded-full flex items-center justify-center border shadow-sm transition-all"
-      [class.bg-success/10]="role.isActive"
-      [class.text-success]="role.isActive"
-      [class.border-success/20]="role.isActive"
-      [class.bg-base-200]="!role.isActive"
-      [class.text-base-content/30]="!role.isActive"
-      [title]="role.isActive ? 'Activo' : 'Inactivo'"
-    >
-      <i class="fas fa-circle text-[7px]"></i>
-    </div>
-  </div>
-
-  <div class="flex flex-col space-y-1.5 p-6 pt-8 pb-3">
-    <div class="flex items-center gap-3">
-      <div class="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center text-xl shadow-sm group-hover:bg-primary group-hover:text-primary-content transition-all duration-500">
-        <i class="fas fa-shield-halved"></i>
-      </div>
-      <div class="min-w-0">
-        <h2 class="text-2xl font-semibold leading-none tracking-tight text-lg font-bold text-base-content group-hover:text-primary transition-colors truncate">
-          {{role.name}}
-        </h2>
-        <p class="text-[10px] text-base-content/40 font-medium uppercase tracking-widest mt-0.5">Rol de Usuario</p>
-      </div>
-    </div>
-  </div>
-  
-  <div class="p-6 pt-0 pb-5">
-    <p class="text-sm text-base-content/60 leading-relaxed line-clamp-2 min-h-[40px] mb-5">
-      {{role.description || 'Sin descripción detallada para este perfil de acceso.'}}
-    </p>
-    
-    <!-- Stats Row -->
-    <div class="grid grid-cols-2 gap-2">
-      <div class="p-2.5 rounded-2xl bg-base-100 border border-base-200 flex items-center gap-2.5 group-hover:border-primary/20 transition-colors">
-        <div class="w-7 h-7 rounded-lg bg-info/10 text-info flex items-center justify-center">
-           <i class="fas fa-users text-[10px]"></i>
-        </div>
-        <div class="min-w-0">
-          <p class="text-sm font-bold text-base-content leading-tight">{{ role.userCount || 0 }}</p>
-          <p class="text-[9px] text-base-content/40 font-medium uppercase truncate">Usuarios</p>
-        </div>
+<z-card
+  class="group p-6 rounded-[2.5rem] bg-card/40 border-border/10 backdrop-blur-2xl hover:bg-card/60 hover:border-primary/20 transition-all shadow-sm hover:shadow-2xl hover:shadow-primary/5 cursor-pointer"
+  [class.ring-2]="selected()" [class.ring-primary/40]="selected()" (click)="roleSelected.emit(role())">
+  <div class="flex flex-col lg:flex-row lg:items-center gap-8">
+    <!-- Left Section: Icon & Main Info -->
+    <div class="flex items-start gap-4 flex-1">
+      <div
+        class="size-14 rounded-2xl flex items-center justify-center shrink-0 shadow-lg border border-border/10 bg-primary/10 text-primary overflow-hidden transition-all duration-500 group-hover:bg-primary group-hover:text-primary-content">
+        <z-icon zType="shield" class="h-6 w-6" />
       </div>
 
-      <div class="p-2.5 rounded-2xl bg-base-100 border border-base-200 flex items-center gap-2.5 group-hover:border-primary/20 transition-colors">
-        <div class="w-7 h-7 rounded-lg bg-warning/10 text-warning flex items-center justify-center">
-           <i class="fas fa-key text-[10px]"></i>
+      <div class="space-y-1 min-w-0">
+        <div class="flex items-center gap-3 flex-wrap">
+          <h3 class="font-black text-lg tracking-tight uppercase inter truncate">
+            {{ role().name }}
+          </h3>
+          <div class="flex gap-1.5 flex-wrap">
+            @if (role().isSystem) {
+            <span
+              class="rounded-full px-3 py-1 text-[9px] font-black uppercase tracking-widest border bg-secondary/10 text-secondary border-secondary/20">
+              Sistema
+            </span>
+            }
+            <span class="rounded-full px-3 py-1 text-[9px] font-black uppercase tracking-widest border" [ngClass]="isActive() 
+                  ? 'bg-green-500/10 text-green-500 border-green-500/20' 
+                  : 'bg-muted text-muted-foreground border-border'">
+              {{ isActive() ? 'Activo' : 'Inactivo' }}
+            </span>
+          </div>
         </div>
-        <div class="min-w-0">
-          <p class="text-sm font-bold text-base-content leading-tight">{{ role.permissionsCount || 0 }}</p>
-          <p class="text-[9px] text-base-content/40 font-medium uppercase truncate">Permisos</p>
-        </div>
+        <p class="text-xs text-muted-foreground font-mono truncate">
+          {{ role().description || 'Perfil de acceso sin descripción detallada.' }}
+        </p>
       </div>
     </div>
-  </div>
 
-  <div class="flex items-center p-6 pt-0 border-t border-base-200/50 pt-3 justify-between">
-    <div class="flex items-center gap-1.5">
-      <div class="w-5 h-5 rounded bg-base-200 flex items-center justify-center">
-         <i class="fas fa-fingerprint text-[9px] text-base-content/30"></i>
+    <!-- Middle Section: Stats (XL only) -->
+    <div class="hidden xl:flex items-center gap-3 px-8 border-x border-border/10">
+      <div class="flex flex-col items-center gap-1">
+        <div class="size-8 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center shadow-sm">
+          <z-icon zType="users" class="h-4 w-4" />
+        </div>
+        <div class="flex flex-col items-center leading-none">
+          <span class="text-xs font-black">{{ role().userCount || 0 }}</span>
+          <span class="text-[7px] font-black uppercase text-muted-foreground/40">Usuarios</span>
+        </div>
       </div>
-      <span class="text-[9px] font-mono text-base-content/30">{{role.id.split('-')[0]}}</span>
+      <z-icon zType="chevron-right" class="h-4 w-4 text-muted-foreground/20" />
+      <div class="flex flex-col items-center gap-1">
+        <div class="size-8 rounded-xl bg-warning/10 text-warning flex items-center justify-center shadow-sm">
+          <z-icon zType="badge-check" class="h-4 w-4" />
+        </div>
+        <div class="flex flex-col items-center leading-none">
+          <span class="text-xs font-black">{{ role().permissionsCount || 0 }}</span>
+          <span class="text-[7px] font-black uppercase text-muted-foreground/40">Permisos</span>
+        </div>
+      </div>
     </div>
-    
-    <div class="flex gap-1 translate-y-1 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
-      <button z-button zType="ghost" zSize="sm" class="rounded-xl h-8 w-8 p-0 hover:bg-primary/10 hover:text-primary" 
-              (click)="$event.stopPropagation(); editClicked.emit(role)"
-              title="Configurar">
-        <i class="fas fa-sliders text-xs"></i>
+
+    <!-- Right Section: Actions -->
+    <div class="flex items-center justify-end gap-2 shrink-0" (click)="$event.stopPropagation()">
+      <button z-button zType="ghost" zSize="icon-sm"
+        class="rounded-xl hover:bg-primary/10 hover:text-primary transition-all" title="Configurar Rol"
+        (click)="editClicked.emit(role())">
+        <z-icon zType="settings" class="h-5 w-5" />
       </button>
-      
-      @if (!role.isSystem) {
-        <button z-button zType="ghost" zSize="sm" class="rounded-xl h-8 w-8 p-0 text-error hover:bg-error/10" 
-                (click)="$event.stopPropagation(); deleteClicked.emit(role)"
-                title="Eliminar">
-          <i class="fas fa-trash-can text-xs"></i>
-        </button>
-      }
+
+      <button z-button zType="ghost" zSize="icon-sm"
+        class="rounded-xl hover:bg-primary/10 hover:text-primary transition-all" title="Más acciones" zPopover
+        [zContent]="roleActionsMenu" [zPlacement]="'bottom'">
+        <z-icon zType="ellipsis" class="h-5 w-5" />
+      </button>
+
+      <ng-template #roleActionsMenu>
+        <z-popover class="min-w-[160px] p-1.5 flex flex-col gap-1">
+          <button z-button zType="ghost"
+            class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
+            (click)="editClicked.emit(role())">
+            <z-icon zType="settings" class="h-4 w-4" />
+            Configurar
+          </button>
+
+          @if (!role().isSystem) {
+          <div class="h-px bg-border/10 my-1 mx-2"></div>
+          <button z-button zType="ghost"
+            class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-destructive/10 hover:text-destructive transition-all"
+            (click)="confirmDelete()">
+            <z-icon zType="trash" class="h-4 w-4" />
+            Eliminar
+          </button>
+          }
+        </z-popover>
+      </ng-template>
     </div>
   </div>
+
+  <!-- Footer -->
+  <footer class="mt-6 pt-6 border-t border-border/10 flex items-center justify-between">
+    <div
+      class="flex items-center gap-1 text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest leading-none">
+      <z-icon zType="code" class="h-3 w-3" />
+      ID: <span class="text-foreground font-mono">{{ role().id.split('-')[0] }}</span>
+    </div>
+    @if (role().isSystem) {
+    <div class="text-[10px] font-bold text-secondary/60 uppercase tracking-widest flex items-center gap-1">
+      <z-icon zType="shield" class="h-3 w-3" />
+      Protegido por el sistema
+    </div>
+    }
+  </footer>
 </z-card>

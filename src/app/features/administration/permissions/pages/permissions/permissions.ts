@@ -1,6 +1,14 @@
 import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardIconComponent } from '@/shared/components/icon';
 import { ZardEmptyComponent } from '@/shared/components/empty';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PermissionStore } from '../../../services/store/permission.store';
@@ -15,54 +23,70 @@ interface ModuleGroup {
   permissions: Permission[];
 }
 
-
 @Component({
   selector: 'sga-permissions',
   standalone: true,
-  imports: [CommonModule, FormsModule, ZardButtonComponent, PermissionCardComponent, ZardEmptyComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ZardButtonComponent,
+    PermissionCardComponent,
+    ZardEmptyComponent,
+    ZardIconComponent,
+  ],
   templateUrl: './permissions.html',
-  styles: [`
-    :host { display: block; padding: 1.5rem; }
-    .module-card {
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .module-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
-    }
-  `],
+  styles: [
+    `
+      :host {
+        display: block;
+        padding: 1.5rem;
+      }
+      .module-card {
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      .module-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+      }
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class PermissionsComponent implements OnInit {
   private dialog = inject(DialogModalService);
   public store = inject(PermissionStore);
-  
+
   public searchTerm = signal('');
   public loading = computed(() => this.store.loading());
 
   public groupedPermissions = computed(() => {
     const all = this.store.permissions();
     const search = this.searchTerm().toLowerCase();
-    
+
     // Filter
-    const filtered = all.filter(p => 
-      p.name.toLowerCase().includes(search) || 
-      p.slug.toLowerCase().includes(search) ||
-      p.module.toLowerCase().includes(search)
+    const filtered = all.filter(
+      (p) =>
+        p.name.toLowerCase().includes(search) ||
+        p.slug.toLowerCase().includes(search) ||
+        p.module.toLowerCase().includes(search),
     );
 
     // Group
     const groups: Record<string, Permission[]> = {};
-    filtered.forEach(p => {
+    filtered.forEach((p) => {
       const mod = p.module || 'General';
       if (!groups[mod]) groups[mod] = [];
       groups[mod].push(p);
     });
 
-    return Object.keys(groups).sort().map(name => ({
-      name,
-      permissions: groups[name]
-    })) as ModuleGroup[];
+    return Object.keys(groups)
+      .sort()
+      .map((name) => ({
+        name,
+        permissions: groups[name],
+      })) as ModuleGroup[];
   });
 
   ngOnInit() {
@@ -95,8 +119,6 @@ export default class PermissionsComponent implements OnInit {
   }
 
   deletePermission(permission: Permission) {
-    if (confirm(`¿Estás seguro de eliminar el permiso "${permission.name}"?`)) {
-        this.store.delete(permission.id).subscribe();
-    }
+    this.store.delete(permission.id).subscribe();
   }
 }

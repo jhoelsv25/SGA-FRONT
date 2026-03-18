@@ -1,36 +1,60 @@
 <form [formGroup]="form" class="grid gap-4" (ngSubmit)="submit()">
   <header class="flex items-center justify-between mb-4">
     <h2 class="text-lg font-semibold">{{ current ? 'Editar usuario' : 'Nuevo usuario' }}</h2>
-    <button type="button" z-button zColor="secondary" zType="ghost" zShape="circle" (click)="close()">
-      <i class="fas fa-times"></i>
+    <button type="button" z-button zColor="secondary" zType="ghost" zShape="circle" (click)="close()"
+      class="h-8 w-8 !p-0">
+      <z-icon zType="x" class="h-4 w-4" />
     </button>
   </header>
   <div class="grid gap-4">
-    <div>
-      <label class="label-form" for="username">Usuario</label>
-      <input z-input w-full id="username" formControlName="username" placeholder="Nombre de usuario"  />
-    </div>
+    <z-form-field>
+      <label z-form-label for="username" [zRequired]="true">Usuario</label>
+      <z-form-control>
+        <input z-input w-full id="username" formControlName="username" placeholder="Nombre de usuario" />
+      </z-form-control>
+    </z-form-field>
+
     <div class="grid grid-cols-2 gap-4">
-      <div>
-        <label class="label-form" for="firstName">Nombre</label>
-        <input z-input w-full id="firstName" formControlName="firstName" placeholder="Nombre"  />
-      </div>
-      <div>
-        <label class="label-form" for="lastName">Apellido</label>
-        <input z-input w-full id="lastName" formControlName="lastName" placeholder="Apellido"  />
-      </div>
+      <z-form-field>
+        <label z-form-label for="firstName" [zRequired]="true">Nombre</label>
+        <z-form-control>
+          <input z-input w-full id="firstName" formControlName="firstName" placeholder="Nombre" />
+        </z-form-control>
+      </z-form-field>
+
+      <z-form-field>
+        <label z-form-label for="lastName" [zRequired]="true">Apellido</label>
+        <z-form-control>
+          <input z-input w-full id="lastName" formControlName="lastName" placeholder="Apellido" />
+        </z-form-control>
+      </z-form-field>
     </div>
-    <div>
-      <label class="label-form" for="email">Email</label>
-      <input z-input w-full id="email" type="email" formControlName="email" placeholder="correo@ejemplo.com"  />
-    </div>
-    <div>
-      <label class="label-form" for="password">Contraseña {{ current ? '(dejar vacío para no cambiar)' : '' }}</label>
-      <input z-input w-full id="password" type="password" formControlName="password" placeholder="Contraseña"  />
-    </div>
+
+    <z-form-field>
+      <label z-form-label for="email" [zRequired]="true">Email</label>
+      <z-form-control>
+        <input z-input w-full id="email" type="email" formControlName="email" placeholder="correo@ejemplo.com" />
+      </z-form-control>
+    </z-form-field>
+
+    @if (!current) {
+    <z-form-field>
+      <label z-form-label for="password" [zRequired]="true">Contraseña</label>
+      <z-form-control>
+        <input z-input w-full id="password" type="password" formControlName="password"
+          placeholder="Contraseña segura" />
+      </z-form-control>
+    </z-form-field>
+    }
   </div>
   <footer class="flex justify-end gap-2 mt-4">
-    <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">Cancelar</button>
-    <button type="submit" z-button zColor="primary" [disabled]="form.invalid">Guardar</button>
+    <button type="button" z-button zColor="secondary" zType="outline" (click)="close()" class="gap-2">
+      <z-icon zType="ban" class="h-4 w-4" />
+      Cancelar
+    </button>
+    <button type="submit" z-button zColor="primary" [disabled]="form.invalid" class="gap-2">
+      <z-icon zType="save" class="h-4 w-4" />
+      {{ current ? 'Actualizar' : 'Crear Usuario' }}
+    </button>
   </footer>
 </form>

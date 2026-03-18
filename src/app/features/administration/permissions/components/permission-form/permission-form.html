@@ -1,76 +1,79 @@
-<z-card class="flex flex-col h-full border-none shadow-none bg-transparent animate-in zoom-in-95 duration-200">
-  <div class="flex flex-col space-y-1.5 p-6 pb-6 border-b border-base-200 bg-base-200/20 flex flex-row justify-between items-center space-y-0">
-    <div>
-      <h2 class="text-2xl font-semibold leading-none tracking-tight text-2xl font-bold text-base-content tracking-tight">{{ title }}</h2>
-      <div class="text-sm text-base-content/60">Configura los detalles técnicos de este permiso.</div>
+<div class="flex flex-col gap-5 h-full animate-in zoom-in-95 duration-200">
+  <!-- Header -->
+  <header class="flex items-center justify-between">
+    <div class="flex items-center gap-4">
+      <div class="size-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-sm">
+        <z-icon zType="shield" class="h-6 w-6" />
+      </div>
+      <div>
+        <h2 class="text-xl font-black uppercase tracking-tight inter">{{ title }}</h2>
+        <p class="text-xs text-muted-foreground font-medium">Configura los detalles técnicos de este permiso.</p>
+      </div>
     </div>
-    <button class="btn btn-ghost btn-circle btn-sm" (click)="close()">
-      <i class="fas fa-times"></i>
+    <button z-button zType="ghost" zShape="circle" (click)="close()" class="size-8 !p-0">
+      <z-icon zType="x" class="h-4 w-4" />
     </button>
-  </div>
+  </header>
 
-  <div class="p-6 pt-0 p-8 overflow-y-auto max-h-[75vh]">
+  <!-- Body -->
+  <div class="overflow-y-auto max-h-[70vh]">
     <form [formGroup]="form" (ngSubmit)="submit()" id="permission-form" class="space-y-6">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="space-y-2">
-            <label for="permission-name" class="text-[10px] font-black uppercase tracking-widest text-base-content/40 ml-1 block">Nombre Descriptivo</label>
-            <input z-input w-full 
-              id="permission-name"
-              formControlName="name" 
-              placeholder="Ej: Crear Usuarios"
-              customClass="mt-1 block"
-            >
-        </div>
-        
-        <div class="space-y-2">
-            <label for="permission-slug" class="text-[10px] font-black uppercase tracking-widest text-base-content/40 ml-1 block">Slug (Identificador)</label>
-            <input z-input w-full 
-              id="permission-slug"
-              formControlName="slug" 
-              placeholder="Ej: users:create"
-              customClass="mt-1 block"
-            >
-        </div>
+        <z-form-field>
+          <label z-form-label for="permission-name" [zRequired]="true">Nombre Descriptivo</label>
+          <z-form-control>
+            <input z-input w-full id="permission-name" formControlName="name" placeholder="Ej: Crear Usuarios" />
+          </z-form-control>
+        </z-form-field>
+
+        <z-form-field>
+          <label z-form-label for="permission-slug" [zRequired]="true">Slug (Identificador)</label>
+          <z-form-control>
+            <input z-input w-full id="permission-slug" formControlName="slug" placeholder="Ej: users:create" />
+          </z-form-control>
+        </z-form-field>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="space-y-2">
-            <label for="permission-module" class="text-[10px] font-black uppercase tracking-widest text-base-content/40 ml-1 block">Módulo Asociado</label>
-            <input z-input w-full 
-              id="permission-module"
-              formControlName="module" 
-              placeholder="Ej: users"
-              customClass="mt-1 block"
-            >
-        </div>
-        
-        <div class="space-y-2">
-            <label for="permission-scope" class="text-[10px] font-black uppercase tracking-widest text-base-content/40 ml-1 block">Alcance (Scope)</label>
-            <select id="permission-scope" formControlName="scope" class="select select-bordered w-full bg-base-100 focus:select-primary transition-all mt-1 block">
-                <option value="global">Global</option>
-                <option value="institution">Institución</option>
-                <option value="department">Departamento</option>
-            </select>
-        </div>
+        <z-form-field>
+          <label z-form-label for="permission-module" [zRequired]="true">Módulo Asociado</label>
+          <z-form-control>
+            <input z-input w-full id="permission-module" formControlName="module" placeholder="Ej: users" />
+          </z-form-control>
+        </z-form-field>
+
+        <z-form-field>
+          <label z-form-label for="permission-scope" [zRequired]="true">Alcance (Scope)</label>
+          <z-form-control>
+            <z-select id="permission-scope" formControlName="scope" zPlaceholder="Selecciona el alcance" class="w-full">
+              <z-select-item zValue="global">Global</z-select-item>
+              <z-select-item zValue="institution">Institución</z-select-item>
+              <z-select-item zValue="department">Departamento</z-select-item>
+            </z-select>
+          </z-form-control>
+        </z-form-field>
       </div>
 
-      <div class="space-y-2">
-        <label for="permission-description" class="text-[10px] font-black uppercase tracking-widest text-base-content/40 ml-1 block">Descripción de Funcionalidad</label>
-        <textarea 
-          id="permission-description"
-          formControlName="description" 
-          class="textarea textarea-bordered w-full h-24 focus:textarea-primary transition-all bg-base-100 mt-1 block" 
-          placeholder="Explica qué permite hacer este permiso..."></textarea>
-      </div>
+      <z-form-field>
+        <label z-form-label for="permission-description">Descripción de Funcionalidad</label>
+        <z-form-control>
+          <textarea z-input w-full id="permission-description" formControlName="description"
+            class="textarea textarea-bordered h-24 bg-card/50 border-border/10 border"
+            placeholder="Explica qué permite hacer este permiso..."></textarea>
+        </z-form-control>
+      </z-form-field>
     </form>
   </div>
 
-  <div class="flex items-center p-6 pt-0 p-6 bg-base-200/50 border-t border-base-200 justify-end gap-3">
-    <button z-button zType="ghost" (click)="close()" type="button">
+  <!-- Footer -->
+  <footer class="flex items-center justify-end gap-3 pt-5">
+    <button z-button zType="outline" zColor="secondary" (click)="close()" type="button" class="gap-2">
+      <z-icon zType="x" class="h-4 w-4" />
       Cancelar
     </button>
-    <button z-button zColor="primary" type="submit" form="permission-form" [disabled]="form.invalid">
-      <i class="fas fa-save mr-2"></i> {{ current ? 'Actualizar' : 'Crear' }} Permiso
+    <button z-button zColor="primary" type="submit" form="permission-form" [disabled]="form.invalid" class="gap-2">
+      <z-icon zType="save" class="h-4 w-4" />
+      {{ current ? 'Actualizar' : 'Crear' }} Permiso
     </button>
-  </div>
-</z-card>
+  </footer>
+</div>

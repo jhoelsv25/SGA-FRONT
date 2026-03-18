@@ -25,7 +25,7 @@ export class UserApi {
   }
 
   update(id: string, user: Partial<User>): Observable<UserResponse> {
-    return this.http.put<UserResponse>(`${this.baseUrl}/${id}`, user);
+    return this.http.patch<UserResponse>(`${this.baseUrl}/${id}`, user);
   }
 
   delete(id: string): Observable<UserResponse> {
