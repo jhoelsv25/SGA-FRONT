@@ -1,59 +1,40 @@
 <div class="p-6 space-y-6">
-  <z-list-toolbar
-    zTitle="Niveles de Grado"
-    icon="fas fa-graduation-cap"
-    zDescription="Gestionar niveles de grado"
-    [searchPlaceholder]="'Buscar niveles por nombre...'"
-    [filterCount]="filterCount()"
-    (searchChange)="onSearch($event)"
-    (refresh)="onRefresh()"
-  >
+  <z-list-toolbar zTitle="Niveles de Grado" icon="fas fa-graduation-cap" zDescription="Gestionar niveles de grado"
+    [searchPlaceholder]="'Buscar niveles por nombre...'" [filterCount]="filterCount()" (searchChange)="onSearch($event)"
+    (refresh)="onRefresh()">
     <div list-toolbar-actions class="flex items-center gap-2">
       <z-dropdown [items]="actionDropdownItems()">
-        <button
-          dropdown-trigger
+        <button dropdown-trigger
           class="flex items-center justify-center w-10 h-10 rounded-2xl border border-base-200 bg-base-100 hover:bg-base-200 transition-colors text-base-content/60 hover:text-primary"
-          aria-label="Más acciones"
-          type="button"
-        >
+          aria-label="Más acciones" type="button">
           <i class="fas fa-ellipsis-h"></i>
         </button>
       </z-dropdown>
-    
+
     </div>
     <div list-toolbar-filter class="space-y-3 p-1">
       <p class="text-sm font-semibold text-base-content">Filtrar por nivel</p>
-      <z-select-option
-        [options]="levelOptions"
-        [value]="filterLevel() || null"
-        [placeholder]="'Todos'"
-        
-        [searchable]="false"
-        (valueChange)="onFilterLevel($event)"></z-select-option>
+      <z-select-option [options]="levelOptions" [value]="filterLevel() || null" [placeholder]="'Todos'"
+        [searchable]="false" (valueChange)="onFilterLevel($event)"></z-select-option>
     </div>
   </z-list-toolbar>
 
-  <div
-    class="grid grid-cols-1 mt-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500"
-  >
+  <div class="grid grid-cols-1 mt-6 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
     @if (loading() && !data().length) {
-      @for (i of skeletonItems; track i) {
-        <z-skeleton [class]="'h-[220px] w-full rounded-4xl border border-base-200'"></z-skeleton>
-      }
+    @for (i of skeletonItems; track i) {
+    <z-skeleton [class]="'h-[220px] w-full rounded-4xl border border-base-200'"></z-skeleton>
+    }
     } @else {
-      @for (gradeLevel of filteredData(); track gradeLevel.id) {
-        <sga-grade-level-card
-          [gradeLevel]="gradeLevel"
-          (edit)="editGradeLevel(gradeLevel)"
-          (delete)="deleteGradeLevel(gradeLevel)"
-          (viewSections)="goToSections(gradeLevel)"
-         />
-      } @empty {
-        <div class="col-span-full">
-          <z-empty zIcon="graduation-cap" zTitle="Sin niveles de grado" zDescription="Aún no hay niveles de grado configurados. Crea el primero para organizar primaria, secundaria o superior.">
-    </z-empty>
-        </div>
-      }
+    @for (gradeLevel of filteredData(); track gradeLevel.id) {
+    <sga-grade-level-card [gradeLevel]="gradeLevel" (edit)="editGradeLevel(gradeLevel)"
+      (delete)="deleteGradeLevel(gradeLevel)" (viewSections)="goToSections(gradeLevel)" />
+    } @empty {
+    <div class="col-span-full">
+      <z-empty zIcon="graduation-cap" zTitle="Sin niveles de grado"
+        zDescription="Aún no hay niveles de grado configurados. Crea el primero para organizar primaria, secundaria o superior.">
+      </z-empty>
+    </div>
+    }
     }
   </div>
 </div>

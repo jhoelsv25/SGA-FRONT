@@ -1,59 +1,40 @@
 <div class="p-6 space-y-6">
-  <z-list-toolbar
-    zTitle="Períodos"
-    icon="fas fa-layer-group"
-    zDescription="Gestionar períodos académicos"
-    [searchPlaceholder]="'Buscar períodos por nombre...'"
-    [filterCount]="filterCount()"
-    (searchChange)="onSearch($event)"
-    (refresh)="onRefresh()"
-  >
+  <z-list-toolbar zTitle="Períodos" icon="fas fa-layer-group" zDescription="Gestionar períodos académicos"
+    [searchPlaceholder]="'Buscar períodos por nombre...'" [filterCount]="filterCount()"
+    (searchChange)="onSearch($event)" (refresh)="onRefresh()">
     <div list-toolbar-actions class="flex items-center gap-2">
       <z-dropdown [items]="actionDropdownItems()">
-        <button
-          dropdown-trigger
+        <button dropdown-trigger
           class="flex items-center justify-center w-10 h-10 rounded-2xl border border-base-200 bg-base-100 hover:bg-base-200 transition-colors text-base-content/60 hover:text-primary"
-          aria-label="Más acciones"
-          type="button"
-        >
+          aria-label="Más acciones" type="button">
           <i class="fas fa-ellipsis-h"></i>
         </button>
       </z-dropdown>
-    
+
     </div>
     <div list-toolbar-filter class="space-y-3 p-1">
       <p class="text-sm font-semibold text-base-content">Filtrar por estado</p>
-      <z-select-option
-        [options]="statusOptions"
-        [value]="filterStatus() || null"
-        [placeholder]="'Todos'"
-        
-        [searchable]="false"
-        (valueChange)="onFilterStatus($event)"></z-select-option>
+      <z-select-option [options]="statusOptions" [value]="filterStatus() || null" [placeholder]="'Todos'"
+        [searchable]="false" (valueChange)="onFilterStatus($event)"></z-select-option>
     </div>
   </z-list-toolbar>
 
-  <div
-    class="grid grid-cols-1 mt-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500"
-  >
+  <div class="grid grid-cols-1 mt-6  gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
     @if (loading() && !data().length) {
-      @for (i of skeletonItems; track i) {
-        <z-skeleton [class]="'h-[260px] w-full rounded-4xl border border-base-200'"></z-skeleton>
-      }
+    @for (i of skeletonItems; track i) {
+    <z-skeleton [class]="'h-[260px] w-full rounded-4xl border border-base-200'"></z-skeleton>
+    }
     } @else {
-      @for (period of filteredData(); track period.id) {
-        <sga-period-card
-          [period]="period"
-          (edit)="editPeriod(period)"
-          (delete)="deletePeriod(period)"
-          (updateStatus)="editPeriod(period)"
-         />
-      } @empty {
-        <div class="col-span-full">
-          <z-empty zIcon="layer-group" zTitle="Sin períodos académicos" zDescription="Aún no hay períodos configurados. Crea trimestres, bimestres o semestres para el año académico.">
-    </z-empty>
-        </div>
-      }
+    @for (period of filteredData(); track period.id) {
+    <sga-period-card [period]="period" (edit)="editPeriod(period)" (delete)="deletePeriod(period)"
+      (updateStatus)="editPeriod(period)" />
+    } @empty {
+    <div class="col-span-full">
+      <z-empty zIcon="layer-group" zTitle="Sin períodos académicos"
+        zDescription="Aún no hay períodos configurados. Crea trimestres, bimestres o semestres para el año académico.">
+      </z-empty>
+    </div>
+    }
     }
   </div>
 </div>

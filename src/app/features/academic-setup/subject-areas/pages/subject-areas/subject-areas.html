@@ -1,58 +1,39 @@
 <div class="p-6 space-y-6">
-  <z-list-toolbar
-    zTitle="Áreas Curriculares"
-    icon="fas fa-book-open"
-    zDescription="Gestionar áreas curriculares"
-    [searchPlaceholder]="'Buscar áreas por nombre o código...'"
-    [filterCount]="filterCount()"
-    (searchChange)="onSearch($event)"
-    (refresh)="onRefresh()"
-  >
+  <z-list-toolbar zTitle="Áreas Curriculares" icon="fas fa-book-open" zDescription="Gestionar áreas curriculares"
+    [searchPlaceholder]="'Buscar áreas por nombre o código...'" [filterCount]="filterCount()"
+    (searchChange)="onSearch($event)" (refresh)="onRefresh()">
     <div list-toolbar-actions class="flex items-center gap-2">
       <z-dropdown [items]="actionDropdownItems()">
-        <button
-          dropdown-trigger
+        <button dropdown-trigger
           class="flex items-center justify-center w-10 h-10 rounded-2xl border border-base-200 bg-base-100 hover:bg-base-200 transition-colors text-base-content/60 hover:text-primary"
-          aria-label="Más acciones"
-          type="button"
-        >
+          aria-label="Más acciones" type="button">
           <i class="fas fa-ellipsis-h"></i>
         </button>
       </z-dropdown>
-    
+
     </div>
     <div list-toolbar-filter class="space-y-3 p-1">
       <p class="text-sm font-semibold text-base-content">Filtrar por tipo</p>
-      <z-select-option
-        [options]="typeOptions"
-        [value]="filterType() || null"
-        [placeholder]="'Todos'"
-        
-        [searchable]="false"
-        (valueChange)="onFilterType($event)"></z-select-option>
+      <z-select-option [options]="typeOptions" [value]="filterType() || null" [placeholder]="'Todos'"
+        [searchable]="false" (valueChange)="onFilterType($event)"></z-select-option>
     </div>
   </z-list-toolbar>
 
-  <div
-    class="grid grid-cols-1 mt-6 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500"
-  >
+  <div class="grid grid-cols-1 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
     @if (loading() && !data().length) {
-      @for (i of skeletonItems; track i) {
-        <z-skeleton [class]="'h-[200px] w-full rounded-4xl border border-base-200'"></z-skeleton>
-      }
+    @for (i of skeletonItems; track i) {
+    <z-skeleton [class]="'h-[200px] w-full rounded-4xl border border-base-200'"></z-skeleton>
+    }
     } @else {
-      @for (area of filteredData(); track area.id) {
-        <sga-subject-area-card
-          [subjectArea]="area"
-          (edit)="editSubjectArea(area)"
-          (delete)="deleteSubjectArea(area)"
-         />
-      } @empty {
-        <div class="col-span-full">
-          <z-empty zIcon="book-open" zTitle="Sin áreas curriculares" zDescription="Aún no hay áreas curriculares. Crea troncal, electiva u opcional para organizar las materias.">
-    </z-empty>
-        </div>
-      }
+    @for (area of filteredData(); track area.id) {
+    <sga-subject-area-card [subjectArea]="area" (edit)="editSubjectArea(area)" (delete)="deleteSubjectArea(area)" />
+    } @empty {
+    <div class="col-span-full">
+      <z-empty zIcon="book-open" zTitle="Sin áreas curriculares"
+        zDescription="Aún no hay áreas curriculares. Crea troncal, electiva u opcional para organizar las materias.">
+      </z-empty>
+    </div>
+    }
     }
   </div>
 </div>

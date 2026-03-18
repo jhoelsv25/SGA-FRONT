@@ -1,102 +1,121 @@
 <z-card
-  class="group flex flex-col h-full transition-all duration-300 border border-base-200/80 overflow-hidden bg-base-100 rounded-4xl shadow-sm"
->
-  <div class="flex flex-col space-y-1.5 p-6 pb-3 border-b border-base-200/50 bg-base-200/10">
-    <div class="flex justify-between items-start">
+  class="group p-6 rounded-[2.5rem] bg-card/40 border-border/10 backdrop-blur-2xl hover:bg-card/60 hover:border-primary/20 transition-all shadow-sm hover:shadow-2xl hover:shadow-primary/5 cursor-pointer">
+  <div class="flex flex-col lg:flex-row lg:items-center gap-8">
+
+    <!-- Left: Period Number & Main Info -->
+    <div class="flex items-start gap-4 flex-1">
       <div
-        class="flex flex-col items-center justify-center w-14 h-14 rounded-2xl bg-primary/10 text-primary border border-primary/20 shadow-sm"
-      >
-        <span class="text-[10px] font-black uppercase tracking-tighter leading-none mb-1">Nº</span>
-        <span class="text-xl font-bold leading-none">{{
-          period().order ?? period().periodNumber ?? '-'
-        }}</span>
+        class="size-14 rounded-2xl flex flex-col items-center justify-center shrink-0 shadow-lg border border-border/10 bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+        <span class="text-[9px] font-black uppercase tracking-tighter leading-none">Nº</span>
+        <span class="text-xl font-bold leading-none">{{ period().order ?? period().periodNumber ?? '-' }}</span>
       </div>
-      <div
-        class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
-        role="group"
-        tabindex="0"
-        (click)="$event.stopPropagation()"
-        (keydown.enter)="$event.preventDefault(); $event.stopPropagation()"
-        (keydown.space)="$event.preventDefault(); $event.stopPropagation()"
-      >
-        <button
-          z-button
-          zType="ghost"
-          zSize="sm"
-          class="rounded-lg h-8 w-8 p-0 hover:bg-base-200/60"
-          (click)="updateStatus.emit(period()); $event.stopPropagation()"
-          title="Actualizar estado"
-        >
-          <i class="fas fa-flag text-xs"></i>
-        </button>
-        <button
-          z-button
-          zType="ghost"
-          zSize="sm"
-          class="rounded-lg h-8 w-8 p-0 hover:bg-base-200/60"
-          (click)="edit.emit(period()); $event.stopPropagation()"
-          title="Editar"
-        >
-          <i class="fas fa-edit text-xs"></i>
-        </button>
-        <button
-          z-button
-          zType="ghost"
-          zSize="sm"
-          class="rounded-lg h-8 w-8 p-0 text-error hover:bg-error/10"
-          (click)="delete.emit(period()); $event.stopPropagation()"
-          title="Eliminar"
-        >
-          <i class="fas fa-trash text-xs"></i>
-        </button>
+
+      <div class="space-y-1 min-w-0">
+        <div class="flex items-center gap-3 flex-wrap">
+          <h3 class="font-black text-lg tracking-tight uppercase inter truncate">
+            {{ period().name }}
+          </h3>
+          @if (period().status) {
+          <span class="rounded-full px-3 py-1 text-[9px] font-black uppercase tracking-widest border"
+            [ngClass]="getStatusColor(period().status)">
+            {{ getStatusLabel(period().status) }}
+          </span>
+          }
+        </div>
+        @if (period().yearAcademic?.name) {
+        <p class="text-xs text-muted-foreground font-mono truncate">
+          Año: {{ period().yearAcademic?.name }}
+        </p>
+        }
+        <p class="text-sm text-muted-foreground font-medium">
+          {{ period().startDate | date:'shortDate' }} — {{ period().endDate | date:'shortDate' }}
+        </p>
       </div>
     </div>
-    <h2
-      class="mt-4 text-xl font-bold leading-tight tracking-tight text-base-content group-hover:text-primary transition-colors line-clamp-2"
-    >
-      {{ period().name }}
-    </h2>
-    <div class="flex flex-wrap items-center gap-2 mt-1">
-      @if (period().status) {
-        <span
-          class="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded border"
-          [ngClass]="getStatusColor(period().status)"
-        >
-          {{ getStatusLabel(period().status) }}
-        </span>
-      }
-      @if (period().yearAcademic?.name) {
-        <span
-          class="text-[10px] font-black uppercase tracking-widest text-primary/60 bg-primary/5 px-2 py-0.5 rounded border border-primary/10"
-        >
-          {{ period().yearAcademic?.name ?? '-' }}
-        </span>
-      }
+
+    <!-- Middle: Stats (XL only) -->
+    <div class="hidden xl:flex items-center gap-3 px-8 border-x border-border/10">
+      <div class="flex flex-col items-center gap-1">
+        <div class="size-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center shadow-sm">
+          <z-icon zType="calendar" class="h-4 w-4" />
+        </div>
+        <span class="text-[8px] font-black uppercase text-muted-foreground/40">Inicio</span>
+      </div>
+      <z-icon zType="chevron-right" class="h-4 w-4 text-muted-foreground/20" />
+      <div class="flex flex-col items-center gap-1">
+        <div class="size-8 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center shadow-sm">
+          <z-icon zType="calendar" class="h-4 w-4" />
+        </div>
+        <span class="text-[8px] font-black uppercase text-muted-foreground/40">Fin</span>
+      </div>
+      <z-icon zType="chevron-right" class="h-4 w-4 text-muted-foreground/20" />
+      <div class="flex flex-col items-center gap-1">
+        <div class="size-8 rounded-xl bg-green-500/10 text-green-500 flex items-center justify-center shadow-sm">
+          <z-icon zType="activity" class="h-4 w-4" />
+        </div>
+        <span class="text-[8px] font-black uppercase text-muted-foreground/40">Estado</span>
+      </div>
+    </div>
+
+    <!-- Right: Dates & Actions -->
+    <div class="flex items-center justify-between lg:justify-end gap-10 shrink-0" (click)="$event.stopPropagation()">
+      <div class="flex items-center gap-8">
+        <div class="text-center">
+          <p class="text-xs font-black inter uppercase">{{ period().startDate | date:'shortDate' }}</p>
+          <span class="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60">Inicio</span>
+        </div>
+        <div class="text-center">
+          <p class="text-xs font-black inter uppercase">{{ period().endDate | date:'shortDate' }}</p>
+          <span class="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60">Fin</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button z-button zType="ghost" zSize="icon-sm"
+          class="rounded-xl hover:bg-primary/10 hover:text-primary transition-all" title="Más acciones" zPopover
+          [zContent]="actionsMenu" [zPlacement]="'bottom'">
+          <z-icon zType="ellipsis" class="h-5 w-5" />
+        </button>
+
+        <ng-template #actionsMenu>
+          <z-popover class="min-w-[160px] p-1.5 flex flex-col gap-1">
+            <button z-button zType="ghost"
+              class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
+              (click)="updateStatus.emit(period())">
+              <z-icon zType="activity" class="h-4 w-4" />
+              Actualizar Estado
+            </button>
+            <button z-button zType="ghost"
+              class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
+              (click)="edit.emit(period())">
+              <z-icon zType="settings" class="h-4 w-4" />
+              Configurar
+            </button>
+            <div class="h-px bg-border/10 my-1 mx-2"></div>
+            <button z-button zType="ghost"
+              class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-destructive/10 hover:text-destructive transition-all"
+              (click)="delete.emit(period())">
+              <z-icon zType="trash" class="h-4 w-4" />
+              Eliminar
+            </button>
+          </z-popover>
+        </ng-template>
+      </div>
     </div>
   </div>
 
-  <div class="p-6 pt-5 grow">
-    <div class="space-y-4">
-      <div class="grid grid-cols-2 gap-4">
-        <div class="p-3 bg-base-200/30 rounded-xl border border-base-200">
-          <p class="text-[9px] font-black uppercase tracking-widest text-base-content/30 mb-1">
-            Inicio
-          </p>
-          <div class="flex items-center gap-2">
-            <i class="fas fa-calendar-alt text-primary/40 text-xs"></i>
-            <span class="text-xs font-bold">{{ period().startDate | date: 'shortDate' }}</span>
-          </div>
-        </div>
-        <div class="p-3 bg-base-200/30 rounded-xl border border-base-200">
-          <p class="text-[9px] font-black uppercase tracking-widest text-base-content/30 mb-1">
-            Fin
-          </p>
-          <div class="flex items-center gap-2">
-            <i class="fas fa-calendar-check text-primary/40 text-xs"></i>
-            <span class="text-xs font-bold">{{ period().endDate | date: 'shortDate' }}</span>
-          </div>
-        </div>
-      </div>
+  <!-- Footer -->
+  <div class="mt-6 pt-6 border-t border-border/10 flex items-center justify-between">
+    <div class="flex items-center gap-1 text-[10px] font-bold text-muted-foreground">
+      <z-icon zType="zap" class="h-3 w-3 text-primary" />
+      Período Académico:
+      <span class="text-foreground font-mono">{{ period().order ?? period().periodNumber }}</span>
     </div>
+    @if (period().yearAcademic?.name) {
+    <div class="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest flex items-center gap-1">
+      <z-icon zType="calendar" class="h-3 w-3" />
+      {{ period().yearAcademic?.name }}
+    </div>
+    }
   </div>
 </z-card>

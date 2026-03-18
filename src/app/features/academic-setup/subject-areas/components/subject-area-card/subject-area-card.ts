@@ -1,14 +1,25 @@
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardCardComponent } from '@/shared/components/card';
+import { ZardIconComponent } from '@/shared/components/icon';
+import {
+  ZardPopoverDirective,
+  ZardPopoverComponent,
+} from '@/shared/components/popover/popover.component';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import type { SubjectArea, SubjectAreaType, StatusType } from '../../types/subject-area-types';
 
-
 @Component({
   selector: 'sga-subject-area-card',
   standalone: true,
-  imports: [CommonModule, ZardCardComponent, ZardButtonComponent],
+  imports: [
+    CommonModule,
+    ZardCardComponent,
+    ZardButtonComponent,
+    ZardIconComponent,
+    ZardPopoverDirective,
+    ZardPopoverComponent,
+  ],
   templateUrl: './subject-area-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -29,10 +40,10 @@ export class SubjectAreaCardComponent {
   getTypeColor(type: SubjectAreaType | string): string {
     const colors: Record<string, string> = {
       core: 'bg-primary/10 text-primary border-primary/20',
-      elective: 'bg-info/10 text-info border-info/20',
-      optional: 'bg-base-content/10 text-base-content/60 border-base-content/20',
+      elective: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
+      optional: 'bg-muted text-muted-foreground border-border',
     };
-    return colors[type ?? ''] ?? 'bg-base-200 text-base-content/60';
+    return colors[type ?? ''] ?? 'bg-muted text-muted-foreground border-border';
   }
 
   getStatusLabel(status: StatusType | string): string {
@@ -47,11 +58,11 @@ export class SubjectAreaCardComponent {
 
   getStatusColor(status: StatusType | string): string {
     const colors: Record<string, string> = {
-      active: 'bg-success/10 text-success border-success/20',
-      inactive: 'bg-base-content/10 text-base-content/60 border-base-content/20',
-      pending: 'bg-warning/10 text-warning border-warning/20',
-      suspended: 'bg-error/10 text-error border-error/20',
+      active: 'bg-green-500/10 text-green-500 border-green-500/20',
+      inactive: 'bg-muted text-muted-foreground border-border',
+      pending: 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20',
+      suspended: 'bg-destructive/10 text-destructive border-destructive/20',
     };
-    return colors[status ?? ''] ?? 'bg-base-200 text-base-content/60';
+    return colors[status ?? ''] ?? 'bg-muted text-muted-foreground border-border';
   }
 }
