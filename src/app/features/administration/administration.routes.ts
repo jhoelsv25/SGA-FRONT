@@ -14,6 +14,12 @@ export default [
     data: { permissions: ['view_user', 'manage_user'] },
   },
   {
+    path: 'users/import',
+    loadComponent: () => import('./users/pages/user-import'),
+    title: 'Importar Usuarios',
+    data: { permissions: ['manage_user'] },
+  },
+  {
     path: 'roles',
     loadComponent: () => import('./roles/pages/roles/roles'),
     title: 'Roles',
@@ -46,6 +52,6 @@ export default [
   {
     path: '',
     redirectTo: 'institution',
-    pathMatch: 'full'
-  }
+    pathMatch: 'full',
+  },
 ] as Routes;

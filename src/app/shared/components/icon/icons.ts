@@ -94,6 +94,7 @@ import {
   User,
   UserPlus,
   Users,
+  Upload,
   X,
   Zap,
 } from 'lucide-angular';
@@ -200,7 +201,7 @@ export const ZARD_ICONS = {
   phone: Phone,
   'map-pin': MapPin,
   target: Target,
-  'bullseye': Target,
+  bullseye: Target,
   book: Book,
   'graduation-cap': GraduationCap,
   'layer-group': Layers,
@@ -209,6 +210,7 @@ export const ZARD_ICONS = {
   'shield-alt': Shield,
   'calendar-alt': Calendar,
   'chalkboard-teacher': Presentation,
+  upload: Upload,
 } as const satisfies Record<string, LucideIconData>;
 
 export declare type ZardIcon = keyof typeof ZARD_ICONS | LucideIconData;

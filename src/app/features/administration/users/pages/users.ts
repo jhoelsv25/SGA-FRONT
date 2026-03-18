@@ -1,5 +1,6 @@
 import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 import { DataSource } from '@shared/widgets/data-source/data-source';
 import { HeaderDetail } from '@shared/widgets/header-detail/header-detail';
@@ -11,7 +12,6 @@ import { USER_COLUMN } from '../config/column.config';
 import { USER_ACTIONS } from '../config/action.config';
 import { take } from 'rxjs';
 
-
 @Component({
   selector: 'sga-users',
   imports: [HeaderDetail, DataSource],
@@ -21,6 +21,7 @@ import { take } from 'rxjs';
 export default class UsersPage implements OnInit {
   private dialog = inject(DialogModalService);
   private store = inject(UserStore);
+  private router = inject(Router);
 
   headerConfig = computed(() => USER_HEADER_CONFIG);
   columns = computed(() => USER_COLUMN);
@@ -32,7 +33,9 @@ export default class UsersPage implements OnInit {
 
   onHeaderAction(e: { action: ActionConfig; context: ActionContext }) {
     if (e.action.key === 'create') this.openForm();
-    if (e.action.key === 'refresh') this.store.loadAll({ page: this.pagination().page, size: this.pagination().size });
+    if (e.action.key === 'import') this.router.navigate(['/administration/users/import']);
+    if (e.action.key === 'refresh')
+      this.store.loadAll({ page: this.pagination().page, size: this.pagination().size });
   }
 
   onRowAction(e: { action: ActionConfig; context: ActionContext<unknown> }) {

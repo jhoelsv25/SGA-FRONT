@@ -1,7 +1,27 @@
 import { ActionConfig } from '@core/types/action-types';
 
 export const USER_ACTIONS: ActionConfig[] = [
-  { key: 'create', label: 'Nuevo usuario', icon: 'fas fa-plus', typeAction: 'header', color: 'success' },
-  { key: 'refresh', label: 'Actualizar', icon: 'fas fa-sync-alt', typeAction: 'header', color: 'primary' },
+  {
+    key: 'create',
+    label: 'Nuevo usuario',
+    icon: 'fas fa-plus',
+    typeAction: 'header',
+    color: 'success',
+  },
+  {
+    key: 'import',
+    label: 'Importar',
+    icon: 'fas fa-file-import',
+    typeAction: 'header',
+    color: 'primary',
+  },
+  {
+    key: 'refresh',
+    label: 'Actualizar',
+    icon: 'fas fa-sync-alt',
+    typeAction: 'header',
+    color: 'primary',
+  },
   { key: 'edit', label: 'Editar', icon: 'fas fa-edit', typeAction: 'row', color: 'primary' },
-  { key: 'delete', label: 'Eliminar', icon: 'fas fa-trash', typeAction: 'row', color: 'danger' }];
+  { key: 'delete', label: 'Eliminar', icon: 'fas fa-trash', typeAction: 'row', color: 'danger' },
+];
