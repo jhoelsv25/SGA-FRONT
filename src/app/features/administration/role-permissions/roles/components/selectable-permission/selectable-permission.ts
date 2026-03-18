@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Permission } from '../../../services/api/permission-api';
+import { Permission } from '../../../../services/api/permission-api';
 import { ZardCheckboxComponent } from '@/shared/components/checkbox';
 
 

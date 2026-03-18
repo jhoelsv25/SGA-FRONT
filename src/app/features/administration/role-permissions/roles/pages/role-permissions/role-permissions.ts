@@ -4,8 +4,8 @@ import { ChangeDetectionStrategy, Component, inject, OnInit, signal, effect, com
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { RoleStore } from '../../../services/store/role.store';
-import { PermissionApi, Permission } from '../../../services/api/permission-api';
+import { RoleStore } from '../../../../services/store/role.store';
+import { PermissionApi, Permission } from '../../../../services/api/permission-api';
 import { PermissionGroupCardComponent } from '../../components/permission-group-card/permission-group-card';
 import { getModuleIcon } from '../../utils/icons.util';
 

@@ -24,6 +24,22 @@ export class UserApi {
     return this.http.post<UserResponse>(this.baseUrl, user);
   }
 
+  uploadImportFile(file: File): Observable<{ uploadId: string; headers: string[]; rowCount: number }> {
+    const form = new FormData();
+    form.append('file', file);
+    return this.http.post<{ uploadId: string; headers: string[]; rowCount: number }>(
+      `${this.baseUrl}/import/upload`,
+      form,
+    );
+  }
+
+  startImport(uploadId: string, columnMapping: Record<string, string>): Observable<{ jobId: string }> {
+    return this.http.post<{ jobId: string }>(`${this.baseUrl}/import/start`, {
+      uploadId,
+      columnMapping,
+    });
+  }
+
   update(id: string, user: Partial<User>): Observable<UserResponse> {
     return this.http.patch<UserResponse>(`${this.baseUrl}/${id}`, user);
   }

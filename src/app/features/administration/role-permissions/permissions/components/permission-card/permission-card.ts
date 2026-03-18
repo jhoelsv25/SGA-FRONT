@@ -3,7 +3,7 @@ import { ZardIconComponent } from '@/shared/components/icon';
 import { ZardAlertDialogService } from '@/shared/components/alert-dialog/alert-dialog.service';
 import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Permission } from '../../../services/api/permission-api';
+import { Permission } from '../../../../services/api/permission-api';
 
 @Component({
   selector: 'sga-permission-card',

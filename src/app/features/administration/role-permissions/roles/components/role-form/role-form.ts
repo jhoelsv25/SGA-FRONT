@@ -6,7 +6,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { CommonModule } from '@angular/common';
 import { ZardInputGroupComponent } from '@shared/components/input-group';
 import { ZardSwitchComponent } from '@shared/components/switch';
-import { Role } from '../../../services/api/role-api';
+import { Role } from '../../../../services/api/role-api';
 
 interface RoleFormData {
   current: Role | null;

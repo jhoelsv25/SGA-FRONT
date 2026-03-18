@@ -46,7 +46,7 @@ export class UserImportDropzone {
   }
 
   private handleFile(file: File) {
-    if (file.name.endsWith('.csv') || file.name.endsWith('.xlsx')) {
+    if (file.name.endsWith('.csv') || file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
       this.fileName.set(file.name);
       this.fileSelected.emit(file);
     } else {

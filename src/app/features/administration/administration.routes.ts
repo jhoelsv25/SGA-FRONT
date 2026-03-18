@@ -21,19 +21,19 @@ export default [
   },
   {
     path: 'roles',
-    loadComponent: () => import('./roles/pages/roles/roles'),
+    loadComponent: () => import('./role-permissions/roles/pages/roles/roles'),
     title: 'Roles',
     data: { permissions: ['view_role', 'manage_role'] },
   },
   {
     path: 'roles/:id',
-    loadComponent: () => import('./roles/pages/role-permissions/role-permissions'),
+    loadComponent: () => import('./role-permissions/roles/pages/role-permissions/role-permissions'),
     title: 'Permisos de Rol',
     data: { permissions: ['manage_role'] },
   },
   {
     path: 'permissions',
-    loadComponent: () => import('./permissions/pages/permissions/permissions'),
+    loadComponent: () => import('./role-permissions/permissions/pages/permissions/permissions'),
     title: 'Permisos',
     data: { permissions: ['view_permission', 'manage_permission'] },
   },

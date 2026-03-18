@@ -14,12 +14,6 @@ export default [
     data: { permissions: ['view_academic_year', 'manage_academic_year'] },
   },
   {
-    path: 'periods',
-    loadComponent: () => import('@features/academic-setup/periods/pages/periods/periods'),
-    title: 'Períodos Académicos',
-    data: { permissions: ['view_academic_period', 'manage_academic_period'] },
-  },
-  {
     path: 'grade-levels',
     loadComponent: () => import('@features/academic-setup/grade-levels/pages/grade-levels/grade-levels'),
     title: 'Niveles de grado',

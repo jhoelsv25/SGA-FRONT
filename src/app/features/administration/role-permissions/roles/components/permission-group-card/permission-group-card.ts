@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 import { CommonModule } from '@angular/common';
 import { ZardCheckboxComponent } from '@/shared/components/checkbox';
 import { SelectablePermissionComponent } from '../selectable-permission/selectable-permission';
-import { Permission } from '../../../services/api/permission-api';
+import { Permission } from '../../../../services/api/permission-api';
 
 interface PermissionGroup {
   module: string;

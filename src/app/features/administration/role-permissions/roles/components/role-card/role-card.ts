@@ -8,7 +8,7 @@ import {
 import { ZardAlertDialogService } from '@/shared/components/alert-dialog/alert-dialog.service';
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Role } from '../../../services/api/role-api';
+import { Role } from '../../../../services/api/role-api';
 
 @Component({
   selector: 'sga-role-card',

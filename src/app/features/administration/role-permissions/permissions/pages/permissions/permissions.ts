@@ -1,18 +1,16 @@
 import { ZardButtonComponent } from '@/shared/components/button';
-import { ZardIconComponent } from '@/shared/components/icon';
 import { ZardEmptyComponent } from '@/shared/components/empty';
 import {
   ChangeDetectionStrategy,
   Component,
   computed,
   inject,
+  input,
   OnInit,
-  signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { PermissionStore } from '../../../services/store/permission.store';
-import { Permission } from '../../../services/api/permission-api';
+import { PermissionStore } from '../../../../services/store/permission.store';
+import { Permission } from '../../../../services/api/permission-api';
 
 import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { PermissionCardComponent } from '../../components/permission-card/permission-card';
@@ -28,11 +26,9 @@ interface ModuleGroup {
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
     ZardButtonComponent,
     PermissionCardComponent,
     ZardEmptyComponent,
-    ZardIconComponent,
   ],
   templateUrl: './permissions.html',
   styles: [
@@ -58,7 +54,7 @@ export default class PermissionsComponent implements OnInit {
   private dialog = inject(DialogModalService);
   public store = inject(PermissionStore);
 
-  public searchTerm = signal('');
+  public searchTerm = input<string>('');
   public loading = computed(() => this.store.loading());
 
   public groupedPermissions = computed(() => {

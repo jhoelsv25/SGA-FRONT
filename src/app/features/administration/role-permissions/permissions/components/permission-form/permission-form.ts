@@ -7,7 +7,7 @@ import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Permission } from '../../../services/api/permission-api';
+import { Permission } from '../../../../services/api/permission-api';
 
 interface PermissionFormData {
   current: Permission | null;

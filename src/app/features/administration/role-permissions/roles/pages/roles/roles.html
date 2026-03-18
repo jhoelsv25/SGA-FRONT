@@ -1,0 +1,48 @@
+<div class="flex flex-col gap-10 animate-in fade-in duration-1000">
+
+  <!-- 1. UNIFIED REACTIVE HEADER & SEARCH -->
+  <sga-role-permission-header
+    [title]="headerInfo().title"
+    [description]="headerInfo().description"
+    [buttonText]="headerInfo().buttonText"
+    [icon]="headerInfo().icon"
+    [placeholder]="headerInfo().placeholder"
+    [searchTerm]="searchTerm()"
+    [activeTab]="activeTab()"
+    (tabChange)="activeTab.set($event)"
+    (create)="handleCreate()"
+    (search)="searchTerm.set($event)">
+  </sga-role-permission-header>
+
+  <!-- 4. CONTENT AREA -->
+  @if (activeTab() === 'roles') {
+    <div class="space-y-4 animate-in fade-in slide-in-from-bottom-6 duration-500">
+      @if (loading() && !roles().length) {
+        @for (i of [1,2,3,4]; track i) {
+          <div class="h-[240px] w-full rounded-[2.5rem] bg-base-200/50 animate-pulse border border-base-200"></div>
+        }
+      } @else {
+        @for (role of roles(); track role.id) {
+          <sga-role-card 
+            [role]="role" 
+            (roleSelected)="selectRole($event)" 
+            (editClicked)="openRoleForm($event)"
+            (deleteClicked)="deleteRole($event)">
+          </sga-role-card>
+        } @empty {
+          <z-empty 
+            zIcon="shield-alt" 
+            zTitle="SIN ENTIDADES"
+            zDescription="No hay roles definidos para el control de acceso."
+            class="bg-base-100/50 border-2 border-dashed border-base-200 rounded-[3rem] p-20"
+          >
+          </z-empty>
+        }
+      }
+    </div>
+  } @else {
+    <div class="animate-in fade-in slide-in-from-right-8 duration-500">
+      <sga-permissions [searchTerm]="searchTerm()"></sga-permissions>
+    </div>
+  }
+</div>

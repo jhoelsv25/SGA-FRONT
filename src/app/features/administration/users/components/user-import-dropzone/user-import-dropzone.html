@@ -5,7 +5,7 @@
     [class.border-primary]="isDragging()" [class.bg-primary/5]="isDragging()">
     <div
         class="w-full h-full min-h-[400px] p-12 flex flex-col items-center justify-center text-center gap-8 relative z-10">
-        <input type="file" #fileInput (change)="onFileSelected($event)" hidden accept=".csv, .xlsx" />
+        <input type="file" #fileInput (change)="onFileSelected($event)" hidden accept=".csv, .xlsx, .xls" />
 
         @if (!fileName()) {
         <div
