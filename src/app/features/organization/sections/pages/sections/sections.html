@@ -1,48 +1,33 @@
 <div class="p-6 space-y-6">
-  <z-list-toolbar
-    zTitle="Secciones"
-    icon="fas fa-layer-group"
-    zDescription="Gestionar secciones por grado y año académico"
-    [searchPlaceholder]="'Buscar secciones por nombre...'"
-    [filterCount]="0"
-    [showFilter]="false"
-    (searchChange)="onSearch($event)"
-    (refresh)="onRefresh()"
-  >
+  <z-list-toolbar zTitle="Secciones" icon="fas fa-layer-group"
+    zDescription="Gestionar secciones por grado y año académico" [searchPlaceholder]="'Buscar secciones por nombre...'"
+    [filterCount]="0" [showFilter]="false" (searchChange)="onSearch($event)" (refresh)="onRefresh()">
     <div list-toolbar-actions class="flex items-center gap-2">
       <z-dropdown [items]="actionDropdownItems()">
-        <button
-          dropdown-trigger
+        <button dropdown-trigger
           class="flex items-center justify-center w-10 h-10 rounded-2xl border border-base-200 bg-base-100 hover:bg-base-200 transition-colors text-base-content/60 hover:text-primary"
-          aria-label="Más acciones"
-          type="button"
-        >
+          aria-label="Más acciones" type="button">
           <i class="fas fa-ellipsis-h"></i>
         </button>
       </z-dropdown>
     </div>
   </z-list-toolbar>
 
-  <div
-    class="grid grid-cols-1 mt-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500"
-  >
+  <div class="grid grid-cols-1 mt-6  gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
     @if (loading() && !data().length) {
-      @for (i of skeletonItems; track i) {
-        <z-skeleton [class]="'h-[220px] w-full rounded-4xl border border-base-200'"></z-skeleton>
-      }
+    @for (i of skeletonItems; track i) {
+    <z-skeleton [class]="'h-[220px] w-full rounded-4xl border border-base-200'"></z-skeleton>
+    }
     } @else {
-      @for (section of filteredData(); track section.id) {
-        <sga-section-card
-          [section]="section"
-          (edit)="editSection(section)"
-          (delete)="deleteSection(section)"
-         />
-      } @empty {
-        <div class="col-span-full">
-          <z-empty zIcon="layer-group" zTitle="Sin secciones" zDescription="Aún no hay secciones. Crea la primera y asígnala a un grado y año académico.">
-    </z-empty>
-        </div>
-      }
+    @for (section of filteredData(); track section.id) {
+    <sga-section-card [section]="section" (edit)="editSection(section)" (delete)="deleteSection(section)" />
+    } @empty {
+    <div class="col-span-full">
+      <z-empty zIcon="layer-group" zTitle="Sin secciones"
+        zDescription="Aún no hay secciones. Crea la primera y asígnala a un grado y año académico.">
+      </z-empty>
+    </div>
+    }
     }
   </div>
 </div>
