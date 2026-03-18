@@ -11,76 +11,78 @@ import type { SectionCourse } from '@features/organization/section-courses/types
   standalone: true,
   imports: [CommonModule, RouterModule, ZardCardComponent],
   template: `
-    <div class="p-6 md:p-8 max-w-[1920px] mx-auto w-full">
-      <div class="mb-8">
-        <h1 class="text-3xl font-bold tracking-tight mb-2">Mis Aulas Virtuales</h1>
-        <p class="text-base-content/60">Selecciona el curso o sección para ingresar al entorno virtual.</p>
+    <div class="px-6 py-12 md:px-12 max-w-[1920px] mx-auto w-full space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div class="space-y-3">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-sm">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <h1 class="text-4xl font-black tracking-tighter text-base-content">Mis Aulas Virtuales</h1>
+            </div>
+            <p class="text-base-content/40 font-bold uppercase tracking-[0.2em] text-[10px]">Portal de aprendizaje académico en línea</p>
+        </div>
+        
+        <div class="flex items-center gap-2 px-4 py-2 rounded-2xl bg-base-100 border border-base-200 text-xs font-black uppercase tracking-widest text-base-content/40">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            Total: {{ courses().length }} Aulas
+        </div>
       </div>
 
       @if (loading()) {
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          @for (item of [1,2,3,4,5,6]; track item) {
-            <z-card class="animate-pulse">
-              <div class="flex flex-col space-y-1.5 p-6">
-                <div class="h-6 bg-base-200 rounded w-2/3 mb-2"></div>
-                <div class="h-4 bg-base-200 rounded w-1/3"></div>
-              </div>
-              <div class="p-6 pt-0">
-                <div class="h-20 bg-base-200 rounded mb-4"></div>
-              </div>
-              <div class="flex items-center p-6 pt-0">
-                <div class="h-10 bg-base-200 rounded w-full"></div>
-              </div>
-            </z-card>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          @for (item of [1,2,3,4,5,6,7,8]; track item) {
+            <div class="h-[300px] bg-base-100/50 rounded-[2.5rem] animate-pulse"></div>
           }
         </div>
       } @else if (courses().length === 0) {
-        <div class="flex flex-col items-center justify-center p-12 text-center border border-dashed border-base-300 rounded-xl bg-base-100/50">
-          <div class="w-16 h-16 bg-base-200 rounded-full flex items-center justify-center mb-4">
-            <i class="fa-solid fa-chalkboard-user text-2xl text-base-content/40"></i>
+        <div class="flex flex-col items-center justify-center py-32 text-center card-premium bg-base-100/30 border-dashed border-base-300">
+          <div class="w-24 h-24 bg-base-200/50 rounded-[2.5rem] flex items-center justify-center mb-8 text-base-content/10">
+            <i class="fa-solid fa-school-circle-exclamation text-4xl"></i>
           </div>
-          <h3 class="text-xl font-semibold mb-2">No hay aulas disponibles</h3>
-          <p class="text-base-content/60 max-w-sm">No te encuentras asignado ni matriculado a ninguna sección o curso en este momento.</p>
+          <h3 class="text-2xl font-black text-base-content/60 tracking-tight">No hay aulas asignadas</h3>
+          <p class="text-sm text-base-content/40 font-medium max-w-sm mt-2">Parece que aún no tienes cursos vinculados a tu cuenta para el periodo actual.</p>
         </div>
       } @else {
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           @for (course of courses(); track course.id) {
-            <z-card class="group hover:border-primary/50 transition-colors flex flex-col h-full bg-base-100/50 backdrop-blur-sm relative overflow-hidden">
-              <div class="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              
-              <div class="flex flex-col space-y-1.5 p-6 relative z-10 pb-4">
-                <h2 class="text-2xl font-semibold leading-none tracking-tight line-clamp-2 leading-tight text-xl mb-1">
-                  {{ course.course?.name || 'Curso (' + course.id.slice(0,6) + ')' }}
-                </h2>
-                <div class="text-sm text-base-content/60 flex items-center gap-2 font-medium">
-                  <span class="px-2 py-0.5 bg-primary/10 text-primary uppercase tracking-wider text-[10px] rounded-sm font-bold">
-                    {{ course.section?.name || 'Sección' }}
-                  </span>
-                  @if ($any(course).academicYear?.year) {
-                    <span class="text-xs">{{ $any(course).academicYear?.year }}</span>
-                  }
+            <div class="group card-premium bg-white dark:bg-zinc-900 border-base-200/50 dark:border-zinc-800 transition-all duration-500 flex flex-col h-full hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden">
+              <!-- Visual Header -->
+              <div class="h-32 bg-gradient-to-br from-primary/10 via-indigo-500/5 to-transparent relative group-hover:from-primary/20 transition-colors">
+                <div class="absolute top-4 right-4 px-3 py-1.5 rounded-xl bg-white/50 dark:bg-zinc-800/50 backdrop-blur-md border border-white/20 dark:border-zinc-700/50 text-[10px] font-black uppercase tracking-widest text-primary">
+                    {{ course.section?.name || 'Clase' }}
+                </div>
+                <div class="absolute -bottom-6 left-8 w-14 h-14 rounded-2xl bg-gradient-to-tr from-primary to-indigo-600 flex items-center justify-center text-white shadow-xl shadow-primary/20 text-xl font-black transform group-hover:rotate-12 transition-transform">
+                    {{ course.course?.name?.[0] || 'C' }}
                 </div>
               </div>
 
-              <div class="p-6 pt-0 relative z-10 flex-1">
-                <div class="flex flex-col gap-3 text-sm text-base-content/70">
-                  <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-users w-4 text-center text-base-content/40"></i>
-                    <span>{{ $any(course).enrolledStudents || 0 }} / {{ $any(course).maxStudents || 30 }} Estudiantes</span>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-chalkboard w-4 text-center text-base-content/40"></i>
-                    <span class="capitalize">{{ $any(course).modality || 'Presencial' }}</span>
-                  </div>
+              <div class="px-8 pt-10 pb-8 flex-1 flex flex-col">
+                <div class="flex-1 space-y-4">
+                    <h2 class="text-xl font-black text-base-content leading-tight tracking-tight line-clamp-2">
+                        {{ course.course?.name || 'Sin nombre de curso' }}
+                    </h2>
+                    
+                    <div class="flex flex-wrap gap-4 pt-2">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-users text-xs text-base-content/20"></i>
+                            <span class="text-[11px] font-black uppercase tracking-widest text-base-content/40">{{ $any(course).enrolledStudents || 0 }} Inscritos</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-calendar-day text-xs text-base-content/20"></i>
+                            <span class="text-[11px] font-black uppercase tracking-widest text-base-content/40">{{ $any(course).academicYear?.year || '2024' }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-10 pt-6 border-t border-base-100 flex items-center justify-between group-hover:border-primary/10 transition-colors">
+                    <a [routerLink]="['/virtual-classroom', course.id]" 
+                       class="w-full h-12 inline-flex items-center justify-center font-black text-[11px] uppercase tracking-[0.2em] transition-all duration-300 bg-zinc-900 dark:bg-white text-white dark:text-zinc-950 rounded-2xl hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white shadow-lg hover:shadow-primary/20 group/btn">
+                        Ingresar Ahora <i class="fa-solid fa-arrow-right ml-3 text-[10px] transform group-hover/btn:translate-x-1 transition-transform"></i>
+                    </a>
                 </div>
               </div>
-
-              <div class="flex items-center p-6 pt-4 relative z-10 border-t border-base-200/50">
-                <a [routerLink]="['/virtual-classroom', course.id]" class="w-full text-center inline-flex items-center justify-center font-medium transition-all duration-200 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 px-4 py-2 text-sm gap-2 rounded-lg bg-primary-500 text-white hover:bg-primary-600 shadow-sm hover:shadow-md">
-                  Ingresar al Aula <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
-                </a>
-              </div>
-            </z-card>
+            </div>
           }
         </div>
       }

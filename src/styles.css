@@ -170,4 +170,12 @@
   .card-premium {
     @apply bg-card border border-border/50 shadow-sm hover:shadow-xl hover:border-primary/20 transition-all duration-500 rounded-[2rem];
   }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }

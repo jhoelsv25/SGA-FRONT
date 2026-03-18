@@ -1,82 +1,60 @@
 <form class="w-full max-w-full space-y-4" [formGroup]="loginForm" (ngSubmit)="singIn()">
   <div class="space-y-2">
     <label for="username" class="text-xs font-semibold text-foreground">Usuario</label>
-    <input z-input w-full
-      id="username"
-      type="text"
-      autocomplete="username"
-      placeholder="Codigo o usuario"
-      formControlName="username"
-     />
+    <input z-input w-full id="username" type="text" autocomplete="username" placeholder="Codigo o usuario"
+      formControlName="username" />
     @if (loginForm.get('username')?.invalid && loginForm.get('username')?.touched) {
-      <p class="text-[11px] text-destructive">Ingresa un usuario valido.</p>
+    <p class="text-[11px] text-destructive">Ingresa un usuario valido.</p>
     }
   </div>
 
   <div class="space-y-2">
     <div class="flex items-center justify-between gap-3">
       <label for="password" class="text-xs font-semibold text-foreground">Contrasena</label>
-      <a
-        routerLink="/auth/forgot-password"
-        class="text-[11px] font-semibold text-primary hover:underline"
-      >
+      <a routerLink="/auth/forgot-password" class="text-[11px] font-semibold text-primary hover:underline">
         Olvide mi contrasena
       </a>
     </div>
 
     <div class="relative">
-      <input z-input w-full
-        id="password"
-        [type]="showPassword() ? 'text' : 'password'"
-        autocomplete="current-password"
-        placeholder="Contrasena"
-        formControlName="password"
-       />
-      <button
-        type="button"
+      <input z-input w-full id="password" [type]="showPassword() ? 'text' : 'password'" autocomplete="current-password"
+        placeholder="Contrasena" formControlName="password" />
+      <button type="button"
         class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground transition hover:text-foreground"
-        (click)="togglePassword()"
-      >
-        <z-icon [zType]="showPassword() ? 'eye' : 'eye'" class="h-4 w-4"  />
+        (click)="togglePassword()">
+        <z-icon [zType]="showPassword() ? 'eye' : 'eye'" class="h-4 w-4" />
       </button>
     </div>
 
     @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
-      <p class="text-[11px] text-destructive">Ingresa una contrasena valida.</p>
+    <p class="text-[11px] text-destructive">Ingresa una contrasena valida.</p>
     }
   </div>
 
-  <div class="flex items-center justify-between gap-4">
-    <input z-checkbox type="checkbox"
-      class="text-xs text-muted-foreground"
-      [checked]="rememberUser"
-      (change)="onRememberUserChange($any($event.target).checked)"
-    >
+  <div class="flex items-center justify-between gap-4 py-2">
+    <z-checkbox class="text-[9px]  text-muted-foreground/70" [zChecked]="rememberUser"
+      (checkChange)="onRememberUserChange($event)">
       Recordar usuario
-    
+    </z-checkbox>
 
-    <span class="text-[11px] text-muted-foreground">Acceso seguro</span>
+    <div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/5 border border-emerald-500/10">
+      <div class="w-1 h-1 rounded-full bg-emerald-500 animate-pulse"></div>
+      <span class="text-[10px] font-black uppercase tracking-widest text-emerald-600/60 leading-none">Acceso
+        seguro</span>
+    </div>
   </div>
 
   @if (loginError()) {
-    <div
-      class="rounded-xl border border-destructive/20 bg-destructive/10 px-4 py-3 text-xs text-destructive"
-    >
-      {{ loginError() }}
-    </div>
+  <div class="rounded-xl border border-destructive/20 bg-destructive/10 px-4 py-3 text-xs text-destructive">
+    {{ loginError() }}
+  </div>
   }
 
-  <button
-    type="submit"
-    z-button
-    zColor="primary"
-    class="w-full text-sm bg-primary text-primary-foreground hover:bg-primary/90"
-    [disabled]="isLoading()"
-  >
+  <button type="submit" z-button zColor="primary" zSize="lg" class="w-full" [disabled]="isLoading()">
     @if (isLoading()) {
-      Ingresando...
+    Ingresando...
     } @else {
-      Iniciar sesion
+    Iniciar sesion
     }
   </button>
 </form>

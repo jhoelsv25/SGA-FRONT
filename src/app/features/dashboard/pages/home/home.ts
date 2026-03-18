@@ -3,12 +3,9 @@ import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@a
 import { RouterLink } from '@angular/router';
 import { AuthFacade } from '@auth/services/store/auth.acede';
 import { DashboardStore } from '@features/dashboard/application/dashboard.store';
-import { NgxChartsModule } from '@swimlane/ngx-charts';
-
-
 @Component({
   selector: 'sga-home',
-  imports: [ZardCardComponent, RouterLink, NgxChartsModule],
+  imports: [ZardCardComponent, RouterLink],
   templateUrl: './home.html',
   styleUrl: './home.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,16 +17,6 @@ export default class Home implements OnInit {
   currentUser = computed(() => this.authFacade.getCurrentUser());
   dashboard = computed(() => this.dashboardStore.data());
   dashboardLoading = computed(() => this.dashboardStore.loading());
-  chartData = computed(() => {
-    const summary = this.dashboard()?.summary ?? [];
-    return summary
-      .map((item) => ({
-        name: item.label,
-        value: typeof item.value === 'number' ? item.value : Number(item.value),
-      }))
-      .filter((item) => Number.isFinite(item.value));
-  });
-
 
   greeting = computed(() => {
     const hour = new Date().getHours();

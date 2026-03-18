@@ -51,8 +51,7 @@ export default class Timeline {
     if (!sectionId) return;
 
     if (this.postContent() || this.attachments().length > 0) {
-      const urls = this.attachments().map((a) => a.url);
-      this.store.publishPost(this.postContent(), urls.length ? urls : undefined)?.subscribe({
+      this.store.publishPost(this.postContent(), this.attachments().length ? this.attachments() : undefined)?.subscribe({
         next: () => {
           this.postContent.set('');
           this.attachments.set([]);

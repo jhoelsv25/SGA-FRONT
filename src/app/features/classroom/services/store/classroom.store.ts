@@ -56,12 +56,12 @@ export const ClassroomStore = signalStore(
         }),
       ),
     ),
-    publishPost: (content: string, attachmentUrls?: string[]) => {
+    publishPost: (content: string, attachments?: { url: string; name: string }[]) => {
       const id = store.selectedSectionId();
       if (!id) return;
       return socket.publishPost(id, {
         content,
-        attachmentUrl: attachmentUrls?.[0],
+        attachments: attachments?.length ? attachments : undefined,
       }).pipe(
         tap({
           next: () => toast.success('Publicado correctamente'),

@@ -1,219 +1,267 @@
-<div class="space-y-6">
-  <section class="rounded-[2rem] border border-border bg-card p-6 shadow-sm">
-    <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-      <div>
-        <h2 class="text-2xl font-semibold tracking-tight text-foreground">{{ pageTitle() }}</h2>
-        <p class="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">{{ pageDescription() }}</p>
+<div class="space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+  <section
+    class="card-premium p-10 bg-gradient-to-br from-indigo-900 to-primary text-white border-none relative overflow-hidden">
+    <div class="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full -mr-40 -mt-40 blur-3xl"></div>
+    <div class="relative flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8">
+      <div class="space-y-2">
+        <h2 class="text-3xl sm:text-4xl font-black tracking-tighter">{{ pageTitle() }}</h2>
+        <p class="text-white/60 font-bold uppercase tracking-[0.2em] text-[10px]">{{ pageDescription() }}</p>
       </div>
 
-      <div class="grid gap-3 sm:grid-cols-3">
-        <div class="rounded-xl border border-border bg-background/80 px-4 py-4">
-          <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Evaluaciones</p>
-          <p class="mt-2 text-2xl font-semibold text-foreground">{{ summary().assessments }}</p>
+      <div class="grid grid-cols-3 gap-4">
+        <div class="px-6 py-3 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/10 text-center">
+          <p class="text-[10px] font-black uppercase tracking-widest text-white/50">Evaluaciones</p>
+          <p class="text-2xl font-black">{{ summary().assessments }}</p>
         </div>
-        <div class="rounded-xl border border-border bg-background/80 px-4 py-4">
-          <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Registros</p>
-          <p class="mt-2 text-2xl font-semibold text-foreground">{{ summary().scores }}</p>
+        <div class="px-6 py-3 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/10 text-center">
+          <p class="text-[10px] font-black uppercase tracking-widest text-white/50">Registros</p>
+          <p class="text-2xl font-black">{{ summary().scores }}</p>
         </div>
-        <div class="rounded-xl border border-border bg-background/80 px-4 py-4">
-          <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Promedio</p>
-          <p class="mt-2 text-2xl font-semibold text-foreground">{{ summary().average | number:'1.1-2' }}</p>
+        <div class="px-6 py-3 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/10 text-center">
+          <p class="text-[10px] font-black uppercase tracking-widest text-white/50">Promedio</p>
+          <p class="text-2xl font-black">{{ summary().average | number:'1.1-1' }}</p>
         </div>
       </div>
     </div>
   </section>
 
   @if (loading()) {
-    <div class="rounded-[2rem] border border-border bg-card p-8 text-sm text-muted-foreground">
-      Cargando calificaciones...
-    </div>
+  <div class="py-24 flex flex-col items-center justify-center text-center">
+    <div class="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin mb-4"></div>
+    <p class="text-sm font-black text-base-content/40 uppercase tracking-widest">Sincronizando calificaciones...</p>
+  </div>
   } @else if (records().length === 0) {
-    <div class="rounded-[2rem] border border-border bg-card p-8 text-center">
-      <p class="text-lg font-semibold text-foreground">Aun no hay evaluaciones registradas</p>
-      <p class="mt-2 text-sm text-muted-foreground">
-        Cuando se registren notas del curso, apareceran aqui.
-      </p>
+  <div class="py-24 card-premium bg-base-100/50 border-dashed flex flex-col items-center justify-center text-center">
+    <div class="w-20 h-20 bg-base-200/50 rounded-3xl flex items-center justify-center text-base-content/10 mb-6">
+      <i class="fa-solid fa-graduation-cap text-3xl"></i>
     </div>
+    <h3 class="text-xl font-black text-base-content/60">No hay evaluaciones registradas</h3>
+    <p class="mt-2 text-sm text-base-content/40 font-medium max-w-xs">Las notas aparecerán aquí tan pronto como el
+      docente publique los resultados.</p>
+  </div>
   } @else {
-    <div class="grid gap-6 xl:grid-cols-[320px_minmax(0,1fr)]">
-      <section class="rounded-[2rem] border border-border bg-card p-4 shadow-sm">
-        <div class="border-border/70 border-b px-2 pb-4">
-          <p class="text-sm font-semibold text-foreground">Evaluaciones</p>
-          <p class="mt-1 text-xs text-muted-foreground">Selecciona una para ver detalle.</p>
-        </div>
+  <div class="grid gap-8 lg:grid-cols-[380px_minmax(0,1fr)]">
+    <!-- Left Sidebar: Assessments List -->
+    <aside class="space-y-6">
+      <div class="flex items-center gap-3 px-2">
+        <i class="fa-solid fa-list-check text-primary"></i>
+        <h3 class="text-lg font-black text-base-content tracking-tight">Actividades evaluadas</h3>
+      </div>
 
-        <div class="mt-4 space-y-2">
-          @for (record of records(); track record.id) {
-            <button
-              type="button"
-              class="w-full rounded-xl border px-4 py-4 text-left transition"
-              [class.border-primary]="selectedRecord().id === record.id"
-              [class.bg-primary/5]="selectedRecord().id === record.id"
-              [class.border-border]="selectedRecord().id !== record.id"
-              [class.bg-background]="selectedRecord().id !== record.id"
-              (click)="selectRecord(record.id)"
-            >
-              <div class="flex items-start justify-between gap-3">
-                <div class="min-w-0">
-                  <p class="truncate text-sm font-semibold text-foreground">{{ record.name }}</p>
-                  <p class="mt-1 text-xs text-muted-foreground">{{ record.date | date:'mediumDate' }}</p>
-                </div>
-                <span class="rounded-full bg-muted px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-                  {{ record.studentsCount }}
-                </span>
-              </div>
-              <div class="mt-3 flex items-center justify-between text-xs">
-                <span class="text-muted-foreground">Promedio</span>
-                <span class="font-semibold text-foreground">{{ record.average | number:'1.1-2' }} / {{ record.total }}</span>
-              </div>
-            </button>
+      <div class="space-y-4">
+        @for (record of records(); track record.id) {
+        <div (click)="selectRecord(record.id)"
+          class="group card-premium p-6 cursor-pointer border-transparent transition-all duration-300 relative overflow-hidden"
+          [ngClass]="selectedRecord().id === record.id ? 'bg-primary text-white shadow-xl shadow-primary/20 scale-[1.02]' : 'bg-white dark:bg-zinc-900 hover:border-primary/20 hover:shadow-lg'">
+          @if (selectedRecord().id === record.id) {
+          <div class="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12 blur-2xl"></div>
           }
-        </div>
-      </section>
 
-      <section class="rounded-[2rem] border border-border bg-card shadow-sm">
-        @if (selectedRecord(); as record) {
-          <div class="border-border/70 border-b p-6">
-            <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-              <div>
-                <h3 class="text-2xl font-semibold tracking-tight text-foreground">{{ record.name }}</h3>
-                <p class="mt-2 text-sm text-muted-foreground">
-                  {{ record.date | date:'mediumDate' }} · {{ record.studentsCount }} registro(s) · maximo {{ record.total }} puntos
+          <div class="relative flex flex-col gap-4">
+            <div class="flex items-start justify-between">
+              <div class="min-w-0">
+                <h4 class="font-black text-base truncate pr-2" [class.text-white]="selectedRecord().id === record.id">{{
+                  record.name }}</h4>
+                <p class="text-[10px] font-bold uppercase tracking-widest mt-1"
+                  [ngClass]="selectedRecord().id === record.id ? 'text-white/60' : 'text-base-content/40'">
+                  {{ record.date | date:'mediumDate' }}
                 </p>
               </div>
+              <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-xs font-black"
+                [ngClass]="selectedRecord().id === record.id ? 'bg-white/20 text-white' : 'bg-base-200 text-base-content/40'">
+                {{ record.studentsCount }}
+              </div>
+            </div>
 
-              <div class="rounded-xl border border-border bg-background/80 px-4 py-3">
-                <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Promedio actual</p>
-                <p class="mt-2 text-2xl font-semibold text-foreground">{{ record.average | number:'1.1-2' }}</p>
+            <div class="flex items-end justify-between">
+              <div class="space-y-0.5">
+                <p class="text-[9px] font-black uppercase tracking-widest opacity-50">Promedio</p>
+                <p class="text-xl font-black">{{ record.average | number:'1.1-1' }}<span
+                    class="text-xs opacity-50 ml-1">/ {{ record.total }}</span></p>
+              </div>
+              <i class="fa-solid fa-chevron-right text-xs transition-transform group-hover:translate-x-1"
+                [class.text-white]="selectedRecord().id === record.id"></i>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+    </aside>
+
+    <!-- Right Content: Details -->
+    <main>
+      @if (selectedRecord(); as record) {
+      <div class="space-y-8 animate-in fade-in slide-in-from-right-8 duration-700">
+        <div class="card-premium p-10 bg-white dark:bg-zinc-900 border-base-200/50 dark:border-zinc-800">
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+            <div class="space-y-3">
+              <div class="flex items-center gap-3">
+                <span
+                  class="px-3 py-1 bg-primary/5 text-primary text-[10px] font-black uppercase tracking-widest rounded-lg border border-primary/10">Detalle
+                  de Evaluación</span>
+                <span class="text-[10px] font-bold text-base-content/30 uppercase tracking-widest">{{ record.date |
+                  date:'fullDate' }}</span>
+              </div>
+              <h3 class="text-3xl font-black text-base-content tracking-tighter">{{ record.name }}</h3>
+              <p class="text-sm text-base-content/50 font-medium">{{ record.studentsCount }} estudiantes registrados con
+                puntajes de hasta {{ record.total }} puntos.</p>
+            </div>
+
+            <div class="flex items-center gap-4">
+              <div class="p-6 rounded-3xl bg-emerald-500/5 border border-emerald-500/10 text-center min-w-[140px]">
+                <p class="text-[10px] font-black uppercase tracking-widest text-emerald-600/50">Promedio Gral</p>
+                <p class="text-4xl font-black text-emerald-600 mt-2">{{ record.average | number:'1.1-1' }}</p>
               </div>
             </div>
           </div>
 
-          <div class="p-6">
-            @if (record.scores.length === 0) {
-              <div class="rounded-xl border border-border bg-background/80 p-6 text-sm text-muted-foreground">
-                Esta evaluacion existe, pero aun no tiene puntajes registrados.
-              </div>
-            } @else {
-              <div
-                class="grid gap-6"
-                [class.xl:grid-cols-[minmax(0,1fr)_360px]]="canViewStudentDetail()"
-              >
-                <div class="space-y-6">
-                  @if (canViewStudentDetail()) {
-                    <section class="rounded-2xl border border-border bg-background/70 p-4">
-                      <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-                        <div>
-                          <p class="text-sm font-semibold text-foreground">Seguimiento por alumno</p>
-                          <p class="mt-1 text-xs text-muted-foreground">
-                            Selecciona un alumno para revisar su historial entre evaluaciones.
-                          </p>
-                        </div>
-                        <div class="rounded-xl border border-border bg-card px-4 py-3">
-                          <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Alumnos visibles</p>
-                          <p class="mt-2 text-lg font-semibold text-foreground">{{ studentOptions().length }}</p>
-                        </div>
-                      </div>
+          <!-- Student Detail Tracker (if applicable) -->
+          @if (canViewStudentDetail()) {
+          <div class="mt-12 space-y-6">
+            <div class="flex items-center gap-3">
+              <i class="fa-solid fa-user-gear text-primary text-sm"></i>
+              <h4 class="text-sm font-black uppercase tracking-widest text-base-content">Seguimiento por estudiante</h4>
+            </div>
 
-                      <div class="mt-4 flex gap-2 overflow-x-auto pb-2">
-                        @for (student of studentOptions(); track student.studentId) {
-                          <button
-                            type="button"
-                            class="min-w-[180px] rounded-2xl border px-4 py-3 text-left transition"
-                            [class.border-primary]="selectedStudent().studentId === student.studentId"
-                            [class.bg-primary/5]="selectedStudent().studentId === student.studentId"
-                            [class.border-border]="selectedStudent().studentId !== student.studentId"
-                            [class.bg-card]="selectedStudent().studentId !== student.studentId"
-                            (click)="selectStudent(student.studentId)"
-                          >
-                            <p class="truncate text-sm font-semibold text-foreground">{{ student.studentName }}</p>
-                            <p class="mt-1 text-xs text-muted-foreground">
-                              {{ student.assessments }} evaluacion(es) con registro
-                            </p>
-                          </button>
-                        }
-                      </div>
-                    </section>
-                  }
+            <div class="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+              @for (student of studentOptions(); track student.studentId) {
+              <button (click)="selectStudent(student.studentId)"
+                class="min-w-[220px] p-5 rounded-[1.5rem] border text-left transition-all duration-300"
+                [ngClass]="selectedStudent().studentId === student.studentId ? 'bg-zinc-900 text-white border-transparent shadow-xl' : 'bg-base-100 dark:bg-zinc-800 border-base-200/50 dark:border-zinc-700 hover:border-primary/30'">
+                <p class="font-black text-sm truncate"
+                  [class.text-white]="selectedStudent().studentId === student.studentId">{{ student.studentName }}</p>
+                <p class="text-[10px] font-bold uppercase tracking-widest mt-1"
+                  [ngClass]="selectedStudent().studentId === student.studentId ? 'text-white/40' : 'text-base-content/40'">
+                  {{ student.assessments }} eval. registradas
+                </p>
+              </button>
+              }
+            </div>
+          </div>
+          }
 
-                  <div class="grid gap-3 md:grid-cols-2">
-                    @for (score of record.scores; track score.id) {
-                      <article class="rounded-xl border border-border bg-background/80 p-4">
-                        <div class="flex items-start justify-between gap-3">
-                          <div class="min-w-0">
-                            <p class="truncate text-sm font-semibold text-foreground">{{ score.studentName }}</p>
-                            <p class="mt-1 text-xs text-muted-foreground">{{ score.observation || 'Sin observacion' }}</p>
-                          </div>
-
-                          <span
-                            class="inline-flex min-w-14 items-center justify-center rounded-xl px-3 py-2 text-sm font-bold"
-                            [class.bg-emerald-500/10]="statusTone(score.score, record.total) === 'success'"
-                            [class.text-emerald-600]="statusTone(score.score, record.total) === 'success'"
-                            [class.bg-sky-500/10]="statusTone(score.score, record.total) === 'info'"
-                            [class.text-sky-600]="statusTone(score.score, record.total) === 'info'"
-                            [class.bg-destructive/10]="statusTone(score.score, record.total) === 'danger'"
-                            [class.text-destructive]="statusTone(score.score, record.total) === 'danger'"
-                          >
-                            {{ score.score }}
-                          </span>
-                        </div>
-                        <div class="mt-3 flex items-center justify-between">
-                          <p class="text-xs text-muted-foreground">De {{ record.total }} puntos</p>
-                          @if (canViewStudentDetail()) {
-                            <button
-                              type="button"
-                              class="text-xs font-semibold text-primary"
-                              (click)="selectStudent(score.studentId)"
-                            >
-                              Ver historial
-                            </button>
-                          }
-                        </div>
-                      </article>
-                    }
-                  </div>
+          <!-- Scores Grid -->
+          <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-4">
+            @for (score of record.scores; track score.id) {
+            <div
+              class="group p-6 rounded-[1.8rem] bg-zinc-50 dark:bg-zinc-800/50 border border-transparent hover:bg-white dark:hover:bg-zinc-800 hover:border-base-200 dark:hover:border-zinc-700 transition-all duration-300">
+              <div class="flex items-center justify-between">
+                <div class="min-w-0">
+                  <p class="font-black text-base-content truncate pr-4">{{ score.studentName }}</p>
+                  <p class="text-xs font-medium text-base-content/40 mt-1 italic">{{ score.observation || 'Sin
+                    observaciones registradas' }}</p>
                 </div>
 
-                @if (canViewStudentDetail() && selectedStudent(); as student) {
-                  <aside class="rounded-2xl border border-border bg-background/80 p-4">
-                    <div class="border-border/70 border-b pb-4">
-                      <p class="text-sm font-semibold text-foreground">{{ student.studentName }}</p>
-                      <p class="mt-1 text-xs text-muted-foreground">Historial consolidado dentro del aula</p>
-                    </div>
-
-                    <div class="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
-                      <div class="rounded-xl border border-border bg-card px-4 py-3">
-                        <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Promedio del alumno</p>
-                        <p class="mt-2 text-2xl font-semibold text-foreground">{{ selectedStudentAverage() | number:'1.1-2' }}</p>
-                      </div>
-                      <div class="rounded-xl border border-border bg-card px-4 py-3">
-                        <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Cobertura</p>
-                        <p class="mt-2 text-2xl font-semibold text-foreground">{{ selectedStudentCompletion() }}%</p>
-                        <p class="mt-1 text-xs text-muted-foreground">
-                          {{ selectedStudentHistory().length }} de {{ summary().assessments }} evaluaciones
-                        </p>
-                      </div>
-                    </div>
-
-                    <div class="mt-4 space-y-2">
-                      @for (item of selectedStudentHistory(); track item.recordId) {
-                        <div class="rounded-lg border border-border bg-card px-3 py-3">
-                          <div class="flex items-center justify-between gap-2">
-                            <p class="text-sm font-semibold text-foreground">{{ item.assessment }}</p>
-                            <span class="text-xs font-semibold text-foreground">{{ item.score }} / {{ item.total }}</span>
-                          </div>
-                          <p class="mt-1 text-xs text-muted-foreground">{{ item.date | date:'mediumDate' }}</p>
-                          <p class="mt-1 text-xs text-muted-foreground">{{ item.observation || 'Sin observacion' }}</p>
-                        </div>
-                      }
-                    </div>
-                  </aside>
-                }
+                <div
+                  class="w-14 h-14 rounded-2xl flex items-center justify-center font-black text-xl shadow-inner border"
+                  [ngClass]="{
+                             'bg-emerald-500/10 text-emerald-600 border-emerald-500/20': statusTone(score.score, record.total) === 'success',
+                             'bg-blue-500/10 text-blue-600 border-blue-500/20': statusTone(score.score, record.total) === 'info',
+                             'bg-rose-500/10 text-rose-600 border-rose-500/20': statusTone(score.score, record.total) === 'danger'
+                           }">
+                  {{ score.score }}
+                </div>
               </div>
+
+              @if (canViewStudentDetail()) {
+              <div class="mt-4 pt-4 border-t border-base-200/30 flex justify-end">
+                <button (click)="selectStudent(score.studentId)"
+                  class="text-[10px] font-black uppercase tracking-widest text-primary hover:translate-x-1 transition-transform">
+                  Ver historial completo <i class="fa-solid fa-arrow-right ml-1"></i>
+                </button>
+              </div>
+              }
+            </div>
             }
           </div>
+        </div>
+
+        <!-- Student History Side Panel/Modal Style -->
+        @if (canViewStudentDetail() && selectedStudent(); as student) {
+        <div
+          class="card-premium p-10 bg-zinc-900 text-white border-none animate-in fade-in slide-in-from-bottom-8 duration-700">
+          <div class="flex flex-col lg:flex-row justify-between gap-12">
+            <div class="flex-1 space-y-8">
+              <div class="space-y-4">
+                <div class="flex items-center gap-3">
+                  <span
+                    class="px-3 py-1 bg-white/10 text-white text-[10px] font-black uppercase tracking-widest rounded-lg border border-white/10">Reporte
+                    de Desempeño</span>
+                </div>
+                <h3 class="text-4xl font-black tracking-tighter">{{ student.studentName }}</h3>
+                <p class="text-white/50 font-medium">Análisis detallado de progreso tras {{
+                  selectedStudentHistory().length }} evaluaciones capturadas.</p>
+              </div>
+
+              <div class="grid grid-cols-2 gap-6">
+                <div
+                  class="p-8 rounded-[2rem] bg-white/5 border border-white/10 group hover:bg-white/10 transition-colors">
+                  <p
+                    class="text-[10px] font-black uppercase tracking-widest text-white/30 group-hover:text-white transition-colors">
+                    Promedio Acumulado</p>
+                  <p class="text-5xl font-black mt-4 text-gradient-primary">{{ selectedStudentAverage() | number:'1.1-1'
+                    }}</p>
+                </div>
+                <div
+                  class="p-8 rounded-[2rem] bg-white/5 border border-white/10 group hover:bg-white/10 transition-colors">
+                  <p
+                    class="text-[10px] font-black uppercase tracking-widest text-white/30 group-hover:text-white transition-colors">
+                    Nivel de Cobertura</p>
+                  <div class="flex items-end gap-3 mt-4">
+                    <p class="text-5xl font-black">{{ selectedStudentCompletion() }}%</p>
+                    <p class="text-xs text-white/30 mb-2 font-bold">{{ selectedStudentHistory().length }} / {{
+                      summary().assessments }} evaluaciones</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="space-y-4">
+                <h4 class="text-xs font-black uppercase tracking-widest text-white/20">Cronología de resultados</h4>
+                <div class="space-y-3">
+                  @for (item of selectedStudentHistory(); track item.recordId) {
+                  <div
+                    class="flex items-center justify-between p-5 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/[0.08] transition-all">
+                    <div class="min-w-0">
+                      <p class="font-bold truncate">{{ item.assessment }}</p>
+                      <p class="text-[10px] font-black uppercase tracking-widest text-white/30 mt-1">{{ item.date |
+                        date:'mediumDate' }}</p>
+                    </div>
+                    <div class="flex items-center gap-6">
+                      @if (item.observation) {
+                      <i class="fa-solid fa-circle-info text-blue-400 opacity-50" [title]="item.observation"></i>
+                      }
+                      <div class="text-right min-w-[60px]">
+                        <span class="text-xl font-black">{{ item.score }}</span>
+                        <span class="text-[10px] text-white/30 ml-1">/{{ item.total }}</span>
+                      </div>
+                    </div>
+                  </div>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <!-- Decorative element could go here if needed -->
+            <div class="hidden xl:block w-px bg-white/10 self-stretch"></div>
+
+            <div class="xl:w-[320px] space-y-6">
+              <div
+                class="p-8 rounded-[2.5rem] bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-white/10 flex flex-col items-center text-center">
+                <div
+                  class="w-20 h-20 rounded-3xl bg-white/10 flex items-center justify-center text-white text-3xl mb-6">
+                  <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <h5 class="font-black text-xl tracking-tight">Análisis Predictivo</h5>
+                <p class="text-sm text-white/50 mt-3 font-medium">Basado en el promedio de {{ selectedStudentAverage() |
+                  number:'1.1-1' }}, el estudiante mantiene un rendimiento estable.</p>
+              </div>
+            </div>
+          </div>
+        </div>
         }
-      </section>
-    </div>
+      </div>
+      }
+    </main>
+  </div>
   }
 </div>

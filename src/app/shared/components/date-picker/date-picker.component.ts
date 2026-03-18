@@ -44,7 +44,13 @@ const HEIGHT_BY_SIZE: Record<ZardDatePickerSizeVariants, string> = {
 
 @Component({
   selector: 'z-date-picker, [z-date-picker]',
-  imports: [ZardButtonComponent, ZardCalendarComponent, ZardPopoverComponent, ZardPopoverDirective, ZardIconComponent],
+  imports: [
+    ZardButtonComponent,
+    ZardCalendarComponent,
+    ZardPopoverComponent,
+    ZardPopoverDirective,
+    ZardIconComponent,
+  ],
   template: `
     <button
       z-button
@@ -94,6 +100,7 @@ const HEIGHT_BY_SIZE: Record<ZardDatePickerSizeVariants, string> = {
   encapsulation: ViewEncapsulation.None,
   host: {
     '[class]': 'class()',
+    class: 'block',
   },
   exportAs: 'zDatePicker',
 })
@@ -124,7 +131,7 @@ export class ZardDatePickerComponent implements ControlValueAccessor {
     const size = this.zSize();
     const height = HEIGHT_BY_SIZE[size];
     return mergeClasses(
-      'justify-start text-left font-normal',
+      'justify-start text-left font-normal w-full',
       !hasValue && 'text-muted-foreground',
       height,
       'min-w-[240px]',

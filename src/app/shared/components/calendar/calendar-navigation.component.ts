@@ -1,5 +1,12 @@
 import { ZardButtonComponent } from '@/shared/components/button';
-import { ChangeDetectionStrategy, Component, computed, input, output, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  output,
+  ViewEncapsulation,
+} from '@angular/core';
 
 import { calendarMonths } from '@/shared/components/calendar/calendar.utils';
 import { mergeClasses } from '@/shared/utils/merge-classes';
@@ -30,14 +37,22 @@ import { ZardSelectComponent } from '@/shared/components/select/select.component
       <!-- Month and Year Selectors -->
       <div class="flex items-center space-x-2">
         <!-- Month Select -->
-        <z-select [zValue]="currentMonth()" [zLabel]="currentMonthName()" (zSelectionChange)="onMonthChange($event)">
+        <z-select
+          [zValue]="currentMonth()"
+          [zLabel]="currentMonthName()"
+          (zSelectionChange)="onMonthChange($event)"
+        >
           @for (month of months; track month) {
             <z-select-item [zValue]="$index.toString()">{{ month }}</z-select-item>
           }
         </z-select>
 
         <!-- Year Select -->
-        <z-select [zValue]="currentYear()" [zLabel]="currentYear()" (zSelectionChange)="onYearChange($event)">
+        <z-select
+          [zValue]="currentYear()"
+          [zLabel]="currentYear()"
+          (zSelectionChange)="onYearChange($event)"
+        >
           @for (year of availableYears(); track year) {
             <z-select-item [zValue]="year.toString()">{{ year }}</z-select-item>
           }
@@ -80,8 +95,9 @@ export class ZardCalendarNavigationComponent {
   protected readonly navClasses = computed(() => mergeClasses(calendarNavVariants()));
 
   protected readonly availableYears = computed(() => {
-    const minYear = this.minDate()?.getFullYear() ?? new Date().getFullYear() - 10;
-    const maxYear = this.maxDate()?.getFullYear() ?? new Date().getFullYear() + 10;
+    const currentYear = new Date().getFullYear();
+    const minYear = this.minDate()?.getFullYear() ?? currentYear - 100;
+    const maxYear = this.maxDate()?.getFullYear() ?? currentYear + 10;
     const years = [];
     for (let i = minYear; i <= maxYear; i++) {
       years.push(i);
@@ -141,7 +157,10 @@ export class ZardCalendarNavigationComponent {
 
   protected onMonthChange(month: string | string[]): void {
     if (Array.isArray(month)) {
-      console.warn('Calendar navigation received array for month selection, expected single value. Ignoring:', month);
+      console.warn(
+        'Calendar navigation received array for month selection, expected single value. Ignoring:',
+        month,
+      );
       return;
     }
     this.monthChange.emit(month);
@@ -149,7 +168,10 @@ export class ZardCalendarNavigationComponent {
 
   protected onYearChange(year: string | string[]): void {
     if (Array.isArray(year)) {
-      console.warn('Calendar navigation received array for year selection, expected single value. Ignoring:', year);
+      console.warn(
+        'Calendar navigation received array for year selection, expected single value. Ignoring:',
+        year,
+      );
       return;
     }
     this.yearChange.emit(year);

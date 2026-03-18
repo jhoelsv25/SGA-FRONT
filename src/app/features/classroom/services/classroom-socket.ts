@@ -94,7 +94,7 @@ export class ClassroomSocketService implements OnDestroy {
     });
   }
 
-  publishPost(room: string, post: { content: string; attachmentUrl?: string }): Observable<FeedPost> {
+  publishPost(room: string, post: { content: string; attachments?: { url: string; name: string }[] }): Observable<FeedPost> {
     return new Observable<FeedPost>((subscriber) => {
       if (!this.socket) {
         subscriber.error(new Error('Socket no conectado'));
