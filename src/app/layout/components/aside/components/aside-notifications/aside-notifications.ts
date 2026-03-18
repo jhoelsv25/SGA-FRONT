@@ -133,7 +133,7 @@ export class AsideNotifications implements OnInit {
   getIcon(type: string): any {
     switch (type) {
       case 'CHAT':
-        return 'message-circle';
+        return 'chat';
       case 'SYSTEM':
         return 'shield';
       case 'ACADEMIC':

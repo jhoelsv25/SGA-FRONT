@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { LayoutStore } from '@core/stores/layout.store';
-import { NotificationService } from '@core/services/notification.service';
-import { Sidebar } from 'app/layout/components/sidebar/sidebar';
-import { Aside } from 'app/layout/components/aside/aside';
-import { Header } from 'app/layout/components/header/header';
+import { NotificationStore } from '@core/stores/notification.store';
+import { Sidebar } from '../../components/sidebar/sidebar';
+import { Aside } from '../../components/aside/aside';
+import { Header } from '../../components/header/header';
 import { ZardIconComponent } from '@shared/components/icon';
 
 @Component({
@@ -18,27 +18,14 @@ import { ZardIconComponent } from '@shared/components/icon';
 })
 export default class Home {
   private layout = inject(LayoutStore);
-  private notifications = inject(NotificationService);
+  private notifications = inject(NotificationStore);
 
   // Left Sidebar States
   public isSidebarCollapsed = computed(() => this.layout.isSidebarCollapsed());
-  public isMobile = computed(() => window.innerWidth < 768);
-  public isMobileOpen = computed(() => !this.isSidebarCollapsed() && this.isMobile());
-
-  // Right Sidebar States
-  public isRightSidebarOpen = signal(false);
-  public rightSidebarTab = signal<'notifications' | 'calendar'>('notifications');
-  public hasNotifications = computed(() => this.notifications.hasUnread());
+  public isMobile = computed(() => this.layout.isMobile());
+  public isMobileOpen = computed(() => this.layout.isMobileOpen());
 
   public closeMobileSidebar() {
     this.layout.toggleSidebar();
-  }
-
-  public toggleRightSidebar() {
-    this.isRightSidebarOpen.update((v) => !v);
-  }
-
-  public setRightSidebarTab(tab: 'notifications' | 'calendar') {
-    this.rightSidebarTab.set(tab);
   }
 }

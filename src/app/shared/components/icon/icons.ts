@@ -214,7 +214,7 @@ export const ZARD_ICONS = {
   'calendar-alt': Calendar,
   'chalkboard-teacher': Presentation,
   upload: Upload,
-  'message-circle': MessageCircle,
+  chat: MessageCircle,
   headset: Headset,
   'layout-grid': LayoutGrid,
 } as const;

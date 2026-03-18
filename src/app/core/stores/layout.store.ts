@@ -1,8 +1,14 @@
 import { computed, inject } from '@angular/core';
 import { LocalStorage } from '@core/services/local-storage';
 import { ThemeConfig } from '@core/types/layout-types';
-import { signalStore, withState, withMethods, withComputed, patchState, withHooks } from '@ngrx/signals';
-
+import {
+  signalStore,
+  withState,
+  withMethods,
+  withComputed,
+  patchState,
+  withHooks,
+} from '@ngrx/signals';
 
 interface LayoutState {
   isShowAside: boolean;
@@ -33,6 +39,8 @@ export const LayoutStore = signalStore(
       }
       return theme === 'dark';
     }),
+    isMobile: computed(() => window.innerWidth < 768),
+    isMobileOpen: computed(() => !store.isSidebarCollapsed() && window.innerWidth < 768),
   })),
   withMethods((store, storageService = inject(LocalStorage)) => ({
     toggleTheme() {

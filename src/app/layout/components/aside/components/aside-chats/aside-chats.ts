@@ -114,7 +114,7 @@ import { ZardInputDirective } from '@/shared/components/input';
         } @empty {
           <div class="h-full flex flex-col items-center justify-center py-20 opacity-40">
             <z-empty
-              zIcon="message-circle"
+              [zIcon]="'chat'"
               zTitle="Sin conversaciones"
               zDescription="Inicia un chat con tus colegas o estudiantes para empezar."
             />
