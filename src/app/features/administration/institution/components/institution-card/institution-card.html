@@ -1,81 +1,130 @@
-<z-card class="group flex flex-col h-full hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 border-base-200 overflow-hidden bg-base-100">
-  <div class="flex flex-col space-y-1.5 p-6 pb-3 border-b border-base-200 bg-base-200/10">
-    <div class="flex justify-between items-start">
-      <div class="w-16 h-16 rounded-2xl bg-base-100 border border-base-200 shadow-sm flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105">
-        @if (institution.logoUrl) {
-          <img [src]="institution.logoUrl" [alt]="institution.name" class="w-full h-full object-cover">
+<z-card
+  class="group p-6 rounded-[2.5rem] bg-card/40 border-border/10 backdrop-blur-2xl hover:bg-card/60 hover:border-primary/20 transition-all shadow-sm hover:shadow-2xl hover:shadow-primary/5 cursor-pointer">
+  <div class="flex flex-col lg:flex-row lg:items-center gap-8">
+    <!-- Left Section: Logo & Main Info -->
+    <div class="flex items-start gap-4 flex-1">
+      <div
+        class="size-14 rounded-2xl flex items-center justify-center shrink-0 shadow-lg border border-border/10 bg-primary/10 text-primary overflow-hidden">
+        @if (institution().logoUrl) {
+        <img [src]="institution().logoUrl" [alt]="institution().name" class="w-full h-full object-cover">
         } @else {
-          <div class="text-primary/20 text-3xl font-black italic">
-            {{ institution.name.substring(0, 2).toUpperCase() }}
-          </div>
+        <span class="text-lg font-black italic">{{ getInitials(institution().name) }}</span>
         }
       </div>
-      <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-        <button z-button zType="ghost" zSize="sm" class="rounded-lg h-8 w-8 p-0" (click)="edit.emit(institution)">
-          <i class="fas fa-edit text-xs"></i>
-        </button>
-        <button z-button zType="ghost" zSize="sm" class="rounded-lg h-8 w-8 p-0 text-error hover:bg-error/10" (click)="delete.emit(institution)">
-          <i class="fas fa-trash text-xs"></i>
-        </button>
+
+      <div class="space-y-1 min-w-0">
+        <div class="flex items-center gap-3 flex-wrap">
+          <h3 class="font-black text-lg tracking-tight uppercase inter truncate">
+            {{ institution().name }}
+          </h3>
+          <span class="rounded-full px-3 py-1 text-[9px] font-black uppercase tracking-widest border" [ngClass]="isActive() 
+                ? 'bg-green-500/10 text-green-500 border-green-500/20' 
+                : 'bg-muted text-muted-foreground border-border'">
+            {{ getStatusLabel(institution().status) }}
+          </span>
+        </div>
+        <p class="text-xs text-muted-foreground font-mono truncate">
+          Cód. Modular: {{ institution().modularCode }}
+        </p>
+        <p class="text-sm text-muted-foreground font-medium leading-relaxed max-w-2xl line-clamp-1">
+          {{ institution().address }}
+        </p>
       </div>
     </div>
-    
-    <h2 class="text-2xl font-semibold leading-none tracking-tight mt-4 text-xl font-bold text-base-content group-hover:text-primary transition-colors line-clamp-2 min-h-[3.5rem] flex items-center">
-      {{ institution.name }}
-    </h2>
-    
-    <div class="flex items-center gap-2 mt-1">
-        <span class="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded border" [ngClass]="getStatusColor(institution.status)">
-            {{ getStatusLabel(institution.status) }}
+
+    <!-- Middle Section: Stats (XL only) -->
+    <div class="hidden xl:flex items-center gap-3 px-8 border-x border-border/10">
+      <div class="flex flex-col items-center gap-1">
+        <div class="size-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center shadow-sm">
+          <z-icon zType="graduation-cap" class="h-4 w-4" />
+        </div>
+        <span class="text-[8px] font-black uppercase text-muted-foreground/40">
+          Académico
         </span>
-        <span class="text-[10px] font-black uppercase tracking-widest text-base-content/40 bg-base-200 px-2 py-0.5 rounded">
-            Cod. Modular: {{ institution.modularCode }}
+      </div>
+      <z-icon zType="chevron-right" class="h-4 w-4 text-muted-foreground/20" />
+      <div class="flex flex-col items-center gap-1">
+        <div class="size-8 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center shadow-sm">
+          <z-icon zType="users" class="h-4 w-4" />
+        </div>
+        <span class="text-[8px] font-black uppercase text-muted-foreground/40">
+          Personal
         </span>
+      </div>
+      <z-icon zType="chevron-right" class="h-4 w-4 text-muted-foreground/20" />
+      <div class="flex flex-col items-center gap-1">
+        <div class="size-8 rounded-xl bg-green-500/10 text-green-500 flex items-center justify-center shadow-sm">
+          <z-icon zType="activity" class="h-4 w-4" />
+        </div>
+        <span class="text-[8px] font-black uppercase text-muted-foreground/40">
+          Estado
+        </span>
+      </div>
+    </div>
+
+    <!-- Right Section: Actions & Metrics -->
+    <div class="flex items-center justify-between lg:justify-end gap-10 shrink-0" (click)="$event.stopPropagation()">
+      <div class="flex items-center gap-8">
+        <div class="text-center">
+          <p class="text-xs font-black inter uppercase">{{ institution().phone || 'N/A' }}</p>
+          <span class="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60">
+            Teléfono
+          </span>
+        </div>
+        <div class="text-center">
+          <p class="text-xs font-black inter uppercase truncate max-w-[100px]">{{ institution().principal || 'S/A' }}
+          </p>
+          <span class="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60">
+            Director
+          </span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button z-button zType="ghost" zSize="icon-sm"
+          class="rounded-xl hover:bg-primary/10 hover:text-primary transition-all" title="Ver detalles">
+          <z-icon zType="eye" class="h-5 w-5" />
+        </button>
+
+        <button z-button zType="ghost" zSize="icon-sm"
+          class="rounded-xl hover:bg-primary/10 hover:text-primary transition-all" title="Más acciones" zPopover
+          [zContent]="actionsMenu" [zPlacement]="'bottom'">
+          <z-icon zType="ellipsis" class="h-5 w-5" />
+        </button>
+
+        <ng-template #actionsMenu>
+          <z-popover class="min-w-[160px] p-1.5 flex flex-col gap-1">
+            <button z-button zType="ghost"
+              class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
+              (click)="edit.emit(institution())">
+              <z-icon zType="settings" class="h-4 w-4" />
+              Configurar
+            </button>
+            <div class="h-px bg-border/10 my-1 mx-2"></div>
+            <button z-button zType="ghost"
+              class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-destructive/10 hover:text-destructive transition-all"
+              (click)="confirmDelete()">
+              <z-icon zType="trash" class="h-4 w-4" />
+              Eliminar
+            </button>
+          </z-popover>
+        </ng-template>
+      </div>
     </div>
   </div>
 
-  <div class="p-6 pt-0 pt-5 flex-grow">
-    <div class="space-y-4">
-        <!-- Address -->
-        <div class="flex items-start gap-3">
-            <div class="mt-0.5 text-primary/40"><i class="fas fa-map-marker-alt text-xs"></i></div>
-            <div class="flex-grow">
-                <p class="text-[9px] font-black uppercase tracking-tighter text-base-content/30 leading-none mb-1">Dirección</p>
-                <p class="text-xs text-base-content/70 line-clamp-2 leading-relaxed">
-                    {{ institution.address }}
-                    @if (institution.district) {
-                      <span>, {{ institution.district }}</span>
-                    }
-                </p>
-            </div>
-        </div>
-
-        <!-- Principal & Contact -->
-        <div class="grid grid-cols-2 gap-4 pt-2">
-            <div>
-                <p class="text-[9px] font-black uppercase tracking-tighter text-base-content/30 mb-1">Director</p>
-                <div class="flex items-center gap-2">
-                    <i class="fas fa-user-tie text-primary/30 text-[10px]"></i>
-                    <span class="text-[11px] font-bold text-base-content/80 truncate">{{ institution.principal || 'No asignado' }}</span>
-                </div>
-            </div>
-            <div>
-                <p class="text-[9px] font-black uppercase tracking-tighter text-base-content/30 mb-1">Contacto</p>
-                <div class="flex items-center gap-2">
-                    <i class="fas fa-phone text-primary/30 text-[10px]"></i>
-                    <span class="text-[11px] font-bold text-base-content/80 truncate">{{ institution.phone || 'N/A' }}</span>
-                </div>
-            </div>
-        </div>
-
-        @if (institution.email) {
-            <div class="pt-2">
-                <div class="flex items-center gap-2 px-3 py-2 bg-base-200/50 rounded-xl border border-base-300/50 text-xs">
-                    <i class="fas fa-envelope text-primary/40"></i>
-                    <span class="truncate text-base-content/60">{{ institution.email }}</span>
-                </div>
-            </div>
-        }
+  <!-- Footer -->
+  <div class="mt-6 pt-6 border-t border-border/10 flex items-center justify-between">
+    <div class="flex items-center gap-1 text-[10px] font-bold text-muted-foreground">
+      <z-icon zType="zap" class="h-3 w-3 text-primary" />
+      Sede Principal:
+      <span class="text-foreground font-mono">
+        {{ institution().district || 'Lima' }}
+      </span>
+    </div>
+    <div class="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest flex items-center gap-1">
+      <z-icon zType="calendar" class="h-3 w-3" />
+      Actualizado: Apertura 2024
     </div>
   </div>
 </z-card>

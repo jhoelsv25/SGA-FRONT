@@ -1,29 +1,20 @@
-<sga-header-detail
-  [config]="headerConfig()"
-  [actions]="headerActions()"
-  
-  (refresh)="onRefresh()"
- />
+<sga-header-detail [config]="headerConfig()" [actions]="headerActions()" (refresh)="onRefresh()" />
 
 <div class="p-6">
-  <div
-    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500"
-  >
+  <div class="grid grid-cols-1 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
     @if (loading() && !data().length) {
-      <sga-institution-skeleton  />
+    <sga-institution-skeleton />
     } @else {
-      @for (inst of data(); track inst.id) {
-        <sga-institution-card
-          [institution]="inst"
-          (edit)="openForm(undefined, inst)"
-          (delete)="deleteInstitution(inst.id)"
-         />
-      } @empty {
-        <div class="grid grid-col-span-full">
-          <z-empty zIcon="building" zTitle="Sin instituciones registradas" zDescription="Aún no tienes ninguna institución. Crea la primera para comenzar a gestionar tu sistema educativo.">
-    </z-empty>
-        </div>
-      }
+    @for (inst of data(); track inst.id) {
+    <sga-institution-card [institution]="inst" (edit)="openForm(undefined, inst)"
+      (delete)="deleteInstitution(inst.id)" />
+    } @empty {
+    <div class="grid grid-col-span-full">
+      <z-empty zIcon="building" zTitle="Sin instituciones registradas"
+        zDescription="Aún no tienes ninguna institución. Crea la primera para comenzar a gestionar tu sistema educativo.">
+      </z-empty>
+    </div>
+    }
     }
   </div>
 </div>
