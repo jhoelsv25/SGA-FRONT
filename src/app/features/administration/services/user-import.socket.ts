@@ -10,7 +10,7 @@ export interface UserImportProgressPayload {
   total: number;
   percentage: number;
   created: number;
-  errors: { row: number; message: string }[];
+  errors: { row: number; message: string; rowData?: Record<string, unknown> }[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -24,12 +24,10 @@ export class UserImportSocketService implements OnDestroy {
   connect(): void {
     if (this.socket?.connected) return;
 
-    const token = this.tokenManager.getToken();
-    if (!token) return;
-
     this.socket = io(environment.wsUrl, {
       transports: ['websocket'],
-      auth: { token },
+      withCredentials: true,
+      auth: this.tokenManager.getToken() ? { token: this.tokenManager.getToken() } : undefined,
     });
 
     this.socket.on('import:progress', (payload: UserImportProgressPayload) => this.progress$.next(payload));

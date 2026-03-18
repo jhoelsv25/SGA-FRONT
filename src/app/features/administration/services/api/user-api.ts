@@ -24,6 +24,46 @@ export class UserApi {
     return this.http.post<UserResponse>(this.baseUrl, user);
   }
 
+  downloadImportTemplate(): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/import/template`, {
+      responseType: 'blob',
+    });
+  }
+
+  getImportHistory(): Observable<
+      {
+        id: string;
+        jobId: string;
+        fileName: string;
+        totalRows: number;
+        processedRows: number;
+        createdRows: number;
+        failedRows: number;
+        status: 'QUEUED' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
+        startedAt?: string | null;
+        finishedAt?: string | null;
+        createdAt: string;
+        errorDetails?: { row: number; message: string; rowData?: Record<string, unknown> }[] | null;
+      }[]
+  > {
+    return this.http.get<
+      {
+        id: string;
+        jobId: string;
+        fileName: string;
+        totalRows: number;
+        processedRows: number;
+        createdRows: number;
+        failedRows: number;
+        status: 'QUEUED' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
+        startedAt?: string | null;
+        finishedAt?: string | null;
+        createdAt: string;
+        errorDetails?: { row: number; message: string; rowData?: Record<string, unknown> }[] | null;
+      }[]
+    >(`${this.baseUrl}/import/history`);
+  }
+
   uploadImportFile(file: File): Observable<{ uploadId: string; headers: string[]; rowCount: number }> {
     const form = new FormData();
     form.append('file', file);

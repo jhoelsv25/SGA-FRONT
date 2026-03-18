@@ -25,3 +25,15 @@ export type InstitutionResponse = {
   message: string;
   status: string;
 };
+
+export enum InstitutionStatus {
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
+  CLOSED = 'closed',
+}
+
+export const INSTITUTION_STATUS_LABELS: Record<string, string> = {
+  [InstitutionStatus.ACTIVE]: 'Activa',
+  [InstitutionStatus.INACTIVE]: 'Inactiva',
+  [InstitutionStatus.CLOSED]: 'Cerrada',
+};

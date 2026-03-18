@@ -86,56 +86,19 @@ export const AuthStore = signalStore(
         return 'loggedOut';
       },
       checkToken: (): Observable<'valid' | 'invalid'> => {
-        const token = tokenService.getToken();
         const hasData = store.currentUser() && store.modules().length > 0;
-
-        if (!token) {
-          patchState(store, { ...initialState, isInitialized: true });
-          return of('invalid' as const);
-        }
 
         if (hasData) {
           patchState(store, { isInitialized: true, isLoggedIn: true });
           return of('valid' as const);
         }
 
-        if (!tokenService.isValidToken()) {
-          console.log('⚠️ [AuthStore] Token expirado localmente, intentando refresh...');
-          return authService.refreshToken().pipe(
-            timeout(15000),
-            switchMap((response) => {
-              tokenService.setToken(response.data.accessToken);
-              const updateStore = (modules: Module[]) => {
-                patchState(store, {
-                  currentUser: response.data.user,
-                  modules,
-                  isLoggedIn: true,
-                  isInitialized: true,
-                });
-              };
-              return authService.getModulesByRole(response.data.user.role.id).pipe(
-                map((res) => {
-                  updateStore(res.modules || []);
-                  return 'valid' as const;
-                }),
-                catchError(() => {
-                  updateStore([]);
-                  return of('valid' as const);
-                }),
-              );
-            }),
-            catchError((err) => {
-              console.error('❌ [AuthStore] Refresh fallido en init:', err);
-              tokenService.removeToken();
-              patchState(store, { ...initialState, isInitialized: true });
-              return of('invalid' as const);
-            }),
-          );
-        }
-
         return authService.checkToken().pipe(
           timeout(10000),
           map((response) => {
+            if (response?.accessToken) {
+              tokenService.setToken(response.accessToken);
+            }
             patchState(store, {
               currentUser: response.user,
               modules: response.modules || [],
@@ -145,10 +108,37 @@ export const AuthStore = signalStore(
             return 'valid' as const;
           }),
           catchError((error) => {
-            console.error('❌ [AuthStore] Error verificando token:', error);
-            tokenService.removeToken();
-            patchState(store, { ...initialState, isInitialized: true });
-            return of('invalid' as const);
+            console.warn('⚠️ [AuthStore] check-token falló, intentando refresh:', error);
+            return authService.refreshToken().pipe(
+              timeout(15000),
+              switchMap((response) => {
+                tokenService.setToken(response.data.accessToken);
+                const updateStore = (modules: Module[]) => {
+                  patchState(store, {
+                    currentUser: response.data.user,
+                    modules,
+                    isLoggedIn: true,
+                    isInitialized: true,
+                  });
+                };
+                return authService.getModulesByRole(response.data.user.role.id).pipe(
+                  map((res) => {
+                    updateStore(res.modules || []);
+                    return 'valid' as const;
+                  }),
+                  catchError(() => {
+                    updateStore([]);
+                    return of('valid' as const);
+                  }),
+                );
+              }),
+              catchError((refreshError) => {
+                console.error('❌ [AuthStore] Refresh fallido en init:', refreshError);
+                tokenService.removeToken();
+                patchState(store, { ...initialState, isInitialized: true });
+                return of('invalid' as const);
+              }),
+            );
           }),
         );
       },

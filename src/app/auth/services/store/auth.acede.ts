@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, map, Observable, of, switchMap, tap } from 'rxjs';
+import { AuthApi } from '../api/auth-api';
 import { AuthStore } from './auth.store';
 import { LoginCredentials } from '@auth/types/auth-type';
 
@@ -8,6 +9,7 @@ import { LoginCredentials } from '@auth/types/auth-type';
 export class AuthFacade {
   private store = inject(AuthStore);
   private router = inject(Router);
+  private authApi = inject(AuthApi);
 
   /** LOGIN → retorna boolean en vez de strings */
   login(credentials: LoginCredentials): Observable<boolean> {
@@ -34,8 +36,13 @@ export class AuthFacade {
 
   /** LOGOUT */
   logout(): void {
-    this.store.logout();
-    this.router.navigate(['/auth/login']);
+    this.authApi.logout().pipe(
+      catchError(() => of(void 0)),
+      tap(() => {
+        this.store.logout();
+        this.router.navigate(['/auth/login']);
+      }),
+    ).subscribe();
   }
 
   /** INITIALIZE → también lo traduzco a boolean */
@@ -52,9 +59,7 @@ export class AuthFacade {
           return of(true);
         }
 
-        // ❌ Token inválido → NO intentar refresh aquí
-        // El refresh se hará automáticamente por el interceptor en la primera petición autenticada
-        console.log('ℹ️ [AuthFacade] Token inválido, no hay sesión activa');
+        console.log('ℹ️ [AuthFacade] Sesión no válida, no hay sesión activa');
         this.store.logout(); // Limpiar estado
         return of(false); // Continuar sin autenticación
       }),

@@ -1,6 +1,6 @@
 import { DropdownOptionComponent, DropdownItem } from '@/shared/widgets/dropdown-option/dropdown-option';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal, TemplateRef } from '@angular/core';
 
 import { PermissionCheckStore } from '@core/stores/permission-check.store';
 import { HeaderConfig } from '@core/types/header-types';
@@ -10,10 +10,12 @@ import { ZardDropdownMenuComponent } from '@/shared/components/dropdown';
 import { ZardIconComponent } from '@shared/components/icon';
 
 
+import { ZardPopoverDirective, ZardPopoverComponent } from '@/shared/components/popover';
+
 @Component({
   selector: 'sga-header-detail',
   standalone: true,
-  imports: [CommonModule, DropdownOptionComponent, ZardIconComponent],
+  imports: [CommonModule, DropdownOptionComponent, ZardIconComponent, ZardPopoverDirective, ZardPopoverComponent],
   templateUrl: './header-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -26,6 +28,8 @@ export class HeaderDetail {
   selectedCount = input<number>(0);
   loading = input<boolean>(false);
   viewModeInput = input<'table' | 'kanban'>('table');
+  filterTemplate = input<TemplateRef<any>>();
+  hasActiveFilters = input<boolean>(false);
 
   // ================= OUTPUTS =================
   action = output<{ action: ActionConfig; context: ActionContext }>();

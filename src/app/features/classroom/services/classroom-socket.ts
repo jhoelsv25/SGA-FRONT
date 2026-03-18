@@ -36,12 +36,6 @@ export class ClassroomSocketService implements OnDestroy {
   public readonly notification$ = new Subject<{ type: string; title: string; body?: string }>();
 
   connect(room: string): void {
-    const token = this.tokenManager.getToken();
-    if (!token) {
-      this.notification$.next({ type: 'error', title: 'Sesion no valida', body: 'No hay token para conectar realtime.' });
-      return;
-    }
-
     if (this.socket) {
       this.socket.disconnect();
     }
@@ -49,7 +43,8 @@ export class ClassroomSocketService implements OnDestroy {
     const wsBase = (environment as { wsUrl?: string }).wsUrl ?? 'http://localhost:3000';
     this.socket = io(`${wsBase}/classroom`, {
       transports: ['websocket'],
-      auth: { token },
+      withCredentials: true,
+      auth: this.tokenManager.getToken() ? { token: this.tokenManager.getToken() } : undefined,
     });
 
     this.socket.on('connect', () => {

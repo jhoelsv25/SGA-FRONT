@@ -22,12 +22,11 @@ export class StudentsImportSocketService implements OnDestroy {
 
   connect(): void {
     if (this.socket?.connected) return;
-    const token = this.tokenManager.getToken();
-    if (!token) return;
     const wsBase = (environment as { wsUrl?: string }).wsUrl ?? 'http://localhost:3000';
     this.socket = io(wsBase, {
       transports: ['websocket'],
-      auth: { token },
+      withCredentials: true,
+      auth: this.tokenManager.getToken() ? { token: this.tokenManager.getToken() } : undefined,
     });
     this.socket.on('import:progress', (payload: ImportProgressPayload) => this.progress$.next(payload));
     this.socket.on('import:complete', (payload: ImportProgressPayload) => this.complete$.next(payload));

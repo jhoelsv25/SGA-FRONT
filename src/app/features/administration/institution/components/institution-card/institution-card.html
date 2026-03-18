@@ -33,33 +33,37 @@
     </div>
 
     <!-- Middle Section: Stats (XL only) -->
-    <div class="hidden xl:flex items-center gap-3 px-8 border-x border-border/10">
-      <div class="flex flex-col items-center gap-1">
-        <div class="size-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center shadow-sm">
+    <div class="hidden xl:flex items-center gap-3 px-8 border-x border-border/10" (click)="$event.stopPropagation()">
+      <a routerLink="/academic-setting/years" class="flex flex-col items-center gap-1 group/academic hover:scale-105 transition-all outline-none cursor-pointer">
+        <div class="size-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center shadow-sm group-hover/academic:bg-primary group-hover/academic:text-white transition-colors">
           <z-icon zType="graduation-cap" class="h-4 w-4" />
         </div>
-        <span class="text-[8px] font-black uppercase text-muted-foreground/40">
+        <span class="text-[8px] font-black uppercase text-muted-foreground/40 group-hover/academic:text-primary transition-colors">
           Académico
         </span>
-      </div>
+      </a>
       <z-icon zType="chevron-right" class="h-4 w-4 text-muted-foreground/20" />
-      <div class="flex flex-col items-center gap-1">
-        <div class="size-8 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center shadow-sm">
+
+      <a routerLink="/teachers/list" class="flex flex-col items-center gap-1 group/personnel hover:scale-105 transition-all outline-none cursor-pointer">
+        <div class="size-8 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center shadow-sm group-hover/personnel:bg-blue-500 group-hover/personnel:text-white transition-colors">
           <z-icon zType="users" class="h-4 w-4" />
         </div>
-        <span class="text-[8px] font-black uppercase text-muted-foreground/40">
+        <span class="text-[8px] font-black uppercase text-muted-foreground/40 group-hover/personnel:text-blue-500 transition-colors">
           Personal
         </span>
-      </div>
+      </a>
       <z-icon zType="chevron-right" class="h-4 w-4 text-muted-foreground/20" />
-      <div class="flex flex-col items-center gap-1">
-        <div class="size-8 rounded-xl bg-green-500/10 text-green-500 flex items-center justify-center shadow-sm">
+
+      <button zPopover [zContent]="statusMenu" zPlacement="bottom" class="flex flex-col items-center gap-1 group/status hover:scale-105 transition-all outline-none cursor-pointer">
+        <div class="size-8 rounded-xl text-green-500 flex items-center justify-center shadow-sm transition-colors"
+          [ngClass]="institution().status === StatusEnum.ACTIVE ? 'bg-green-500/10' : 'bg-muted/50'">
           <z-icon zType="activity" class="h-4 w-4" />
         </div>
-        <span class="text-[8px] font-black uppercase text-muted-foreground/40">
+        <span class="text-[8px] font-black uppercase text-muted-foreground/40 group-hover/status:text-green-500 transition-colors"
+          [class.text-green-500]="institution().status === StatusEnum.ACTIVE">
           Estado
         </span>
-      </div>
+      </button>
     </div>
 
     <!-- Right Section: Actions & Metrics -->
@@ -93,7 +97,7 @@
         </button>
 
         <ng-template #actionsMenu>
-          <z-popover class="min-w-[160px] p-1.5 flex flex-col gap-1">
+          <z-popover class="min-w-[160px] p-1.5 flex flex-col gap-1 bg-white dark:bg-neutral-900 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.3)] border border-base-200 rounded-xl z-[150]">
             <button z-button zType="ghost"
               class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
               (click)="edit.emit(institution())">
@@ -102,10 +106,54 @@
             </button>
             <div class="h-px bg-border/10 my-1 mx-2"></div>
             <button z-button zType="ghost"
+              class="w-full justify-between gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-primary/10 hover:text-primary transition-all group"
+              zPopover [zContent]="statusMenu" zPlacement="left">
+              <div class="flex items-center gap-2.5">
+                <z-icon zType="activity" class="h-4 w-4" />
+                Actualizar Estado
+              </div>
+              <i class="fas fa-chevron-left text-[10px] opacity-50 group-hover:opacity-100"></i>
+            </button>
+            <div class="h-px bg-border/10 my-1 mx-2"></div>
+            <button z-button zType="ghost"
               class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-destructive/10 hover:text-destructive transition-all"
               (click)="confirmDelete()">
               <z-icon zType="trash" class="h-4 w-4" />
               Eliminar
+            </button>
+          </z-popover>
+        </ng-template>
+
+        <ng-template #statusMenu>
+          <z-popover class="min-w-[140px] p-1.5 flex flex-col gap-1 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.3)] border border-base-200 bg-white dark:bg-neutral-900 rounded-xl z-[160]">
+            <button z-button zType="ghost" 
+              class="w-full flex justify-between gap-2 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-lg transition-all"
+              [ngClass]="institution().status === StatusEnum.ACTIVE ? 'bg-success/10 text-success' : 'hover:bg-success/10 hover:text-success'"
+              (click)="changeStatus(StatusEnum.ACTIVE)">
+              <span class="flex items-center gap-2">
+                <i class="fas fa-circle text-[8px] text-success"></i> Activa
+              </span>
+              @if (institution().status === StatusEnum.ACTIVE) { <i class="fas fa-check text-[10px]"></i> }
+            </button>
+            
+            <button z-button zType="ghost" 
+              class="w-full flex justify-between gap-2 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-lg transition-all"
+              [ngClass]="institution().status === StatusEnum.INACTIVE ? 'bg-warning/10 text-warning' : 'hover:bg-warning/10 hover:text-warning'"
+              (click)="changeStatus(StatusEnum.INACTIVE)">
+              <span class="flex items-center gap-2">
+                <i class="fas fa-circle text-[8px] text-warning"></i> Inactiva
+              </span>
+              @if (institution().status === StatusEnum.INACTIVE) { <i class="fas fa-check text-[10px]"></i> }
+            </button>
+            
+            <button z-button zType="ghost" 
+              class="w-full flex justify-between gap-2 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-lg transition-all"
+              [ngClass]="institution().status === StatusEnum.CLOSED ? 'bg-destructive/10 text-destructive' : 'hover:bg-destructive/10 hover:text-destructive'"
+              (click)="changeStatus(StatusEnum.CLOSED)">
+              <span class="flex items-center gap-2">
+                <i class="fas fa-circle text-[8px] text-destructive"></i> Cerrada
+              </span>
+              @if (institution().status === StatusEnum.CLOSED) { <i class="fas fa-check text-[10px]"></i> }
             </button>
           </z-popover>
         </ng-template>

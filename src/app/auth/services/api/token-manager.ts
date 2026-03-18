@@ -4,18 +4,21 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class TokenManager {
-  private readonly TOKEN_KEY = 'token';
+  private readonly TOKEN_KEY = 'access_token_cache';
+  private inMemoryToken: string | null = null;
 
   setToken(token: string) {
-    localStorage.setItem(this.TOKEN_KEY, token);
+    this.inMemoryToken = token;
+    sessionStorage.setItem(this.TOKEN_KEY, token);
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+    return this.inMemoryToken ?? sessionStorage.getItem(this.TOKEN_KEY);
   }
 
   removeToken() {
-    localStorage.removeItem(this.TOKEN_KEY);
+    this.inMemoryToken = null;
+    sessionStorage.removeItem(this.TOKEN_KEY);
   }
 
   isValidToken(): boolean {

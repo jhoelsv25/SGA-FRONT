@@ -1,10 +1,15 @@
 <form [formGroup]="institutionForm" class="grid gap-4" (ngSubmit)="onSubmit()">
-  <header class="flex items-center justify-between mb-4">
-    <div>
-      <h2 class="text-lg font-semibold text-neutral-800 dark:text-white mb-0">{{ title() }}</h2>
-      <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
-        {{ subTitle() }}
-      </p>
+  <header class="flex items-center justify-between mb-2 pb-4 border-b border-base-200">
+    <div class="flex items-center gap-3">
+      <div class="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+        <i class="fa fa-building text-lg"></i>
+      </div>
+      <div>
+        <h2 class="text-lg font-black text-base-content tracking-tight">{{ title() }}</h2>
+        <p class="text-xs text-base-content/40 font-medium uppercase tracking-widest mt-0.5">
+          {{ subTitle() }}
+        </p>
+      </div>
     </div>
     <button
       type="button"
@@ -28,110 +33,119 @@
   }
   <div></div>
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div>
-      <label class="label-form" for="name">Nombre</label>
-      <input z-input w-full
-        id="name"
-        type="text"
-        formControlName="name"
-        placeholder="Nombre de la institución"
-       />
-    </div>
-    <div>
-      <label class="label-form" for="modularCode">Código Modular</label>
-      <input z-input w-full
-        id="modularCode"
-        type="text"
-        formControlName="modularCode"
-        placeholder="Código modular"
-       />
-    </div>
-    <div>
-      <label class="label-form" for="managementType">Tipo de Gestión</label>
-      <z-select-option
-        id="managementType"
-        [options]="managementTypes"
-        formControlName="managementType"
-        placeholder="Seleccionar tipo de gestión"
-      ></z-select-option>
-    </div>
-    <div>
-      <label class="label-form" for="ugel">UGEL</label>
-      <input z-input w-full id="ugel" type="text" formControlName="ugel" placeholder="UGEL"  />
-    </div>
-    <div>
-      <label class="label-form" for="dre">DRE</label>
-      <input z-input w-full id="dre" type="text" formControlName="dre" placeholder="DRE"  />
-    </div>
-    <div>
-      <label class="label-form" for="principal">Director</label>
-      <input z-input w-full
-        id="principal"
-        type="text"
-        formControlName="principal"
-        placeholder="Nombre del director"
-       />
-    </div>
-    <div>
-      <label class="label-form" for="address">Dirección</label>
-      <input z-input w-full id="address" type="text" formControlName="address" placeholder="Dirección"  />
-    </div>
-    <div>
-      <label class="label-form" for="district">Distrito</label>
-      <input z-input w-full id="district" type="text" formControlName="district" placeholder="Distrito"  />
-    </div>
-    <div>
-      <label class="label-form" for="province">Provincia</label>
-      <input z-input w-full id="province" type="text" formControlName="province" placeholder="Provincia"  />
-    </div>
-    <div>
-      <label class="label-form" for="department">Departamento</label>
-      <input z-input w-full
-        id="department"
-        type="text"
-        formControlName="department"
-        placeholder="Departamento"
-       />
-    </div>
-    <div>
-      <label class="label-form" for="phone">Teléfono</label>
-      <input z-input w-full id="phone" type="text" formControlName="phone" placeholder="Teléfono"  />
-    </div>
-    <div>
-      <label class="label-form" for="email">Email</label>
-      <input z-input w-full id="email" type="text" formControlName="email" placeholder="Correo electrónico"  />
-    </div>
-    <div>
-      <label class="label-form" for="status">Estado</label>
-      <z-select-option
-        id="status"
-        [options]="statuses"
-        formControlName="status"
-        placeholder="Seleccionar estado"
-      ></z-select-option>
-    </div>
-    <div>
-      <label class="label-form" for="logoUrl">Logo (URL)</label>
-      <input z-input w-full id="logoUrl" type="text" formControlName="logoUrl" placeholder="URL del logo"  />
-    </div>
-    <div class="md:col-span-2">
-      <label class="label-form" for="description">Descripción</label>
-      <input z-input w-full
-        id="description"
-        type="text"
-        formControlName="description"
-        placeholder="Descripción"
-       />
-    </div>
+    <z-form-field>
+      <label z-form-label for="name">Nombre</label>
+      <z-form-control>
+        <input z-input w-full id="name" type="text" formControlName="name" placeholder="Nombre de la institución" />
+      </z-form-control>
+    </z-form-field>
+
+    <z-form-field>
+      <label z-form-label for="modularCode">Código Modular</label>
+      <z-form-control>
+        <input z-input w-full id="modularCode" type="text" formControlName="modularCode" placeholder="Código modular" />
+      </z-form-control>
+    </z-form-field>
+
+    <z-form-field>
+      <label z-form-label for="managementType">Tipo de Gestión</label>
+      <z-form-control>
+        <z-select-option id="managementType" [options]="managementTypes" formControlName="managementType" placeholder="Seleccionar tipo de gestión"></z-select-option>
+      </z-form-control>
+    </z-form-field>
+
+    <z-form-field>
+      <label z-form-label for="ugel">UGEL</label>
+      <z-form-control>
+        <input z-input w-full id="ugel" type="text" formControlName="ugel" placeholder="UGEL" />
+      </z-form-control>
+    </z-form-field>
+
+    <z-form-field>
+      <label z-form-label for="dre">DRE</label>
+      <z-form-control>
+        <input z-input w-full id="dre" type="text" formControlName="dre" placeholder="DRE" />
+      </z-form-control>
+    </z-form-field>
+
+    <z-form-field>
+      <label z-form-label for="principal">Director</label>
+      <z-form-control>
+        <input z-input w-full id="principal" type="text" formControlName="principal" placeholder="Nombre del director" />
+      </z-form-control>
+    </z-form-field>
+
+    <z-form-field>
+      <label z-form-label for="address">Dirección</label>
+      <z-form-control>
+        <input z-input w-full id="address" type="text" formControlName="address" placeholder="Dirección" />
+      </z-form-control>
+    </z-form-field>
+
+    <z-form-field>
+      <label z-form-label for="district">Distrito</label>
+      <z-form-control>
+        <input z-input w-full id="district" type="text" formControlName="district" placeholder="Distrito" />
+      </z-form-control>
+    </z-form-field>
+
+    <z-form-field>
+      <label z-form-label for="province">Provincia</label>
+      <z-form-control>
+        <input z-input w-full id="province" type="text" formControlName="province" placeholder="Provincia" />
+      </z-form-control>
+    </z-form-field>
+
+    <z-form-field>
+      <label z-form-label for="department">Departamento</label>
+      <z-form-control>
+        <input z-input w-full id="department" type="text" formControlName="department" placeholder="Departamento" />
+      </z-form-control>
+    </z-form-field>
+
+    <z-form-field>
+      <label z-form-label for="phone">Teléfono</label>
+      <z-form-control>
+        <input z-input w-full id="phone" type="text" formControlName="phone" placeholder="Teléfono" />
+      </z-form-control>
+    </z-form-field>
+
+    <z-form-field>
+      <label z-form-label for="email">Email</label>
+      <z-form-control>
+        <input z-input w-full id="email" type="text" formControlName="email" placeholder="Correo electrónico" />
+      </z-form-control>
+    </z-form-field>
+
+    <z-form-field>
+      <label z-form-label for="logoUrl">Logo (URL)</label>
+      <z-form-control>
+        <input z-input w-full id="logoUrl" type="text" formControlName="logoUrl" placeholder="URL del logo" />
+      </z-form-control>
+    </z-form-field>
+
+    <z-form-field class="md:col-span-2">
+      <label z-form-label for="description">Descripción</label>
+      <z-form-control>
+        <textarea
+          z-input
+          id="description"
+          formControlName="description"
+          placeholder="Descripción de la institución..."
+          rows="3"
+          class="w-full resize-none"
+        ></textarea>
+      </z-form-control>
+    </z-form-field>
   </div>
-  <footer class="flex items-center justify-end gap-2 mt-6">
-    <button type="button" z-button zColor="secondary" zType="outline" (click)="onClose()">
-      <i class="fas fa-times"></i>
+  <footer class="flex items-center justify-end gap-3 mt-6 pt-4 border-t border-base-200">
+    <button type="button" z-button zColor="secondary" zType="outline" (click)="onClose()" class="rounded-full px-8 h-11">
+      <i class="fas fa-times mr-2"></i>
       Cancelar
     </button>
-    <button type="submit" z-button zColor="primary" [disabled]="institutionForm.invalid">
-      <i class="fas fa-check"></i>
-      Guardar
+    <button type="submit" z-button zColor="primary" [disabled]="institutionForm.invalid" class="rounded-full px-8 h-11">
+      <i class="fas fa-check mr-2"></i>
+      Guardar Cambios
     </button>
   </footer>
 </form>

@@ -156,6 +156,7 @@ export class ZardDialogOptions<T, U> {
   host: {
     '[class]': 'classes()',
     '[style.width]': 'config.zWidth ? config.zWidth : null',
+    '[style.max-width]': 'config.zWidth ? "none" : null',
     '[style.height]': 'config.zHeight ? config.zHeight : null',
     '[style.min-height]': 'config.zMinHeight ? config.zMinHeight : null',
     '[style.max-height]': 'config.zMaxHeight ? config.zMaxHeight : null',

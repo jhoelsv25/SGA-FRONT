@@ -8,7 +8,8 @@ import {
 import { ZardAlertDialogService } from '@/shared/components/alert-dialog/alert-dialog.service';
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Institution } from '../../types/institution-types';
+import { RouterLink } from '@angular/router';
+import { Institution, InstitutionStatus, INSTITUTION_STATUS_LABELS } from '../../types/institution-types';
 
 @Component({
   selector: 'sga-institution-card',
@@ -20,6 +21,7 @@ import { Institution } from '../../types/institution-types';
     ZardIconComponent,
     ZardPopoverDirective,
     ZardPopoverComponent,
+    RouterLink
   ],
   templateUrl: './institution-card.html',
   styleUrls: ['./institution-card.css'],
@@ -32,8 +34,11 @@ export class InstitutionCardComponent {
 
   readonly edit = output<Institution>();
   readonly delete = output<Institution>();
+  readonly statusChange = output<string>();
 
-  public isActive = computed(() => this.institution().status === 'active');
+  public StatusEnum = InstitutionStatus;
+
+  public isActive = computed(() => this.institution().status === InstitutionStatus.ACTIVE);
 
   public getInitials(name: string): string {
     return name
@@ -65,11 +70,10 @@ export class InstitutionCardComponent {
   }
 
   getStatusLabel(status: string): string {
-    const labels: Record<string, string> = {
-      active: 'activas',
-      inactive: 'inactiva',
-      pending: 'pendiente',
-    };
-    return labels[status.toLowerCase()] || 'inactivo';
+    return INSTITUTION_STATUS_LABELS[status as string] || 'Inactiva';
+  }
+
+  changeStatus(status: string): void {
+    this.statusChange.emit(status);
   }
 }

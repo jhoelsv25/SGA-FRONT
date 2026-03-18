@@ -1,5 +1,6 @@
 import { DialogModalService } from '@shared/widgets/dialog-modal';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
+import { DialogConfirmService } from '@shared/widgets/dialog-confirm';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 import { DataSource } from '@shared/widgets/data-source/data-source';
@@ -12,16 +13,53 @@ import { USER_COLUMN } from '../config/column.config';
 import { USER_ACTIONS } from '../config/action.config';
 import { take } from 'rxjs';
 
+import { UrlParamsService } from '@core/services/url-params.service';
+import { ActivatedRoute } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
+import { FormsModule } from '@angular/forms';
+import { ZardInputDirective } from '@/shared/components/input';
+import { ZardButtonComponent } from '@/shared/components/button';
+import { SelectOptionComponent } from '@/shared/widgets/select-option/select-option';
+import { ZardFormImports } from '@/shared/components/form';
+
 @Component({
   selector: 'sga-users',
-  imports: [HeaderDetail, DataSource],
+  imports: [HeaderDetail, DataSource, FormsModule, ZardInputDirective, ZardButtonComponent, SelectOptionComponent, ...ZardFormImports],
   templateUrl: './users.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class UsersPage implements OnInit {
   private dialog = inject(DialogModalService);
+  private confirmDialog = inject(DialogConfirmService);
   private store = inject(UserStore);
   private router = inject(Router);
+  private urlParams = inject(UrlParamsService);
+  private route = inject(ActivatedRoute);
+
+  public filterSearch = signal('');
+  public filterRole = signal('');
+  public hasActiveFilters = computed(() => !!this.filterSearch() || !!this.filterRole());
+  
+  // Asumiendo que pueden haber roles fijos de prueba o se filtrarán luego
+  public rolesFilter = [
+    { value: '', label: 'Todos' },
+    { value: 'admin', label: 'Admin' },
+    { value: 'user', label: 'User' },
+    { value: 'student', label: 'Estudiante' }
+  ];
+
+  constructor() {
+    this.route.queryParams.pipe(takeUntilDestroyed()).subscribe(params => {
+      this.filterSearch.set(params['search'] || '');
+      this.filterRole.set(params['role'] || '');
+      this.store.loadAll({
+        page: this.store.pagination().page,
+        size: this.store.pagination().size,
+        ...params
+      });
+    });
+  }
 
   headerConfig = computed(() => USER_HEADER_CONFIG);
   columns = computed(() => USER_COLUMN);
@@ -38,10 +76,23 @@ export default class UsersPage implements OnInit {
       this.store.loadAll({ page: this.pagination().page, size: this.pagination().size });
   }
 
-  onRowAction(e: { action: ActionConfig; context: ActionContext<unknown> }) {
+  async onRowAction(e: { action: ActionConfig; context: ActionContext<unknown> }) {
     const row = e.context.row as User;
     if (e.action.key === 'edit') this.openForm(row);
-    if (e.action.key === 'delete') this.store.delete(String(row.id));
+    if (e.action.key === 'delete') {
+      const confirmed = await this.confirmDialog.open({
+        type: 'danger',
+        icon: 'fa-solid fa-triangle-exclamation',
+        title: 'Eliminar usuario',
+        message: `¿Estás seguro de eliminar al usuario ${row.firstName} ${row.lastName}? Esta acción no se puede deshacer.`,
+        acceptButtonProps: { label: 'Eliminar', color: 'danger' },
+        rejectButtonProps: { label: 'Cancelar', color: 'secondary' }
+      });
+
+      if (confirmed) {
+        this.store.delete(String(row.id));
+      }
+    }
   }
 
   onPageChange(p: { page: number; size: number }) {
@@ -49,7 +100,18 @@ export default class UsersPage implements OnInit {
   }
 
   ngOnInit() {
-    this.store.loadAll({ page: this.pagination().page, size: this.pagination().size });
+    // La carga inicial y las actualizaciones se manejan en el constructor reactivamente vía URL
+  }
+
+  applyFilters() {
+    this.urlParams.setParams({
+      search: this.filterSearch(),
+      role: this.filterRole()
+    });
+  }
+
+  clearFilters() {
+    this.urlParams.clearParams();
   }
 
   private openForm(current?: User | null) {

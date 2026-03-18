@@ -1,7 +1,43 @@
+<ng-template #filters>
+  <div class="p-5 flex flex-col gap-4 min-w-80 bg-white dark:bg-neutral-900 rounded-2xl relative">
+    <div class="flex items-center justify-between pb-2 border-b border-base-200">
+      <h3 class="text-xs font-bold text-base-content/50 uppercase tracking-widest">Filtros Activos</h3>
+      @if (filterSearch() || filterRole()) {
+        <button type="button" class="text-xs text-primary font-medium hover:underline" (click)="clearFilters()">Limpiar</button>
+      }
+    </div>
+
+    <z-form-field>
+      <label z-form-label>Buscar</label>
+      <z-form-control>
+        <input z-input placeholder="Nombre, email..." [ngModel]="filterSearch()" (ngModelChange)="filterSearch.set($event)" />
+      </z-form-control>
+    </z-form-field>
+
+    <z-form-field>
+      <label z-form-label>Rol de Usuario</label>
+      <z-form-control>
+        <z-select-option
+          [options]="rolesFilter"
+          [ngModel]="filterRole()"
+          (ngModelChange)="filterRole.set($event)"
+          placeholder="Todos"
+        ></z-select-option>
+      </z-form-control>
+    </z-form-field>
+
+    <button type="button" z-button class="w-full mt-2" (click)="applyFilters()">
+      Aplicar Filtros
+    </button>
+  </div>
+</ng-template>
+
 <sga-header-detail
   [config]="headerConfig()"
   [actions]="headerActions()"
   (action)="onHeaderAction($event)"
+  [filterTemplate]="filters"
+  [hasActiveFilters]="hasActiveFilters()"
  />
 <sga-data-source
   [data]="data()"
