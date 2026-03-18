@@ -1,212 +1,250 @@
-<div class="space-y-6">
-  <section class="rounded-[2rem] border border-border bg-card p-6 shadow-sm">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-      <div>
-        <h2 class="text-2xl font-semibold tracking-tight text-foreground">Trabajos y tareas</h2>
-        <p class="mt-2 text-sm text-muted-foreground">{{ pageLabel() }}</p>
+<div class="space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+  <section
+    class="card-premium p-10 bg-gradient-to-br from-zinc-900 to-black text-white border-none relative overflow-hidden">
+    <div class="absolute top-0 right-0 w-80 h-80 bg-primary/20 rounded-full -mr-40 -mt-40 blur-3xl animate-pulse"></div>
+    <div class="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+      <div class="space-y-2">
+        <h2 class="text-3xl sm:text-4xl font-black tracking-tighter">Trabajos y tareas</h2>
+        <p class="text-white/50 font-bold uppercase tracking-[0.2em] text-[10px]">{{ pageLabel() }}</p>
       </div>
-      <div class="inline-flex items-center rounded-xl border border-border bg-background/80 px-3 py-1.5 text-xs font-semibold text-muted-foreground">
-        {{ tasks().length }} tarea(s)
+      <div class="flex items-center gap-3">
+        <div
+          class="px-5 py-2.5 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/10 text-xs font-black uppercase tracking-widest">
+          {{ tasks().length }} Tareas totales
+        </div>
       </div>
     </div>
   </section>
 
-  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-2">
-    <div>
-      <h3 class="text-lg font-semibold text-foreground">Listado del aula</h3>
-      <p class="text-sm text-muted-foreground">Fechas de entrega, estado y puntajes publicados.</p>
+  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-base-200 pb-6">
+    <div class="space-y-1">
+      <h3 class="text-xl font-black text-base-content tracking-tight">Listado de actividades</h3>
+      <p class="text-sm text-base-content/50 font-medium">Gestiona tus entregas, revisa calificaciones y
+        retroalimentación.</p>
     </div>
-    <div class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold border border-border bg-background text-muted-foreground">
-      Vista general
+    <div
+      class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary bg-primary/5 px-4 py-2 rounded-xl border border-primary/10">
+      <i class="fa-solid fa-layer-group"></i>
+      Vista Detallada
     </div>
   </div>
 
   @if (tasks().length === 0) {
-    <div class="rounded-2xl border border-dashed border-border bg-card p-10 text-center">
-      <div class="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-background text-muted-foreground">
-        <i class="fa-solid fa-list-check"></i>
-      </div>
-      <p class="font-semibold text-foreground">No hay tareas registradas</p>
-      <p class="mt-1 text-sm text-muted-foreground">Cuando se publique una tarea en el aula, aparecera aqui.</p>
+  <div
+    class="py-24 flex flex-col items-center justify-center text-center bg-base-100/50 rounded-[3rem] border border-dashed border-base-300">
+    <div class="w-20 h-20 bg-base-200/50 rounded-3xl flex items-center justify-center text-base-content/10 mb-6">
+      <i class="fa-solid fa-list-check text-3xl"></i>
     </div>
+    <p class="text-xl font-black text-base-content/60">No hay tareas pendientes</p>
+    <p class="mt-2 text-sm text-base-content/40 font-medium max-w-xs">¡Excelente! Estás al día con todas tus actividades
+      del aula.</p>
+  </div>
   } @else {
-    <div class="grid grid-cols-1 gap-4">
-      @for (task of tasks(); track task.id) {
-        <div class="group flex flex-col gap-4 rounded-2xl border border-border bg-card p-5 shadow-sm transition-all hover:shadow-md sm:flex-row sm:items-center sm:justify-between">
-          <div class="flex items-start gap-4">
-            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors duration-300 group-hover:bg-primary group-hover:text-primary-foreground">
-              <i class="fa-solid fa-clipboard-check"></i>
+  <div class="grid grid-cols-1 gap-6">
+    @for (task of tasks(); track task.id; let i = $index) {
+    <div class="card-premium bg-white dark:bg-zinc-900 overflow-hidden" [style.animation-delay]="i * 100 + 'ms'">
+      <div class="p-8">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+          <div class="flex items-start gap-6 flex-1 min-w-0">
+            <div
+              class="w-16 h-16 shrink-0 flex items-center justify-center rounded-2xl bg-base-100 dark:bg-zinc-800 text-base-content/20 group-hover:bg-primary group-hover:text-white transition-all duration-500 shadow-inner border border-base-200/50 dark:border-zinc-700/50">
+              <i class="fa-solid fa-clipboard-check text-2xl"></i>
             </div>
-            <div>
-              <h3 class="text-base font-semibold text-foreground transition-colors group-hover:text-primary sm:text-lg">{{ task.title }}</h3>
-              <p class="mt-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Vence el {{ task.date | date:'mediumDate' }}</p>
-            </div>
-          </div>
-
-          <div class="flex items-center justify-between sm:justify-end gap-6">
-            <div class="text-right">
-              <p class="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Puntaje</p>
-              <p class="text-base font-semibold text-foreground">{{ task.points }} pts</p>
-            </div>
-
-            <div class="flex flex-col items-end gap-1">
-              @if (task.status === 'pending') {
-                <span class="px-3 py-1 rounded-full bg-warning/10 text-warning text-[11px] font-semibold border border-warning/20">Pendiente</span>
-              } @else if (task.status === 'delivered') {
-                <span class="px-3 py-1 rounded-full bg-info/10 text-info text-[11px] font-semibold border border-info/20">Entregado</span>
-              } @else if (task.status === 'late') {
-                <span class="px-3 py-1 rounded-full bg-orange-500/10 text-orange-600 text-[11px] font-semibold border border-orange-500/20">Tardio</span>
-              } @else if (task.status === 'graded') {
-                <span class="px-3 py-1 rounded-full bg-success/10 text-success text-[11px] font-semibold border border-success/20">
-                  @if (task.grade !== undefined && task.grade !== null) {
-                    Calificado: {{ task.grade }}
-                  } @else {
-                    Calificado
-                  }
-                </span>
-              }
-              <span class="text-xs font-semibold text-primary">
-                @if (task.studentSubmissions?.length) {
-                  {{ task.studentSubmissions!.length }} registro(s)
-                } @else {
-                  Sin entregas
-                }
-              </span>
-            </div>
-          </div>
-
-          @if (canSubmitTask()) {
-            <div class="grid gap-3 border-t border-border/70 pt-4 sm:w-full sm:max-w-[460px]">
-              <div>
-                <p class="text-sm font-semibold text-foreground">Entregar tarea</p>
-                <p class="mt-1 text-xs text-muted-foreground">Adjunta texto, enlace o archivo desde el aula.</p>
-              </div>
-              <textarea
-                class="min-h-24 rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition focus:border-primary"
-                placeholder="Describe tu entrega..."
-                [ngModel]="getSubmissionDraft(task.id).submissionText"
-                (ngModelChange)="updateSubmissionDraft(task.id, { submissionText: $event })"
-              ></textarea>
-              <input
-                type="url"
-                class="h-11 rounded-xl border border-border bg-background px-4 text-sm text-foreground outline-none transition focus:border-primary"
-                placeholder="https://enlace-de-tu-entrega.com"
-                [ngModel]="getSubmissionDraft(task.id).linkUrl"
-                (ngModelChange)="updateSubmissionDraft(task.id, { linkUrl: $event })"
-               />
+            <div class="min-w-0 space-y-2">
+              <h3
+                class="text-xl sm:text-2xl font-black text-base-content leading-tight hover:text-primary transition-colors cursor-pointer truncate">
+                {{ task.title }}</h3>
               <div class="flex flex-wrap items-center gap-3">
-                <input type="file" #taskFileInput class="hidden" (change)="onTaskFileSelected(task.id, $event)">
-                <button
-                  type="button"
-                  class="inline-flex h-10 items-center rounded-xl border border-border bg-background px-4 text-sm font-semibold text-foreground transition hover:border-primary/40 hover:text-primary"
-                  (click)="taskFileInput.click()"
-                >
-                  Adjuntar archivo
-                </button>
-                @if (getSubmissionDraft(task.id).fileName) {
-                  <span class="text-xs text-muted-foreground">{{ getSubmissionDraft(task.id).fileName }}</span>
+                <span
+                  class="px-3 py-1 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 text-[10px] font-black uppercase tracking-widest rounded-lg border border-red-100 dark:border-red-500/20">
+                  Vence: {{ task.date | date:'mediumDate' }}
+                </span>
+                <span class="w-1 h-1 rounded-full bg-base-300"></span>
+                <span class="text-[10px] font-bold text-base-content/40 uppercase tracking-widest">Valor: {{ task.points
+                  }} Puntos puros</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-6 self-end lg:self-center">
+            <div class="flex flex-col items-end gap-2">
+              @if (task.status === 'pending') {
+              <span
+                class="px-4 py-1.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 text-xs font-black uppercase tracking-widest border border-amber-500/20">Pendiente</span>
+              } @else if (task.status === 'delivered') {
+              <span
+                class="px-4 py-1.5 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 text-xs font-black uppercase tracking-widest border border-blue-500/20">Entregado</span>
+              } @else if (task.status === 'late') {
+              <span
+                class="px-4 py-1.5 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 text-xs font-black uppercase tracking-widest border border-rose-500/20">Tardío</span>
+              } @else if (task.status === 'graded') {
+              <div class="flex flex-col items-end">
+                <span
+                  class="px-4 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-black uppercase tracking-widest border border-emerald-500/20">Calificado</span>
+                @if (task.grade !== undefined && task.grade !== null) {
+                <span class="text-2xl font-black text-emerald-600 mt-1">{{ task.grade }}<span
+                    class="text-xs text-base-content/30 ml-1">/{{ task.points }}</span></span>
                 }
-                <button
-                  type="button"
-                  class="inline-flex h-10 items-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition disabled:opacity-60"
-                  [disabled]="submittingTaskId() === task.id"
-                  (click)="submitTask(task)"
-                >
+              </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        @if (canSubmitTask()) {
+        <div class="mt-8 pt-8 border-t border-base-100 flex flex-col gap-6 animate-in fade-in slide-in-from-top-4">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-primary/5 flex items-center justify-center text-primary">
+              <i class="fa-solid fa-paper-plane text-xs"></i>
+            </div>
+            <span class="text-sm font-black uppercase tracking-widest text-base-content">Entregar actividad</span>
+          </div>
+
+          <div class="grid gap-4">
+            <textarea
+              class="w-full min-h-[140px] rounded-[1.5rem] border-transparent bg-base-200/50 focus:bg-white dark:bg-zinc-800/50 dark:focus:bg-zinc-800 p-6 text-sm font-medium transition-all duration-300 outline-none focus:ring-4 focus:ring-primary/5 resize-none"
+              placeholder="Escribe tus comentarios o detalles de la entrega aquí..."
+              [ngModel]="getSubmissionDraft(task.id).submissionText"
+              (ngModelChange)="updateSubmissionDraft(task.id, { submissionText: $event })"></textarea>
+
+            <div class="flex flex-col sm:flex-row items-center gap-4">
+              <div class="relative w-full">
+                <i class="fa-solid fa-link absolute left-5 top-1/2 -translate-y-1/2 text-base-content/30"></i>
+                <input type="url"
+                  class="w-full h-14 pl-12 pr-6 rounded-2xl border-transparent bg-base-200/50 focus:bg-white dark:bg-zinc-800/50 dark:focus:bg-zinc-800 text-sm font-medium transition-all duration-300 outline-none focus:ring-4 focus:ring-primary/5"
+                  placeholder="Enlace de entrega (Drive, GitHub, etc.)" [ngModel]="getSubmissionDraft(task.id).linkUrl"
+                  (ngModelChange)="updateSubmissionDraft(task.id, { linkUrl: $event })" />
+              </div>
+
+              <div class="flex items-center gap-3 w-full sm:w-auto">
+                <input type="file" #taskFileInput class="hidden" (change)="onTaskFileSelected(task.id, $event)">
+                <button type="button" (click)="taskFileInput.click()"
+                  class="h-14 px-6 rounded-2xl bg-base-200/80 dark:bg-zinc-800 text-sm font-black uppercase tracking-widest text-base-content/60 hover:text-primary hover:bg-white transition-all border-none flex-1 sm:flex-initial whitespace-nowrap">
+                  <i class="fa-solid fa-paperclip mr-2"></i>
+                  {{ getSubmissionDraft(task.id).fileName ? 'Cambiar archivo' : 'Adjuntar' }}
+                </button>
+
+                <button type="button" [disabled]="submittingTaskId() === task.id" (click)="submitTask(task)"
+                  class="h-14 px-10 rounded-2xl bg-primary text-white text-sm font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all flex-1 sm:flex-initial whitespace-nowrap disabled:opacity-50">
                   @if (submittingTaskId() === task.id) {
-                    Guardando...
+                  <i class="fa-solid fa-circle-notch animate-spin mr-2"></i> Procesando
                   } @else {
-                    Entregar ahora
+                  Enviar ahora
                   }
                 </button>
               </div>
             </div>
+            @if (getSubmissionDraft(task.id).fileName) {
+            <div
+              class="flex items-center gap-2 text-[10px] font-black text-emerald-600 bg-emerald-500/5 px-4 py-2 rounded-lg border border-emerald-500/10 w-fit">
+              <i class="fa-solid fa-file-check"></i>
+              {{ getSubmissionDraft(task.id).fileName }}
+            </div>
+            }
+          </div>
+        </div>
+        }
+
+        @if (task.submissionSummary || (canInspectStudentSubmissions() && task.studentSubmissions?.length)) {
+        <div class="mt-8 pt-8 border-t border-base-100 space-y-8">
+          @if (task.submissionSummary) {
+          <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="p-6 rounded-3xl bg-blue-500/5 border border-blue-500/10 group/stat">
+              <p
+                class="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600/50 group-hover/stat:text-blue-600 transition-colors">
+                Entregados</p>
+              <p class="mt-3 text-3xl font-black text-blue-600">{{ task.submissionSummary.deliveredCount }}</p>
+            </div>
+            <div class="p-6 rounded-3xl bg-emerald-500/5 border border-emerald-500/10 group/stat">
+              <p
+                class="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600/50 group-hover/stat:text-emerald-600 transition-colors">
+                Calificados</p>
+              <p class="mt-3 text-3xl font-black text-emerald-600">{{ task.submissionSummary.gradedCount }}</p>
+            </div>
+            <div class="p-6 rounded-3xl bg-amber-500/5 border border-amber-500/10 group/stat col-span-2 lg:col-span-1">
+              <p
+                class="text-[10px] font-black uppercase tracking-[0.2em] text-amber-600/50 group-hover/stat:text-amber-600 transition-colors">
+                Pendientes</p>
+              <p class="mt-3 text-3xl font-black text-amber-600">{{ task.submissionSummary.pendingCount }}</p>
+            </div>
+          </div>
           }
 
-          @if (task.submissionSummary || (canInspectStudentSubmissions() && task.studentSubmissions?.length)) {
-            <div class="grid gap-4 border-t border-border/70 pt-4 sm:w-full sm:max-w-[420px]">
-              @if (task.submissionSummary) {
-                <div class="grid gap-3 sm:grid-cols-3">
-                  <div class="rounded-xl border border-border bg-background/80 px-3 py-3">
-                    <p class="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Entregados</p>
-                    <p class="mt-2 text-lg font-semibold text-foreground">{{ task.submissionSummary.deliveredCount }}</p>
-                  </div>
-                  <div class="rounded-xl border border-border bg-background/80 px-3 py-3">
-                    <p class="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Calificados</p>
-                    <p class="mt-2 text-lg font-semibold text-foreground">{{ task.submissionSummary.gradedCount }}</p>
-                  </div>
-                  <div class="rounded-xl border border-border bg-background/80 px-3 py-3">
-                    <p class="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Pendientes</p>
-                    <p class="mt-2 text-lg font-semibold text-foreground">{{ task.submissionSummary.pendingCount }}</p>
-                  </div>
-                </div>
-              }
-
-              @if (canInspectStudentSubmissions() && task.studentSubmissions?.length) {
-                <div class="space-y-2">
-                  @for (submission of task.studentSubmissions; track submission.studentId ?? submission.studentName) {
-                    <div class="rounded-xl border border-border bg-background/80 px-4 py-3">
-                      <div class="flex items-center justify-between gap-3">
-                        <div class="min-w-0">
-                          <p class="truncate text-sm font-semibold text-foreground">{{ submission.studentName }}</p>
-                          <p class="mt-1 text-xs text-muted-foreground">
-                            {{ statusLabel(submission.status) }}
-                            @if (submission.submittedAt) {
-                              · {{ submission.submittedAt | date:'mediumDate' }}
-                            }
-                          </p>
-                        </div>
-                        @if (submission.score !== undefined && submission.score !== null) {
-                          <span class="rounded-lg bg-primary/10 px-3 py-2 text-xs font-semibold text-primary">
-                            {{ submission.score }} pts
-                          </span>
-                        }
-                      </div>
-                      @if (submission.feedback) {
-                        <p class="mt-2 text-xs text-muted-foreground">{{ submission.feedback }}</p>
-                      }
-
-                      @if (canReviewTask() && submission.submissionId) {
-                        <div class="mt-3 grid gap-2 border-t border-border/60 pt-3">
-                          <div class="grid gap-2 sm:grid-cols-[120px_minmax(0,1fr)_auto]">
-                            <input
-                              type="number"
-                              min="0"
-                              [max]="task.points"
-                              class="h-10 rounded-lg border border-border bg-card px-3 text-sm text-foreground outline-none transition focus:border-primary"
-                              placeholder="Puntaje"
-                              [ngModel]="getReviewDraft(submission.submissionId).score"
-                              (ngModelChange)="updateReviewDraft(submission.submissionId, { score: $event })"
-                             />
-                            <input
-                              type="text"
-                              class="h-10 rounded-lg border border-border bg-card px-3 text-sm text-foreground outline-none transition focus:border-primary"
-                              placeholder="Retroalimentacion"
-                              [ngModel]="getReviewDraft(submission.submissionId).feedback"
-                              (ngModelChange)="updateReviewDraft(submission.submissionId, { feedback: $event })"
-                             />
-                            <button
-                              type="button"
-                              class="inline-flex h-10 items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition disabled:opacity-60"
-                              [disabled]="reviewingSubmissionId() === submission.submissionId"
-                              (click)="reviewSubmission(task.id, submission.submissionId)"
-                            >
-                              @if (reviewingSubmissionId() === submission.submissionId) {
-                                Guardando
-                              } @else {
-                                Calificar
-                              }
-                            </button>
-                          </div>
-                        </div>
-                      }
+          @if (canInspectStudentSubmissions() && task.studentSubmissions?.length) {
+          <div class="space-y-4">
+            <div class="flex items-center gap-3 mb-2">
+              <i class="fa-solid fa-users-viewfinder text-primary"></i>
+              <span class="text-xs font-black uppercase tracking-widest text-base-content/40">Revisiones de
+                estudiantes</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              @for (submission of task.studentSubmissions; track submission.studentId ?? submission.studentName) {
+              <div
+                class="p-6 rounded-[2rem] bg-base-100/50 border border-base-200/50 hover:bg-white dark:hover:bg-zinc-800 transition-all group/rev">
+                <div class="flex items-center justify-between gap-4">
+                  <div class="flex items-center gap-4 min-w-0">
+                    <div
+                      class="w-10 h-10 rounded-xl bg-gradient-to-tr from-base-200 to-base-300 flex items-center justify-center font-black text-sm text-base-content/40 group-hover/rev:from-primary group-hover/rev:to-indigo-500 group-hover/rev:text-white transition-all duration-500">
+                      {{ submission.studentName[0] }}
                     </div>
+                    <div class="min-w-0">
+                      <p class="truncate text-sm font-black text-base-content">{{ submission.studentName }}</p>
+                      <p class="text-[10px] font-bold text-base-content/40 uppercase mt-0.5">
+                        {{ statusLabel(submission.status) }}
+                        @if (submission.submittedAt) {
+                        • {{ submission.submittedAt | date:'mediumDate' }}
+                        }
+                      </p>
+                    </div>
+                  </div>
+                  @if (submission.score !== undefined && submission.score !== null) {
+                  <div class="text-right">
+                    <span class="text-lg font-black text-primary">{{ submission.score }}</span>
+                    <span class="text-[10px] text-base-content/30 ml-0.5">pts</span>
+                  </div>
                   }
                 </div>
+
+                @if (submission.feedback) {
+                <div class="mt-4 p-4 rounded-2xl bg-blue-500/5 border border-blue-500/10">
+                  <p class="text-xs font-medium text-blue-600 leading-relaxed italic">"{{ submission.feedback }}"</p>
+                </div>
+                }
+
+                @if (canReviewTask() && submission.submissionId) {
+                <div class="mt-6 pt-6 border-t border-base-200/50 grid gap-4">
+                  <div class="flex flex-col sm:flex-row gap-3">
+                    <input type="number" min="0" [max]="task.points"
+                      class="h-12 w-full sm:w-28 rounded-xl border-transparent bg-base-200/50 focus:bg-white dark:bg-zinc-800 p-4 text-sm font-black text-primary transition-all outline-none"
+                      placeholder="Nota" [ngModel]="getReviewDraft(submission.submissionId).score"
+                      (ngModelChange)="updateReviewDraft(submission.submissionId, { score: $event })" />
+                    <input type="text"
+                      class="h-12 flex-1 rounded-xl border-transparent bg-base-200/50 focus:bg-white dark:bg-zinc-800 p-4 text-sm font-medium text-base-content transition-all outline-none"
+                      placeholder="Feedback..." [ngModel]="getReviewDraft(submission.submissionId).feedback"
+                      (ngModelChange)="updateReviewDraft(submission.submissionId, { feedback: $event })" />
+                  </div>
+                  <button type="button"
+                    class="h-12 w-full rounded-xl bg-zinc-900 dark:bg-white dark:text-zinc-900 text-white text-[10px] font-black uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
+                    [disabled]="reviewingSubmissionId() === submission.submissionId"
+                    (click)="reviewSubmission(task.id, submission.submissionId)">
+                    @if (reviewingSubmissionId() === submission.submissionId) {
+                    <i class="fa-solid fa-circle-notch animate-spin mr-2"></i> Guardando
+                    } @else {
+                    Confirmar Calificación
+                    }
+                  </button>
+                </div>
+                }
+              </div>
               }
             </div>
+          </div>
           }
         </div>
-      }
+        }
+      </div>
     </div>
+    }
+  </div>
   }
 </div>

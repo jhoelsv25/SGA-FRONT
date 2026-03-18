@@ -1,192 +1,204 @@
-<div class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-12">
+<div class="space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-1000 pb-20">
   @if (canPublish()) {
-    <z-card class="shadow-sm">
-      <div class="p-6 pt-0 pt-6">
-        <div class="flex items-start gap-4">
-          <div class="w-10 h-10 rounded-full bg-primary/10 border-2 border-base-100 shadow-sm shrink-0 flex items-center justify-center font-bold text-primary">JP</div>
-          <div class="flex-1 space-y-4">
-            <textarea z-input w-full text-sm
-              [ngModel]="postContent()"
-              (ngModelChange)="postContent.set($event)"
-              placeholder="Anuncia algo a tu clase..."
-              class="resize-none"
-              [rows]="3"
-            ></textarea>
+  <div class="card-premium p-8 bg-white dark:bg-zinc-900 overflow-hidden relative group">
+    <div
+      class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl group-hover:bg-primary/10 transition-colors">
+    </div>
 
-            @if (attachments().length > 0) {
-              <div class="flex flex-wrap gap-2 px-2">
-                @for (file of attachments(); track $index) {
-                  <div class="flex items-center gap-2 bg-primary/5 px-3 py-1.5 rounded-lg border border-primary/20 text-[11px] font-bold text-primary group">
-                    <i class="fa-solid fa-paperclip"></i>
-                    <span class="max-w-[150px] truncate">{{ file.name }}</span>
-                    <button (click)="removeAttachment($index)" class="text-primary/50 hover:text-red-500 transition-colors">
-                      <i class="fa-solid fa-xmark"></i>
-                    </button>
-                  </div>
-                }
-              </div>
-            }
+    <div class="relative flex items-start gap-6">
+      <div
+        class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-primary/20 to-indigo-500/20 text-primary flex items-center justify-center font-black text-xl shadow-inner shrink-0 border border-primary/10">
+        JP
+      </div>
+      <div class="flex-1 space-y-6">
+        <div class="relative">
+          <textarea [ngModel]="postContent()" (ngModelChange)="postContent.set($event)"
+            placeholder="¿Qué quieres compartir hoy con tu clase?"
+            class="w-full bg-base-200/30 dark:bg-zinc-800/50 rounded-[1.5rem] border-transparent focus:border-primary/30 focus:bg-white dark:focus:bg-zinc-800 p-5 text-base font-medium transition-all duration-300 outline-none min-h-[120px] resize-none"></textarea>
+        </div>
 
-            <div class="flex justify-between items-center">
-              <div class="flex items-center gap-2">
-                <input type="file" #fileInput class="hidden" (change)="onFileSelected($event)">
-                <button type="button" z-button zType="ghost" zColor="secondary" zSize="sm" (click)="fileInput.click()" title="Adjuntar archivo">
-                  <i class="fa-solid fa-paperclip"></i>
-                </button>
-                <button
-                  type="button"
-                  z-button
-                  [zType]="isAssignment() ? 'default' : 'ghost'"
-                  zSize="sm"
-                  (click)="isAssignment.set(!isAssignment())"
-                  [class.bg-primary]="isAssignment()"
-                  [class.text-primary-foreground]="isAssignment()"
-                >
-                  <i class="fa-solid fa-list-check mr-2"></i> Tarea
-                </button>
-              </div>
-              <button
-                type="button"
-                z-button
-                zType="default"
-                [disabled]="!postContent() && attachments().length === 0"
-                (click)="publish()"
-              >
-                Publicar
-              </button>
-            </div>
+        @if (attachments().length > 0) {
+        <div class="flex flex-wrap gap-3">
+          @for (file of attachments(); track $index) {
+          <div
+            class="flex items-center gap-3 bg-primary/5 hover:bg-primary/10 px-4 py-2 rounded-xl border border-primary/20 text-xs font-bold text-primary transition-all animate-in zoom-in">
+            <i class="fa-solid fa-file-lines"></i>
+            <span class="max-w-[180px] truncate">{{ file.name }}</span>
+            <button (click)="removeAttachment($index)" class="hover:text-red-500 transition-colors">
+              <i class="fa-solid fa-circle-xmark"></i>
+            </button>
           </div>
+          }
+        </div>
+        }
+
+        <div class="flex justify-between items-center bg-base-200/20 p-2 rounded-2xl border border-base-200/50">
+          <div class="flex items-center gap-1">
+            <input type="file" #fileInput class="hidden" (change)="onFileSelected($event)">
+            <button type="button" (click)="fileInput.click()"
+              class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white dark:hover:bg-zinc-800 text-base-content/50 hover:text-primary transition-all shadow-sm hover:shadow-md"
+              title="Adjuntar archivo">
+              <i class="fa-solid fa-paperclip"></i>
+            </button>
+
+            <div class="h-6 w-px bg-base-200 mx-2"></div>
+
+            <button type="button" (click)="isAssignment.set(!isAssignment())"
+              [class]="isAssignment() ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-base-content/50 hover:bg-white dark:hover:bg-zinc-800'"
+              class="px-4 py-2 flex items-center gap-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all">
+              <i class="fa-solid fa-list-check"></i>
+              <span class="hidden sm:inline">Tarea</span>
+            </button>
+          </div>
+
+          <button type="button" [disabled]="!postContent() && attachments().length === 0" (click)="publish()"
+            class="bg-primary hover:bg-primary/90 disabled:opacity-50 text-white px-8 py-2.5 rounded-xl text-sm font-black uppercase tracking-[0.1em] transition-all shadow-lg shadow-primary/20 hover:scale-105 active:scale-95">
+            Publicar
+          </button>
         </div>
       </div>
-    </z-card>
+    </div>
+  </div>
   } @else {
-    <section class="rounded-[2rem] border border-border bg-card p-6 shadow-sm">
-      <div class="flex items-start gap-4">
-        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-          <i class="fa-solid fa-bullhorn"></i>
-        </div>
-        <div>
-          <h2 class="text-lg font-semibold text-foreground">Muro del aula</h2>
-          <p class="mt-1 text-sm text-muted-foreground">
-            Puedes revisar publicaciones, materiales y tareas del curso. La creacion de anuncios esta disponible para docentes y personal de gestion.
-          </p>
-        </div>
+  <div
+    class="card-premium p-8 bg-gradient-to-br from-primary to-indigo-700 text-white border-none relative overflow-hidden">
+    <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl"></div>
+    <div class="relative flex items-center gap-6">
+      <div
+        class="w-16 h-16 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center border border-white/30">
+        <i class="fa-solid fa-bullhorn text-2xl"></i>
       </div>
-    </section>
+      <div>
+        <h2 class="text-2xl font-black tracking-tight">Muro del aula</h2>
+        <p class="mt-1 text-white/70 font-medium">Revisa avisos, materiales y tareas publicadas por tus docentes.</p>
+      </div>
+    </div>
+  </div>
   }
 
   <!-- Feed Area -->
-  <div class="space-y-6">
+  <div class="space-y-8">
     @if (store.loading()) {
-      <z-card>
-        <div class="p-6 pt-0 pt-6">
-          <div class="flex items-start gap-4 mb-4">
-            <z-skeleton class="h-12 w-12 rounded-full"></z-skeleton>
-            <div class="space-y-2 flex-1">
-              <z-skeleton class="h-4 w-1/4"></z-skeleton>
-              <z-skeleton class="h-3 w-1/6"></z-skeleton>
-            </div>
+    <div class="space-y-6">
+      @for (i of [1,2,3]; track i) {
+      <div class="card-premium p-8 bg-white dark:bg-zinc-900 border-none">
+        <div class="flex items-center gap-4 mb-6">
+          <div class="w-14 h-14 rounded-2xl bg-base-200 animate-pulse"></div>
+          <div class="space-y-2 flex-1">
+            <div class="h-4 w-1/4 bg-base-200 animate-pulse rounded-full"></div>
+            <div class="h-3 w-1/6 bg-base-200 animate-pulse rounded-full"></div>
           </div>
-          <z-skeleton class="h-16 w-full"></z-skeleton>
         </div>
-      </z-card>
-      <z-card>
-        <div class="p-6 pt-0 pt-6">
-           <z-skeleton class="h-16 w-full"></z-skeleton>
-        </div>
-      </z-card>
-    } @else {
-      @for (item of store.feed(); track item.id) {
-        <z-card class="group hover:shadow-md transition-all">
-          
-          <!-- Post Header -->
-          <div class="flex flex-col space-y-1.5 p-6">
-            <div class="flex justify-between items-start">
-              <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold transition-all duration-500 shadow-sm"
-                     [ngClass]="item.type === 'assignment' ? 'bg-primary' : (item.type === 'material' ? 'bg-indigo-500' : 'bg-base-300 text-base-content')">
-                  @if (item.type === 'assignment') {
-                    <i class="fa-solid fa-clipboard-list text-xl"></i>
-                  } @else if(item.type === 'material') {
-                    <i class="fa-solid fa-book-bookmark text-xl"></i>
-                  } @else {
-                    {{ item.author.avatar || item.author.name[0] }}
-                  }
-                </div>
-                <div>
-                  <h4 class="font-black tracking-tight" [ngClass]="item.type !== 'post' ? 'text-primary' : 'text-base-content'">
-                    @if(item.type !== 'post') {
-                      {{ item.author.name }} ha publicado una nueva {{ item.type === 'assignment' ? 'tarea' : 'sesión material' }}: 
-                    } @else {
-                      {{ item.author.name }}
-                    }
-                  </h4>
-                  <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-base-content/50">
-                    <span>{{ item.author.role }}</span>
-                    <span>•</span>
-                    <span>{{ item.date | date:'short' }}</span>
-                  </div>
-                </div>
-              </div>
-              
-              @if (item.type === 'assignment') {
-                <!-- Icon options context could be placed here -->
-                <button z-button zType="ghost" zColor="secondary" zSize="sm" shape="square"><i class="fa-solid fa-ellipsis-vertical"></i></button>
-              }
-            </div>
-          </div>
-  
-          <div class="p-6 pt-0">
-            <div class="space-y-4 px-0 md:px-2 md:pl-16">
-              @if (item.title) {
-                <h2 class="text-2xl font-semibold leading-none tracking-tight leading-tight text-lg">{{ item.title }}</h2>
-              }
-              <p class="text-base-content/80 font-medium leading-relaxed whitespace-pre-wrap">{{ item.content }}</p>
-              
-              <!-- Post Attachments -->
-              @if (item.metadata.attachments && item.metadata.attachments.length > 0) {
-                <div class="flex flex-wrap gap-3 mt-4">
-                  @for (file of item.metadata.attachments; track $index) {
-                    <a [href]="file.url" target="_blank" class="flex items-center gap-3 bg-base-200/50 p-3 rounded-2xl border border-base-200 hover:border-primary/30 hover:bg-primary/5 transition-all">
-                      <div class="w-10 h-10 bg-base-100 rounded-xl shadow-sm flex items-center justify-center text-primary">
-                        <i class="fa-solid fa-file-arrow-down"></i>
-                      </div>
-                      <div class="flex flex-col">
-                        <span class="text-xs font-bold text-base-content truncate max-w-[200px]">{{ file.name }}</span>
-                        <span class="text-[9px] font-black uppercase tracking-widest text-base-content/50">Descargar</span>
-                      </div>
-                    </a>
-                  }
-                </div>
-              }
-            </div>
-          </div>
-  
-          @if (item.type === 'post') {
-            <div class="border-t border-base-200/50">
-              <div class="flex w-full items-center justify-between p-4">
-                <div class="flex items-center gap-6">
-                  <button class="flex items-center gap-2 text-base-content/50 hover:text-primary font-bold text-sm transition-colors">
-                    <i class="fa-regular fa-comment"></i>
-                    <span>{{ item.commentsCount || 0 }} Comentarios de clase</span>
-                  </button>
-                </div>
-              </div>
-              <div class="border-t border-base-200/50 bg-base-200/30 p-4">
-                <p class="text-xs font-medium text-base-content/50">
-                  El detalle de comentarios del muro todavia no esta habilitado en esta vista.
-                </p>
-              </div>
-            </div>
-          }
-        </z-card>
-      } @empty {
-        <div class="flex flex-col items-center justify-center py-20 bg-base-100 rounded-3xl border border-base-200 text-center">
-          <i class="fa-solid fa-scroll text-5xl text-base-content/20 mb-4"></i>
-          <p class="text-base-content/50 font-bold mb-1">El muro está vacío</p>
-          <p class="text-sm text-base-content/40 font-medium">Aquí es donde puedes comunicarte con tu clase.</p>
-        </div>
+        <div class="h-20 w-full bg-base-200/50 animate-pulse rounded-2xl"></div>
+      </div>
       }
+    </div>
+    } @else {
+    @for (item of store.feed(); track item.id; let i = $index) {
+    <div class="card-premium group overflow-hidden bg-white dark:bg-zinc-900" [style.animation-delay]="i * 100 + 'ms'">
+
+      <div class="p-8 pb-4">
+        <div class="flex justify-between items-start">
+          <div class="flex items-center gap-5">
+            <div
+              class="w-14 h-14 rounded-2xl flex items-center justify-center text-white font-black text-xl transition-all duration-500 shadow-xl"
+              [ngClass]="{
+                        'bg-gradient-to-tr from-primary to-indigo-600 shadow-primary/20': item.type === 'assignment',
+                        'bg-gradient-to-tr from-emerald-500 to-teal-600 shadow-emerald-500/20': item.type === 'material',
+                        'bg-zinc-100 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-500 shadow-none border border-zinc-200/50 dark:border-zinc-700/50': item.type === 'post'
+                     }">
+              @if (item.type === 'assignment') {
+              <i class="fa-solid fa-clipboard-list"></i>
+              } @else if(item.type === 'material') {
+              <i class="fa-solid fa-book-bookmark"></i>
+              } @else {
+              <span class="text-lg lowercase">{{ item.author.name[0] }}</span>
+              }
+            </div>
+            <div>
+              <h4 class="font-black text-lg tracking-tight flex flex-wrap items-center gap-x-2"
+                [ngClass]="item.type !== 'post' ? 'text-primary' : 'text-base-content'">
+                @if(item.type !== 'post') {
+                <span>{{ item.author.name }}</span>
+                <span class="text-base-content/40 font-bold text-sm">publicó {{ item.type === 'assignment' ? 'una tarea'
+                  : 'un material' }}</span>
+                } @else {
+                {{ item.author.name }}
+                }
+              </h4>
+              <div class="flex items-center gap-3 mt-1">
+                <span
+                  class="text-[10px] font-black uppercase tracking-[0.2em] text-primary bg-primary/5 px-2 py-0.5 rounded-md">{{
+                  item.author.role }}</span>
+                <span class="w-1 h-1 rounded-full bg-base-300"></span>
+                <span class="text-[10px] font-bold text-base-content/40 uppercase tracking-widest">{{ item.date |
+                  date:'medium' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <button
+            class="w-10 h-10 flex items-center justify-center rounded-xl text-base-content/20 hover:text-primary hover:bg-primary/5 transition-all">
+            <i class="fa-solid fa-ellipsis-vertical"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="px-8 pb-8 pt-2">
+        <div class="space-y-4 md:pl-16">
+          @if (item.title) {
+          <h2 class="text-2xl sm:text-3xl font-black text-base-content leading-tight tracking-tight">{{ item.title }}
+          </h2>
+          }
+          <p class="text-base-content/70 font-medium text-base sm:text-lg leading-relaxed whitespace-pre-wrap">{{
+            item.content }}</p>
+
+          @if (item.metadata.attachments && item.metadata.attachments.length > 0) {
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
+            @for (file of item.metadata.attachments; track $index) {
+            <a [href]="file.url" target="_blank"
+              class="flex items-center gap-4 bg-base-200/30 dark:bg-zinc-800/50 p-4 rounded-[1.5rem] border border-transparent hover:border-primary/20 hover:bg-white dark:hover:bg-zinc-800 hover:shadow-lg transition-all group/file">
+              <div
+                class="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary group-hover/file:bg-primary group-hover/file:text-white transition-colors duration-500">
+                <i class="fa-solid fa-file-arrow-down text-lg"></i>
+              </div>
+              <div class="flex flex-col min-w-0">
+                <span class="text-sm font-black text-base-content truncate pr-4">{{ file.name }}</span>
+                <span
+                  class="text-[10px] font-bold uppercase tracking-[0.1em] text-primary group-hover/file:translate-x-1 transition-transform">Descargar
+                  archivo</span>
+              </div>
+            </a>
+            }
+          </div>
+          }
+        </div>
+      </div>
+
+      @if (item.type === 'post') {
+      <div class="mt-4 border-t border-base-100 bg-base-200/10 p-6 flex items-center justify-between">
+        <button class="flex items-center gap-3 text-base-content/40 hover:text-primary transition-colors">
+          <div class="w-8 h-8 rounded-lg bg-base-200/50 flex items-center justify-center">
+            <i class="fa-regular fa-comment text-sm"></i>
+          </div>
+          <span class="text-xs font-black uppercase tracking-widest">{{ item.commentsCount || 0 }} Comentarios</span>
+        </button>
+
+        <div class="text-[10px] font-bold text-base-content/30 uppercase italic">Próximamente: Hilo de comentarios</div>
+      </div>
+      }
+    </div>
+    } @empty {
+    <div class="py-32 flex flex-col items-center justify-center text-center">
+      <div
+        class="w-24 h-24 bg-base-200/50 rounded-3xl flex items-center justify-center text-base-content/10 mb-8 animate-bounce">
+        <i class="fa-solid fa-cloud-sun text-4xl"></i>
+      </div>
+      <h3 class="text-2xl font-black text-base-content/60 tracking-tight">Todo despejado por hoy</h3>
+      <p class="text-base-content/40 font-medium max-w-xs mt-2">No hay publicaciones recientes en esta sección del aula.
+      </p>
+    </div>
+    }
     }
   </div>
 </div>
