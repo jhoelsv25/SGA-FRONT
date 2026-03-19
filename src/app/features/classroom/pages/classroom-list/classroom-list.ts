@@ -2,8 +2,8 @@ import { ZardCardComponent } from '@/shared/components/card';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { SectionCourseApi } from '@features/organization/section-courses/services/section-course-api';
-import type { SectionCourse } from '@features/organization/section-courses/types/section-course-types';
+import { SectionCourseApi } from '@features/section-courses/services/section-course-api';
+import type { SectionCourse } from '@features/section-courses/types/section-course-types';
 
 
 @Component({

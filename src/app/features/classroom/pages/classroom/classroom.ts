@@ -5,7 +5,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { ClassroomStore } from '../../services/store/classroom.store';
 import { ClassroomSocketService } from '../../services/classroom-socket';
-import { SectionCourseApi } from '@features/organization/section-courses/services/section-course-api';
+import { SectionCourseApi } from '@features/section-courses/services/section-course-api';
 import type { ClassroomFeedItem } from '../../types/classroom-types';
 
 

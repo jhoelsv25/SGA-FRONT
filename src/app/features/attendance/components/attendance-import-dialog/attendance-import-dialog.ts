@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import * as XLSX from 'xlsx';
 import { Toast } from '@core/services/toast';
-import { AttendanceStatus } from '../../../academic-setting/attendances/types/attendance-types';
+import { AttendanceStatus } from '../../../attendances/types/attendance-types';
 
 interface ImportData {
   onImport: (data: { studentCode: string; status: AttendanceStatus }[]) => void;

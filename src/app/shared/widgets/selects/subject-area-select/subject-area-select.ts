@@ -3,8 +3,8 @@ import { SelectOption } from '@/shared/widgets/select-option/select-option';
 import { ChangeDetectionStrategy, Component, computed, ElementRef, forwardRef, HostListener, inject, input, output, signal, viewChild, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { SubjectAreaApi } from '@features/academic-setup/subject-areas/services/subject-area-api';
-import type { SubjectArea } from '@features/academic-setup/subject-areas/types/subject-area-types';
+import { SubjectAreaApi } from '@features/subject-areas/services/subject-area-api';
+import type { SubjectArea } from '@features/subject-areas/types/subject-area-types';
 
 function getSubjectAreaLabel(s: SubjectArea): string {
   return `${s.code} - ${s.name}`;

@@ -9,7 +9,7 @@ export default [
   },
   {
     path: 'enrollments',
-    loadComponent: () => import('../academic-setting/enrollments/pages/enrollments/enrollments'),
+    loadComponent: () => import('../enrollments/pages/enrollments/enrollments'),
     title: 'Matrículas',
     data: { permissions: ['view_enrollment', 'manage_enrollment'] },
   },

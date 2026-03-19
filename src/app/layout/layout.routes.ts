@@ -12,12 +12,12 @@ export default [
       },
       {
         path: 'academic-setup',
-        loadChildren: () => import('@features/academic-setup/academic-setup.routes'),
+        loadChildren: () => import('@features/academic-setup.routes'),
         title: 'Configuración Académica',
       },
       {
         path: 'organization',
-        loadChildren: () => import('@features/organization/organization.routes'),
+        loadChildren: () => import('@features/organization.routes'),
         title: 'Organización Escolar',
       },
       {
@@ -53,7 +53,7 @@ export default [
       },
       {
         path: 'administration',
-        loadChildren: () => import('@features/administration/administration.routes'),
+        loadChildren: () => import('@features/administration.routes'),
         title: 'Administración',
       },
       {

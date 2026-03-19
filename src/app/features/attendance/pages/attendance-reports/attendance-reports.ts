@@ -4,7 +4,7 @@ import { ChangeDetectionStrategy, Component, inject, OnInit, computed, signal } 
 import { CommonModule } from '@angular/common';
 
 import { DataSource, SgaTemplate } from '@shared/widgets/data-source/data-source';
-import { AttendanceStore } from '../../../academic-setting/attendances/services/store/attendance.store';
+import { AttendanceStore } from '../../../attendances/services/store/attendance.store';
 import { DataSourceColumn } from '@core/types/data-source-types';
 import { UiFiltersService } from '@core/services/ui-filters.service';
 

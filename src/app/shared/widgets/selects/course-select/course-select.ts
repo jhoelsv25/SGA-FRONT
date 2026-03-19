@@ -3,8 +3,8 @@ import { SelectOption } from '@/shared/widgets/select-option/select-option';
 import { ChangeDetectionStrategy, Component, computed, ElementRef, forwardRef, HostListener, inject, input, output, signal, viewChild, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { CourseApi } from '@features/academic-setup/courses/services/course-api';
-import type { Course } from '@features/academic-setup/courses/types/course-types';
+import { CourseApi } from '@features/courses/services/course-api';
+import type { Course } from '@features/courses/types/course-types';
 
 function getLabel(c: Course): string {
   return `${c.code} - ${c.name}`;

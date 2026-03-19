@@ -3,8 +3,8 @@ import { SelectOption } from '@/shared/widgets/select-option/select-option';
 import { ChangeDetectionStrategy, Component, computed, ElementRef, forwardRef, HostListener, inject, input, output, signal, viewChild, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { SectionApi } from '@features/organization/sections/services/api/section-api';
-import type { Section } from '@features/organization/sections/types/section-types';
+import { SectionApi } from '@features/sections/services/api/section-api';
+import type { Section } from '@features/sections/types/section-types';
 
 function getLabel(s: Section): string {
   return s.name ?? s.id;

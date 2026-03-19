@@ -1,0 +1,74 @@
+<div class="space-y-6 p-6">
+  <ng-template #filters>
+    <div class="relative flex min-w-80 flex-col gap-5 rounded-[var(--radius-xl)] bg-card p-5">
+      <div class="flex items-center justify-between border-b border-base-200 pb-3">
+        <h3 class="text-xs font-bold uppercase tracking-widest text-base-content/50">Filtros</h3>
+        @if (hasActiveFilters()) {
+          <button type="button" class="text-xs font-semibold uppercase tracking-widest text-primary transition hover:opacity-80" (click)="clearFilters()">Limpiar</button>
+        }
+      </div>
+
+      <z-form-field>
+        <label z-form-label>Buscar</label>
+        <z-form-control>
+          <input z-input placeholder="Buscar cursos por nombre o código..." [ngModel]="searchTerm()" (ngModelChange)="onSearch($event)" />
+        </z-form-control>
+      </z-form-field>
+
+      <z-form-field>
+        <label z-form-label>Tipo</label>
+        <z-form-control>
+          <z-select-option [options]="typeOptions" [ngModel]="filterType()" [placeholder]="'Todos'"
+            [searchable]="false" (ngModelChange)="onFilterType($event)"></z-select-option>
+        </z-form-control>
+      </z-form-field>
+    </div>
+  </ng-template>
+
+  <sga-header-detail
+    [config]="headerConfig()"
+    [actions]="headerActions()"
+    [filterTemplate]="filters"
+    [hasActiveFilters]="hasActiveFilters()"
+    (action)="onHeaderAction($event)"
+    (refresh)="onRefresh()"
+  />
+
+  <div class="grid grid-cols-1 mt-6 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    @if (loading() && !data().length) {
+      @for (i of skeletonItems; track i) {
+        <z-skeleton [class]="'h-[220px] w-full rounded-4xl border border-base-200'"></z-skeleton>
+      }
+    } @else {
+      @for (group of groupedData(); track group.key) {
+        <section class="space-y-4">
+          <div class="space-y-1 px-1">
+            <h2 class="text-lg font-black tracking-tight text-base-content">{{ group.label }}</h2>
+            <p class="text-sm text-base-content/55">{{ group.description }}</p>
+          </div>
+
+          <div class="grid grid-cols-1 gap-6">
+            @for (course of group.items; track course.id) {
+              <sga-course-card
+                [course]="course"
+                [canManage]="canManageCourses()"
+                (edit)="editCourse(course)"
+                (delete)="deleteCourse(course)"
+                (viewSections)="goToSectionCourses(course)"
+              />
+            }
+          </div>
+        </section>
+      } @empty {
+        <div class="col-span-full">
+          <z-empty zIcon="book" zTitle="Sin cursos"
+            zDescription="Aún no hay cursos configurados. Crea el primero para asignarlo a un área curricular y nivel.">
+            @if (canManageCourses()) {
+              <button z-button type="button" class="mt-4" (click)="createFromEmpty()">Crear curso</button>
+            }
+          </z-empty>
+        </div>
+      }
+    }
+  </div>
+</div>

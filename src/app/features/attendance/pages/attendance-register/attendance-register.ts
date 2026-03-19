@@ -12,12 +12,12 @@ import { FormsModule } from '@angular/forms';
 import { DataSource, SgaTemplate } from '@shared/widgets/data-source/data-source';
 import { Toast } from '@core/services/toast';
 
-import { AttendanceApi } from '../../../academic-setting/attendances/services/attendance-api';
-import { AttendanceStore } from '../../../academic-setting/attendances/services/store/attendance.store';
-import { AttendanceStatus } from '../../../academic-setting/attendances/types/attendance-types';
-import { SectionCourseApi } from '@features/organization/section-courses/services/section-course-api';
-import { EnrollmentApi } from '../../../academic-setting/enrollments/services/enrollment-api';
-import type { SectionCourse } from '@features/organization/section-courses/types/section-course-types';
+import { AttendanceApi } from '../../../attendances/services/attendance-api';
+import { AttendanceStore } from '../../../attendances/services/store/attendance.store';
+import { AttendanceStatus } from '../../../attendances/types/attendance-types';
+import { SectionCourseApi } from '@features/section-courses/services/section-course-api';
+import { EnrollmentApi } from '../../../enrollments/services/enrollment-api';
+import type { SectionCourse } from '@features/section-courses/types/section-course-types';
 import { DataSourceColumn } from '@core/types/data-source-types';
 import { AttendanceImportDialog } from '../../components/attendance-import-dialog/attendance-import-dialog';
 import { ZardDropdownMenuComponent } from '@/shared/components/dropdown';

@@ -3,8 +3,8 @@ import { SelectOption } from '@/shared/widgets/select-option/select-option';
 import { ChangeDetectionStrategy, Component, computed, ElementRef, forwardRef, HostListener, inject, input, output, signal, viewChild, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { YearAcademicApi } from '@features/academic-setup/year-academic/services/api/year-academic-api';
-import type { YearAcademic } from '@features/academic-setup/year-academic/types/year-academi-types';
+import { YearAcademicApi } from '@features/year-academic/services/api/year-academic-api';
+import type { YearAcademic } from '@features/year-academic/types/year-academi-types';
 
 function getLabel(y: YearAcademic): string {
   return y.name ?? String(y.year ?? y.id);

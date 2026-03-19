@@ -10,7 +10,7 @@ import type { AccountAuditLog, AccountEmailLog, AccountSession, AccountUserDetai
 import { Toast } from '@core/services/toast';
 import { LayoutStore } from '@core/stores/layout.store';
 import type { ThemeConfig } from '@core/types/layout-types';
-import { SessionApi } from '@features/administration/services/api/session-api';
+import { SessionApi } from '@features/admin-services/api/session-api';
 import { catchError, of } from 'rxjs';
 
 type SettingsSectionId = 'general' | 'appearance' | 'notifications' | 'email' | 'security' | 'logs' | 'sessions';

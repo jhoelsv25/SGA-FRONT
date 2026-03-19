@@ -33,10 +33,20 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
   {
     id: 'academic-setup',
     icon: 'fa-cog',
-    label: 'Configuración Académica',
+    label: 'Estructura Académica',
     route: '/academic-setup',
     order: 2,
-    permissions: ['manage_academic_setup'],
+    permissions: [
+      'manage_academic_setup',
+      'view_academic_year',
+      'view_academic_period',
+      'view_grade_level',
+      'view_subject_area',
+      'view_course',
+      'view_competency',
+      'view_section',
+      'view_schedule',
+    ],
     visibility: Visibility.PUBLIC,
     children: [
       {
@@ -45,14 +55,6 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         label: 'Años Académicos',
         route: '/academic-setup/years',
         permissions: ['view_academic_year', 'manage_academic_year'],
-        visibility: Visibility.PUBLIC,
-      },
-      {
-        id: 'academic-periods',
-        icon: 'fa-clock',
-        label: 'Períodos Académicos',
-        route: '/academic-setup/periods',
-        permissions: ['view_academic_period', 'manage_academic_period'],
         visibility: Visibility.PUBLIC,
       },
       {
@@ -86,35 +88,13 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         route: '/academic-setup/competencies',
         permissions: ['view_competency', 'manage_competency'],
         visibility: Visibility.PUBLIC,
-      }],
-  },
-
-  // ============================================
-  // ORGANIZACIÓN (Secciones y Horarios)
-  // ============================================
-  {
-    id: 'organization',
-    icon: 'fa-sitemap',
-    label: 'Organización Escolar',
-    route: '/organization',
-    order: 3,
-    permissions: ['view_organization'],
-    visibility: Visibility.PUBLIC,
-    children: [
+      },
       {
         id: 'sections',
         icon: 'fa-users',
         label: 'Secciones',
         route: '/organization/sections',
         permissions: ['view_section', 'manage_section'],
-        visibility: Visibility.PUBLIC,
-      },
-      {
-        id: 'section-courses',
-        icon: 'fa-link',
-        label: 'Cursos por Sección',
-        route: '/organization/section-courses',
-        permissions: ['view_section_course', 'manage_section_course'],
         visibility: Visibility.PUBLIC,
       },
       {
@@ -135,7 +115,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
     icon: 'fa-user-graduate',
     label: 'Estudiantes',
     route: '/students',
-    order: 4,
+    order: 3,
     permissions: ['view_student'],
     visibility: Visibility.PUBLIC,
     children: [
@@ -181,7 +161,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
     icon: 'fa-chalkboard-teacher',
     label: 'Docentes',
     route: '/teachers',
-    order: 5,
+    order: 4,
     permissions: ['view_teacher'],
     visibility: Visibility.PUBLIC,
     children: [
@@ -211,7 +191,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
     icon: 'fa-clipboard-check',
     label: 'Asistencia Estudiantes',
     route: '/attendance',
-    order: 6,
+    order: 5,
     permissions: ['view_attendance'],
     visibility: Visibility.PUBLIC,
     children: [
@@ -241,7 +221,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
     icon: 'fa-file-alt',
     label: 'Evaluaciones',
     route: '/assessments',
-    order: 7,
+    order: 6,
     permissions: ['view_assessment'],
     visibility: Visibility.PUBLIC,
     children: [
@@ -279,7 +259,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
     icon: 'fa-flag',
     label: 'Conducta',
     route: '/behavior',
-    order: 8,
+    order: 7,
     permissions: ['view_behavior'],
     visibility: Visibility.PUBLIC,
     children: [
@@ -309,7 +289,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
     icon: 'fa-chalkboard',
     label: 'Aula Virtual',
     route: '/virtual-classroom',
-    order: 9,
+    order: 8,
     permissions: ['view_virtual_classroom'],
     visibility: Visibility.PUBLIC,
     children: [
@@ -319,55 +299,6 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         label: 'Mis Aulas',
         route: '/virtual-classroom/list',
         permissions: ['view_virtual_classroom'],
-        visibility: Visibility.PUBLIC,
-      },
-      {
-        id: 'learning-modules',
-        icon: 'fa-folder',
-        label: 'Módulos de Aprendizaje',
-        route: '/virtual-classroom/list',
-        permissions: ['view_learning_module', 'manage_learning_module'],
-        visibility: Visibility.PUBLIC,
-      },
-      {
-        id: 'learning-materials',
-        icon: 'fa-file',
-        label: 'Materiales',
-        route: '/virtual-classroom/list',
-        permissions: ['view_learning_material', 'manage_learning_material'],
-        visibility: Visibility.PUBLIC,
-      },
-      {
-        id: 'assignments',
-        icon: 'fa-tasks',
-        label: 'Tareas',
-        route: '/virtual-classroom/list',
-        permissions: ['view_assignment', 'manage_assignment'],
-        badge: 0,
-        visibility: Visibility.PUBLIC,
-      },
-      {
-        id: 'assignment-submissions',
-        icon: 'fa-upload',
-        label: 'Entregas',
-        route: '/virtual-classroom/list',
-        permissions: ['view_assignment_submission', 'manage_assignment_submission'],
-        visibility: Visibility.PUBLIC,
-      },
-      {
-        id: 'forums',
-        icon: 'fa-comments',
-        label: 'Foros',
-        route: '/virtual-classroom/list',
-        permissions: ['view_forum', 'manage_forum'],
-        visibility: Visibility.PUBLIC,
-      },
-      {
-        id: 'chat',
-        icon: 'fa-comment-dots',
-        label: 'Chat',
-        route: '/virtual-classroom/list',
-        permissions: ['view_chat'],
         visibility: Visibility.PUBLIC,
       }],
   },
@@ -380,7 +311,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
     icon: 'fa-money-bill-wave',
     label: 'Pagos',
     route: '/payments',
-    order: 10,
+    order: 9,
     permissions: ['view_payment'],
     visibility: Visibility.PUBLIC,
     children: [
@@ -419,7 +350,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
     icon: 'fa-bullhorn',
     label: 'Comunicaciones',
     route: '/communications',
-    order: 11,
+    order: 10,
     permissions: ['view_communication'],
     visibility: Visibility.PUBLIC,
     children: [
@@ -458,7 +389,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
     icon: 'fa-chart-bar',
     label: 'Reportes',
     route: '/reports',
-    order: 12,
+    order: 11,
     permissions: ['view_reports'],
     visibility: Visibility.PUBLIC,
     children: [
@@ -504,7 +435,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
     icon: 'fa-cogs',
     label: 'Administración',
     route: '/administration',
-    order: 13,
+    order: 12,
     permissions: ['view_administration'],
     visibility: Visibility.PUBLIC,
     children: [
