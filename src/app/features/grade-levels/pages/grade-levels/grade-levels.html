@@ -45,7 +45,8 @@
         <div class="grid grid-cols-1 gap-6">
           @for (gradeLevel of group.items; track gradeLevel.id) {
             <sga-grade-level-card [gradeLevel]="gradeLevel" (edit)="editGradeLevel(gradeLevel)"
-              (delete)="deleteGradeLevel(gradeLevel)" (viewSections)="goToSections(gradeLevel)" />
+              (delete)="deleteGradeLevel(gradeLevel)" (viewSections)="goToSections(gradeLevel)"
+              (viewCourses)="goToCourses(gradeLevel)" />
           }
         </div>
     } @empty {

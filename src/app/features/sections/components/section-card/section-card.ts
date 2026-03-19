@@ -36,6 +36,7 @@ export class SectionCardComponent {
   edit = output<Section>();
   delete = output<Section>();
   viewCourses = output<Section>();
+  viewSchedules = output<Section>();
 
   readonly capacityText = computed(() => {
     const section = this.section();

@@ -27,6 +27,7 @@ export class SubjectAreaCardComponent {
   subjectArea = input.required<SubjectArea>();
   edit = output<SubjectArea>();
   delete = output<SubjectArea>();
+  viewCourses = output<SubjectArea>();
 
   getTypeLabel(type: SubjectAreaType | string): string {
     const labels: Record<string, string> = {

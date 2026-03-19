@@ -4,6 +4,7 @@ import { ZardSkeletonComponent } from '@/shared/components/skeleton';
 import { ZardEmptyComponent } from '@/shared/components/empty';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 import { DialogConfirmService } from '@shared/widgets/dialog-confirm';
 import { SubjectAreaStore } from '../../services/store/subject-area.store';
@@ -36,6 +37,7 @@ export default class SubjectAreasPage {
   private confirmDialog = inject(DialogConfirmService);
   private store = inject(SubjectAreaStore);
   private permissionStore = inject(PermissionCheckStore);
+  private router = inject(Router);
 
   readonly skeletonItems = [1, 2, 3, 4];
   readonly typeOptions = TYPE_OPTIONS;
@@ -114,6 +116,12 @@ export default class SubjectAreasPage {
     this.openForm(area);
   }
 
+  goToCourses(area: SubjectArea) {
+    this.router.navigate(['/academic-setup/courses'], {
+      queryParams: { subjectAreaId: area.id, subjectAreaName: area.name },
+    });
+  }
+
   deleteSubjectArea(area: SubjectArea) {
     this.confirmDialog
       .open({
@@ -140,8 +148,8 @@ export default class SubjectAreasPage {
     if (!this.canManageSubjectAreas() && !current) return;
     const ref = this.dialog.open(SubjectAreaForm, {
       data: { current: current ?? null },
-      panelClass: 'dialog-top',
       width: '520px',
+      maxHeight: '80vh',
     });
     ref.closed.subscribe(() => this.onRefresh());
   }

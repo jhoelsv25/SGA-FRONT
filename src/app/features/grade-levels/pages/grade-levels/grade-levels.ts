@@ -125,7 +125,13 @@ export default class GradeLevelsPage {
 
   goToSections(gradeLevel: GradeLevel) {
     this.router.navigate(['/organization/sections'], {
-      queryParams: { gradeId: gradeLevel.id },
+      queryParams: { gradeId: gradeLevel.id, gradeName: gradeLevel.name },
+    });
+  }
+
+  goToCourses(gradeLevel: GradeLevel) {
+    this.router.navigate(['/academic-setup/courses'], {
+      queryParams: { gradeId: gradeLevel.id, gradeName: gradeLevel.name },
     });
   }
 
@@ -155,9 +161,8 @@ export default class GradeLevelsPage {
     if (!this.canManageGradeLevels() && !current) return;
     const ref = this.dialog.open(GradeLevelForm, {
       data: { current: current ?? null },
-      panelClass: 'dialog-top',
       width: '560px',
-      maxHeight: '500px',
+      maxHeight: '80vh',
     });
     ref.closed.subscribe(() => this.onRefresh());
   }

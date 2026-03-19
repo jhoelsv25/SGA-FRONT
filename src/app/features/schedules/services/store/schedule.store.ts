@@ -1,4 +1,5 @@
 import { inject } from '@angular/core';
+import { Params } from '@angular/router';
 import { patchState, signalStore, withHooks, withMethods, withState } from '@ngrx/signals';
 import { ScheduleApi } from '../api/schedule-api';
 import { Toast } from '@core/services/toast';
@@ -35,9 +36,9 @@ export const ScheduleStore = signalStore(
   { providedIn: 'root' },
   withState<State>(initialState),
   withMethods((store, api = inject(ScheduleApi), toast = inject(Toast)) => ({
-    loadAll() {
+    loadAll(params?: Params) {
       patchState(store, { loading: true, error: null });
-      api.getAll().subscribe({
+      api.getAll(params ?? {}).subscribe({
         next: (list) => {
           const data = Array.isArray(list) ? list : [];
           patchState(store, {

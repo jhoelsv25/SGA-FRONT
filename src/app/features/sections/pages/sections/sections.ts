@@ -45,6 +45,8 @@ export default class SectionsPage implements OnInit {
   readonly shiftOptions = SHIFT_OPTIONS;
   searchTerm = signal('');
   filterShift = signal('');
+  gradeContextId = signal('');
+  gradeContextName = signal('');
   readonly canManageSections = computed(() => this.permissionStore.has('manage_section'));
   readonly headerConfig = computed(() => this.store.headerConfig());
 
@@ -58,13 +60,17 @@ export default class SectionsPage implements OnInit {
     const list = this.data();
     const search = this.searchTerm().toLowerCase().trim();
     const shift = this.filterShift();
+    const gradeId = this.gradeContextId();
     return list.filter((section) => {
       const matchSearch = !search
         || section.name?.toLowerCase().includes(search)
         || section.tutor?.toLowerCase().includes(search)
         || section.classroom?.toLowerCase().includes(search);
       const matchShift = !shift || section.shift === shift;
-      return matchSearch && matchShift;
+      const sectionGradeId =
+        typeof section.grade === 'object' ? section.grade?.id : section.gradeId;
+      const matchGrade = !gradeId || sectionGradeId === gradeId;
+      return matchSearch && matchShift && matchGrade;
     });
   });
   readonly filterCount = computed(() => (this.filterShift() ? 1 : 0));
@@ -97,6 +103,8 @@ export default class SectionsPage implements OnInit {
 
   ngOnInit() {
     this.route.queryParams.subscribe((params) => {
+      this.gradeContextId.set(params['gradeId'] ?? '');
+      this.gradeContextName.set(params['gradeName'] ?? '');
       this.store.loadAll(params);
     });
   }
@@ -129,8 +137,18 @@ export default class SectionsPage implements OnInit {
 
   goToSectionCourses(section: Section) {
     this.router.navigate(['/organization/section-courses'], {
-      queryParams: { sectionId: section.id },
+      queryParams: { sectionId: section.id, sectionName: section.name },
     });
+  }
+
+  goToSchedules(section: Section) {
+    this.router.navigate(['/organization/schedules'], {
+      queryParams: { sectionId: section.id, sectionName: section.name },
+    });
+  }
+
+  clearGradeContext() {
+    this.router.navigate(['/organization/sections']);
   }
 
   deleteSection(section: Section) {
@@ -159,9 +177,8 @@ export default class SectionsPage implements OnInit {
     if (!this.canManageSections() && !current) return;
     const ref = this.dialog.open(SectionForm, {
       data: { current: current ?? null },
-      panelClass: 'dialog-top',
       width: '600px',
-      maxHeight: '530px',
+      maxHeight: '80vh',
     });
     ref.closed.subscribe(() => this.onRefresh());
   }

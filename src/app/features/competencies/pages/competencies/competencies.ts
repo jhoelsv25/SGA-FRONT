@@ -2,7 +2,8 @@ import { HeaderDetail } from '@/shared/widgets/header-detail/header-detail';
 import { ZardSkeletonComponent } from '@/shared/components/skeleton';
 import { ZardEmptyComponent } from '@/shared/components/empty';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 import { DialogConfirmService } from '@shared/widgets/dialog-confirm';
 import { CompetencyStore } from '../../services/store/competency.store';
@@ -24,14 +25,18 @@ import { ZardFormImports } from '@/shared/components/form';
   templateUrl: './competencies.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class CompetenciesPage {
+export default class CompetenciesPage implements OnInit {
   private dialog = inject(DialogModalService);
   private confirmDialog = inject(DialogConfirmService);
   private store = inject(CompetencyStore);
   private permissionStore = inject(PermissionCheckStore);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   readonly skeletonItems = [1, 2, 3, 4];
   searchTerm = signal('');
+  courseContextId = signal('');
+  courseContextName = signal('');
   readonly canManageCompetencies = computed(() => this.permissionStore.has('manage_competency'));
   headerConfig = computed(() => this.store.headerConfig());
 
@@ -44,11 +49,13 @@ export default class CompetenciesPage {
   filteredData = computed(() => {
     const list = this.data();
     const search = this.searchTerm().toLowerCase().trim();
+    const courseId = this.courseContextId();
     return list.filter(
       (c) =>
-        !search ||
-        c.name.toLowerCase().includes(search) ||
-        (c.code?.toLowerCase().includes(search) ?? false),
+        (!search ||
+          c.name.toLowerCase().includes(search) ||
+          (c.code?.toLowerCase().includes(search) ?? false)) &&
+        (!courseId || c.course?.id === courseId),
     );
   });
   hasActiveFilters = computed(() => !!this.searchTerm().trim());
@@ -71,6 +78,16 @@ export default class CompetenciesPage {
       .sort((a, b) => a.label.localeCompare(b.label));
   });
 
+  ngOnInit() {
+    this.route.queryParamMap.subscribe((params) => {
+      const courseId = params.get('courseId') ?? '';
+      const courseName = params.get('courseName') ?? '';
+      this.courseContextId.set(courseId);
+      this.courseContextName.set(courseName);
+      this.store.loadAll(courseId ? { courseId } : {});
+    });
+  }
+
   onSearch(value: string) {
     this.searchTerm.set(value);
   }
@@ -87,7 +104,8 @@ export default class CompetenciesPage {
   }
 
   onRefresh() {
-    this.store.loadAll({});
+    const courseId = this.courseContextId();
+    this.store.loadAll(courseId ? { courseId } : {});
   }
 
   editCompetency(competency: Competency) {
@@ -118,13 +136,16 @@ export default class CompetenciesPage {
     this.openForm();
   }
 
+  clearCourseContext() {
+    this.router.navigate(['/academic-setup/competencies']);
+  }
+
   openForm(current?: Competency | null) {
     if (!this.canManageCompetencies() && !current) return;
     const ref = this.dialog.open(CompetencyForm, {
       data: { current: current ?? null },
-      panelClass: 'dialog-top',
       width: '560px',
-      maxHeight: '540px',
+      maxHeight: '80vh',
     });
     ref.closed.subscribe(() => this.onRefresh());
   }

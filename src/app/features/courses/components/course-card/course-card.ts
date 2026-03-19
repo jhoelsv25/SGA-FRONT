@@ -29,4 +29,5 @@ export class CourseCardComponent {
   edit = output<Course>();
   delete = output<Course>();
   viewSections = output<Course>();
+  viewCompetencies = output<Course>();
 }

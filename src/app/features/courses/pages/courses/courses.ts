@@ -3,7 +3,7 @@ import { SelectOptionComponent } from '@/shared/widgets/select-option/select-opt
 import { ZardSkeletonComponent } from '@/shared/components/skeleton';
 import { ZardEmptyComponent } from '@/shared/components/empty';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 import { DialogConfirmService } from '@shared/widgets/dialog-confirm';
 import { CourseStore } from '../../services/store/course.store';
@@ -16,7 +16,7 @@ import { FormsModule } from '@angular/forms';
 import { ZardInputDirective } from '@/shared/components/input';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardFormImports } from '@/shared/components/form';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 const TYPE_OPTIONS = [
   { value: '', label: 'Todos' },
@@ -32,17 +32,22 @@ const TYPE_OPTIONS = [
   templateUrl: './courses.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class CoursesPage {
+export default class CoursesPage implements OnInit {
   private dialog = inject(DialogModalService);
   private confirmDialog = inject(DialogConfirmService);
   private store = inject(CourseStore);
   private permissionStore = inject(PermissionCheckStore);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   readonly skeletonItems = [1, 2, 3, 4];
   readonly typeOptions = TYPE_OPTIONS;
   searchTerm = signal('');
   filterType = signal<string>('');
+  gradeContextId = signal('');
+  gradeContextName = signal('');
+  subjectAreaContextId = signal('');
+  subjectAreaContextName = signal('');
   readonly canManageCourses = computed(() => this.permissionStore.has('manage_course'));
   readonly headerConfig = computed(() => this.store.headerConfig());
 
@@ -57,6 +62,8 @@ export default class CoursesPage {
     const list = this.data();
     const search = this.searchTerm().toLowerCase().trim();
     const type = this.filterType();
+    const gradeId = this.gradeContextId();
+    const subjectAreaId = this.subjectAreaContextId();
     return list.filter((c) => {
       const matchSearch =
         !search ||
@@ -66,7 +73,9 @@ export default class CoursesPage {
         !type ||
         (type === 'mandatory' && c.isMandatory !== false) ||
         (type === 'elective' && c.isMandatory === false);
-      return matchSearch && matchType;
+      const matchGrade = !gradeId || c.grade?.id === gradeId;
+      const matchSubjectArea = !subjectAreaId || c.subjectArea?.id === subjectAreaId;
+      return matchSearch && matchType && matchGrade && matchSubjectArea;
     });
   });
 
@@ -94,6 +103,23 @@ export default class CoursesPage {
       .sort((a, b) => a.label.localeCompare(b.label));
   });
 
+  ngOnInit() {
+    this.route.queryParamMap.subscribe((params) => {
+      const gradeId = params.get('gradeId') ?? '';
+      const gradeName = params.get('gradeName') ?? '';
+      const subjectAreaId = params.get('subjectAreaId') ?? '';
+      const subjectAreaName = params.get('subjectAreaName') ?? '';
+      this.gradeContextId.set(gradeId);
+      this.gradeContextName.set(gradeName);
+      this.subjectAreaContextId.set(subjectAreaId);
+      this.subjectAreaContextName.set(subjectAreaName);
+      this.store.loadAll({
+        ...(gradeId ? { gradeId } : {}),
+        ...(subjectAreaId ? { subjectAreaId } : {}),
+      });
+    });
+  }
+
   onSearch(value: string) {
     this.searchTerm.set(value);
   }
@@ -113,7 +139,12 @@ export default class CoursesPage {
   }
 
   onRefresh() {
-    this.store.loadAll({});
+    const gradeId = this.gradeContextId();
+    const subjectAreaId = this.subjectAreaContextId();
+    this.store.loadAll({
+      ...(gradeId ? { gradeId } : {}),
+      ...(subjectAreaId ? { subjectAreaId } : {}),
+    });
   }
 
   editCourse(course: Course) {
@@ -122,8 +153,22 @@ export default class CoursesPage {
 
   goToSectionCourses(course: Course) {
     this.router.navigate(['/organization/section-courses'], {
-      queryParams: { courseId: course.id },
+      queryParams: { courseId: course.id, courseName: course.name },
     });
+  }
+
+  goToCompetencies(course: Course) {
+    this.router.navigate(['/academic-setup/competencies'], {
+      queryParams: { courseId: course.id, courseName: course.name },
+    });
+  }
+
+  clearGradeContext() {
+    this.router.navigate(['/academic-setup/courses']);
+  }
+
+  clearSubjectAreaContext() {
+    this.router.navigate(['/academic-setup/courses']);
   }
 
   deleteCourse(course: Course) {
@@ -152,8 +197,8 @@ export default class CoursesPage {
     if (!this.canManageCourses() && !current) return;
     const ref = this.dialog.open(CourseForm, {
       data: { current: current ?? null },
-      panelClass: 'dialog-top',
       width: '560px',
+      maxHeight: '80vh',
     });
     ref.closed.subscribe(() => this.onRefresh());
   }

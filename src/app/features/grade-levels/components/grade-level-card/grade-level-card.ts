@@ -29,6 +29,7 @@ export class GradeLevelCardComponent {
   edit = output<GradeLevel>();
   delete = output<GradeLevel>();
   viewSections = output<GradeLevel>();
+  viewCourses = output<GradeLevel>();
 
   getLevelLabel(level: string): string {
     const labels: Record<string, string> = {

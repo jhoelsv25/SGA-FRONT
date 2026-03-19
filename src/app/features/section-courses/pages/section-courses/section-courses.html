@@ -1,17 +1,55 @@
 <div class="p-6 space-y-6">
-  <z-list-toolbar zTitle="Cursos por Sección" icon="fas fa-chalkboard-teacher"
-    zDescription="Asignación de cursos a secciones" [searchPlaceholder]="'Buscar por curso o sección...'"
-    [filterCount]="0" [showFilter]="false" (searchChange)="onSearch($event)" (refresh)="onRefresh()">
-    <div list-toolbar-actions class="flex items-center gap-2">
-      <z-dropdown [items]="actionDropdownItems()">
-        <button dropdown-trigger
-          class="flex items-center justify-center w-10 h-10 rounded-2xl border border-base-200 bg-base-100 hover:bg-base-200 transition-colors text-base-content/60 hover:text-primary"
-          aria-label="Más acciones" type="button">
-          <i class="fas fa-ellipsis-h"></i>
-        </button>
-      </z-dropdown>
+  <ng-template #filters>
+    <div class="relative flex min-w-80 flex-col gap-5 rounded-[var(--radius-xl)] bg-card p-5">
+      <div class="flex items-center justify-between border-b border-base-200 pb-3">
+        <h3 class="text-xs font-bold uppercase tracking-widest text-base-content/50">Filtros</h3>
+        @if (hasActiveFilters()) {
+          <button type="button" class="text-xs font-semibold uppercase tracking-widest text-primary transition hover:opacity-80" (click)="clearFilters()">Limpiar</button>
+        }
+      </div>
+
+      <z-form-field>
+        <label z-form-label>Buscar</label>
+        <z-form-control>
+          <input z-input placeholder="Buscar por curso o sección..." [ngModel]="searchTerm()" (ngModelChange)="onSearch($event)" />
+        </z-form-control>
+      </z-form-field>
     </div>
-  </z-list-toolbar>
+  </ng-template>
+
+  <sga-header-detail
+    [config]="headerConfig()"
+    [actions]="headerActions()"
+    [filterTemplate]="filters"
+    [hasActiveFilters]="hasActiveFilters()"
+    (action)="onHeaderAction($event)"
+    (refresh)="onRefresh()"
+  />
+
+  @if (courseId() || sectionId()) {
+    <div class="rounded-4xl border border-primary/15 bg-primary/8 px-5 py-4 text-sm text-primary dark:bg-primary/10">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="space-y-1">
+          <p class="text-[10px] font-black uppercase tracking-[0.24em] text-primary/70">Contexto relacional</p>
+          @if (courseId()) {
+            <p class="font-semibold">Mostrando asignaciones del curso <span class="font-black">{{ courseName() || 'seleccionado' }}</span></p>
+          }
+          @if (sectionId()) {
+            <p class="font-semibold">Mostrando asignaciones de la sección <span class="font-black">{{ sectionName() || 'seleccionada' }}</span></p>
+          }
+        </div>
+        <button
+          z-button
+          zType="outline"
+          type="button"
+          class="h-9 rounded-[var(--radius-xl)] px-4 text-[10px] font-black uppercase tracking-[0.18em]"
+          (click)="clearContext()"
+        >
+          Ver todas
+        </button>
+      </div>
+    </div>
+  }
 
   <div class="grid grid-cols-1 mt-6  gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
     @if (loading() && !data().length) {

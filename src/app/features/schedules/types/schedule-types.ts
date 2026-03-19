@@ -15,7 +15,11 @@ export type Schedule = {
   startAt: string | Date;
   endAt: string | Date;
   classroom: string;
-  sectionCourse?: string | { id: string };
+  sectionCourse?: string | {
+    id: string;
+    section?: { id: string; name?: string };
+    course?: { id: string; name?: string };
+  };
 };
 
 export type ScheduleCreate = {

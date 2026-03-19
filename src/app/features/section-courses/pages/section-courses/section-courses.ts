@@ -1,26 +1,27 @@
-import { ListToolbarComponent } from '@/shared/widgets/list-toolbar/list-toolbar';
-import { DropdownOptionComponent, DropdownItem } from '@/shared/widgets/dropdown-option/dropdown-option';
+import { HeaderDetail } from '@/shared/widgets/header-detail/header-detail';
 import { ZardSkeletonComponent } from '@/shared/components/skeleton';
 import { ZardEmptyComponent } from '@/shared/components/empty';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 import { SectionCourseStore } from '../../services/store/section-course.store';
 import type { SectionCourse } from '../../types/section-course-types';
 import { SectionCourseForm } from '../../components/section-course-form/section-course-form';
 import { CommonModule } from '@angular/common';
 import { SectionCourseCardComponent } from '../../components/section-course-card/section-course-card';
-
-import { ZardDropdownMenuComponent } from '@/shared/components/dropdown';
 import { PermissionCheckStore } from '@core/stores/permission-check.store';
 import { DialogConfirmService } from '@shared/widgets/dialog-confirm';
+import { FormsModule } from '@angular/forms';
+import { ZardInputDirective } from '@/shared/components/input';
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardFormImports } from '@/shared/components/form';
 
 
 @Component({
   selector: 'sga-section-courses',
   standalone: true,
-  imports: [CommonModule, SectionCourseCardComponent, ZardEmptyComponent, ZardSkeletonComponent, DropdownOptionComponent, ListToolbarComponent],
+  imports: [CommonModule, HeaderDetail, SectionCourseCardComponent, ZardEmptyComponent, ZardSkeletonComponent, FormsModule, ZardInputDirective, ZardButtonComponent, ...ZardFormImports],
   templateUrl: './section-courses.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -30,26 +31,22 @@ export default class SectionCoursesPage {
   private permissionStore = inject(PermissionCheckStore);
   private confirmDialog = inject(DialogConfirmService);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   readonly skeletonItems = [1, 2, 3, 4];
   searchTerm = signal('');
   courseId = signal('');
   sectionId = signal('');
+  courseName = signal('');
+  sectionName = signal('');
+  headerConfig = computed(() => this.store.headerConfig());
 
   headerActions = computed(() =>
     this.permissionStore.filterActions(this.store.actions().filter((a) => a.typeAction === 'header')),
   );
 
-  actionDropdownItems = computed(() =>
-    this.headerActions().map((action) => ({
-      label: action.label,
-      icon: action.icon,
-      disabled: typeof action.disabled === 'function' ? action.disabled({}) : !!action.disabled,
-      action: () => this.onHeaderAction({ action, context: {} }),
-    })),
-  );
-
   data = computed(() => this.store.data());
+  hasActiveFilters = computed(() => !!this.searchTerm().trim());
 
   filteredData = computed(() => {
     const list = this.data();
@@ -72,6 +69,12 @@ export default class SectionCoursesPage {
     this.route.queryParams.subscribe((params) => {
       this.courseId.set(params['courseId'] ?? '');
       this.sectionId.set(params['sectionId'] ?? '');
+      this.courseName.set(params['courseName'] ?? '');
+      this.sectionName.set(params['sectionName'] ?? '');
+      this.store.loadAll({
+        ...(params['courseId'] ? { courseId: params['courseId'] } : {}),
+        ...(params['sectionId'] ? { sectionId: params['sectionId'] } : {}),
+      });
     });
   }
 
@@ -84,8 +87,15 @@ export default class SectionCoursesPage {
     this.searchTerm.set(value);
   }
 
+  clearFilters() {
+    this.searchTerm.set('');
+  }
+
   onRefresh() {
-    this.store.loadAll({});
+    this.store.loadAll({
+      ...(this.courseId() ? { courseId: this.courseId() } : {}),
+      ...(this.sectionId() ? { sectionId: this.sectionId() } : {}),
+    });
   }
 
   editSectionCourse(sc: SectionCourse) {
@@ -114,12 +124,15 @@ export default class SectionCoursesPage {
     this.openForm();
   }
 
+  clearContext() {
+    this.router.navigate(['/organization/section-courses']);
+  }
+
   openForm(current?: SectionCourse | null) {
     const ref = this.dialog.open(SectionCourseForm, {
       data: { current: current ?? null },
-      panelClass: 'dialog-top',
       width: '560px',
-      maxHeight: '60vh',
+      maxHeight: '80vh',
     });
     ref.closed.subscribe(() => this.onRefresh());
   }

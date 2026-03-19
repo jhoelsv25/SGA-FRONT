@@ -44,7 +44,8 @@
      
         <div class="grid grid-cols-1 gap-6">
           @for (area of group.items; track area.id) {
-            <sga-subject-area-card [subjectArea]="area" (edit)="editSubjectArea(area)" (delete)="deleteSubjectArea(area)" />
+            <sga-subject-area-card [subjectArea]="area" (edit)="editSubjectArea(area)" (delete)="deleteSubjectArea(area)"
+              (viewCourses)="goToCourses(area)" />
           }
         </div>
     } @empty {
