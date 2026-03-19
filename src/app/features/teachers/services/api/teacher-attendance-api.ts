@@ -20,8 +20,8 @@ export class TeacherAttendanceApi {
     return this.http.get<DataResponse<TeacherAttendance>>(this.baseUrl, { params });
   }
 
-  getTeachers(): Observable<{ message: string; data: { id: string; teacherCode: string; specialization: string }[] }> {
-    return this.http.get<{ message: string; data: { id: string; teacherCode: string; specialization: string }[] }>(
+  getTeachers(): Observable<{ message: string; data: { id: string; teacherCode: string; specialization: string; firstName?: string; lastName?: string }[] }> {
+    return this.http.get<{ message: string; data: { id: string; teacherCode: string; specialization: string; firstName?: string; lastName?: string }[] }>(
       `${this.baseUrl}/teachers`,
     );
   }

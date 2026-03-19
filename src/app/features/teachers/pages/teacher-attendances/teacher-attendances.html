@@ -1,224 +1,331 @@
-<sga-header-detail [config]="headerConfig"  />
+<sga-header-detail [config]="headerConfig" />
 
-<div class="rounded-2xl border border-base-200 bg-base-100 p-4 md:p-5 shadow-sm">
-  <div class="mb-4 flex flex-wrap items-end gap-3">
-    <div>
-      <label for="teacher-attendance-date" class="mb-1 block text-sm font-medium text-base-content/70">Fecha</label>
-      <input z-input w-full
-        id="teacher-attendance-date"
-        type="date"
-        [ngModel]="attendanceDate()"
-        (ngModelChange)="onDateChange($event)"
-       />
-    </div>
-
-    <button type="button" z-button zColor="primary" zType="outline" (click)="openManualDialog()">
-      <i class="fas fa-plus mr-2"></i>
-      Registro manual
-    </button>
-
-    <button type="button" z-button zColor="primary" zType="outline" (click)="openImportDialog()">
-      <i class="fas fa-file-import mr-2"></i>
-      Importar Excel
-    </button>
-
-    <button type="button" z-button zColor="primary" zType="outline" (click)="downloadTemplate()">
-      <i class="fas fa-download mr-2"></i>
-      Plantilla Excel
-    </button>
-
-    <button type="button" z-button zColor="secondary" zType="outline" (click)="loadTeachers()">
-      <i class="fas fa-sync-alt mr-2"></i>
-      Recargar
-    </button>
-
-    <div class="ml-auto flex items-center gap-2">
+@if (teacherContextId()) {
+  <div class="mx-6 rounded-4xl border border-primary/15 bg-primary/8 px-5 py-4 text-sm text-primary dark:bg-primary/10">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div class="space-y-1">
+        <p class="text-[10px] font-black uppercase tracking-[0.24em] text-primary/70">Contexto de docente</p>
+        <p class="font-semibold">
+          Mostrando asistencias de
+          <span class="font-black">{{ teacherContextName() || 'docente seleccionado' }}</span>
+        </p>
+      </div>
       <button
-        type="button"
         z-button
-        zColor="success"
         zType="outline"
-        zSize="sm"
-        [disabled]="saving() || loading()"
-        (click)="saveManual()"
-        class="!h-9"
-        aria-label="Guardar asistencia manual"
-      >
-        @if (saving()) {
-          <i class="fas fa-spinner fa-spin mr-2"></i>
-        } @else {
-          <i class="fas fa-save"></i>
-        }
-      </button>
-
-      <button
         type="button"
-        z-button
-        zColor="danger"
-        zType="outline"
-        [disabled]="deleting() || loading() || !bulkDeleteMode() || !hasDeleteSelections()"
-        (click)="deleteSelected()"
-        aria-label="Eliminar seleccionados"
-        class="!h-10 !w-10 !px-0 flex items-center justify-center"
+        class="h-9 rounded-[var(--radius-xl)] px-4 text-[10px] font-black uppercase tracking-[0.18em]"
+        (click)="clearTeacherContext()"
       >
-        @if (deleting()) {
-          <i class="fas fa-spinner fa-spin mr-2"></i>
-        } @else {
-          <i class="fas fa-trash"></i>
-        }
+        Ver todos
       </button>
     </div>
   </div>
+}
 
-  <div class="overflow-x-auto rounded-xl border border-base-200">
-    <table class="w-full min-w-[860px] border-collapse bg-base-100">
-      <thead>
-        <tr class="border-b border-base-200 bg-base-200/50">
-          <th class="w-12 px-3 py-2 text-center text-xs font-semibold uppercase tracking-wide text-base-content/60">
-            <div class="flex items-center justify-center">
-              <label class="inline-flex items-center cursor-pointer group">
-                <input
-                  type="checkbox"
-                  class="sr-only"
-                  [checked]="allSelected()"
-                  [indeterminate]="partialSelected()"
-                  (change)="toggleAllSelection()"
-                 />
-                <div
-                  class="w-5 h-5 border-2 rounded flex items-center justify-center transition-all"
-                  [class.bg-primary-500]="allSelected() || partialSelected()"
-                  [class.border-primary-500]="allSelected() || partialSelected()"
-                  [class.border-base-400]="!allSelected() && !partialSelected()"
-                >
-                  @if (allSelected()) {
-                    <i class="fas fa-check text-white text-xs"></i>
-                  } @else if (partialSelected()) {
-                    <i class="fas fa-minus text-white text-xs"></i>
-                  }
-                </div>
-              </label>
-            </div>
-          </th>
-          <th class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Codigo</th>
-          <th class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Docente</th>
-          <th class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Estado</th>
-          <th class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Hora entrada</th>
-          <th class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Observaciones</th>
-          <th class="w-12 px-3 py-2 text-center text-xs font-semibold uppercase tracking-wide text-base-content/60">
-            Acciones
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        @if (loading()) {
-          <tr>
-            <td colspan="7" class="px-3 py-8 text-center text-sm text-base-content/50">
-              Cargando docentes...
-            </td>
-          </tr>
-        } @else if (rows().length === 0) {
-          <tr>
-            <td colspan="7" class="px-3 py-8 text-center text-sm text-base-content/50">
-              No hay docentes disponibles para registrar asistencia.
-            </td>
-          </tr>
-        } @else {
-          @for (row of rows(); track row.teacherId) {
-            <tr
-              class="border-b border-base-200/70 align-top"
-              [class.bg-warning/10]="row.dirty"
-              [class.bg-error/10]="row.markedForDelete"
-            >
-              <td class="w-12 px-3 py-2 text-center align-middle">
-                <label
-                  class="inline-flex items-center justify-center w-full group"
-                  [class.opacity-50]="isRowDeleteDisabled(row.teacherId)"
-                >
+<div class="mx-6 space-y-5">
+  <div class="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+    <div class="rounded-3xl border border-base-200 bg-card px-4 py-4 shadow-sm">
+      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Docentes</p>
+      <p class="mt-2 text-2xl font-black">{{ rows().length }}</p>
+    </div>
+    <div class="rounded-3xl border border-success/20 bg-success/8 px-4 py-4 shadow-sm">
+      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-success-700 dark:text-success">Presentes</p>
+      <p class="mt-2 text-2xl font-black text-success-700 dark:text-success">{{ presentCount() }}</p>
+    </div>
+    <div class="rounded-3xl border border-warning/20 bg-warning/8 px-4 py-4 shadow-sm">
+      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-warning-700 dark:text-warning">Tardanzas</p>
+      <p class="mt-2 text-2xl font-black text-warning-700 dark:text-warning">{{ lateCount() }}</p>
+    </div>
+    <div class="rounded-3xl border border-danger/20 bg-danger/8 px-4 py-4 shadow-sm">
+      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-danger-700 dark:text-danger">Faltas</p>
+      <p class="mt-2 text-2xl font-black text-danger-700 dark:text-danger">{{ absentCount() }}</p>
+    </div>
+    <div class="rounded-3xl border border-info/20 bg-info/8 px-4 py-4 shadow-sm">
+      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-info">Justificados</p>
+      <p class="mt-2 text-2xl font-black text-info">{{ excusedCount() }}</p>
+    </div>
+    <div class="rounded-3xl border border-primary/20 bg-primary/8 px-4 py-4 shadow-sm">
+      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Pendientes</p>
+      <p class="mt-2 text-2xl font-black text-primary">{{ dirtyCount() }}</p>
+    </div>
+  </div>
+
+  <div class="rounded-4xl border border-base-200 bg-base-100 p-4 shadow-sm md:p-5">
+    <div class="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
+      <div class="grid flex-1 grid-cols-1 gap-4 md:grid-cols-[220px_1fr] xl:max-w-3xl">
+        <div>
+          <label for="teacher-attendance-date" class="mb-1.5 block text-sm font-semibold text-base-content/70">Fecha de control</label>
+          <input
+            z-input
+            w-full
+            id="teacher-attendance-date"
+            type="date"
+            [ngModel]="attendanceDate()"
+            (ngModelChange)="onDateChange($event)"
+          />
+        </div>
+
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <button
+            type="button"
+            z-button
+            zColor="primary"
+            zType="outline"
+            class="h-11 justify-start rounded-[var(--radius-xl)] px-4 font-bold uppercase tracking-[0.12em]"
+            (click)="openManualDialog()"
+          >
+            <i class="fas fa-plus mr-2"></i>
+            Manual
+          </button>
+
+          <button
+            type="button"
+            z-button
+            zColor="primary"
+            zType="outline"
+            class="h-11 justify-start rounded-[var(--radius-xl)] px-4 font-bold uppercase tracking-[0.12em]"
+            (click)="openImportDialog()"
+          >
+            <i class="fas fa-file-import mr-2"></i>
+            Importar
+          </button>
+
+          <button
+            type="button"
+            z-button
+            zColor="primary"
+            zType="outline"
+            class="h-11 justify-start rounded-[var(--radius-xl)] px-4 font-bold uppercase tracking-[0.12em]"
+            (click)="downloadTemplate()"
+          >
+            <i class="fas fa-download mr-2"></i>
+            Plantilla
+          </button>
+
+          <button
+            type="button"
+            z-button
+            zColor="secondary"
+            zType="outline"
+            class="h-11 justify-start rounded-[var(--radius-xl)] px-4 font-bold uppercase tracking-[0.12em]"
+            (click)="loadTeachers()"
+          >
+            <i class="fas fa-sync-alt mr-2"></i>
+            Recargar
+          </button>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 self-stretch xl:self-auto">
+        <button
+          type="button"
+          z-button
+          zColor="success"
+          class="h-11 flex-1 rounded-[var(--radius-xl)] px-5 text-[11px] font-black uppercase tracking-[0.18em] xl:flex-none"
+          [disabled]="saving() || loading() || dirtyCount() === 0"
+          (click)="saveManual()"
+        >
+          @if (saving()) {
+            <i class="fas fa-spinner fa-spin mr-2"></i>
+          } @else {
+            <i class="fas fa-save mr-2"></i>
+          }
+          Guardar cambios
+        </button>
+
+        <button
+          type="button"
+          z-button
+          zColor="danger"
+          zType="outline"
+          [disabled]="deleting() || loading() || !bulkDeleteMode() || !hasDeleteSelections()"
+          (click)="deleteSelected()"
+          class="h-11 w-11 rounded-[var(--radius-xl)] !px-0"
+          aria-label="Eliminar seleccionados"
+        >
+          @if (deleting()) {
+            <i class="fas fa-spinner fa-spin"></i>
+          } @else {
+            <i class="fas fa-trash"></i>
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="overflow-hidden rounded-4xl border border-base-200 bg-base-100 shadow-sm">
+    <div class="overflow-x-auto">
+      <table class="w-full min-w-[960px] border-collapse bg-base-100">
+        <thead>
+          <tr class="border-b border-base-200 bg-base-200/55">
+            <th class="w-12 px-3 py-3 text-center text-xs font-semibold uppercase tracking-wide text-base-content/60">
+              <div class="flex items-center justify-center">
+                <label class="inline-flex items-center cursor-pointer group">
                   <input
                     type="checkbox"
                     class="sr-only"
-                    [checked]="row.markedForDelete"
-                    (change)="toggleDelete(row.attendanceId, $event.target.checked)"
-                   />
+                    [checked]="allSelected()"
+                    [indeterminate]="partialSelected()"
+                    (change)="toggleAllSelection()"
+                  />
                   <div
-                    class="w-5 h-5 border-2 rounded flex items-center justify-center transition-all"
-                    [class.bg-primary-500]="row.markedForDelete"
-                    [class.border-primary-500]="row.markedForDelete"
-                    [class.border-base-400]="!row.markedForDelete"
+                    class="flex h-5 w-5 items-center justify-center rounded border-2 transition-all"
+                    [class.bg-primary-500]="allSelected() || partialSelected()"
+                    [class.border-primary-500]="allSelected() || partialSelected()"
+                    [class.border-base-400]="!allSelected() && !partialSelected()"
                   >
-                    @if (row.markedForDelete) {
-                      <i class="fas fa-check text-white text-xs"></i>
+                    @if (allSelected()) {
+                      <i class="fas fa-check text-xs text-white"></i>
+                    } @else if (partialSelected()) {
+                      <i class="fas fa-minus text-xs text-white"></i>
                     }
                   </div>
                 </label>
-              </td>
-              <td class="px-3 py-2 text-sm font-semibold text-base-content">{{ row.teacherCode }}</td>
-              <td class="px-3 py-2 text-sm text-base-content/80">{{ row.teacherLabel }}</td>
-              <td class="px-3 py-2">
-                <div class="flex gap-2">
-                  <button
-                    type="button"
-                    class="rounded px-2 py-1 text-xs font-semibold transition-colors"
-                    [class]="row.status === 'present' ? 'bg-success text-success-content' : 'bg-success/10 text-success hover:bg-success/20'"
-                    [disabled]="isRowSyncing(row.teacherId)"
-                    (click)="setStatus(row.teacherId, 'present')"
-                  >P</button>
-                  <button
-                    type="button"
-                    class="rounded px-2 py-1 text-xs font-semibold transition-colors"
-                    [class]="row.status === 'late' ? 'bg-warning text-warning-content' : 'bg-warning/10 text-warning hover:bg-warning/20'"
-                    [disabled]="isRowSyncing(row.teacherId)"
-                    (click)="setStatus(row.teacherId, 'late')"
-                  >T</button>
-                  <button
-                    type="button"
-                    class="rounded px-2 py-1 text-xs font-semibold transition-colors"
-                    [class]="row.status === 'absent' ? 'bg-error text-error-content' : 'bg-error/10 text-error hover:bg-error/20'"
-                    [disabled]="isRowSyncing(row.teacherId)"
-                    (click)="setStatus(row.teacherId, 'absent')"
-                  >F</button>
-                  <button
-                    type="button"
-                    class="rounded px-2 py-1 text-xs font-semibold transition-colors"
-                    [class]="row.status === 'excused' ? 'bg-info text-info-content' : 'bg-info/10 text-info hover:bg-info/20'"
-                    [disabled]="isRowSyncing(row.teacherId)"
-                    (click)="setStatus(row.teacherId, 'excused')"
-                  >J</button>
-                </div>
-              </td>
-              <td class="px-3 py-2">
-                <input z-input w-full
-                  type="time"
-                  [ngModel]="row.checkInTime.slice(0, 5)"
-                  (ngModelChange)="updateCheckInTime(row.teacherId, $event)"
-                 />
-              </td>
-              <td class="px-3 py-2">
-                <input z-input w-full
-                  [ngModel]="row.observations"
-                  (ngModelChange)="updateObservations(row.teacherId, $event)"
-                  placeholder="Observaciones"
-                 />
-              </td>
-              <td class="w-12 px-3 py-2 text-center align-middle">
-                <button
-                  type="button"
-                  z-button
-                  zColor="danger"
-                  zType="ghost"
-                  zSize="sm"
-                  class="!h-9 !w-9 !px-0 flex items-center justify-center"
-                  [disabled]="isRowDeleteDisabled(row.teacherId)"
-                  (click)="deleteRow(row.teacherId)"
-                  aria-label="Eliminar asistencia"
-                >
-                  <i class="fas fa-trash"></i>
-                </button>
+              </div>
+            </th>
+            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Código</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Docente</th>
+            <th class="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Estado</th>
+            <th class="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Hora entrada</th>
+            <th class="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Observaciones</th>
+            <th class="w-12 px-3 py-3 text-center text-xs font-semibold uppercase tracking-wide text-base-content/60">
+              Acciones
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (loading()) {
+            <tr>
+              <td colspan="7" class="px-3 py-10 text-center text-sm text-base-content/50">
+                Cargando docentes...
               </td>
             </tr>
+          } @else if (rows().length === 0) {
+            <tr>
+              <td colspan="7" class="px-3 py-10 text-center text-sm text-base-content/50">
+                No hay docentes disponibles para registrar asistencia.
+              </td>
+            </tr>
+          } @else {
+            @for (row of rows(); track row.teacherId) {
+              <tr
+                class="border-b border-base-200/70 align-top transition-colors hover:bg-base-200/25"
+                [class.bg-warning/8]="row.dirty"
+                [class.bg-danger/8]="row.markedForDelete"
+              >
+                <td class="w-12 px-3 py-3 text-center align-middle">
+                  <label
+                    class="inline-flex w-full items-center justify-center group"
+                    [class.opacity-50]="isRowDeleteDisabled(row.teacherId)"
+                  >
+                    <input
+                      type="checkbox"
+                      class="sr-only"
+                      [checked]="row.markedForDelete"
+                      (change)="toggleDelete(row.attendanceId, $event.target.checked)"
+                    />
+                    <div
+                      class="flex h-5 w-5 items-center justify-center rounded border-2 transition-all"
+                      [class.bg-primary-500]="row.markedForDelete"
+                      [class.border-primary-500]="row.markedForDelete"
+                      [class.border-base-400]="!row.markedForDelete"
+                    >
+                      @if (row.markedForDelete) {
+                        <i class="fas fa-check text-xs text-white"></i>
+                      }
+                    </div>
+                  </label>
+                </td>
+                <td class="px-4 py-3 text-sm font-black text-base-content">{{ row.teacherCode }}</td>
+                <td class="px-4 py-3">
+                  <div class="space-y-1">
+                    <p class="text-sm font-semibold text-base-content/85">{{ row.teacherLabel }}</p>
+                    @if (row.dirty) {
+                      <span class="inline-flex rounded-full border border-warning/25 bg-warning/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.18em] text-warning-700 dark:text-warning">
+                        Con cambios
+                      </span>
+                    }
+                  </div>
+                </td>
+                <td class="px-3 py-3">
+                  <div class="flex gap-2">
+                    <button
+                      type="button"
+                      class="rounded-[var(--radius-xl)] px-3 py-1.5 text-xs font-black uppercase tracking-[0.16em] transition-colors"
+                      [class]="row.status === 'present' ? 'bg-success text-success-content' : 'bg-success/10 text-success hover:bg-success/20'"
+                      [disabled]="isRowSyncing(row.teacherId)"
+                      (click)="setStatus(row.teacherId, 'present')"
+                    >
+                      P
+                    </button>
+                    <button
+                      type="button"
+                      class="rounded-[var(--radius-xl)] px-3 py-1.5 text-xs font-black uppercase tracking-[0.16em] transition-colors"
+                      [class]="row.status === 'late' ? 'bg-warning text-warning-content' : 'bg-warning/10 text-warning hover:bg-warning/20'"
+                      [disabled]="isRowSyncing(row.teacherId)"
+                      (click)="setStatus(row.teacherId, 'late')"
+                    >
+                      T
+                    </button>
+                    <button
+                      type="button"
+                      class="rounded-[var(--radius-xl)] px-3 py-1.5 text-xs font-black uppercase tracking-[0.16em] transition-colors"
+                      [class]="row.status === 'absent' ? 'bg-error text-error-content' : 'bg-error/10 text-error hover:bg-error/20'"
+                      [disabled]="isRowSyncing(row.teacherId)"
+                      (click)="setStatus(row.teacherId, 'absent')"
+                    >
+                      F
+                    </button>
+                    <button
+                      type="button"
+                      class="rounded-[var(--radius-xl)] px-3 py-1.5 text-xs font-black uppercase tracking-[0.16em] transition-colors"
+                      [class]="row.status === 'excused' ? 'bg-info text-info-content' : 'bg-info/10 text-info hover:bg-info/20'"
+                      [disabled]="isRowSyncing(row.teacherId)"
+                      (click)="setStatus(row.teacherId, 'excused')"
+                    >
+                      J
+                    </button>
+                  </div>
+                </td>
+                <td class="px-3 py-3">
+                  <input
+                    z-input
+                    w-full
+                    type="time"
+                    [ngModel]="row.checkInTime.slice(0, 5)"
+                    (ngModelChange)="updateCheckInTime(row.teacherId, $event)"
+                  />
+                </td>
+                <td class="px-3 py-3">
+                  <input
+                    z-input
+                    w-full
+                    [ngModel]="row.observations"
+                    (ngModelChange)="updateObservations(row.teacherId, $event)"
+                    placeholder="Observaciones"
+                  />
+                </td>
+                <td class="w-12 px-3 py-3 text-center align-middle">
+                  <button
+                    type="button"
+                    z-button
+                    zColor="danger"
+                    zType="ghost"
+                    zSize="sm"
+                    class="!flex !h-9 !w-9 !items-center !justify-center !px-0"
+                    [disabled]="isRowDeleteDisabled(row.teacherId)"
+                    (click)="deleteRow(row.teacherId)"
+                    aria-label="Eliminar asistencia"
+                  >
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            }
           }
-        }
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>

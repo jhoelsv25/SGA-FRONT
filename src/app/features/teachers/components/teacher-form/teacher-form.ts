@@ -4,7 +4,9 @@ import { ZardInputDirective } from '@/shared/components/input';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
 import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
 import { ChangeDetectionStrategy, Component, inject, OnInit, input } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { InstitutionApi } from '@features/admin-services/api/institution-api';
 import { TeacherStore } from '../../services/store/teacher.store';
 import {
   Teacher,
@@ -28,11 +30,15 @@ export class TeacherForm implements OnInit {
   private data = inject(Z_MODAL_DATA, { optional: true });
   private ref = inject(ZardDialogRef);
   private fb = inject(FormBuilder);
+  private institutionApi = inject(InstitutionApi);
+  private http = inject(HttpClient);
 
   form!: FormGroup;
   current: Teacher | null = null;
   readonly uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   readonly currentYear = new Date().getFullYear();
+  institutionOptions: LocalSelectOption[] = [];
+  personOptions: LocalSelectOption[] = [];
 
   contractTypeOptions: LocalSelectOption[] = [
     { value: 'full_time' satisfies TeacherContractType, label: 'Tiempo completo' },
@@ -79,13 +85,12 @@ export class TeacherForm implements OnInit {
       weeklyHours: [this.current?.weeklyHours ?? 40, [Validators.required, Validators.min(1), Validators.max(100)]],
       teachingLevel: [this.current?.teachingLevel ?? '', [Validators.required, Validators.maxLength(100)]],
       employmentStatus: [this.current?.employmentStatus ?? 'active', [Validators.required]],
-      institution: [
-        this.getEntityId(this.current?.institution),
-        [Validators.required, Validators.pattern(this.uuidPattern)]],
-      person: [
-        this.getEntityId(this.current?.person),
-        [Validators.required, Validators.pattern(this.uuidPattern)]],
+      institution: [this.getEntityId(this.current?.institution), [Validators.required, Validators.pattern(this.uuidPattern)]],
+      person: [this.getEntityId(this.current?.person), [Validators.required, Validators.pattern(this.uuidPattern)]],
     });
+
+    this.loadInstitutions();
+    this.loadPersons();
   }
 
   submit() {
@@ -108,5 +113,33 @@ export class TeacherForm implements OnInit {
 
   close() {
     this.ref.close();
+  }
+
+  private loadInstitutions() {
+    this.institutionApi.getAll({}).subscribe({
+      next: (list) => {
+        this.institutionOptions = (list ?? []).map((institution) => ({
+          value: institution.id,
+          label: institution.name,
+        }));
+      },
+    });
+  }
+
+  private loadPersons() {
+    this.http.get<{ data?: Array<{ id: string; firstName?: string; lastName?: string; email?: string; documentNumber?: string }> }>('persons', {
+      params: { size: 999 as any },
+    }).subscribe({
+      next: (res) => {
+        this.personOptions = (res.data ?? []).map((person) => ({
+          value: person.id,
+          label:
+            `${person.firstName ?? ''} ${person.lastName ?? ''}`.trim() ||
+            person.email ||
+            person.documentNumber ||
+            person.id,
+        }));
+      },
+    });
   }
 }

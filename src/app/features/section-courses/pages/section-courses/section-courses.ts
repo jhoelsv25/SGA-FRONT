@@ -38,8 +38,10 @@ export default class SectionCoursesPage {
   searchTerm = signal('');
   courseId = signal('');
   sectionId = signal('');
+  teacherId = signal('');
   courseName = signal('');
   sectionName = signal('');
+  teacherName = signal('');
   headerConfig = computed(() => this.store.headerConfig());
 
   headerActions = computed(() =>
@@ -54,13 +56,20 @@ export default class SectionCoursesPage {
     const search = this.searchTerm().toLowerCase().trim();
     const courseId = this.courseId();
     const sectionId = this.sectionId();
+    const teacherId = this.teacherId();
     return list.filter((sc) => {
       const courseName = sc.course?.name?.toLowerCase() ?? '';
       const sectionName = sc.section?.name?.toLowerCase() ?? '';
-      const matchSearch = !search || courseName.includes(search) || sectionName.includes(search);
+      const teacherLabel =
+        [sc.teacher?.person?.firstName, sc.teacher?.person?.lastName].filter(Boolean).join(' ').toLowerCase() ||
+        sc.teacher?.teacherCode?.toLowerCase() ||
+        '';
+      const matchSearch =
+        !search || courseName.includes(search) || sectionName.includes(search) || teacherLabel.includes(search);
       const matchCourse = !courseId || sc.course?.id === courseId;
       const matchSection = !sectionId || sc.section?.id === sectionId;
-      return matchSearch && matchCourse && matchSection;
+      const matchTeacher = !teacherId || sc.teacher?.id === teacherId;
+      return matchSearch && matchCourse && matchSection && matchTeacher;
     });
   });
 
@@ -70,11 +79,14 @@ export default class SectionCoursesPage {
     this.route.queryParams.subscribe((params) => {
       this.courseId.set(params['courseId'] ?? '');
       this.sectionId.set(params['sectionId'] ?? '');
+      this.teacherId.set(params['teacherId'] ?? '');
       this.courseName.set(params['courseName'] ?? '');
       this.sectionName.set(params['sectionName'] ?? '');
+      this.teacherName.set(params['teacherName'] ?? '');
       this.store.loadAll({
         ...(params['courseId'] ? { courseId: params['courseId'] } : {}),
         ...(params['sectionId'] ? { sectionId: params['sectionId'] } : {}),
+        ...(params['teacherId'] ? { teacherId: params['teacherId'] } : {}),
       });
     });
   }
@@ -96,6 +108,7 @@ export default class SectionCoursesPage {
     this.store.loadAll({
       ...(this.courseId() ? { courseId: this.courseId() } : {}),
       ...(this.sectionId() ? { sectionId: this.sectionId() } : {}),
+      ...(this.teacherId() ? { teacherId: this.teacherId() } : {}),
     });
   }
 

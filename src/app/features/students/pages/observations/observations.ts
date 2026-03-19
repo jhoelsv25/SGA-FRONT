@@ -8,6 +8,7 @@ import { StudentObservation } from '../../types/observation-types';
 import { OBSERVATION_HEADER_CONFIG, OBSERVATION_COLUMN, OBSERVATION_ACTIONS } from '../../config/observation.config';
 import { ObservationForm } from '../../components/observation-form/observation-form';
 import { Toast } from '@core/services/toast';
+import { ActivatedRoute, Router } from '@angular/router';
 
 
 @Component({
@@ -21,6 +22,10 @@ export default class ObservationsPage implements OnInit {
   private dialog = inject(DialogModalService);
   private api = inject(ObservationApi);
   private toast = inject(Toast);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  readonly studentContextId = signal('');
+  readonly studentContextName = signal('');
 
   headerConfig = OBSERVATION_HEADER_CONFIG;
   columns = OBSERVATION_COLUMN;
@@ -38,7 +43,11 @@ export default class ObservationsPage implements OnInit {
   private loadingSignal = signal(false);
 
   ngOnInit() {
-    this.loadAll();
+    this.route.queryParamMap.subscribe((params) => {
+      this.studentContextId.set(params.get('studentId') ?? '');
+      this.studentContextName.set(params.get('studentName') ?? '');
+      this.loadAll();
+    });
   }
 
   loadAll() {
@@ -62,7 +71,13 @@ export default class ObservationsPage implements OnInit {
             teacherName: teacher?.teacherCode ?? '-',
           };
         });
-        this.rowsSignal.set(list);
+        this.rowsSignal.set(
+          list.filter(
+            (item) =>
+              !this.studentContextId() ||
+              ((item.observation as StudentObservation).student as { id?: string } | undefined)?.id === this.studentContextId(),
+          ),
+        );
         this.loadingSignal.set(false);
       },
       error: (err) => {
@@ -85,11 +100,15 @@ export default class ObservationsPage implements OnInit {
 
   onPageChange() {}
 
+  clearStudentContext() {
+    this.router.navigate(['/students/observations']);
+  }
+
   private openForm(current?: StudentObservation | null) {
     const ref = this.dialog.open(ObservationForm, {
       data: { current: current ?? null },
-      panelClass: 'dialog-top',
       width: '560px',
+      maxHeight: '80vh',
     });
     ref.closed.subscribe(() => this.loadAll());
   }

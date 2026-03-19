@@ -14,8 +14,14 @@ export type Teacher = {
   weeklyHours: number;
   teachingLevel: string;
   employmentStatus: TeacherEmploymentStatus;
-  institution: string | { id: string };
-  person: string | { id: string };
+  institution: string | { id: string; name?: string };
+  person: string | {
+    id: string;
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    phone?: string;
+  };
 };
 
 export type TeacherContractType = 'full_time' | 'part_time' | 'temporary' | 'permanent';

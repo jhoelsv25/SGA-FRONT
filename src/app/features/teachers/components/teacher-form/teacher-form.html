@@ -72,12 +72,22 @@
       <z-select-option id="employmentStatus" [options]="employmentStatusOptions" formControlName="employmentStatus" [searchable]="false"></z-select-option>
     </div>
     <div>
-      <label class="label-form" for="institution">ID institución (UUID)</label>
-      <input z-input w-full id="institution" formControlName="institution" placeholder="xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"  />
+      <label class="label-form" for="institution">Institución</label>
+      <z-select-option
+        id="institution"
+        [options]="institutionOptions"
+        formControlName="institution"
+        placeholder="Seleccione institución"
+      ></z-select-option>
     </div>
     <div>
-      <label class="label-form" for="person">ID persona (UUID)</label>
-      <input z-input w-full id="person" formControlName="person" placeholder="xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"  />
+      <label class="label-form" for="person">Persona</label>
+      <z-select-option
+        id="person"
+        [options]="personOptions"
+        formControlName="person"
+        placeholder="Seleccione persona"
+      ></z-select-option>
     </div>
   </div>
 

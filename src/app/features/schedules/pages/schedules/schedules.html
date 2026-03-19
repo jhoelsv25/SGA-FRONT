@@ -72,6 +72,29 @@
     </div>
   }
 
+  @if (teacherContextId()) {
+    <div class="rounded-4xl border border-primary/15 bg-primary/8 px-5 py-4 text-sm text-primary dark:bg-primary/10">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="space-y-1">
+          <p class="text-[10px] font-black uppercase tracking-[0.24em] text-primary/70">Contexto de docente</p>
+          <p class="font-semibold">
+            Mostrando horarios del docente
+            <span class="font-black">{{ teacherContextName() || 'seleccionado' }}</span>
+          </p>
+        </div>
+        <button
+          z-button
+          zType="outline"
+          type="button"
+          class="h-9 rounded-[var(--radius-xl)] px-4 text-[10px] font-black uppercase tracking-[0.18em]"
+          (click)="clearSectionContext()"
+        >
+          Ver todos
+        </button>
+      </div>
+    </div>
+  }
+
   <sga-schedule-calendar
     [schedules]="filteredData()"
     [loading]="loading()"

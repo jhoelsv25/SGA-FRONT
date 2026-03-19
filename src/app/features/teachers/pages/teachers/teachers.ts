@@ -1,23 +1,27 @@
-import { ListToolbarComponent } from '@/shared/widgets/list-toolbar/list-toolbar';
-import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
-import { DropdownOptionComponent, DropdownItem } from '@/shared/widgets/dropdown-option/dropdown-option';
-import { ZardButtonComponent } from '@/shared/components/button';
-import { DialogModalService } from '@shared/widgets/dialog-modal';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ActionConfig } from '@core/types/action-types';
-import { DataSourceSorting } from '@core/types/data-source-types';
+import { HeaderDetail } from '@/shared/widgets/header-detail/header-detail';
+import { SelectOptionComponent } from '@/shared/widgets/select-option/select-option';
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardEmptyComponent } from '@/shared/components/empty';
+import { ZardSkeletonComponent } from '@/shared/components/skeleton';
+import { ZardInputDirective } from '@/shared/components/input';
+import { ZardFormImports } from '@/shared/components/form';
+import { DialogModalService } from '@shared/widgets/dialog-modal';
+import { DialogConfirmService } from '@shared/widgets/dialog-confirm';
+import { ActionConfig, ActionContext } from '@core/types/action-types';
+import { PermissionCheckStore } from '@core/stores/permission-check.store';
 import { ExcelService } from '@core/services/excel.service';
-import { TeacherForm } from '@features/teachers/components/teacher-form/teacher-form';
-import { TEACHER_COLUMN } from '@features/teachers/config/column.config';
-import { TeacherApi } from '@features/teachers/services/api/teacher-api';
-import { TeacherStore } from '@features/teachers/services/store/teacher.store';
-import { Teacher, TeacherCreate, TeacherParams } from '@features/teachers/types/teacher-types';
-import { DataSource } from '@shared/widgets/data-source/data-source';
 import { ImportDialog } from '@shared/widgets/import-dialog/import-dialog';
-import { ZardDropdownMenuComponent } from '@/shared/components/dropdown';
-import { ZardSelectComponent } from '@/shared/components/select';
-
+import { TeacherForm } from '../../components/teacher-form/teacher-form';
+import { TeacherCardComponent } from '../../components/teacher-card/teacher-card';
+import { TeacherApi } from '../../services/api/teacher-api';
+import { TeacherStore } from '../../services/store/teacher.store';
+import { Teacher, TeacherCreate, TeacherParams } from '../../types/teacher-types';
+import { TEACHER_ACTIONS } from '../../config/action.config';
+import { TEACHER_HEADER_CONFIG } from '../../config/header.config';
 
 const EXCEL_COLUMNS = [
   { key: 'teacherCode', label: 'Codigo docente' },
@@ -35,7 +39,8 @@ const EXCEL_COLUMNS = [
   { key: 'teachingLevel', label: 'Nivel ensenanza' },
   { key: 'employmentStatus', label: 'Estado laboral' },
   { key: 'institution', label: 'ID institucion' },
-  { key: 'person', label: 'ID persona' }];
+  { key: 'person', label: 'ID persona' },
+];
 
 function parseNumber(v: unknown, fallback = 0): number {
   const n = Number(v);
@@ -62,222 +67,280 @@ function normalizeQueryValue(value: string | null): string {
   return value;
 }
 
-
 @Component({
   selector: 'sga-teachers',
   standalone: true,
-  imports: [SelectOptionComponent, DataSource, DropdownOptionComponent, ListToolbarComponent, ZardButtonComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    HeaderDetail,
+    TeacherCardComponent,
+    ZardEmptyComponent,
+    ZardSkeletonComponent,
+    SelectOptionComponent,
+    ZardInputDirective,
+    ZardButtonComponent,
+    ...ZardFormImports,
+  ],
   templateUrl: './teachers.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class TeachersPage implements OnInit {
+export default class TeachersPage {
   private readonly dialog = inject(DialogModalService);
+  private readonly confirmDialog = inject(DialogConfirmService);
   private readonly store = inject(TeacherStore);
   private readonly teacherApi = inject(TeacherApi);
   private readonly excel = inject(ExcelService);
-  readonly router = inject(Router);
+  private readonly permissionStore = inject(PermissionCheckStore);
+  private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
-  private readonly currentSearch = signal('');
-  private readonly currentSort = signal<DataSourceSorting | null>(null);
-  readonly filterContractType = signal<string>('');
-  readonly filterLaborRegime = signal<string>('');
-  readonly filterWorkloadType = signal<string>('');
-  readonly filterEmploymentStatus = signal<string>('');
+  readonly skeletonItems = [1, 2, 3, 4];
+  readonly headerConfig = TEACHER_HEADER_CONFIG;
+  readonly actions = TEACHER_ACTIONS;
+  readonly currentSearch = signal('');
+  readonly filterContractType = signal('');
+  readonly filterLaborRegime = signal('');
+  readonly filterWorkloadType = signal('');
+  readonly filterEmploymentStatus = signal('');
 
-  columns = computed(() => TEACHER_COLUMN);
-  data = computed(() => this.store.teachers());
-  loading = computed(() => this.store.loading());
-  pagination = computed(() => this.store.pagination());
-  rowActions = computed<ActionConfig[]>(() => [
-    { key: 'edit', label: 'Editar', icon: 'fas fa-edit', typeAction: 'row', color: 'primary' as const },
-    { key: 'delete', label: 'Eliminar', icon: 'fas fa-trash', typeAction: 'row', color: 'danger' as const }]);
-  filterCount = computed(() => {
-    let count = 0;
-    if (this.filterContractType()) count++;
-    if (this.filterLaborRegime()) count++;
-    if (this.filterWorkloadType()) count++;
-    if (this.filterEmploymentStatus()) count++;
-    return count;
-  });
-
-  contractTypeOptions: SelectOption[] = [
+  readonly contractTypeOptions = [
     { value: '', label: 'Todos' },
     { value: 'full_time', label: 'Tiempo completo' },
     { value: 'part_time', label: 'Medio tiempo' },
     { value: 'temporary', label: 'Temporal' },
-    { value: 'permanent', label: 'Permanente' }];
-  laborRegimeOptions: SelectOption[] = [
+    { value: 'permanent', label: 'Permanente' },
+  ];
+  readonly laborRegimeOptions = [
     { value: '', label: 'Todos' },
     { value: 'public', label: 'Público' },
-    { value: 'private', label: 'Privado' }];
-  workloadTypeOptions: SelectOption[] = [
+    { value: 'private', label: 'Privado' },
+  ];
+  readonly workloadTypeOptions = [
     { value: '', label: 'Todos' },
     { value: '20_hours', label: '20 horas' },
     { value: '30_hours', label: '30 horas' },
-    { value: '40_hours', label: '40 horas' }];
-  employmentStatusOptions: SelectOption[] = [
+    { value: '40_hours', label: '40 horas' },
+  ];
+  readonly employmentStatusOptions = [
     { value: '', label: 'Todos' },
     { value: 'active', label: 'Activo' },
     { value: 'inactive', label: 'Inactivo' },
-    { value: 'on_leave', label: 'Licencia' }];
-  toolbarMoreItems = computed<DropdownItem[]>(() => [
-    {
-      label: 'Agregar docente',
-      icon: 'fas fa-plus',
-      action: () => this.openForm(),
-    },
-    {
-      label: 'Exportar Excel',
-      icon: 'fas fa-file-export',
-      action: () => this.export(),
-    },
-    { separator: true, label: 'sep-1' },
-    {
-      label: 'Asistencias',
-      icon: 'fas fa-user-check',
-      action: () => this.goToAttendances(),
-    },
-    {
-      label: 'Plantilla Excel',
-      icon: 'fas fa-download',
-      action: () => this.downloadTemplate(),
-    },
-    {
-      label: 'Importar Excel',
-      icon: 'fas fa-file-import',
-      action: () => this.openImport(),
-    }]);
+    { value: 'on_leave', label: 'Licencia' },
+  ];
 
-  ngOnInit(): void {
-    const query = this.route.snapshot.queryParamMap;
-    const page = Number(query.get('page') ?? 1) || 1;
-    const size = Number(query.get('size') ?? this.pagination().size) || this.pagination().size;
+  readonly canManageTeachers = computed(() => this.permissionStore.has('manage_teacher'));
+  readonly loading = computed(() => this.store.loading());
+  readonly data = computed(() => this.store.teachers());
+  readonly filteredData = computed(() => {
+    const search = this.currentSearch().toLowerCase().trim();
+    const contractType = this.filterContractType();
+    const laborRegime = this.filterLaborRegime();
+    const workloadType = this.filterWorkloadType();
+    const employmentStatus = this.filterEmploymentStatus();
 
-    const search = normalizeQueryValue(query.get('search'));
-    const contractType = normalizeQueryValue(query.get('contractType'));
-    const laborRegime = normalizeQueryValue(query.get('laborRegime'));
-    const workloadType = normalizeQueryValue(query.get('workloadType'));
-    const employmentStatus = normalizeQueryValue(query.get('employmentStatus'));
-    const sortBy = query.get('sortBy');
-    const sortOrder = query.get('sortOrder');
+    return this.data().filter((teacher) => {
+      const person = typeof teacher.person === 'object' ? teacher.person : null;
+      const name = [person?.firstName, person?.lastName].filter(Boolean).join(' ').toLowerCase();
+      const email = person?.email?.toLowerCase() ?? '';
+      const matchSearch =
+        !search ||
+        teacher.teacherCode?.toLowerCase().includes(search) ||
+        teacher.specialization?.toLowerCase().includes(search) ||
+        teacher.professionalTitle?.toLowerCase().includes(search) ||
+        name.includes(search) ||
+        email.includes(search);
 
-    this.currentSearch.set(search);
-    this.filterContractType.set(contractType);
-    this.filterLaborRegime.set(laborRegime);
-    this.filterWorkloadType.set(workloadType);
-    this.filterEmploymentStatus.set(employmentStatus);
+      return (
+        matchSearch &&
+        (!contractType || teacher.contractType === contractType) &&
+        (!laborRegime || teacher.laborRegime === laborRegime) &&
+        (!workloadType || teacher.workloadType === workloadType) &&
+        (!employmentStatus || teacher.employmentStatus === employmentStatus)
+      );
+    });
+  });
 
-    if (sortBy && (sortOrder === 'ASC' || sortOrder === 'DESC')) {
-      this.currentSort.set({ column: sortBy, direction: sortOrder === 'ASC' ? 'asc' : 'desc' });
-    }
+  readonly hasActiveFilters = computed(
+    () =>
+      !!this.currentSearch().trim() ||
+      !!this.filterContractType() ||
+      !!this.filterLaborRegime() ||
+      !!this.filterWorkloadType() ||
+      !!this.filterEmploymentStatus(),
+  );
 
-    this.loadPage(page, size);
+  readonly filteredHeaderActions = computed(() =>
+    this.permissionStore.filterActions(this.actions.filter((a) => a.typeAction === 'header')),
+  );
+
+  constructor() {
+    this.route.queryParamMap.subscribe((query) => {
+      const search = normalizeQueryValue(query.get('search'));
+      const contractType = normalizeQueryValue(query.get('contractType'));
+      const laborRegime = normalizeQueryValue(query.get('laborRegime'));
+      const workloadType = normalizeQueryValue(query.get('workloadType'));
+      const employmentStatus = normalizeQueryValue(query.get('employmentStatus'));
+
+      this.currentSearch.set(search);
+      this.filterContractType.set(contractType);
+      this.filterLaborRegime.set(laborRegime);
+      this.filterWorkloadType.set(workloadType);
+      this.filterEmploymentStatus.set(employmentStatus);
+
+      const params: TeacherParams = {
+        page: 1,
+        size: 999,
+        search: search || undefined,
+        contractType: (contractType || undefined) as TeacherParams['contractType'],
+        laborRegime: (laborRegime || undefined) as TeacherParams['laborRegime'],
+        workloadType: (workloadType || undefined) as TeacherParams['workloadType'],
+        employmentStatus: (employmentStatus || undefined) as TeacherParams['employmentStatus'],
+      };
+      this.store.loadAll(params);
+    });
   }
 
-  onRowAction(e: {
-    action: { key: string };
-    context: { row?: unknown };
-  }): void {
-    const row = e.context.row as Teacher;
-    if (e.action.key === 'edit') this.openForm(row);
-    if (e.action.key === 'delete') this.store.delete(row.id).subscribe();
+  onHeaderAction(e: { action: ActionConfig; context: ActionContext }) {
+    if (e.action.key === 'create') this.openForm();
+    if (e.action.key === 'refresh') this.onRefresh();
+    if (e.action.key === 'attendances') this.goToAttendances();
+    if (e.action.key === 'downloadTemplate') this.downloadTemplate();
+    if (e.action.key === 'import') this.openImport();
+    if (e.action.key === 'export') this.export();
   }
 
-  onPageChange(p: { page: number; size: number }): void {
-    this.loadPage(p.page, p.size);
+  onSearch(value: string) {
+    this.currentSearch.set(value);
+    this.syncUrl();
   }
 
-  onSearch(term: string): void {
-    this.currentSearch.set(term.trim());
-    this.loadPage(1, this.pagination().size);
+  onFilterContractType(value: unknown) {
+    this.filterContractType.set(value != null ? String(value) : '');
+    this.syncUrl();
   }
 
-  onRefresh(): void {
-    this.loadPage(this.pagination().page, this.pagination().size);
+  onFilterLaborRegime(value: unknown) {
+    this.filterLaborRegime.set(value != null ? String(value) : '');
+    this.syncUrl();
   }
 
-  goToAttendances(): void {
-    this.router.navigate(['/teachers/attendances']);
+  onFilterWorkloadType(value: unknown) {
+    this.filterWorkloadType.set(value != null ? String(value) : '');
+    this.syncUrl();
   }
 
-  onFilterContractType(value: unknown): void {
-    this.filterContractType.set(normalizeQueryValue(value == null ? null : String(value)));
-    this.loadPage(1, this.pagination().size);
+  onFilterEmploymentStatus(value: unknown) {
+    this.filterEmploymentStatus.set(value != null ? String(value) : '');
+    this.syncUrl();
   }
 
-  onFilterLaborRegime(value: unknown): void {
-    this.filterLaborRegime.set(normalizeQueryValue(value == null ? null : String(value)));
-    this.loadPage(1, this.pagination().size);
-  }
-
-  onFilterWorkloadType(value: unknown): void {
-    this.filterWorkloadType.set(normalizeQueryValue(value == null ? null : String(value)));
-    this.loadPage(1, this.pagination().size);
-  }
-
-  onFilterEmploymentStatus(value: unknown): void {
-    this.filterEmploymentStatus.set(normalizeQueryValue(value == null ? null : String(value)));
-    this.loadPage(1, this.pagination().size);
-  }
-
-  clearFilters(): void {
+  clearFilters() {
+    this.currentSearch.set('');
     this.filterContractType.set('');
     this.filterLaborRegime.set('');
     this.filterWorkloadType.set('');
     this.filterEmploymentStatus.set('');
-    this.loadPage(1, this.pagination().size);
+    this.syncUrl();
   }
 
-  onSort(sort: DataSourceSorting): void {
-    this.currentSort.set(sort);
-    this.loadPage(this.pagination().page, this.pagination().size);
-  }
-
-  private loadPage(page: number, size: number): void {
-    const sort = this.currentSort();
-    const params: TeacherParams = {
-      page,
-      size,
+  onRefresh() {
+    this.store.loadAll({
+      page: 1,
+      size: 999,
       search: this.currentSearch() || undefined,
-      sortBy: sort?.column,
-      sortOrder: sort ? (sort.direction === 'asc' ? 'ASC' : 'DESC') : undefined,
       contractType: (this.filterContractType() || undefined) as TeacherParams['contractType'],
       laborRegime: (this.filterLaborRegime() || undefined) as TeacherParams['laborRegime'],
       workloadType: (this.filterWorkloadType() || undefined) as TeacherParams['workloadType'],
       employmentStatus: (this.filterEmploymentStatus() || undefined) as TeacherParams['employmentStatus'],
-    };
-    this.syncUrl(params);
-    this.store.loadAll(params);
+    });
   }
 
-  private syncUrl(params: TeacherParams): void {
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: {
-        search: params.search || null,
-        page: params.page ?? 1,
-        size: params.size ?? this.pagination().size,
-        sortBy: params.sortBy || null,
-        sortOrder: params.sortOrder || null,
-        contractType: params.contractType || null,
-        laborRegime: params.laborRegime || null,
-        workloadType: params.workloadType || null,
-        employmentStatus: params.employmentStatus || null,
-      },
-      queryParamsHandling: 'merge',
-      replaceUrl: true,
+  goToAttendances() {
+    this.router.navigate(['/teachers/attendances']);
+  }
+
+  goToTeacherAttendances(teacher: Teacher) {
+    const person = typeof teacher.person === 'object' ? teacher.person : null;
+    const teacherName = [person?.firstName, person?.lastName].filter(Boolean).join(' ').trim() || teacher.teacherCode;
+    this.router.navigate(['/teachers/attendances'], {
+      queryParams: { teacherId: teacher.id, teacherName },
     });
+  }
+
+  goToDetail(teacher: Teacher) {
+    this.router.navigate(['/teachers', teacher.id], {
+      state: { teacher },
+    });
+  }
+
+  editTeacher(teacher: Teacher) {
+    this.openForm(teacher);
+  }
+
+  deleteTeacher(teacher: Teacher) {
+    const person = typeof teacher.person === 'object' ? teacher.person : null;
+    const label = [person?.firstName, person?.lastName].filter(Boolean).join(' ').trim() || teacher.teacherCode;
+    this.confirmDialog
+      .open({
+        type: 'danger',
+        title: 'Eliminar docente',
+        icon: 'fa-solid fa-trash',
+        message: `¿Estás seguro de eliminar "${label}"? Esta acción no se puede deshacer.`,
+        acceptButtonProps: { label: 'Eliminar', color: 'danger', zType: 'default' },
+        rejectButtonProps: { label: 'Cancelar', zType: 'outline' },
+      })
+      .then((confirmed) => {
+        if (confirmed) {
+          this.store.delete(teacher.id).subscribe();
+        }
+      });
+  }
+
+  goToAssignments(teacher: Teacher) {
+    const person = typeof teacher.person === 'object' ? teacher.person : null;
+    const teacherName = [person?.firstName, person?.lastName].filter(Boolean).join(' ').trim() || teacher.teacherCode;
+    this.router.navigate(['/organization/section-courses'], {
+      queryParams: { teacherId: teacher.id, teacherName },
+    });
+  }
+
+  goToSchedules(teacher: Teacher) {
+    const person = typeof teacher.person === 'object' ? teacher.person : null;
+    const teacherName = [person?.firstName, person?.lastName].filter(Boolean).join(' ').trim() || teacher.teacherCode;
+    this.router.navigate(['/organization/schedules'], {
+      queryParams: { teacherId: teacher.id, teacherName },
+    });
+  }
+
+  createFromEmpty() {
+    if (!this.canManageTeachers()) return;
+    this.openForm();
   }
 
   openForm(current?: Teacher | null): void {
     const ref = this.dialog.open(TeacherForm, {
       data: { current: current ?? null },
-      panelClass: 'dialog-top',
       width: '720px',
+      maxHeight: '80vh',
     });
 
-    ref.closed.subscribe(() => this.loadPage(this.pagination().page, this.pagination().size));
+    ref.closed.subscribe(() => this.onRefresh());
+  }
+
+  private syncUrl() {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        search: this.currentSearch() || null,
+        contractType: this.filterContractType() || null,
+        laborRegime: this.filterLaborRegime() || null,
+        workloadType: this.filterWorkloadType() || null,
+        employmentStatus: this.filterEmploymentStatus() || null,
+      },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
   }
 
   downloadTemplate(): void {
@@ -361,11 +424,11 @@ export default class TeachersPage implements OnInit {
             ),
           ),
       },
-      panelClass: 'dialog-top',
       width: '720px',
+      maxHeight: '80vh',
     });
 
-    ref.closed.subscribe(() => this.loadPage(this.pagination().page, this.pagination().size));
+    ref.closed.subscribe(() => this.onRefresh());
   }
 
   export(): void {

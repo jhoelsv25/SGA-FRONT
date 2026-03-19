@@ -1,4 +1,20 @@
 <div class="p-6">
+  @if (studentContextId()) {
+    <div class="mb-4 flex items-center justify-between rounded-4xl border border-primary/15 bg-primary/5 px-5 py-4">
+      <div class="space-y-1">
+        <p class="text-xs font-bold uppercase tracking-widest text-primary/70">Contexto estudiante</p>
+        <p class="text-sm text-base-content/80">
+          Registrando asistencia de
+          <span class="font-semibold text-base-content">{{ studentContextName() || 'estudiante seleccionado' }}</span>
+        </p>
+      </div>
+
+      <button type="button" class="text-sm font-semibold text-primary transition hover:opacity-80" (click)="clearStudentContext()">
+        Ver todos
+      </button>
+    </div>
+  }
+
   <sga-data-source
     [data]="students()"
     [columns]="columns"
@@ -121,10 +137,14 @@
     <div data-source-empty class="flex flex-col items-center justify-center py-20 text-base-content/40">
         @if (!selectedSectionCourse()) {
             <i class="fas fa-arrow-up text-5xl mb-4 animate-bounce"></i>
-            <p class="font-medium text-lg">Seleccione un curso y fecha en los filtros</p>
+            <p class="font-medium text-lg">
+              {{ studentContextId() ? 'Seleccione un curso del estudiante y la fecha' : 'Seleccione un curso y fecha en los filtros' }}
+            </p>
         } @else {
             <i class="fas fa-users-slash text-5xl mb-4 text-base-content/20"></i>
-            <p class="font-medium text-lg">No hay estudiantes matriculados</p>
+            <p class="font-medium text-lg">
+              {{ studentContextId() ? 'No hay asistencia disponible para este estudiante en el curso seleccionado' : 'No hay estudiantes matriculados' }}
+            </p>
         }
     </div>
   </sga-data-source>

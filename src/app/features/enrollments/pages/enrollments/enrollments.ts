@@ -10,6 +10,7 @@ import { EnrollmentForm } from '../../components/enrollment-form/enrollment-form
 import { UrlParamsService } from '@core/services/url-params.service';
 import { ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
 
 import { FormsModule } from '@angular/forms';
 import { ZardInputDirective } from '@/shared/components/input';
@@ -30,6 +31,9 @@ export default class Enrollments {
   private store = inject(EnrollmentStore);
   private urlParams = inject(UrlParamsService);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  public studentContextId = signal('');
+  public studentContextName = signal('');
 
   public filterSearch = signal('');
   public filterStatus = signal('');
@@ -46,6 +50,8 @@ export default class Enrollments {
     this.route.queryParams.pipe(takeUntilDestroyed()).subscribe(params => {
       this.filterSearch.set(params['search'] || '');
       this.filterStatus.set(params['status'] || '');
+      this.studentContextId.set(params['studentId'] || '');
+      this.studentContextName.set(params['studentName'] || '');
       this.store.loadAll({
         ...params
       });
@@ -55,7 +61,9 @@ export default class Enrollments {
   columns = computed(() => this.store.columns());
   /** Lista completa para búsqueda y paginación en DataSource. */
   data = computed(() =>
-    this.store.enrollments().map((e) => ({
+    this.store.enrollments()
+      .filter((e) => !this.studentContextId() || e.student?.id === this.studentContextId())
+      .map((e) => ({
       id: e.id,
       enrollment: e,
       studentName: `${e.student?.firstName ?? ''} ${e.student?.lastName ?? ''}`.trim() || (e.student?.studentCode ?? ''),
@@ -87,6 +95,17 @@ export default class Enrollments {
 
   clearFilters() {
     this.urlParams.clearParams();
+  }
+
+  clearStudentContext() {
+    this.router.navigate(['/students/enrollments'], {
+      queryParams: {
+        search: this.filterSearch() || null,
+        status: this.filterStatus() || null,
+      },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
   }
 
   onRowAction(e: { action: ActionConfig; context: ActionContext<unknown> }) {

@@ -26,7 +26,7 @@
     (refresh)="onRefresh()"
   />
 
-  @if (courseId() || sectionId()) {
+  @if (courseId() || sectionId() || teacherId()) {
     <div class="rounded-4xl border border-primary/15 bg-primary/8 px-5 py-4 text-sm text-primary dark:bg-primary/10">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div class="space-y-1">
@@ -36,6 +36,9 @@
           }
           @if (sectionId()) {
             <p class="font-semibold">Mostrando asignaciones de la sección <span class="font-black">{{ sectionName() || 'seleccionada' }}</span></p>
+          }
+          @if (teacherId()) {
+            <p class="font-semibold">Mostrando asignaciones del docente <span class="font-black">{{ teacherName() || 'seleccionado' }}</span></p>
           }
         </div>
         <button

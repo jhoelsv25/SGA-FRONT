@@ -7,6 +7,7 @@ import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, computed, input } from '@angular/core';
 import { CommonModule, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 
 
 import { DataSource, SgaTemplate } from '@shared/widgets/data-source/data-source';
@@ -41,10 +42,15 @@ export default class AttendanceRegisterPage implements OnInit {
   private readonly enrollmentApi = inject(EnrollmentApi);
   private readonly toast = inject(Toast);
   private readonly filters = inject(UiFiltersService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   // Filters
   public selectedSectionCourse = signal<string>('');
   public attendanceDate = signal<string>('');
+  public studentContextId = signal('');
+  public studentContextName = signal('');
+  public allowedSectionIds = signal<string[]>([]);
   
   // Data
   public sectionCourseOptions = signal<SelectOption[]>([]);
@@ -57,7 +63,9 @@ export default class AttendanceRegisterPage implements OnInit {
     { key: 'id', label: 'Marcar Asistencia', width: '200px', type: 'custom', customTemplate: 'actionsTemplate' }];
 
   public canSave = computed(() => this.selectedSectionCourse() && this.students().length > 0);
-  public hasActiveFilters = computed(() => Boolean(this.selectedSectionCourse() || this.filters.attendanceRegisterDate()));
+  public hasActiveFilters = computed(() =>
+    Boolean(this.selectedSectionCourse() || this.filters.attendanceRegisterDate() || this.studentContextId()),
+  );
 
   public toolbarActions = computed<DropdownItem[]>(() => [
     {
@@ -78,31 +86,62 @@ export default class AttendanceRegisterPage implements OnInit {
     const initialDate = this.filters.attendanceRegisterDate() || today;
     this.attendanceDate.set(initialDate);
     this.filters.setAttendanceRegisterDate(initialDate);
-    this.loadSectionCourses();
+    this.route.queryParamMap.subscribe((params) => {
+      this.studentContextId.set(params.get('studentId') ?? '');
+      this.studentContextName.set(params.get('studentName') ?? '');
+      this.loadSectionCourses();
+    });
   }
 
   private loadSectionCourses() {
     this.sectionCourseApi.getAll().subscribe({
       next: (res) => {
         const list = res?.data ?? [];
-        this.sectionCourseOptions.set(
-          list.map((sc: SectionCourse) => ({
-            value: sc.id,
-            label: sc.course?.name && sc.section?.name
-              ? `${sc.course.name} - ${sc.section.name}`
-              : sc.id.slice(0, 8),
-          }))
-        );
-
-        const options = this.sectionCourseOptions();
-        const saved = this.filters.attendanceRegisterSectionCourseId();
-        const fallback = options[0]?.value?.toString() ?? '';
-        const nextSection = saved && options.some((o) => o.value?.toString() === saved) ? saved : fallback;
-        if (nextSection) {
-          this.onSectionCourseChange(nextSection);
+        if (!this.studentContextId()) {
+          this.allowedSectionIds.set([]);
+          this.applySectionCourseOptions(list);
+          return;
         }
+
+        this.enrollmentApi.getAll({ size: 999 }).subscribe({
+          next: (enrollmentRes) => {
+            const allowedSectionIds = enrollmentRes.data
+              .filter((e) => e.student?.id === this.studentContextId())
+              .map((e) => e.section?.id)
+              .filter((id): id is string => !!id);
+
+            this.allowedSectionIds.set(allowedSectionIds);
+            const filteredSectionCourses = list.filter((sc) => !allowedSectionIds.length || allowedSectionIds.includes(sc.section?.id ?? ''));
+            this.applySectionCourseOptions(filteredSectionCourses);
+          },
+          error: () => {
+            this.allowedSectionIds.set([]);
+            this.applySectionCourseOptions(list);
+          },
+        });
       },
     });
+  }
+
+  private applySectionCourseOptions(list: SectionCourse[]) {
+    this.sectionCourseOptions.set(
+      list.map((sc: SectionCourse) => ({
+        value: sc.id,
+        label: sc.course?.name && sc.section?.name ? `${sc.course.name} - ${sc.section.name}` : sc.id.slice(0, 8),
+      })),
+    );
+
+    const options = this.sectionCourseOptions();
+    const saved = this.filters.attendanceRegisterSectionCourseId();
+    const fallback = options[0]?.value?.toString() ?? '';
+    const nextSection = saved && options.some((o) => o.value?.toString() === saved) ? saved : fallback;
+
+    if (nextSection) {
+      this.onSectionCourseChange(nextSection);
+    } else {
+      this.selectedSectionCourse.set('');
+      this.students.set([]);
+    }
   }
 
   onSectionCourseChange(value: unknown): void {
@@ -125,12 +164,14 @@ export default class AttendanceRegisterPage implements OnInit {
   private loadStudents(sectionCourseId: string): void {
     this.enrollmentApi.getAll({ sectionCourse: sectionCourseId }).subscribe({
       next: (enrollmentRes) => {
-        const rows: StudentRow[] = enrollmentRes.data.map((e) => ({
-          id: e.id,
-          studentCode: e.student.studentCode,
-          name: `${e.student.person?.firstName || ''} ${e.student.person?.lastName || ''}`.trim() || e.student.studentCode,
-          status: 'present' as AttendanceStatus,
-        }));
+        const rows: StudentRow[] = enrollmentRes.data
+          .filter((e) => !this.studentContextId() || e.student?.id === this.studentContextId())
+          .map((e) => ({
+            id: e.id,
+            studentCode: e.student.studentCode,
+            name: `${e.student.person?.firstName || ''} ${e.student.person?.lastName || ''}`.trim() || e.student.studentCode,
+            status: 'present' as AttendanceStatus,
+          }));
         this.students.set(rows);
         
         this.attendanceApi.getBySectionCourse(sectionCourseId, this.attendanceDate()).subscribe({
@@ -205,5 +246,16 @@ export default class AttendanceRegisterPage implements OnInit {
     this.selectedSectionCourse.set('');
     this.students.set([]);
     this.filters.setAttendanceRegisterDate(today);
+  }
+
+  clearStudentContext(): void {
+    this.router.navigate(['/attendance/register'], {
+      queryParams: {
+        studentId: null,
+        studentName: null,
+      },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
   }
 }

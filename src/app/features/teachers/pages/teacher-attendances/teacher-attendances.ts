@@ -2,7 +2,7 @@ import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardInputDirective } from '@/shared/components/input';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DialogConfirmService } from '@shared/widgets/dialog-confirm';
 import { ExcelService } from '@core/services/excel.service';
@@ -16,6 +16,7 @@ import {
 import { HeaderDetail } from '@shared/widgets/header-detail/header-detail';
 import { ImportDialog } from '@shared/widgets/import-dialog/import-dialog';
 import { forkJoin, map } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
 
 type TeacherAttendanceRow = {
   teacherId: string;
@@ -56,32 +57,46 @@ export default class TeacherAttendancesPage implements OnInit {
   private readonly confirmDialog = inject(DialogConfirmService);
   private readonly excel = inject(ExcelService);
   private readonly toast = inject(Toast);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   readonly headerConfig = HEADER_CONFIG;
   readonly attendanceDate = signal(new Date().toISOString().slice(0, 10));
-  readonly teachers = signal<{ id: string; teacherCode: string; specialization: string }[]>([]);
+  readonly teacherContextId = signal('');
+  readonly teacherContextName = signal('');
+  readonly teachers = signal<{ id: string; teacherCode: string; specialization: string; firstName?: string; lastName?: string }[]>([]);
   readonly rows = signal<TeacherAttendanceRow[]>([]);
   readonly loading = signal(false);
   readonly saving = signal(false);
   readonly deleting = signal(false);
   readonly bulkDeleteMode = signal(false);
   readonly rowSyncing = signal<Set<string>>(new Set());
+  readonly presentCount = computed(() => this.rows().filter((row) => row.status === 'present').length);
+  readonly lateCount = computed(() => this.rows().filter((row) => row.status === 'late').length);
+  readonly absentCount = computed(() => this.rows().filter((row) => row.status === 'absent').length);
+  readonly excusedCount = computed(() => this.rows().filter((row) => row.status === 'excused').length);
+  readonly dirtyCount = computed(() => this.rows().filter((row) => !!row.dirty).length);
 
   ngOnInit(): void {
-    this.loadTeachers();
+    this.route.queryParamMap.subscribe((params) => {
+      this.teacherContextId.set(params.get('teacherId') ?? '');
+      this.teacherContextName.set(params.get('teacherName') ?? '');
+      this.loadTeachers();
+    });
   }
 
   loadTeachers(): void {
     this.loading.set(true);
     this.teacherAttendanceApi.getTeachers().subscribe({
       next: (response) => {
-        const list = response.data ?? [];
+        const teacherContextId = this.teacherContextId();
+        const list = (response.data ?? []).filter((teacher) => !teacherContextId || teacher.id === teacherContextId);
         this.teachers.set(list);
         this.rows.set(
           list.map((teacher) => ({
             teacherId: teacher.id,
             teacherCode: teacher.teacherCode,
-            teacherLabel: `${teacher.teacherCode} - ${teacher.specialization}`,
+            teacherLabel: `${teacher.teacherCode} - ${[teacher.firstName, teacher.lastName].filter(Boolean).join(' ').trim() || teacher.specialization}`,
             status: 'present',
             checkInTime: '08:00:00',
             observations: '',
@@ -476,10 +491,15 @@ export default class TeacherAttendancesPage implements OnInit {
     );
   }
 
+  clearTeacherContext(): void {
+    this.router.navigate(['/teachers/attendances']);
+  }
+
   private loadAttendancesByDate(): void {
     if (this.teachers().length === 0) return;
 
-    this.teacherAttendanceApi.getAll({ date: this.attendanceDate() }).subscribe({
+    const teacherId = this.teacherContextId();
+    this.teacherAttendanceApi.getAll({ date: this.attendanceDate(), ...(teacherId ? { teacher: teacherId } : {}) }).subscribe({
       next: (res) => {
         const selectedAttendanceIds = new Set(
           this.rows()
@@ -498,23 +518,26 @@ export default class TeacherAttendancesPage implements OnInit {
         });
 
         this.rows.update((current) =>
-          current.flatMap((row) => {
+          current.map((row) => {
             const existing = attendanceByCode.get(row.teacherCode);
-            if (!existing) return [];
-
-            if (!existing.id) return [];
-            return [
-              {
+            if (!existing || !existing.id) {
+              return {
                 ...row,
-                attendanceId: existing.id,
-                status: existing.status ?? row.status,
-                checkInTime: this.normalizeTime(existing.checkInTime ?? row.checkInTime),
-                observations: existing.observations ?? row.observations,
+                attendanceId: undefined,
                 dirty: false,
-                markedForDelete: bulkMode
-                  ? true
-                  : selectedAttendanceIds.has(existing.id),
-              }];
+                markedForDelete: false,
+              };
+            }
+
+            return {
+              ...row,
+              attendanceId: existing.id,
+              status: existing.status ?? row.status,
+              checkInTime: this.normalizeTime(existing.checkInTime ?? row.checkInTime),
+              observations: existing.observations ?? row.observations,
+              dirty: false,
+              markedForDelete: bulkMode ? true : selectedAttendanceIds.has(existing.id),
+            };
           }),
         );
         this.syncBulkModeFromSelection();

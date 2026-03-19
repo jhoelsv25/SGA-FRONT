@@ -8,6 +8,7 @@ import { StudentGuardian } from '../../types/guardian-types';
 import { GUARDIAN_HEADER_CONFIG, GUARDIAN_COLUMN, GUARDIAN_ACTIONS } from '../../config/guardian.config';
 import { StudentGuardianForm } from '../../components/student-guardian-form/student-guardian-form';
 import { Toast } from '@core/services/toast';
+import { ActivatedRoute, Router } from '@angular/router';
 
 
 @Component({
@@ -21,6 +22,10 @@ export default class GuardiansPage implements OnInit {
   private dialog = inject(DialogModalService);
   private api = inject(GuardianApi);
   private toast = inject(Toast);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  readonly studentContextId = signal('');
+  readonly studentContextName = signal('');
 
   headerConfig = GUARDIAN_HEADER_CONFIG;
   columns = GUARDIAN_COLUMN;
@@ -37,7 +42,11 @@ export default class GuardiansPage implements OnInit {
   rowActions = computed(() => GUARDIAN_ACTIONS.filter((a) => a.typeAction === 'row'));
 
   ngOnInit() {
-    this.loadAll();
+    this.route.queryParamMap.subscribe((params) => {
+      this.studentContextId.set(params.get('studentId') ?? '');
+      this.studentContextName.set(params.get('studentName') ?? '');
+      this.loadAll();
+    });
   }
 
   loadAll() {
@@ -65,7 +74,9 @@ export default class GuardiansPage implements OnInit {
             emergencyContact: g.emergencyContact,
           };
         });
-        this.rowsSignal.set(list);
+        this.rowsSignal.set(
+          list.filter((item) => !this.studentContextId() || (item.studentGuardian as StudentGuardian)?.student?.id === this.studentContextId()),
+        );
         this.loadingSignal.set(false);
       },
       error: (err) => {
@@ -87,6 +98,10 @@ export default class GuardiansPage implements OnInit {
   }
 
   onPageChange() {}
+
+  clearStudentContext() {
+    this.router.navigate(['/students/guardians']);
+  }
 
   private openForm(current?: StudentGuardian | null) {
     const ref = this.dialog.open(StudentGuardianForm, {

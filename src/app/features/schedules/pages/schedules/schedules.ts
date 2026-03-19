@@ -36,6 +36,8 @@ export default class SchedulesPage {
   sectionContextName = signal('');
   courseContextId = signal('');
   courseContextName = signal('');
+  teacherContextId = signal('');
+  teacherContextName = signal('');
   readonly headerConfig = computed(() => this.store.headerConfig());
 
   headerActions = computed(() =>
@@ -50,12 +52,21 @@ export default class SchedulesPage {
     const search = this.searchTerm().toLowerCase().trim();
     const sectionId = this.sectionContextId();
     const courseId = this.courseContextId();
+    const teacherId = this.teacherContextId();
     return list.filter((s) => {
+      const teacherLabel =
+        typeof s.sectionCourse === 'object'
+          ? [s.sectionCourse?.teacher?.person?.firstName, s.sectionCourse?.teacher?.person?.lastName]
+              .filter(Boolean)
+              .join(' ')
+              .toLowerCase()
+          : '';
       const matchSearch =
         !search ||
         s.title?.toLowerCase().includes(search) ||
         s.classroom?.toLowerCase().includes(search) ||
         s.description?.toLowerCase().includes(search) ||
+        teacherLabel.includes(search) ||
         (typeof s.sectionCourse === 'object' && s.sectionCourse?.course?.name?.toLowerCase().includes(search)) ||
         (typeof s.sectionCourse === 'object' && s.sectionCourse?.section?.name?.toLowerCase().includes(search));
       const matchSection =
@@ -64,7 +75,10 @@ export default class SchedulesPage {
       const matchCourse =
         !courseId ||
         (typeof s.sectionCourse === 'object' && s.sectionCourse?.course?.id === courseId);
-      return matchSearch && matchSection && matchCourse;
+      const matchTeacher =
+        !teacherId ||
+        (typeof s.sectionCourse === 'object' && s.sectionCourse?.teacher?.id === teacherId);
+      return matchSearch && matchSection && matchCourse && matchTeacher;
     });
   });
 
@@ -76,13 +90,18 @@ export default class SchedulesPage {
       const sectionName = params.get('sectionName') ?? '';
       const courseId = params.get('courseId') ?? '';
       const courseName = params.get('courseName') ?? '';
+      const teacherId = params.get('teacherId') ?? '';
+      const teacherName = params.get('teacherName') ?? '';
       this.sectionContextId.set(sectionId);
       this.sectionContextName.set(sectionName);
       this.courseContextId.set(courseId);
       this.courseContextName.set(courseName);
+      this.teacherContextId.set(teacherId);
+      this.teacherContextName.set(teacherName);
       this.store.loadAll({
         ...(sectionId ? { sectionId } : {}),
         ...(courseId ? { courseId } : {}),
+        ...(teacherId ? { teacherId } : {}),
       });
     });
   }
@@ -103,9 +122,11 @@ export default class SchedulesPage {
   onRefresh() {
     const sectionId = this.sectionContextId();
     const courseId = this.courseContextId();
+    const teacherId = this.teacherContextId();
     this.store.loadAll({
       ...(sectionId ? { sectionId } : {}),
       ...(courseId ? { courseId } : {}),
+      ...(teacherId ? { teacherId } : {}),
     });
   }
 
