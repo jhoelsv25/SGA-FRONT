@@ -10,6 +10,7 @@ import { filter, Subject, takeUntil } from 'rxjs';
 import { ZardIconComponent, type ZardIcon } from '@shared/components/icon';
 import { ZardPopoverDirective } from '@shared/components/popover/popover.component';
 import { UserMenu, UserMenuAction, UserMenuDetail, UserMenuStat } from '@shared/widgets/user-menu/user-menu';
+import type { CurrentUserProfile } from '@auth/types/auth-type';
 
 export interface MenuItem {
   id: string;
@@ -23,6 +24,60 @@ export interface MenuItem {
   hasChildren?: boolean;
   expanded?: boolean;
 }
+
+const LEGACY_SIDEBAR_ICONS: Record<string, ZardIcon> = {
+  'fa-home': 'house',
+  'fa-cog': 'settings',
+  'fa-calendar-alt': 'calendar',
+  'fa-clock': 'clock',
+  'fa-layer-group': 'layers',
+  'fa-th': 'layout-grid',
+  'fa-book': 'book',
+  'fa-star': 'star',
+  'fa-sitemap': 'layers-2',
+  'fa-users': 'users',
+  'fa-link': 'arrow-right',
+  'fa-calendar-days': 'calendar',
+  'fa-user-graduate': 'graduation-cap',
+  'fa-list': 'layout-grid',
+  'fa-file-signature': 'file-text',
+  'fa-user-shield': 'shield',
+  'fa-comment-medical': 'chat',
+  'fa-chalkboard-teacher': 'book-open-text',
+  'fa-user-check': 'badge-check',
+  'fa-clipboard-check': 'clipboard',
+  'fa-check-circle': 'circle-check',
+  'fa-chart-pie': 'activity',
+  'fa-file-alt': 'file-text',
+  'fa-clipboard-list': 'clipboard',
+  'fa-pen-square': 'square',
+  'fa-chart-line': 'activity',
+  'fa-flag': 'target',
+  'fa-chart-bar': 'activity',
+  'fa-chalkboard': 'book-open-text',
+  'fa-door-open': 'book-open',
+  'fa-folder': 'folder',
+  'fa-file': 'file',
+  'fa-tasks': 'check',
+  'fa-upload': 'upload',
+  'fa-comments': 'chat',
+  'fa-comment-dots': 'chat',
+  'fa-money-bill-wave': 'credit-card',
+  'fa-file-invoice-dollar': 'credit-card',
+  'fa-exclamation-triangle': 'triangle-alert',
+  'fa-history': 'clock',
+  'fa-bullhorn': 'bell',
+  'fa-bell': 'bell',
+  'fa-envelope-open-text': 'mail',
+  'fa-graduation-cap': 'graduation-cap',
+  'fa-cogs': 'settings',
+  'fa-building': 'building',
+  'fa-users-cog': 'users',
+  'fa-user-tag': 'user',
+  'fa-key': 'shield',
+  'fa-desktop': 'monitor',
+  'fa-file-search': 'search',
+};
 
 
 @Component({
@@ -85,15 +140,16 @@ export class Sidebar implements OnInit, OnDestroy {
 
   private normalizeIcon(icon: string): ZardIcon {
     if (!icon) return 'circle';
-    return icon as ZardIcon;
+    return LEGACY_SIDEBAR_ICONS[icon] ?? (icon as ZardIcon);
   }
 
   // --- Permissions ---
 
   public getVisibleMenuItems(): MenuItem[] {
     const permitted = this.filterByPermissions(this.menuItems());
+    const roleScoped = this.filterByRoleProfile(permitted);
     const term = this.sidebarSearch().trim().toLowerCase();
-    if (!term) return permitted;
+    if (!term) return roleScoped;
 
     const filterTree = (items: MenuItem[]): MenuItem[] => {
       const result: MenuItem[] = [];
@@ -108,7 +164,7 @@ export class Sidebar implements OnInit, OnDestroy {
       return result;
     };
 
-    return filterTree(permitted);
+    return filterTree(roleScoped);
   }
 
   private filterByPermissions(items: MenuItem[]): MenuItem[] {
@@ -123,6 +179,79 @@ export class Sidebar implements OnInit, OnDestroy {
   private hasPermission(permissions?: string[]): boolean {
     if (!permissions || permissions.length === 0) return true;
     return permissions.some((p) => this.authFacade.hasPermission(p));
+  }
+
+  private filterByRoleProfile(items: MenuItem[]): MenuItem[] {
+    const roleType = this.resolveProfileType();
+    if (roleType === 'superadmin' || roleType === 'admin' || roleType === 'director' || roleType === 'subdirector' || roleType === 'ugel') {
+      return items;
+    }
+
+    const allowedTopLevelByRole: Record<string, Set<string>> = {
+      teacher: new Set(['dashboard', 'teachers', 'students', 'attendance', 'assessments', 'behavior', 'virtual-classroom', 'communications', 'reports']),
+      student: new Set(['dashboard', 'virtual-classroom', 'communications', 'payments', 'reports']),
+      guardian: new Set(['dashboard', 'students', 'communications', 'payments', 'reports']),
+      guest: new Set(['dashboard']),
+      user: new Set(['dashboard']),
+    };
+
+    const allowed = allowedTopLevelByRole[roleType];
+    if (!allowed) return items;
+
+    return items
+      .filter(item => allowed.has(item.id) || item.active)
+      .map(item => ({
+        ...item,
+        children: this.filterRoleChildren(item, roleType),
+      }));
+  }
+
+  private filterRoleChildren(item: MenuItem, roleType: string): MenuItem[] {
+    const children = item.children || [];
+    if (children.length === 0) return [];
+
+    const allowByRoleAndParent: Record<string, Record<string, Set<string>>> = {
+      teacher: {
+        teachers: new Set(['teachers-list', 'teacher-attendances']),
+        students: new Set(['students-list', 'student-observations']),
+        attendance: new Set(['attendance-register', 'attendance-reports']),
+        assessments: new Set(['assessments-list', 'assessment-scores', 'grades']),
+        behavior: new Set(['behavior-records', 'behavior-reports']),
+        'virtual-classroom': new Set(['virtual-classrooms-list', 'learning-modules', 'learning-materials', 'assignments', 'assignment-submissions', 'forums', 'chat']),
+        communications: new Set(['announcements', 'notifications']),
+        reports: new Set(['reports-academic', 'reports-attendance', 'reports-behavior']),
+      },
+      student: {
+        'virtual-classroom': new Set(['virtual-classrooms-list', 'learning-modules', 'learning-materials', 'assignments', 'assignment-submissions', 'forums', 'chat']),
+        communications: new Set(['announcements', 'notifications']),
+        payments: new Set(['payments-pending', 'payments-history']),
+        reports: new Set(['reports-academic', 'reports-attendance', 'reports-behavior']),
+      },
+      guardian: {
+        students: new Set(['students-list', 'student-observations']),
+        communications: new Set(['announcements', 'notifications']),
+        payments: new Set(['payments-pending', 'payments-history']),
+        reports: new Set(['reports-academic', 'reports-attendance', 'reports-behavior']),
+      },
+    };
+
+    const allowed = allowByRoleAndParent[roleType]?.[item.id];
+    if (!allowed) return children;
+    return children.filter(child => allowed.has(child.id) || child.active);
+  }
+
+  private resolveProfileType(): NonNullable<CurrentUserProfile['type']> {
+    const profileType = this.currentUser()?.profile?.type;
+    if (profileType) return profileType;
+
+    const roleName = (this.currentUser()?.role?.name ?? '').toLowerCase();
+    if (roleName.includes('super')) return 'superadmin';
+    if (roleName.includes('admin')) return 'admin';
+    if (roleName.includes('director')) return 'director';
+    if (roleName.includes('docente') || roleName.includes('teacher')) return 'teacher';
+    if (roleName.includes('estudiante') || roleName.includes('student') || roleName.includes('alumno')) return 'student';
+    if (roleName.includes('apoderado') || roleName.includes('guardian')) return 'guardian';
+    return 'user';
   }
 
   // --- Interaction & Navigation ---

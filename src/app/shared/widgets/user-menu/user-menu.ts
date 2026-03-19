@@ -1,6 +1,24 @@
 import { Component, ElementRef, HostListener, inject, input, output, signal } from '@angular/core';
 import { ZardIconComponent, type ZardIcon } from "@/shared/components/icon";
 
+const LEGACY_ICON_ALIASES: Record<string, ZardIcon> = {
+  'fas fa-user': 'user',
+  'fa-solid fa-user-shield': 'shield',
+  'fa-solid fa-layer-group': 'layers',
+  'fa-solid fa-grid-2': 'layout-grid',
+  'fa-solid fa-school': 'building',
+  'fa-solid fa-book-open-reader': 'book-open',
+  'fa-solid fa-user-graduate': 'graduation-cap',
+  'fa-solid fa-people-roof': 'users',
+  'fa-solid fa-briefcase': 'building',
+  'fa-solid fa-envelope': 'mail',
+  'fa-solid fa-phone': 'phone',
+  'fa-solid fa-location-dot': 'map-pin',
+  'fas fa-cog': 'settings',
+  'fas fa-history': 'clock',
+  'fas fa-key': 'shield',
+};
+
 export interface UserMenuAction {
   label: string;
   icon?: string;
@@ -35,6 +53,7 @@ export class UserMenu {
   role = input<string>('Rol');
   code = input<string>('0000');
   isCollapsed = input<boolean>(false);
+  dropdownPlacement = input<'top' | 'bottom'>('top');
   details = input<UserMenuDetail[]>([]);
 
   stats = input<{ courses?: number; students?: number; average?: string }>({
@@ -53,7 +72,8 @@ export class UserMenu {
   actionSelected = output<UserMenuAction>();
 
   resolveIcon(icon?: string): ZardIcon {
-    return (icon || 'circle') as ZardIcon;
+    if (!icon) return 'circle';
+    return LEGACY_ICON_ALIASES[icon] ?? (icon as ZardIcon);
   }
 
 

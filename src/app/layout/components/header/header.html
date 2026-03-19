@@ -1,18 +1,18 @@
-<div class="flex h-full items-center justify-between gap-2 px-2 sm:px-4">
+<div class="flex h-full items-center justify-between gap-3 px-3 sm:px-4">
   <!-- Botón hamburguesa para móvil -->
   <div class="flex items-center gap-2">
-    <button class="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+    <button class="flex h-10 w-10 items-center justify-center rounded-[var(--radius-xl)] border border-border/60 bg-base-100/80 text-base-content/70 transition-colors hover:bg-base-200 md:hidden"
       (click)="toggleSidebar()" aria-label="Toggle sidebar">
-      <z-icon zType="panel-left" class="h-5 w-5 text-gray-700 dark:text-gray-300" />
+      <z-icon zType="panel-left" class="h-5 w-5" />
     </button>
 
     <!-- Search Section - Modal Trigger -->
     <div class="flex items-center">
       <button type="button" (click)="onSearch()"
-        class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-base-100 dark:bg-base-300 border border-base-300 dark:border-base-200 hover:border-primary-400 dark:hover:border-primary-500 transition-all duration-200 group"
+        class="group flex h-10 items-center gap-2 rounded-[var(--radius-xl)] border border-border/60 bg-base-100/80 px-3 text-base-content/65 transition-all duration-200 hover:border-primary/25 hover:bg-base-200"
         aria-label="Abrir buscador global">
-        <z-icon zType="search" class="h-4 w-4 text-gray-500 dark:text-gray-400 text-sm group-hover:text-primary-500" />
-        <span class="text-xs text-gray-400 dark:text-gray-500 font-mono hidden sm:inline">
+        <z-icon zType="search" class="h-4 w-4 text-base-content/50 group-hover:text-primary" />
+        <span class="hidden font-mono text-xs text-base-content/35 sm:inline">
           ⌘K
         </span>
       </button>
@@ -20,16 +20,16 @@
   </div>
 
   <!-- Action Buttons and User Menu -->
-  <div class="flex items-center gap-1 sm:gap-2 md:gap-4">
+  <div class="flex items-center gap-1.5 sm:gap-2 md:gap-3">
     <!-- Theme Toggle -->
     <button
-      class="p-2 rounded-lg text-gray-600 dark:text-gray-400 hover:text-primary-500 dark:hover:text-primary-400 hover:bg-base-100 dark:hover:bg-base-300 transition-all duration-200 flex items-center gap-2"
+      class="flex h-10 w-10 items-center justify-center rounded-[var(--radius-xl)] border border-transparent text-base-content/60 transition-all duration-200 hover:border-border/60 hover:bg-base-100 hover:text-primary"
       (click)="toggleTheme()" [attr.aria-label]="'Cambiar tema'">
       <div class="flex items-center justify-center w-5 h-5">
         @switch (currentTheme()) {
         @case ("light") {
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-          stroke-linecap="round" stroke-linejoin="round" class="size-5 text-primary-500">
+          stroke-linecap="round" stroke-linejoin="round" class="size-5 text-primary">
           <circle cx="12" cy="12" r="4"></circle>
           <path d="M12 2v2"></path>
           <path d="M12 20v2"></path>
@@ -43,13 +43,13 @@
         }
         @case ("dark") {
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-          stroke-linecap="round" stroke-linejoin="round" class="size-5 text-primary-500">
+          stroke-linecap="round" stroke-linejoin="round" class="size-5 text-primary">
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
         </svg>
         }
         @case ("system") {
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-          stroke-linecap="round" stroke-linejoin="round" class="size-5 text-primary-500">
+          stroke-linecap="round" stroke-linejoin="round" class="size-5 text-primary">
           <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
           <line x1="8" y1="21" x2="16" y2="21"></line>
           <line x1="12" y1="17" x2="12" y2="21"></line>
@@ -61,12 +61,12 @@
 
     <!-- Notifications -->
     <button
-      class="relative p-2 rounded-lg text-gray-600 dark:text-gray-400 hover:text-primary-500 dark:hover:text-primary-400 hover:bg-base-100 dark:hover:bg-base-300 transition-all duration-200 sm:flex items-center justify-center"
+      class="relative flex h-10 w-10 items-center justify-center rounded-[var(--radius-xl)] border border-transparent text-base-content/60 transition-all duration-200 hover:border-border/60 hover:bg-base-100 hover:text-primary sm:flex"
       (click)="toggleAside('notifications')" aria-label="Ver notificaciones">
       <z-icon zType="bell" class="h-5 w-5" />
       @if (unreadNotifications() > 0) {
       <span
-        class="bg-primary-500 absolute -top-1 -right-1 text-white text-[10px] rounded-full px-1.5 py-0.5 min-w-4 h-4 flex items-center justify-center font-bold">
+        class="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold text-primary-foreground">
         {{ unreadNotifications() }}
       </span>
       }
@@ -74,23 +74,23 @@
 
     <!-- Chats -->
     <button
-      class="relative p-2 rounded-lg text-gray-600 dark:text-gray-400 hover:text-primary-500 dark:hover:text-primary-400 hover:bg-base-100 dark:hover:bg-base-300 transition-all duration-200 sm:flex items-center justify-center"
+      class="relative flex h-10 w-10 items-center justify-center rounded-[var(--radius-xl)] border border-transparent text-base-content/60 transition-all duration-200 hover:border-border/60 hover:bg-base-100 hover:text-primary sm:flex"
       (click)="toggleAside('chats')" aria-label="Ver mensajes">
       <z-icon zType="chat" class="h-5 w-5" />
       <span
-        class="bg-blue-500 absolute -top-1 -right-1 text-white text-[10px] rounded-full px-1.5 py-0.5 min-w-4 h-4 flex items-center justify-center font-bold">2</span>
+        class="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold text-primary-foreground">2</span>
     </button>
 
     <!-- Calendar -->
     <button
-      class="p-2 rounded-lg text-gray-600 dark:text-gray-400 hover:text-primary-500 dark:hover:text-primary-400 hover:bg-base-100 dark:hover:bg-base-300 transition-all duration-200 md:flex items-center justify-center"
+      class="hidden h-10 w-10 items-center justify-center rounded-[var(--radius-xl)] border border-transparent text-base-content/60 transition-all duration-200 hover:border-border/60 hover:bg-base-100 hover:text-primary md:flex"
       (click)="toggleAside('calendar')" aria-label="Ver calendario">
       <z-icon zType="calendar" class="h-5 w-5" />
     </button>
 
     <!-- User Menu -->
     <sga-user-menu [name]="getUserDisplayName()" [role]="getUserRole()" [code]="getUserCode()"
-      [initials]="getUserInitials()" [statsItems]="userMenuStats()" [actions]="[
+      [initials]="getUserInitials()" [dropdownPlacement]="'bottom'" [statsItems]="userMenuStats()" [actions]="[
         {
           label: 'Mi Perfil',
           icon: 'fas fa-user',
