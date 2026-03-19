@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { PaginationType } from '@core/types/pagination-types';
+import { CursorPagination } from '@core/types/pagination-types';
 import { User } from '../../users/types/user-types';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { UserApi } from '../api/user-api';
@@ -10,8 +10,7 @@ import { pipe, switchMap, tap } from 'rxjs';
 
 type UserState = {
   users: User[];
-  pagination: PaginationType;
-  total: number;
+  pagination: CursorPagination;
   loading: boolean;
   error: string | null;
 };
@@ -19,11 +18,11 @@ type UserState = {
 export const initialUserState: UserState = {
   users: [],
   pagination: {
-    page: 1,
-    size: 10,
-    total: 0,
+    nextCursor: null,
+    hasNext: false,
+    limit: 50,
+    loadedCount: 0,
   },
-  total: 0,
   loading: false,
   error: null,
 };
@@ -39,7 +38,18 @@ export const UserStore = signalStore(
           return api.getAll(params || {}).pipe(
             tap({
               next: (response) => {
-                patchState(store, { users: response.data, total: response.total, loading: false });
+                const isLoadMore = !!params?.['cursor'];
+                const newUsers = isLoadMore ? [...store.users(), ...response.data] : response.data;
+                patchState(store, { 
+                  users: newUsers, 
+                  pagination: {
+                    limit: store.pagination().limit,
+                    loadedCount: newUsers.length,
+                    hasNext: !!response.nextCursor,
+                    nextCursor: response.nextCursor
+                  },
+                  loading: false 
+                });
               },
               error: (error) => {
                 patchState(store, { loading: false, error: error.message });

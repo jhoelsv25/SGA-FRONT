@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Params } from '@angular/router';
-import { DataResponse } from '@core/types/pagination-types';
 import { User, UserResponse } from '@features/administration/users/types/user-types';
 import { Observable } from 'rxjs';
 
@@ -12,8 +11,8 @@ export class UserApi {
   private readonly http = inject(HttpClient);
   public baseUrl = 'users';
 
-  getAll(params: Params = {}): Observable<DataResponse<User>> {
-    return this.http.get<DataResponse<User>>(this.baseUrl, { params });
+  getAll(params: Params = {}): Observable<{ data: User[]; nextCursor: string | null }> {
+    return this.http.get<{ data: User[]; nextCursor: string | null }>(this.baseUrl, { params });
   }
 
   getById(id: string): Observable<User> {

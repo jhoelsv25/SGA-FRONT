@@ -4,9 +4,11 @@ export type User = {
   email: string;
   firstName: string;
   lastName: string;
+  roleName?: string;
   isActive: boolean;
+  lastLogin?: string | null;
   createdAt: string; // ISO date string
-  updatedAt: string; // ISO date string
+  updatedAt?: string; // ISO date string
 };
 
 export type UserCreate = {

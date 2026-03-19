@@ -204,6 +204,7 @@ export class Header implements OnInit, OnDestroy {
   }
 
   goProfile = () => this.router.navigateByUrl('/account/profile');
+  goSessions = () => this.router.navigateByUrl('/administration/sessions');
   goSettings = () => this.router.navigateByUrl('/account/settings');
   goChangePass = () => this.router.navigateByUrl('/account/change-password');
 

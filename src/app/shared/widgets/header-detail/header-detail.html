@@ -1,6 +1,7 @@
 <div class="w-full animate-in fade-in duration-700">
   <div class="relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-6
-              bg-base-100/60 px-8 py-7 rounded-[2rem] shadow-xl backdrop-blur-xl group mb-6">
+              border border-base-300/50 bg-base-100/60 px-8 py-7 rounded-[2rem] shadow-xl backdrop-blur-xl group mb-6
+              dark:border-base-200/60 dark:bg-base-300/30">
 
     <!-- Decoración de fondo -->
     <div class="absolute -right-16 -top-16 w-64 h-64 bg-primary/8 rounded-full blur-[60px]
@@ -45,7 +46,7 @@
           title="Filtros"
           class="relative size-11 rounded-full bg-base-200/60 border border-base-300/50 flex items-center justify-center
                  text-base-content/50 hover:text-primary hover:bg-primary/10 hover:border-primary/30
-                 transition-all duration-300 hover:scale-110 active:scale-95"
+                 transition-all duration-300 hover:scale-110 active:scale-95 dark:border-base-200/60 dark:bg-base-300/40"
         >
           @if (hasActiveFilters()) {
             <span class="absolute top-0 right-0 size-3 rounded-full bg-primary border-2 border-base-100 shadow-sm animate-pulse z-10"></span>
@@ -54,7 +55,7 @@
         </button>
 
         <ng-template #filterPopoverTpl>
-          <z-popover class="w-80 p-0 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.3)] bg-white dark:bg-neutral-900 rounded-2xl border border-base-200 z-[100]">
+          <z-popover class="z-[100] w-80 rounded-[var(--radius-xl)] border border-base-200 bg-popover p-0 text-popover-foreground shadow-[0_10px_40px_-10px_rgba(0,0,0,0.3)]">
             <ng-container [ngTemplateOutlet]="filterTemplate() ?? null"></ng-container>
           </z-popover>
         </ng-template>
@@ -67,7 +68,7 @@
         title="Actualizar"
         class="size-11 rounded-full bg-base-200/60 border border-base-300/50 flex items-center justify-center
                text-base-content/50 hover:text-primary hover:bg-primary/10 hover:border-primary/30
-               transition-all duration-300 hover:scale-110 active:scale-95"
+               transition-all duration-300 hover:scale-110 active:scale-95 dark:border-base-200/60 dark:bg-base-300/40"
       >
         <z-icon zType="loader-circle" class="h-4 w-4" />
       </button>
@@ -81,7 +82,7 @@
             title="Más acciones"
             class="size-11 rounded-full bg-base-200/60 border border-base-300/50 flex items-center justify-center
                    text-base-content/50 hover:text-primary hover:bg-primary/10 hover:border-primary/30
-                   transition-all duration-300 hover:scale-110 active:scale-95"
+                   transition-all duration-300 hover:scale-110 active:scale-95 dark:border-base-200/60 dark:bg-base-300/40"
           >
             <z-icon zType="ellipsis" class="h-4 w-4" />
           </button>

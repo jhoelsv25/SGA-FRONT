@@ -4,14 +4,14 @@ import { mergeClasses } from '@/shared/utils/merge-classes';
 
 export const selectVariants = cva(
   mergeClasses(
-    'relative inline-block w-full rounded-md group data-active:border data-active:border-ring data-active:ring-ring/50 data-active:ring-[3px]',
+    'relative inline-block w-full rounded-[var(--radius-xl)] group data-active:border data-active:border-ring data-active:ring-ring/50 data-active:ring-[3px]',
     '[&_button]:focus-visible:border [&_button]:focus-visible:border-ring [&_button]:focus-visible:ring-ring/50 [&_button]:focus-visible:ring-[3px]',
   ),
 );
 
 export const selectTriggerVariants = cva(
   mergeClasses(
-    'flex w-full items-center justify-between gap-2 rounded-md border border-input bg-transparent',
+    'flex w-full items-center justify-between gap-2 rounded-[var(--radius-xl)] border border-input bg-base-100',
     'shadow-xs transition-[color,box-shadow] outline-none cursor-pointer disabled:cursor-not-allowed',
     'disabled:opacity-50 data-placeholder:text-muted-foreground [&_svg:not([class*="text-"])]:text-muted-foreground',
     'dark:bg-input/30 dark:hover:bg-input/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40',
@@ -31,7 +31,7 @@ export const selectTriggerVariants = cva(
   },
 );
 export const selectContentVariants = cva(
-  'z-9999 min-w-full overflow-y-auto rounded-md border bg-popover text-popover-foreground shadow-lg animate-in fade-in-0 zoom-in-95',
+  'z-9999 min-w-full overflow-y-auto rounded-[var(--radius-xl)] border bg-popover text-popover-foreground shadow-lg animate-in fade-in-0 zoom-in-95',
 );
 export const selectItemVariants = cva(
   'relative flex min-w-full cursor-pointer text-nowrap items-center gap-2 rounded-sm mb-0.5 outline-hidden select-none hover:bg-accent hover:text-accent-foreground data-selected:bg-accent data-selected:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50 data-disabled:cursor-not-allowed data-disabled:hover:bg-transparent data-disabled:hover:text-current [&_svg:not([class*="text-"])]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*="size-"])]:size-4',

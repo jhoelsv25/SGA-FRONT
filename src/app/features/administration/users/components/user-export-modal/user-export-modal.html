@@ -1,0 +1,102 @@
+<div class="flex flex-col h-full bg-base-100 rounded-3xl overflow-hidden shadow-2xl relative">
+  <!-- Header -->
+  <div class="bg-base-200/50 p-6 flex justify-between items-center relative z-10 border-b border-base-200">
+    <div>
+      <h2 class="text-lg font-black tracking-tight text-base-content flex items-center gap-2">
+        <i class="fas fa-file-excel text-success"></i> Exportar a Excel
+      </h2>
+      <p class="text-xs text-muted-foreground font-medium uppercase tracking-widest mt-1">
+        Paso {{ step() }} de 2: {{ step() === 1 ? 'Configure Filtros' : 'Seleccione Columnas' }}
+      </p>
+    </div>
+    <button type="button" (click)="close()"
+      class="w-8 h-8 flex items-center justify-center rounded-xl bg-base-100 hover:bg-base-200 text-base-content/50 hover:text-base-content transition-colors shadow-sm cursor-pointer border-none outline-none">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <!-- Body -->
+  <div class="p-6 flex-1 overflow-y-auto">
+    
+    @if (step() === 1) {
+    <!-- Paso 1: Filtros -->
+    <div class="flex flex-col gap-5 animate-in fade-in slide-in-from-right-4">
+      <div class="bg-primary/5 p-4 rounded-xl border border-primary/10 flex items-start gap-4 mb-2">
+        <i class="fas fa-info-circle text-primary mt-0.5"></i>
+        <p class="text-sm font-medium text-base-content/80 leading-relaxed">
+          Defina qué grupo de usuarios desea exportar ajustando los siguientes filtros. Si deja los filtros en blanco o en "Todos", se exportará el listado completo de la base de datos.
+        </p>
+      </div>
+
+      <z-form-field>
+        <label z-form-label>Término de Búsqueda</label>
+        <z-form-control>
+          <input z-input placeholder="Nombre, email, usuario..." [ngModel]="filterSearch()" (ngModelChange)="filterSearch.set($event)" />
+        </z-form-control>
+      </z-form-field>
+
+      <z-form-field>
+        <label z-form-label>Rol de Usuario</label>
+        <z-form-control>
+          <z-select-option
+            [options]="rolesFilter"
+            [ngModel]="filterRole()"
+            (ngModelChange)="filterRole.set($event)"
+            placeholder="Todos"
+          ></z-select-option>
+        </z-form-control>
+      </z-form-field>
+    </div>
+    } @else {
+    <!-- Paso 2: Columnas -->
+    <div class="flex flex-col gap-4 animate-in fade-in slide-in-from-right-4">
+      <div class="bg-primary/5 p-4 rounded-xl border border-primary/10 flex items-start gap-4 mb-2">
+        <i class="fas fa-table text-primary mt-0.5"></i>
+        <p class="text-sm font-medium text-base-content/80 leading-relaxed">
+          Seleccione únicamente las columnas de información que necesita en su archivo Excel resultante. Recuerde que el orden base se mantiene por defecto.
+        </p>
+      </div>
+
+      <!-- Marcar Todos -->
+      <div class="flex items-center justify-between pb-3 border-b border-border/10">
+        <span class="text-sm font-bold text-base-content">Múltiples Columnas</span>
+        <button type="button" class="text-xs font-bold uppercase tracking-widest text-primary hover:text-primary/70 transition-colors cursor-pointer outline-none border-none bg-transparent"
+          (click)="toggleAll(!allSelected)">
+          {{ allSelected ? 'Desmarcar Todos' : 'Marcar Todos' }}
+        </button>
+      </div>
+
+      <!-- Opciones -->
+      <div class="grid grid-cols-2 gap-3 mt-1">
+        @for (col of columns(); track col.key; let i = $index) {
+          <label class="flex items-center gap-3 p-3 rounded-xl border border-base-200 cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all group select-none">
+            <z-checkbox [ngModel]="col.selected" (ngModelChange)="toggleColumn(i, $event)"></z-checkbox>
+            <span class="text-sm font-bold text-base-content/80 group-hover:text-base-content">{{ col.label }}</span>
+          </label>
+        }
+      </div>
+    </div>
+    }
+  </div>
+
+  <!-- Footer -->
+  <div class="p-5 border-t border-base-200/60 bg-base-200/30 flex items-center justify-between">
+    @if (step() === 1) {
+      <button type="button" z-button zType="ghost" (click)="close()">Cancelar</button>
+      <button type="button" z-button color="primary" class="gap-2" (click)="nextStep()">
+        Siguiente <i class="fas fa-arrow-right text-xs"></i>
+      </button>
+    } @else {
+      <button type="button" z-button zType="ghost" class="gap-2" [disabled]="isExporting()" (click)="prevStep()">
+        <i class="fas fa-arrow-left text-xs"></i> Atrás
+      </button>
+      <button type="button" z-button color="success" class="gap-2" [disabled]="isExporting()" (click)="exportData()">
+        @if (isExporting()) {
+          <i class="fas fa-spinner fa-spin"></i> Generando Excel...
+        } @else {
+          <i class="fas fa-download text-xs"></i> Generar Excel
+        }
+      </button>
+    }
+  </div>
+</div>

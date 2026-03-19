@@ -1,9 +1,9 @@
 <ng-template #filters>
-  <div class="p-5 flex flex-col gap-4 min-w-80 bg-white dark:bg-neutral-900 rounded-2xl relative">
-    <div class="flex items-center justify-between pb-2 border-b border-base-200">
+  <div class="relative flex min-w-80 flex-col gap-5 rounded-[var(--radius-xl)] bg-card p-5">
+    <div class="flex items-center justify-between border-b border-base-200 pb-3">
       <h3 class="text-xs font-bold text-base-content/50 uppercase tracking-widest">Filtros Activos</h3>
-      @if (filterSearch() || filterRole()) {
-        <button type="button" class="text-xs text-primary font-medium hover:underline" (click)="clearFilters()">Limpiar</button>
+      @if (hasActiveFilters()) {
+        <button type="button" class="text-xs font-semibold uppercase tracking-widest text-primary transition hover:opacity-80" (click)="clearFilters()">Limpiar</button>
       }
     </div>
 
@@ -26,7 +26,19 @@
       </z-form-control>
     </z-form-field>
 
-    <button type="button" z-button class="w-full mt-2" (click)="applyFilters()">
+    <z-form-field>
+      <label z-form-label>Fecha de registro</label>
+      <z-form-control>
+        <sga-user-date-range-filter
+          [preset]="filterDatePreset()"
+          [fromDate]="filterCreatedFrom()"
+          [toDate]="filterCreatedTo()"
+          (rangeChange)="onDateRangeChange($event)"
+        />
+      </z-form-control>
+    </z-form-field>
+
+    <button type="button" z-button class="mt-1 h-11 w-full rounded-2xl font-bold uppercase tracking-widest" (click)="applyFilters()">
       Aplicar Filtros
     </button>
   </div>
@@ -39,12 +51,11 @@
   [filterTemplate]="filters"
   [hasActiveFilters]="hasActiveFilters()"
  />
-<sga-data-source
-  [data]="data()"
-  [columns]="columns()"
+<sga-users-table
+  [users]="data()"
   [loading]="loading()"
   [pagination]="pagination()"
   [actions]="rowActions()"
   (actionClick)="onRowAction($event)"
-  (pageChange)="onPageChange($event)"
+  (loadMore)="onLoadMore($event)"
  />

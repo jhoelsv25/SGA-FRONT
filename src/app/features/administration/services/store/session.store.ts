@@ -47,6 +47,28 @@ export const SessionStore = signalStore(
         }),
       ),
     ),
+    loadByUser: rxMethod<{ userId: string; params?: Params }>(
+      pipe(
+        switchMap(({ userId, params }) => {
+          patchState(store, { loading: true });
+          return api.getByUser(userId, params || {}).pipe(
+            tap({
+              next: (response) => {
+                patchState(store, {
+                  sessions: response.data,
+                  pagination: { ...store.pagination(), total: response.total },
+                  loading: false,
+                });
+              },
+              error: (err) => {
+                patchState(store, { loading: false, error: err.message });
+                toast.error('Error al cargar las sesiones del usuario');
+              },
+            }),
+          );
+        }),
+      ),
+    ),
     delete: (id: string) => {
       patchState(store, { loading: true });
       api.delete(id).subscribe({

@@ -12,7 +12,7 @@
             <div class="space-y-1">
                 <div class="flex items-center gap-3">
                     <h1 class="text-3xl font-black text-foreground tracking-tight uppercase inter">
-                        Sesiones Activas
+                        {{ pageTitle() }}
                     </h1>
                     <span
                         class="px-3 py-1 bg-green-500/10 text-green-500 rounded-full text-[10px] font-black uppercase tracking-widest border border-green-500/20">
@@ -20,7 +20,7 @@
                     </span>
                 </div>
                 <p class="text-muted-foreground text-sm font-medium">
-                    Supervisa y controla los accesos en tiempo real de todos los usuarios.
+                    {{ pageSubtitle() }}
                 </p>
 
                 <div class="flex gap-4 mt-2">
@@ -34,8 +34,14 @@
             </div>
         </div>
 
-        <div class="flex items-center gap-3 w-full lg:w-auto relative z-10">
-            <button z-button zType="outline" zSize="lg" (click)="refresh()" class="rounded-2xl gap-2 font-bold px-8">
+        <div class="relative z-10 flex w-full items-center gap-3 lg:w-auto">
+            @if (userId()) {
+            <button z-button zType="ghost" zSize="lg" (click)="goToGlobalSessions()" class="h-11 rounded-2xl gap-2 px-6 font-bold uppercase tracking-widest">
+                <z-icon zType="arrow-left" class="h-5 w-5" />
+                Todas las sesiones
+            </button>
+            }
+            <button z-button zType="outline" zSize="lg" (click)="refresh()" class="h-11 rounded-2xl gap-2 px-8 font-bold uppercase tracking-widest">
                 <z-icon zType="loader-circle" class="h-5 w-5" [class.animate-spin]="store.loading()" />
                 Sincronizar
             </button>
@@ -46,10 +52,10 @@
     <div class="grid grid-cols-1 gap-4 relative z-10">
         <div class="relative group">
             <z-icon zType="search"
-                class="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/30 group-focus-within:text-primary transition-colors" />
-            <input type="text" [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)"
+                class="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/30 group-focus-within:text-primary transition-colors" />
+            <input z-input type="text" [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)"
                 placeholder="Buscar por nombre, apellido, IP o agentes..."
-                class="w-full pl-14 pr-6 py-4 rounded-3xl bg-card border border-border/10 shadow-xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-sm font-medium placeholder:text-muted-foreground/30 backdrop-blur-xl" />
+                class="h-12 w-full border-border/20 bg-card pl-14 pr-5 text-sm font-medium shadow-sm transition-all placeholder:text-muted-foreground/30 focus-visible:ring-2 focus-visible:ring-primary/20" />
         </div>
     </div>
 

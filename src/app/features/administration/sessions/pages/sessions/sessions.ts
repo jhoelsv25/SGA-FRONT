@@ -6,8 +6,10 @@ import { FormsModule } from '@angular/forms';
 import { SessionStore } from '@features/administration/services/store/session.store';
 import { Session } from '@features/administration/services/api/session-api';
 import { SessionCardComponent } from '../../components/session-card/session-card';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { ZardIconComponent } from '@/shared/components/icon';
+import { ZardInputDirective } from '@/shared/components/input';
 
 @Component({
   selector: 'sga-sessions',
@@ -18,6 +20,7 @@ import { ZardIconComponent } from '@/shared/components/icon';
     ZardButtonComponent,
     ZardEmptyComponent,
     ZardIconComponent,
+    ZardInputDirective,
   ],
   templateUrl: './sessions.html',
   styles: [
@@ -33,7 +36,14 @@ import { ZardIconComponent } from '@/shared/components/icon';
 })
 export default class SessionsComponent {
   public store = inject(SessionStore);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
   public searchTerm = signal('');
+  public userId = signal<string | null>(null);
+  public pageTitle = computed(() => this.userId() ? 'Sesiones del Usuario' : 'Sesiones Activas');
+  public pageSubtitle = computed(() => this.userId()
+    ? 'Historial y accesos del usuario seleccionado.'
+    : 'Supervisa y controla los accesos en tiempo real de todos los usuarios.');
 
   public filteredSessions = computed(() => {
     const search = this.searchTerm().toLowerCase().trim();
@@ -50,14 +60,27 @@ export default class SessionsComponent {
   });
 
   constructor() {
-    this.refresh();
+    this.route.paramMap.subscribe((params) => {
+      const userId = params.get('id');
+      this.userId.set(userId);
+      this.refresh();
+    });
   }
 
   refresh() {
+    const userId = this.userId();
+    if (userId) {
+      this.store.loadByUser({ userId, params: { limit: 100 } });
+      return;
+    }
     this.store.loadAll({ size: 100 });
   }
 
   revokeSession(id: string) {
     this.store.delete(id);
+  }
+
+  goToGlobalSessions() {
+    this.router.navigateByUrl('/administration/sessions');
   }
 }

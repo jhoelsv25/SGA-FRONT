@@ -20,6 +20,12 @@ export default [
     data: { permissions: ['manage_user'] },
   },
   {
+    path: 'users/:id/sessions',
+    loadComponent: () => import('./sessions/pages/sessions/sessions'),
+    title: 'Sesiones del Usuario',
+    data: { permissions: ['view_sessions', 'manage_sessions'] },
+  },
+  {
     path: 'roles',
     loadComponent: () => import('./role-permissions/roles/pages/roles/roles'),
     title: 'Roles',

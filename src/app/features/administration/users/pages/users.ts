@@ -3,13 +3,14 @@ import { DialogConfirmService } from '@shared/widgets/dialog-confirm';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
-import { DataSource } from '@shared/widgets/data-source/data-source';
 import { HeaderDetail } from '@shared/widgets/header-detail/header-detail';
 import { UserStore } from '../../services/store/user.store';
 import { User } from '../types/user-types';
 import { UserForm } from '../components/user-form/user-form';
+import { UserExportModal } from '../components/user-export-modal/user-export-modal';
+import { UserDatePreset, UserDateRangeFilterComponent } from '../components/user-date-range-filter/user-date-range-filter';
+import { UsersTableComponent } from '../components/users-table/users-table';
 import { USER_HEADER_CONFIG } from '../config/header.config';
-import { USER_COLUMN } from '../config/column.config';
 import { USER_ACTIONS } from '../config/action.config';
 import { take } from 'rxjs';
 
@@ -25,7 +26,7 @@ import { ZardFormImports } from '@/shared/components/form';
 
 @Component({
   selector: 'sga-users',
-  imports: [HeaderDetail, DataSource, FormsModule, ZardInputDirective, ZardButtonComponent, SelectOptionComponent, ...ZardFormImports],
+  imports: [HeaderDetail, UsersTableComponent, FormsModule, ZardInputDirective, ZardButtonComponent, SelectOptionComponent, UserDateRangeFilterComponent, ...ZardFormImports],
   templateUrl: './users.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -39,30 +40,42 @@ export default class UsersPage implements OnInit {
 
   public filterSearch = signal('');
   public filterRole = signal('');
-  public hasActiveFilters = computed(() => !!this.filterSearch() || !!this.filterRole());
-  
-  // Asumiendo que pueden haber roles fijos de prueba o se filtrarán luego
+  public filterDatePreset = signal<UserDatePreset>('');
+  public filterCreatedFrom = signal<Date | null>(null);
+  public filterCreatedTo = signal<Date | null>(null);
+  public hasActiveFilters = computed(
+    () =>
+      !!this.filterSearch() ||
+      !!this.filterRole() ||
+      !!this.filterDatePreset() ||
+      !!this.filterCreatedFrom() ||
+      !!this.filterCreatedTo(),
+  );
+
   public rolesFilter = [
     { value: '', label: 'Todos' },
-    { value: 'admin', label: 'Admin' },
-    { value: 'user', label: 'User' },
-    { value: 'student', label: 'Estudiante' }
+    { value: 'Super Admin', label: 'Super Admin' },
+    { value: 'Admin', label: 'Admin' },
+    { value: 'Director', label: 'Director' },
+    { value: 'Docente', label: 'Docente' },
+    { value: 'Estudiante', label: 'Estudiante' },
   ];
 
   constructor() {
     this.route.queryParams.pipe(takeUntilDestroyed()).subscribe(params => {
       this.filterSearch.set(params['search'] || '');
-      this.filterRole.set(params['role'] || '');
+      this.filterRole.set(params['roleName'] || '');
+      this.filterDatePreset.set((params['datePreset'] || '') as UserDatePreset);
+      this.filterCreatedFrom.set(this.parseDateParam(params['createdFrom']));
+      this.filterCreatedTo.set(this.parseDateParam(params['createdTo']));
       this.store.loadAll({
-        page: this.store.pagination().page,
-        size: this.store.pagination().size,
+        limit: this.store.pagination().limit,
         ...params
       });
     });
   }
 
   headerConfig = computed(() => USER_HEADER_CONFIG);
-  columns = computed(() => USER_COLUMN);
   data = computed(() => this.store.users());
   loading = computed(() => this.store.loading());
   pagination = computed(() => this.store.pagination());
@@ -72,12 +85,18 @@ export default class UsersPage implements OnInit {
   onHeaderAction(e: { action: ActionConfig; context: ActionContext }) {
     if (e.action.key === 'create') this.openForm();
     if (e.action.key === 'import') this.router.navigate(['/administration/users/import']);
+    if (e.action.key === 'export') this.openExportModal();
+    if (e.action.key === 'sessions-global') this.router.navigate(['/administration/sessions']);
     if (e.action.key === 'refresh')
-      this.store.loadAll({ page: this.pagination().page, size: this.pagination().size });
+      this.store.loadAll({ limit: this.pagination().limit, ...this.urlParams.getAllParams() });
   }
 
   async onRowAction(e: { action: ActionConfig; context: ActionContext<unknown> }) {
     const row = e.context.row as User;
+    if (e.action.key === 'sessions') this.router.navigate(['/administration/users', row.id, 'sessions']);
+    if (e.action.key === 'toggle-active') {
+      this.store.update(row.id, { isActive: !row.isActive }).subscribe();
+    }
     if (e.action.key === 'edit') this.openForm(row);
     if (e.action.key === 'delete') {
       const confirmed = await this.confirmDialog.open({
@@ -96,7 +115,12 @@ export default class UsersPage implements OnInit {
   }
 
   onPageChange(p: { page: number; size: number }) {
-    this.store.loadAll({ page: p.page, size: p.size });
+    // Para cambiar sólo de tamaño de página o offset retrocompatible si se usa
+    this.store.loadAll({ limit: p.size, ...this.urlParams.getAllParams() });
+  }
+
+  onLoadMore(cursor: string) {
+    this.store.loadAll({ cursor, limit: this.pagination().limit, ...this.urlParams.getAllParams() });
   }
 
   ngOnInit() {
@@ -106,12 +130,26 @@ export default class UsersPage implements OnInit {
   applyFilters() {
     this.urlParams.setParams({
       search: this.filterSearch(),
-      role: this.filterRole()
+      roleName: this.filterRole(),
+      datePreset: this.filterDatePreset(),
+      createdFrom: this.toIsoDate(this.filterCreatedFrom()),
+      createdTo: this.toIsoDate(this.filterCreatedTo()),
     });
   }
 
   clearFilters() {
+    this.filterSearch.set('');
+    this.filterRole.set('');
+    this.filterDatePreset.set('');
+    this.filterCreatedFrom.set(null);
+    this.filterCreatedTo.set(null);
     this.urlParams.clearParams();
+  }
+
+  onDateRangeChange(range: { preset: UserDatePreset; from: Date | null; to: Date | null }) {
+    this.filterDatePreset.set(range.preset);
+    this.filterCreatedFrom.set(range.from);
+    this.filterCreatedTo.set(range.to);
   }
 
   private openForm(current?: User | null) {
@@ -121,7 +159,32 @@ export default class UsersPage implements OnInit {
       width: '520px',
     });
     ref.closed.pipe(take(1)).subscribe(() => {
-      this.store.loadAll({ page: this.pagination().page, size: this.pagination().size });
+      this.store.loadAll({ limit: this.pagination().limit, ...this.urlParams.getAllParams() });
     });
+  }
+
+  private openExportModal() {
+    this.dialog.open(UserExportModal, {
+      data: {
+        filterSearch: this.filterSearch(),
+        filterRole: this.filterRole()
+      },
+      panelClass: 'dialog-top',
+      width: '600px',
+    });
+  }
+
+  private parseDateParam(value?: string): Date | null {
+    if (!value) return null;
+    const parsed = new Date(value);
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
+  }
+
+  private toIsoDate(value: Date | null): string | null {
+    if (!value) return null;
+    const year = value.getFullYear();
+    const month = String(value.getMonth() + 1).padStart(2, '0');
+    const day = String(value.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 }

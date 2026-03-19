@@ -16,7 +16,7 @@ export interface DropdownItem {
   standalone: true,
   imports: [CommonModule, ZardDropdownMenuComponent, ZardDropdownMenuItemComponent],
   template: `
-    <z-dropdown-menu>
+    <z-dropdown-menu [align]="align()">
       <div dropdown-trigger>
         <ng-content select="[sga-dropdown-trigger], [z-dropdown-trigger], [dropdown-trigger], [dropdown-trigger-content]"></ng-content>
       </div>
@@ -45,4 +45,5 @@ export interface DropdownItem {
 })
 export class DropdownOptionComponent {
   readonly items = input<DropdownItem[]>([]);
+  readonly align = input<'start' | 'end'>('start');
 }

@@ -24,6 +24,13 @@ export class SessionApi {
     return this.http.get<{ data: Session[]; total: number }>(this.baseUrl, { params });
   }
 
+  getByUser(
+    userId: string,
+    params: Record<string, string | number | boolean> = {},
+  ): Observable<{ data: Session[]; total: number }> {
+    return this.http.get<{ data: Session[]; total: number }>(`${this.baseUrl}/user/${userId}`, { params });
+  }
+
   getById(id: string): Observable<Session> {
     return this.http.get<Session>(`${this.baseUrl}/${id}`);
   }
@@ -32,4 +39,3 @@ export class SessionApi {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 }
-

@@ -7,8 +7,10 @@ import { RouterLink } from '@angular/router';
 import { AuthApi } from '@auth/services/api/auth-api';
 import { AuthFacade } from '@auth/services/store/auth.acede';
 import type { AccountAuditLog, AccountEmailLog, AccountSession, AccountUserDetail } from '@auth/types/auth-type';
+import { Toast } from '@core/services/toast';
 import { LayoutStore } from '@core/stores/layout.store';
 import type { ThemeConfig } from '@core/types/layout-types';
+import { SessionApi } from '@features/administration/services/api/session-api';
 import { catchError, of } from 'rxjs';
 
 type SettingsSectionId = 'general' | 'appearance' | 'notifications' | 'email' | 'security' | 'logs' | 'sessions';
@@ -325,15 +327,24 @@ type ToggleKey =
                       <div class="rounded-xl border border-border bg-background/80 p-4">
                         <div class="flex items-center justify-between gap-2">
                           <p class="text-sm font-semibold text-foreground">Sesion</p>
-                          <span
-                            class="rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]"
-                            [class.bg-emerald-500/10]="isSessionActive(session)"
-                            [class.text-emerald-600]="isSessionActive(session)"
-                            [class.bg-muted]="!isSessionActive(session)"
-                            [class.text-muted-foreground]="!isSessionActive(session)"
-                          >
-                            {{ isSessionActive(session) ? 'activa' : 'expirada' }}
-                          </span>
+                          <div class="flex items-center gap-2">
+                            <span
+                              class="rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]"
+                              [class.bg-emerald-500/10]="isSessionActive(session)"
+                              [class.text-emerald-600]="isSessionActive(session)"
+                              [class.bg-muted]="!isSessionActive(session)"
+                              [class.text-muted-foreground]="!isSessionActive(session)"
+                            >
+                              {{ isSessionActive(session) ? 'activa' : 'expirada' }}
+                            </span>
+                            <button
+                              type="button"
+                              class="rounded-xl border border-destructive/20 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-destructive transition hover:bg-destructive/10"
+                              (click)="revokeSession(session.id)"
+                            >
+                              Revocar
+                            </button>
+                          </div>
                         </div>
                         <p class="mt-2 text-xs text-muted-foreground">{{ session.userAgent }}</p>
                         <p class="mt-1 text-xs text-muted-foreground">IP {{ session.ipAddress }}</p>
@@ -355,6 +366,8 @@ export default class AccountSettingsPage {
   protected readonly layout = inject(LayoutStore);
   private readonly authFacade = inject(AuthFacade);
   private readonly authApi = inject(AuthApi);
+  private readonly sessionApi = inject(SessionApi);
+  private readonly toast = inject(Toast);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly activeSection = signal<SettingsSectionId>('general');
@@ -617,5 +630,24 @@ export default class AccountSettingsPage {
     const date = new Date(session.expiresAt);
     if (Number.isNaN(date.getTime())) return false;
     return date.getTime() > Date.now();
+  }
+
+  protected revokeSession(sessionId: string) {
+    const userId = this.currentUser()?.id;
+    if (!userId) return;
+
+    this.sessionApi.delete(sessionId)
+      .pipe(
+        catchError((error) => {
+          this.toast.error(error?.message || 'No se pudo revocar la sesion');
+          return of(null);
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((result) => {
+        if (result === null) return;
+        this.toast.success('Sesion revocada');
+        this.loadSessions(userId);
+      });
   }
 }

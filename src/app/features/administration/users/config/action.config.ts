@@ -9,6 +9,13 @@ export const USER_ACTIONS: ActionConfig[] = [
     color: 'success',
   },
   {
+    key: 'export',
+    label: 'Exportar a Excel',
+    icon: 'fas fa-file-excel',
+    typeAction: 'header',
+    color: 'success',
+  },
+  {
     key: 'import',
     label: 'Importar',
     icon: 'fas fa-file-import',
@@ -22,6 +29,15 @@ export const USER_ACTIONS: ActionConfig[] = [
     typeAction: 'header',
     color: 'primary',
   },
+  {
+    key: 'sessions-global',
+    label: 'Sesiones',
+    icon: 'fas fa-history',
+    typeAction: 'header',
+    color: 'secondary',
+  },
+  { key: 'toggle-active', label: 'Activar / Desactivar', icon: 'fas fa-power-off', typeAction: 'row', color: 'warning' },
+  { key: 'sessions', label: 'Sesiones', icon: 'fas fa-history', typeAction: 'row', color: 'secondary' },
   { key: 'edit', label: 'Editar', icon: 'fas fa-edit', typeAction: 'row', color: 'primary' },
   { key: 'delete', label: 'Eliminar', icon: 'fas fa-trash', typeAction: 'row', color: 'danger' },
 ];

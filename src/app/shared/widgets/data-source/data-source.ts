@@ -17,6 +17,7 @@ import { ActionConfig, ActionContext } from '@core/types/action-types';
 import { CellFormatter } from '@core/services/cell-formated';
 import { CursorPagination } from '@core/types/pagination-types';
 import { ZardCheckboxComponent } from '@/shared/components/checkbox';
+import { DropdownItem, DropdownOptionComponent } from '@/shared/widgets/dropdown-option/dropdown-option';
 
 import { getActionMenuItemClasses, getColumnClasses, getRowClasses } from '@/shared/utils/data-source';
 
@@ -33,7 +34,7 @@ export class SgaTemplate {
 @Component({
   selector: 'sga-data-source',
   standalone: true,
-  imports: [CommonModule, FormsModule, ZardPaginationComponent, ZardCheckboxComponent, ZardButtonComponent, ZardEmptyComponent, ZardInputDirective],
+  imports: [CommonModule, FormsModule, ZardPaginationComponent, ZardCheckboxComponent, ZardButtonComponent, ZardEmptyComponent, ZardInputDirective, DropdownOptionComponent],
   templateUrl: './data-source.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -305,6 +306,24 @@ export class DataSource implements OnInit, OnDestroy {
 
   getRowId(row: unknown, index: number): string {
     return (row as Record<string, unknown>)?.['id']?.toString() ?? index.toString();
+  }
+
+  getRowDropdownItems(row: unknown): DropdownItem[] {
+    return this.filteredActions()
+      .filter((action) => this.isVisible(action, row))
+      .map((action) => ({
+        label: this.getActionLabel(action, row),
+        icon: action.icon,
+        disabled: this.isDisabled(action, row),
+        action: () => this.executeAction(action, row),
+      }));
+  }
+
+  getActionLabel(action: ActionConfig, row?: unknown): string {
+    if (action.key === 'toggle-active' && row) {
+      return this.isRowPropertyTruthy(row, 'isActive') ? 'Desactivar' : 'Activar';
+    }
+    return action.label;
   }
 
   // =========================

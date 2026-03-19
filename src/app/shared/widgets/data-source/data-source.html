@@ -291,38 +291,17 @@
                   <td
                     class="px-4 py-3 sticky right-0 bg-base-100 dark:bg-base-200 border-l border-base-300 z-10"
                   >
-                    <div class="relative flex items-center justify-center">
-                      <button
-                        type="button"
-                        class="w-8 h-8 rounded-md text-neutral-600 hover:text-neutral-800 hover:bg-base-200 transition-colors"
-                        (click)="toggleMenu(getRowId(row, i)); $event.stopPropagation()"
-                        title="Acciones"
-                      >
-                        <i class="fas fa-ellipsis-v"></i>
-                      </button>
-
-                      @if (isMenuOpen(getRowId(row, i))) {
-                        <div
-                          class="absolute z-50 min-w-48 bg-base border border-base-300 rounded-lg shadow-xl right-0 top-full mt-2"
+                    <div class="flex items-center justify-center">
+                      <z-dropdown [items]="getRowDropdownItems(row)">
+                        <button
+                          type="button"
+                          dropdown-trigger
+                          class="w-8 h-8 rounded-md text-neutral-600 hover:text-neutral-800 hover:bg-base-200 transition-colors"
+                          title="Acciones"
                         >
-                          @for (action of filteredActions(); track action.key) {
-                            @if (isVisible(action, row)) {
-                              <button
-                                type="button"
-                                class="w-full px-4 py-2 text-sm text-left flex items-center gap-3 hover:bg-base-200 first:rounded-t-lg last:rounded-b-lg"
-                                [class]="getActionClasses(action)"
-                                [disabled]="isDisabled(action, row)"
-                                (click)="executeAction(action, row); $event.stopPropagation()"
-                              >
-                                @if (action.icon) {
-                                  <i [class]="action.icon + ' text-sm'"></i>
-                                }
-                                <span>{{ action.label }}</span>
-                              </button>
-                            }
-                          }
-                        </div>
-                      }
+                          <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                      </z-dropdown>
                     </div>
                   </td>
                 }
