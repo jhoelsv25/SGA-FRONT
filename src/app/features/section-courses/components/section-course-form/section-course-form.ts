@@ -8,7 +8,17 @@ import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
 import { SectionCourseStore } from '../../services/store/section-course.store';
 import type { SectionCourse, SectionCourseCreate } from '../../types/section-course-types';
 import { Observable } from 'rxjs';
+import { forkJoin } from 'rxjs';
 import { MODALITY_OPTIONS, STATUS_OPTIONS } from '../../config/form.constants';
+import { SectionApi } from '../../../sections/services/api/section-api';
+import { CourseApi } from '../../../courses/services/course-api';
+import { YearAcademicApi } from '../../../year-academic/services/api/year-academic-api';
+import { TeacherApi } from '../../../teachers/services/api/teacher-api';
+import { Section } from '../../../sections/types/section-types';
+import { Course } from '../../../courses/types/course-types';
+import { YearAcademic } from '../../../year-academic/types/year-academi-types';
+import { Teacher } from '../../../teachers/types/teacher-types';
+import { DataResponse } from '@core/types/pagination-types';
 
 
 @Component({
@@ -24,12 +34,20 @@ export class SectionCourseForm implements OnInit {
   private fb = inject(FormBuilder);
   private store = inject(SectionCourseStore);
   private cdr = inject(ChangeDetectorRef);
+  private sectionApi = inject(SectionApi);
+  private courseApi = inject(CourseApi);
+  private yearAcademicApi = inject(YearAcademicApi);
+  private teacherApi = inject(TeacherApi);
 
   current: SectionCourse | null = null;
   saving = signal(false);
 
   modalityOptions = MODALITY_OPTIONS;
   statusOptions = STATUS_OPTIONS;
+  sectionOptions = signal<SelectOption[]>([]);
+  courseOptions = signal<SelectOption[]>([]);
+  academicYearOptions = signal<SelectOption[]>([]);
+  teacherOptions = signal<SelectOption[]>([]);
 
   title = computed(() => (this.current ? 'Editar asignación' : 'Asignar curso a sección'));
   subTitle = computed(() => 'Complete el formulario para continuar');
@@ -59,7 +77,47 @@ export class SectionCourseForm implements OnInit {
         teacher: this.current.teacher ? (typeof this.current.teacher === 'string' ? this.current.teacher : this.current.teacher?.id) : null,
       });
     }
+    this.loadOptions();
     this.cdr.markForCheck();
+  }
+
+  private loadOptions() {
+    forkJoin({
+      sections: this.sectionApi.getAll({}),
+      courses: this.courseApi.getAll({}),
+      years: this.yearAcademicApi.getAll({}),
+      teachers: this.teacherApi.getAll({ page: 1, size: 9999 }),
+    }).subscribe({
+      next: ({ sections, courses, years, teachers }) => {
+        this.sectionOptions.set((sections.data ?? []).map((item: Section) => ({
+          value: item.id,
+          label: item.name ? `Sección ${item.name}` : item.id,
+        })));
+        this.courseOptions.set((courses.data ?? []).map((item: Course) => ({
+          value: item.id,
+          label: item.code ? `${item.code} · ${item.name}` : item.name,
+        })));
+        this.academicYearOptions.set((years.data ?? []).map((item: YearAcademic) => ({
+          value: item.id,
+          label: item.name,
+        })));
+        this.teacherOptions.set((teachers.data ?? []).map((item: Teacher) => ({
+          value: item.id,
+          label: this.getTeacherOptionLabel(item),
+        })));
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  private getTeacherOptionLabel(item: Teacher): string {
+    const person = typeof item.person === 'object' ? item.person : null;
+    const name = [person?.['firstName' as keyof typeof person], person?.['lastName' as keyof typeof person]]
+      .filter(Boolean)
+      .join(' ');
+    return name
+      ? `${item.teacherCode} · ${name}`
+      : `${item.teacherCode} · ${item.specialization}`;
   }
 
   onClose() {

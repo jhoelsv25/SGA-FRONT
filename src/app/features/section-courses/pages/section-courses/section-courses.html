@@ -58,7 +58,8 @@
     }
     } @else {
     @for (sc of filteredData(); track sc.id) {
-    <sga-section-course-card [sectionCourse]="sc" (edit)="editSectionCourse(sc)" (delete)="deleteSectionCourse(sc)" />
+    <sga-section-course-card [sectionCourse]="sc" (edit)="editSectionCourse(sc)" (delete)="deleteSectionCourse(sc)"
+      (assignTeacher)="assignTeacher(sc)" (viewSchedules)="goToSchedules(sc)" (createSchedule)="createSchedule(sc)" />
     } @empty {
     <div class="col-span-full">
       <z-empty zIcon="chalkboard-teacher" zTitle="Sin asignaciones"

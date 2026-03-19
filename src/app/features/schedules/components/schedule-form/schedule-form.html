@@ -1,41 +1,77 @@
-<form [formGroup]="form" class="grid gap-4" (ngSubmit)="submit()">
-  <header class="flex items-center justify-between mb-4">
+<form [formGroup]="form" class="flex max-h-[calc(80vh-3rem)] flex-col overflow-hidden" (ngSubmit)="submit()">
+  <header class="mb-4 flex items-center justify-between">
     <h2 class="text-lg font-semibold">{{ current ? 'Editar horario' : 'Nuevo horario' }}</h2>
     <button type="button" z-button zColor="secondary" zType="ghost" zShape="circle" (click)="close()">
       <i class="fas fa-times"></i>
     </button>
   </header>
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div class="md:col-span-2">
-      <label class="label-form" for="sectionCourse">Curso - Sección</label>
-      <z-select-option
-        id="sectionCourse"
-        formControlName="sectionCourse"
-        placeholder="Seleccionar curso y sección"
-        (selectionChange)="onSectionCourseSelect($event)"></z-select-option>
-    </div>
-    <div>
-      <label class="label-form" for="dayOfWeek">Día</label>
-      <z-select-option id="dayOfWeek" [options]="dayOptions" formControlName="dayOfWeek"></z-select-option>
-    </div>
-    <div>
-      <label class="label-form" for="classroom">Aula</label>
-      <input z-input w-full id="classroom" formControlName="classroom" placeholder="Ej: Aula 006"  />
-    </div>
-    <div>
-      <label class="label-form" for="startAt">Hora inicio</label>
-      <input z-input w-full id="startAt" type="time" formControlName="startAt"  />
-    </div>
-    <div>
-      <label class="label-form" for="endAt">Hora fin</label>
-      <input z-input w-full id="endAt" type="time" formControlName="endAt"  />
-    </div>
-    <div class="md:col-span-2">
-      <label class="label-form" for="description">Descripción</label>
-      <input z-input w-full id="description" formControlName="description" placeholder="Opcional"  />
+
+  <div class="flex-1 overflow-y-auto pr-1">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div class="md:col-span-2">
+        <z-form-field>
+          <label z-form-label for="sectionCourse">Curso - Sección</label>
+          <z-form-control>
+            <z-select-option
+              id="sectionCourse"
+              [options]="sectionCourseOptions()"
+              formControlName="sectionCourse"
+              [placeholder]="loadingSectionCourses() ? 'Cargando asignaciones...' : 'Seleccionar curso y sección'"
+              (selectionChange)="onSectionCourseSelect($event)"></z-select-option>
+          </z-form-control>
+        </z-form-field>
+      </div>
+      <div>
+        <z-form-field>
+          <label z-form-label for="dayOfWeek">Día</label>
+          <z-form-control>
+            <z-select-option id="dayOfWeek" [options]="dayOptions" formControlName="dayOfWeek"></z-select-option>
+          </z-form-control>
+        </z-form-field>
+      </div>
+      <div>
+        <z-form-field>
+          <label z-form-label for="classroom">Aula</label>
+          <z-form-control>
+            <input z-input w-full id="classroom" formControlName="classroom" placeholder="Ej: Aula 006"  />
+          </z-form-control>
+        </z-form-field>
+      </div>
+      <div>
+        <z-form-field>
+          <label z-form-label for="startAt">Hora inicio</label>
+          <z-form-control>
+            <input z-input w-full id="startAt" type="time" formControlName="startAt"  />
+          </z-form-control>
+        </z-form-field>
+      </div>
+      <div>
+        <z-form-field>
+          <label z-form-label for="durationMinutes">Duración</label>
+          <z-form-control>
+            <z-select-option id="durationMinutes" [options]="durationOptions" formControlName="durationMinutes"></z-select-option>
+          </z-form-control>
+        </z-form-field>
+      </div>
+      <div class="rounded-[var(--radius-xl)] border border-base-300/60 bg-base-100/80 px-4 py-3 text-sm md:col-span-2 dark:border-base-200/60 dark:bg-base-100">
+        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-base-content/50">Termina a las</p>
+        <p class="mt-1 text-base font-semibold text-base-content">{{ durationPreview() }}</p>
+      </div>
+      <div class="hidden">
+        <input id="endAt" type="hidden" formControlName="endAt" />
+      </div>
+      <div class="md:col-span-2">
+        <z-form-field>
+          <label z-form-label for="description">Descripción</label>
+          <z-form-control>
+            <input z-input w-full id="description" formControlName="description" placeholder="Opcional"  />
+          </z-form-control>
+        </z-form-field>
+      </div>
     </div>
   </div>
-  <footer class="flex justify-end gap-2 mt-4">
+
+  <footer class="mt-4 flex shrink-0 justify-end gap-2 border-t border-base-200 pt-4">
     <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">Cancelar</button>
     <button type="submit" z-button zColor="primary" [disabled]="form.invalid">Guardar</button>
   </footer>

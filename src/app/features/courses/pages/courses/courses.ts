@@ -163,6 +163,12 @@ export default class CoursesPage implements OnInit {
     });
   }
 
+  goToSchedules(course: Course) {
+    this.router.navigate(['/organization/schedules'], {
+      queryParams: { courseId: course.id, courseName: course.name },
+    });
+  }
+
   clearGradeContext() {
     this.router.navigate(['/academic-setup/courses']);
   }

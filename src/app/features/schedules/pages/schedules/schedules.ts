@@ -34,6 +34,8 @@ export default class SchedulesPage {
   searchTerm = signal('');
   sectionContextId = signal('');
   sectionContextName = signal('');
+  courseContextId = signal('');
+  courseContextName = signal('');
   readonly headerConfig = computed(() => this.store.headerConfig());
 
   headerActions = computed(() =>
@@ -47,6 +49,7 @@ export default class SchedulesPage {
     const list = this.data();
     const search = this.searchTerm().toLowerCase().trim();
     const sectionId = this.sectionContextId();
+    const courseId = this.courseContextId();
     return list.filter((s) => {
       const matchSearch =
         !search ||
@@ -58,7 +61,10 @@ export default class SchedulesPage {
       const matchSection =
         !sectionId ||
         (typeof s.sectionCourse === 'object' && s.sectionCourse?.section?.id === sectionId);
-      return matchSearch && matchSection;
+      const matchCourse =
+        !courseId ||
+        (typeof s.sectionCourse === 'object' && s.sectionCourse?.course?.id === courseId);
+      return matchSearch && matchSection && matchCourse;
     });
   });
 
@@ -68,9 +74,16 @@ export default class SchedulesPage {
     this.route.queryParamMap.subscribe((params) => {
       const sectionId = params.get('sectionId') ?? '';
       const sectionName = params.get('sectionName') ?? '';
+      const courseId = params.get('courseId') ?? '';
+      const courseName = params.get('courseName') ?? '';
       this.sectionContextId.set(sectionId);
       this.sectionContextName.set(sectionName);
-      this.store.loadAll(sectionId ? { sectionId } : {});
+      this.courseContextId.set(courseId);
+      this.courseContextName.set(courseName);
+      this.store.loadAll({
+        ...(sectionId ? { sectionId } : {}),
+        ...(courseId ? { courseId } : {}),
+      });
     });
   }
 
@@ -89,7 +102,11 @@ export default class SchedulesPage {
 
   onRefresh() {
     const sectionId = this.sectionContextId();
-    this.store.loadAll(sectionId ? { sectionId } : {});
+    const courseId = this.courseContextId();
+    this.store.loadAll({
+      ...(sectionId ? { sectionId } : {}),
+      ...(courseId ? { courseId } : {}),
+    });
   }
 
   editSchedule(schedule: Schedule) {

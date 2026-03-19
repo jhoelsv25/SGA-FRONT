@@ -28,6 +28,9 @@ export class SectionCourseCardComponent {
   sectionCourse = input.required<SectionCourse>();
   edit = output<SectionCourse>();
   delete = output<SectionCourse>();
+  assignTeacher = output<SectionCourse>();
+  viewSchedules = output<SectionCourse>();
+  createSchedule = output<SectionCourse>();
 
   modalityLabel(modality?: string): string {
     return (modality && MODALITY_LABELS[modality]) || modality || '-';
@@ -41,5 +44,9 @@ export class SectionCourseCardComponent {
       return `${person.firstName ?? ''} ${person.lastName ?? ''}`.trim();
     }
     return teacher.teacherCode ?? teacher.specialization ?? teacher.id ?? '-';
+  }
+
+  hasTeacher(): boolean {
+    return !!this.sectionCourse().teacher;
   }
 }

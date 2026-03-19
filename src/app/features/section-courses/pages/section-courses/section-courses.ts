@@ -16,6 +16,7 @@ import { FormsModule } from '@angular/forms';
 import { ZardInputDirective } from '@/shared/components/input';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardFormImports } from '@/shared/components/form';
+import { ScheduleForm } from '../../../schedules/components/schedule-form/schedule-form';
 
 
 @Component({
@@ -100,6 +101,29 @@ export default class SectionCoursesPage {
 
   editSectionCourse(sc: SectionCourse) {
     this.openForm(sc);
+  }
+
+  assignTeacher(sc: SectionCourse) {
+    this.openForm(sc);
+  }
+
+  goToSchedules(sc: SectionCourse) {
+    this.router.navigate(['/organization/schedules'], {
+      queryParams: {
+        sectionCourseId: sc.id,
+        sectionName: sc.section?.name ?? '',
+        courseName: sc.course?.name ?? '',
+      },
+    });
+  }
+
+  createSchedule(sc: SectionCourse) {
+    const ref = this.dialog.open(ScheduleForm, {
+      data: { preselectedSectionCourse: sc },
+      width: '760px',
+      maxHeight: '80vh',
+    });
+    ref.closed.subscribe(() => this.onRefresh());
   }
 
   deleteSectionCourse(sc: SectionCourse) {

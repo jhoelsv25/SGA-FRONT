@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ZardPopoverComponent, ZardPopoverDirective } from '@/shared/components/popover';
 import { Schedule } from '../../types/schedule-types';
 import { DAY_ORDER, DAY_LABELS, HOUR_END, HOUR_START, SLOTS_PER_HOUR } from '../../config/schedule.constants';
 
@@ -7,7 +8,7 @@ import { DAY_ORDER, DAY_LABELS, HOUR_END, HOUR_START, SLOTS_PER_HOUR } from '../
 @Component({
   selector: 'sga-schedule-calendar',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ZardPopoverDirective, ZardPopoverComponent],
   templateUrl: './schedule-calendar.html',
   styleUrls: ['./schedule-calendar.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -98,5 +99,23 @@ export class ScheduleCalendarComponent {
     }
     const d = new Date(v);
     return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
+  }
+
+  getTeacherLabel(schedule: Schedule): string | null {
+    const sectionCourse = typeof schedule.sectionCourse === 'object' ? schedule.sectionCourse : null;
+    const teacher = sectionCourse?.teacher;
+    if (!teacher) return null;
+    const fullName = [teacher.person?.firstName, teacher.person?.lastName].filter(Boolean).join(' ').trim();
+    return fullName || teacher.teacherCode || teacher.specialization || null;
+  }
+
+  getCourseLabel(schedule: Schedule): string | null {
+    const sectionCourse = typeof schedule.sectionCourse === 'object' ? schedule.sectionCourse : null;
+    return sectionCourse?.course?.name ?? null;
+  }
+
+  getSectionLabel(schedule: Schedule): string | null {
+    const sectionCourse = typeof schedule.sectionCourse === 'object' ? schedule.sectionCourse : null;
+    return sectionCourse?.section?.name ? `Sección ${sectionCourse.section.name}` : null;
   }
 }

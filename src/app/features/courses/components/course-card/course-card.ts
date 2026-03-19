@@ -30,4 +30,5 @@ export class CourseCardComponent {
   delete = output<Course>();
   viewSections = output<Course>();
   viewCompetencies = output<Course>();
+  viewSchedules = output<Course>();
 }

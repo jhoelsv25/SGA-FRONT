@@ -19,6 +19,12 @@ export type Schedule = {
     id: string;
     section?: { id: string; name?: string };
     course?: { id: string; name?: string };
+    teacher?: {
+      id: string;
+      teacherCode?: string;
+      specialization?: string;
+      person?: { firstName?: string; lastName?: string };
+    };
   };
 };
 

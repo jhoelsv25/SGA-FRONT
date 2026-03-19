@@ -1,4 +1,4 @@
-<form [formGroup]="form" class="grid gap-4" (ngSubmit)="onSubmit()">
+<form [formGroup]="form" class="flex max-h-[calc(80vh-3rem)] flex-col overflow-hidden" (ngSubmit)="onSubmit()">
   <header class="flex items-center justify-between mb-4">
     <h2 class="text-lg font-semibold">{{ title() }}</h2>
     <button
@@ -12,26 +12,29 @@
       <i class="fas fa-times"></i>
     </button>
   </header>
+  <div class="flex-1 overflow-y-auto pr-1">
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <div>
       <label class="label-form" for="section">Sección</label>
       <z-select-option
         id="section"
+        [options]="sectionOptions()"
         formControlName="section"
         placeholder="Seleccionar sección"></z-select-option>
     </div>
     <div>
       <label class="label-form" for="course">Curso</label>
-      <z-select-option id="course" formControlName="course" placeholder="Seleccionar curso"></z-select-option>
+      <z-select-option id="course" [options]="courseOptions()" formControlName="course" placeholder="Seleccionar curso"></z-select-option>
     </div>
     <div>
       <label class="label-form" for="academicYear">Año académico</label>
-      <z-select-option id="academicYear" formControlName="academicYear" placeholder="Seleccionar año"></z-select-option>
+      <z-select-option id="academicYear" [options]="academicYearOptions()" formControlName="academicYear" placeholder="Seleccionar año"></z-select-option>
     </div>
     <div>
       <label class="label-form" for="teacher">Docente</label>
       <z-select-option
         id="teacher"
+        [options]="teacherOptions()"
         formControlName="teacher"
         placeholder="Seleccionar docente"></z-select-option>
     </div>
@@ -60,7 +63,8 @@
         [searchable]="false"></z-select-option>
     </div>
   </div>
-  <footer class="flex justify-end gap-2 mt-4">
+  </div>
+  <footer class="flex shrink-0 justify-end gap-2 mt-4 border-t border-base-200 pt-4">
     <button type="button" z-button zColor="secondary" zType="outline" (click)="onClose()">
       Cancelar
     </button>
