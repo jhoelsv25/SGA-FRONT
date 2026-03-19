@@ -1,5 +1,4 @@
-import { ListToolbarComponent } from '@/shared/widgets/list-toolbar/list-toolbar';
-import { DropdownOptionComponent, DropdownItem } from '@/shared/widgets/dropdown-option/dropdown-option';
+import { HeaderDetail } from '@/shared/widgets/header-detail/header-detail';
 import { ZardSkeletonComponent } from '@/shared/components/skeleton';
 import { ZardEmptyComponent } from '@/shared/components/empty';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
@@ -11,15 +10,17 @@ import type { Competency } from '../../types/competency-types';
 import { CompetencyForm } from '../../components/competency-form/competency-form';
 import { CommonModule } from '@angular/common';
 import { CompetencyCardComponent } from '../../components/competency-card/competency-card';
-
-import { ZardDropdownMenuComponent } from '@/shared/components/dropdown';
 import { PermissionCheckStore } from '@core/stores/permission-check.store';
+import { FormsModule } from '@angular/forms';
+import { ZardInputDirective } from '@/shared/components/input';
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardFormImports } from '@/shared/components/form';
 
 
 @Component({
   selector: 'sga-competencies',
   standalone: true,
-  imports: [CommonModule, CompetencyCardComponent, ZardEmptyComponent, ZardSkeletonComponent, DropdownOptionComponent, ListToolbarComponent],
+  imports: [CommonModule, HeaderDetail, CompetencyCardComponent, ZardEmptyComponent, ZardSkeletonComponent, FormsModule, ZardInputDirective, ZardButtonComponent, ...ZardFormImports],
   templateUrl: './competencies.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -31,20 +32,13 @@ export default class CompetenciesPage {
 
   readonly skeletonItems = [1, 2, 3, 4];
   searchTerm = signal('');
+  readonly canManageCompetencies = computed(() => this.permissionStore.has('manage_competency'));
+  headerConfig = computed(() => this.store.headerConfig());
 
   data = computed(() => this.store.data());
 
   headerActions = computed(() =>
     this.permissionStore.filterActions(this.store.actions().filter((a) => a.typeAction === 'header')),
-  );
-
-  actionDropdownItems = computed(() =>
-    this.headerActions().map((action) => ({
-      label: action.label,
-      icon: action.icon,
-      disabled: typeof action.disabled === 'function' ? action.disabled({}) : !!action.disabled,
-      action: () => this.onHeaderAction({ action, context: {} }),
-    })),
   );
 
   filteredData = computed(() => {
@@ -57,9 +51,32 @@ export default class CompetenciesPage {
         (c.code?.toLowerCase().includes(search) ?? false),
     );
   });
+  hasActiveFilters = computed(() => !!this.searchTerm().trim());
+  groupedData = computed(() => {
+    const grouped = new Map<string, Competency[]>();
+    for (const item of this.filteredData()) {
+      const courseName = item.course?.name?.trim() || 'Sin curso asignado';
+      const list = grouped.get(courseName) ?? [];
+      list.push(item);
+      grouped.set(courseName, list);
+    }
+
+    return Array.from(grouped.entries())
+      .map(([courseName, items]) => ({
+        key: courseName,
+        label: courseName,
+        description: courseName === 'Sin curso asignado' ? 'Competencias pendientes de vincular a un curso' : 'Competencias asociadas a este curso',
+        items: items.sort((a, b) => a.name.localeCompare(b.name)),
+      }))
+      .sort((a, b) => a.label.localeCompare(b.label));
+  });
 
   onSearch(value: string) {
     this.searchTerm.set(value);
+  }
+
+  clearFilters() {
+    this.searchTerm.set('');
   }
 
   loading = computed(() => this.store.loading());
@@ -97,10 +114,12 @@ export default class CompetenciesPage {
   }
 
   createFromEmpty() {
+    if (!this.canManageCompetencies()) return;
     this.openForm();
   }
 
   openForm(current?: Competency | null) {
+    if (!this.canManageCompetencies() && !current) return;
     const ref = this.dialog.open(CompetencyForm, {
       data: { current: current ?? null },
       panelClass: 'dialog-top',

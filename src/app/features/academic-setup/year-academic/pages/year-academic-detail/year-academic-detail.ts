@@ -1,6 +1,7 @@
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardSkeletonComponent } from '@/shared/components/skeleton';
 import { ZardEmptyComponent } from '@/shared/components/empty';
+import { ZardIconComponent } from '@/shared/components/icon';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -11,13 +12,13 @@ import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { PeriodForm } from '@features/academic-setup/periods/components/period-form/period-form';
 import { PeriodApi } from '@features/academic-setup/periods/services/period-api';
 import { YearAcademicApi } from '../../services/api/year-academic-api';
-import type { YearAcademic, YearAcademicPeriod } from '../../types/year-academi-types';
+import { AcademicYearStatus, Modality, type YearAcademic, type YearAcademicPeriod } from '../../types/year-academi-types';
 
 
 @Component({
   selector: 'sga-year-academic-detail',
   standalone: true,
-  imports: [CommonModule, ZardButtonComponent, PeriodCardComponent, ZardEmptyComponent, ZardSkeletonComponent],
+  imports: [CommonModule, ZardButtonComponent, ZardIconComponent, PeriodCardComponent, ZardEmptyComponent, ZardSkeletonComponent],
   templateUrl: './year-academic-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -94,6 +95,35 @@ export default class YearAcademicDetailComponent implements OnInit {
     this.periodApi.delete(period.id).subscribe({
       next: () => this.refreshPeriods(),
     });
+  }
+
+  getStatusLabel(status?: string): string {
+    const labels: Record<string, string> = {
+      [AcademicYearStatus.PLANNED]: 'Planificado',
+      [AcademicYearStatus.ONGOING]: 'En curso',
+      [AcademicYearStatus.COMPLETED]: 'Cerrado',
+      [AcademicYearStatus.CANCELLED]: 'Cancelado',
+    };
+    return labels[status ?? ''] ?? 'Sin estado';
+  }
+
+  getStatusClass(status?: string): string {
+    const styles: Record<string, string> = {
+      [AcademicYearStatus.PLANNED]: 'border-primary/20 bg-primary/10 text-primary',
+      [AcademicYearStatus.ONGOING]: 'border-success/20 bg-success/10 text-success',
+      [AcademicYearStatus.COMPLETED]: 'border-border bg-base-200 text-base-content/70',
+      [AcademicYearStatus.CANCELLED]: 'border-destructive/20 bg-destructive/10 text-destructive',
+    };
+    return styles[status ?? ''] ?? 'border-border bg-base-200 text-base-content/70';
+  }
+
+  getModalityLabel(modality?: string): string {
+    const labels: Record<string, string> = {
+      [Modality.IN_PERSON]: 'Presencial',
+      [Modality.ONLINE]: 'Virtual',
+      [Modality.HYBRID]: 'Híbrido',
+    };
+    return labels[modality ?? ''] ?? 'No definido';
   }
 
   private refreshPeriods(): void {

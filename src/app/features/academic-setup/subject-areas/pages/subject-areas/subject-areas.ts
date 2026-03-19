@@ -1,6 +1,5 @@
-import { ListToolbarComponent } from '@/shared/widgets/list-toolbar/list-toolbar';
+import { HeaderDetail } from '@/shared/widgets/header-detail/header-detail';
 import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
-import { DropdownOptionComponent, DropdownItem } from '@/shared/widgets/dropdown-option/dropdown-option';
 import { ZardSkeletonComponent } from '@/shared/components/skeleton';
 import { ZardEmptyComponent } from '@/shared/components/empty';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
@@ -12,9 +11,11 @@ import { SubjectArea } from '../../types/subject-area-types';
 import { SubjectAreaForm } from '../../components/subject-area-form/subject-area-form';
 import { CommonModule } from '@angular/common';
 import { SubjectAreaCardComponent } from '../../components/subject-area-card/subject-area-card';
-
-import { ZardDropdownMenuComponent } from '@/shared/components/dropdown';
 import { PermissionCheckStore } from '@core/stores/permission-check.store';
+import { FormsModule } from '@angular/forms';
+import { ZardInputDirective } from '@/shared/components/input';
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardFormImports } from '@/shared/components/form';
 
 const TYPE_OPTIONS = [
   { value: '', label: 'Todos' },
@@ -26,7 +27,7 @@ const TYPE_OPTIONS = [
 @Component({
   selector: 'sga-subject-areas',
   standalone: true,
-  imports: [CommonModule, SubjectAreaCardComponent, ZardEmptyComponent, ZardSkeletonComponent, DropdownOptionComponent, SelectOptionComponent, ListToolbarComponent],
+  imports: [CommonModule, HeaderDetail, SubjectAreaCardComponent, ZardEmptyComponent, ZardSkeletonComponent, SelectOptionComponent, FormsModule, ZardInputDirective, ZardButtonComponent, ...ZardFormImports],
   templateUrl: './subject-areas.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -40,18 +41,11 @@ export default class SubjectAreasPage {
   readonly typeOptions = TYPE_OPTIONS;
   searchTerm = signal('');
   filterType = signal<string>('');
+  readonly canManageSubjectAreas = computed(() => this.permissionStore.has('manage_subject_area'));
+  headerConfig = computed(() => this.store.headerConfig());
 
   headerActions = computed(() =>
     this.permissionStore.filterActions(this.store.actions().filter((a) => a.typeAction === 'header')),
-  );
-
-  actionDropdownItems = computed(() =>
-    this.headerActions().map((action) => ({
-      label: action.label,
-      icon: action.icon,
-      disabled: typeof action.disabled === 'function' ? action.disabled({}) : !!action.disabled,
-      action: () => this.onHeaderAction({ action, context: {} }),
-    })),
   );
 
   data = computed(() => this.store.data());
@@ -71,6 +65,26 @@ export default class SubjectAreasPage {
   });
 
   filterCount = computed(() => (this.filterType() ? 1 : 0));
+  hasActiveFilters = computed(() => !!this.searchTerm().trim() || !!this.filterType());
+  groupedData = computed(() => {
+    const groups = {
+      core: [] as SubjectArea[],
+      elective: [] as SubjectArea[],
+      optional: [] as SubjectArea[],
+    };
+
+    for (const item of this.filteredData()) {
+      if (item.type && item.type in groups) {
+        groups[item.type as keyof typeof groups].push(item);
+      }
+    }
+
+    return [
+      { key: 'core', label: 'Troncales', description: 'Áreas base y obligatorias del plan curricular', items: groups.core.sort((a, b) => a.name.localeCompare(b.name)) },
+      { key: 'elective', label: 'Electivas', description: 'Áreas opcionales orientadas a profundización', items: groups.elective.sort((a, b) => a.name.localeCompare(b.name)) },
+      { key: 'optional', label: 'Opcionales', description: 'Áreas complementarias o flexibles', items: groups.optional.sort((a, b) => a.name.localeCompare(b.name)) },
+    ].filter(group => group.items.length > 0);
+  });
 
   onSearch(value: string) {
     this.searchTerm.set(value);
@@ -78,6 +92,11 @@ export default class SubjectAreasPage {
 
   onFilterType(value: unknown) {
     this.filterType.set(value != null ? String(value) : '');
+  }
+
+  clearFilters() {
+    this.searchTerm.set('');
+    this.filterType.set('');
   }
 
   loading = computed(() => this.store.loading());
@@ -113,10 +132,12 @@ export default class SubjectAreasPage {
   }
 
   createFromEmpty() {
+    if (!this.canManageSubjectAreas()) return;
     this.openForm();
   }
 
   openForm(current?: SubjectArea | null) {
+    if (!this.canManageSubjectAreas() && !current) return;
     const ref = this.dialog.open(SubjectAreaForm, {
       data: { current: current ?? null },
       panelClass: 'dialog-top',

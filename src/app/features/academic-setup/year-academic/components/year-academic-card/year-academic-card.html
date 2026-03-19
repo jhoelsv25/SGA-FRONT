@@ -82,35 +82,43 @@
           <z-icon zType="eye" class="h-5 w-5" />
         </button>
 
-        <button z-button zType="ghost" zSize="icon-sm"
-          class="rounded-xl hover:bg-primary/10 hover:text-primary transition-all" title="Más acciones" zPopover
-          [zContent]="actionsMenu" [zPlacement]="'bottom'">
-          <z-icon zType="ellipsis" class="h-5 w-5" />
-        </button>
+        @if (canManage() || canCreatePeriod()) {
+          <button z-button zType="ghost" zSize="icon-sm"
+            class="rounded-xl hover:bg-primary/10 hover:text-primary transition-all" title="Más acciones" zPopover
+            [zContent]="actionsMenu" [zPlacement]="'bottom'">
+            <z-icon zType="ellipsis" class="h-5 w-5" />
+          </button>
 
-        <ng-template #actionsMenu>
-          <z-popover class="min-w-[180px] p-1.5 flex flex-col gap-1">
-            <button z-button zType="ghost"
-              class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
-              (click)="createPeriod.emit(year())">
-              <z-icon zType="layers" class="h-4 w-4" />
-              Crear Período
-            </button>
-            <button z-button zType="ghost"
-              class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
-              (click)="edit.emit(year())">
-              <z-icon zType="settings" class="h-4 w-4" />
-              Configurar
-            </button>
-            <div class="h-px bg-border/10 my-1 mx-2"></div>
-            <button z-button zType="ghost"
-              class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-destructive/10 hover:text-destructive transition-all"
-              (click)="delete.emit(year())">
-              <z-icon zType="trash" class="h-4 w-4" />
-              Eliminar
-            </button>
-          </z-popover>
-        </ng-template>
+          <ng-template #actionsMenu>
+            <z-popover class="min-w-[180px] p-1.5 flex flex-col gap-1">
+              @if (canCreatePeriod()) {
+                <button z-button zType="ghost"
+                  class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
+                  (click)="createPeriod.emit(year())">
+                  <z-icon zType="layers" class="h-4 w-4" />
+                  Crear Período
+                </button>
+              }
+              @if (canManage()) {
+                <button z-button zType="ghost"
+                  class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
+                  (click)="edit.emit(year())">
+                  <z-icon zType="settings" class="h-4 w-4" />
+                  Configurar
+                </button>
+              }
+              @if (canManage()) {
+                <div class="h-px bg-border/10 my-1 mx-2"></div>
+                <button z-button zType="ghost"
+                  class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-destructive/10 hover:text-destructive transition-all"
+                  (click)="delete.emit(year())">
+                  <z-icon zType="trash" class="h-4 w-4" />
+                  Eliminar
+                </button>
+              }
+            </z-popover>
+          </ng-template>
+        }
       </div>
     </div>
   </div>

@@ -1,11 +1,9 @@
 <z-card
-  class="group p-6 rounded-[2.5rem] bg-card/40 border-border/10 backdrop-blur-2xl hover:bg-card/60 hover:border-primary/20 transition-all shadow-sm hover:shadow-2xl hover:shadow-primary/5 cursor-pointer">
+  class="group rounded-[var(--radius-xl)] border border-base-300/60 bg-card/85 p-6 shadow-sm transition-all hover:border-primary/20 hover:shadow-lg dark:border-base-200/60 dark:bg-base-100/90">
   <div class="flex flex-col lg:flex-row lg:items-center gap-8">
-
-    <!-- Left: Icon & Main Info -->
     <div class="flex items-start gap-4 flex-1">
       <div
-        class="size-14 rounded-2xl flex items-center justify-center shrink-0 shadow-lg border border-border/10 bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+        class="flex size-14 shrink-0 items-center justify-center rounded-[var(--radius-xl)] border border-primary/15 bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
         <z-icon zType="layers" class="h-6 w-6" />
       </div>
 
@@ -15,62 +13,52 @@
             Sección {{ section().name }}
           </h3>
           <span
-            class="rounded-full px-3 py-1 text-[9px] font-black uppercase tracking-widest border bg-muted text-muted-foreground border-border">
+            class="rounded-full border border-base-300 bg-base-200 px-3 py-1 text-[9px] font-black uppercase tracking-widest text-base-content/65 dark:border-base-200/60 dark:bg-base-300/60">
             {{ shiftLabel(section().shift) }}
           </span>
         </div>
         @if (section().tutor) {
-        <p class="text-xs text-muted-foreground font-mono truncate">
+        <p class="truncate text-xs font-mono text-muted-foreground">
           Tutor: {{ section().tutor }}
         </p>
         }
         @if (section().classroom) {
-        <p class="text-sm text-muted-foreground font-medium line-clamp-1">
+        <p class="line-clamp-1 text-sm font-medium text-muted-foreground">
           Aula: {{ section().classroom }}
         </p>
         }
       </div>
     </div>
 
-    <!-- Middle: Stats (XL only) -->
-    <div class="hidden xl:flex items-center gap-3 px-8 border-x border-border/10">
+    <div class="hidden items-center gap-3 border-x border-base-300/60 px-8 xl:flex dark:border-base-200/60">
       <div class="flex flex-col items-center gap-1">
-        <div class="size-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center shadow-sm">
+        <div class="flex size-8 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-sm">
           <z-icon zType="layers" class="h-4 w-4" />
         </div>
-        <span class="text-[8px] font-black uppercase text-muted-foreground/40">Sección</span>
+        <span class="text-[8px] font-black uppercase text-muted-foreground/50">Sección</span>
       </div>
       <z-icon zType="chevron-right" class="h-4 w-4 text-muted-foreground/20" />
       <div class="flex flex-col items-center gap-1">
-        <div class="size-8 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center shadow-sm">
+        <div class="flex size-8 items-center justify-center rounded-xl bg-secondary/15 text-secondary shadow-sm">
           <z-icon zType="users" class="h-4 w-4" />
         </div>
-        <span class="text-[8px] font-black uppercase text-muted-foreground/40">Capacidad</span>
+        <span class="text-[8px] font-black uppercase text-muted-foreground/50">Capacidad</span>
       </div>
       <z-icon zType="chevron-right" class="h-4 w-4 text-muted-foreground/20" />
       <div class="flex flex-col items-center gap-1">
-        <div class="size-8 rounded-xl bg-green-500/10 text-green-500 flex items-center justify-center shadow-sm">
+        <div class="flex size-8 items-center justify-center rounded-xl bg-success/15 text-success shadow-sm">
           <z-icon zType="map-pin" class="h-4 w-4" />
         </div>
-        <span class="text-[8px] font-black uppercase text-muted-foreground/40">Aula</span>
+        <span class="text-[8px] font-black uppercase text-muted-foreground/50">Aula</span>
       </div>
     </div>
 
-    <!-- Right: Metrics & Actions -->
     <div class="flex items-center justify-between lg:justify-end gap-10 shrink-0" (click)="$event.stopPropagation()">
       <div class="flex items-center gap-8">
-        @if (section().availableSlots !== null || section().capacity !== null) {
         <div class="text-center">
-          <p class="text-xs font-black inter uppercase text-primary">
-            @if (section().availableSlots !== null) {
-            {{ section().availableSlots }} cupos
-            } @else {
-            {{ section().capacity }}
-            }
-          </p>
+          <p class="text-xs font-black uppercase text-primary">{{ capacityText() }}</p>
           <span class="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60">Capacidad</span>
         </div>
-        }
         @if (section().classroom) {
         <div class="text-center hidden lg:block">
           <p class="text-xs font-black inter uppercase truncate max-w-[100px]">{{ section().classroom }}</p>
@@ -83,6 +71,7 @@
         </div>
       </div>
 
+      @if (canManage()) {
       <div class="flex items-center gap-2">
         <button z-button zType="ghost" zSize="icon-sm"
           class="rounded-xl hover:bg-primary/10 hover:text-primary transition-all" title="Más acciones" zPopover
@@ -108,11 +97,11 @@
           </z-popover>
         </ng-template>
       </div>
+      }
     </div>
   </div>
 
-  <!-- Footer -->
-  <div class="mt-6 pt-6 border-t border-border/10 flex items-center justify-between">
+  <div class="mt-6 flex items-center justify-between border-t border-base-300/60 pt-6 dark:border-base-200/60">
     <div class="flex items-center gap-1 text-[10px] font-bold text-muted-foreground">
       <z-icon zType="zap" class="h-3 w-3 text-primary" />
       Turno: <span class="text-foreground font-mono">{{ shiftLabel(section().shift) }}</span>

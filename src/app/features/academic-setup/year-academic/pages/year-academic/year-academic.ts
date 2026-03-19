@@ -1,6 +1,5 @@
-import { ListToolbarComponent } from '@/shared/widgets/list-toolbar/list-toolbar';
+import { HeaderDetail } from '@/shared/widgets/header-detail/header-detail';
 import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
-import { DropdownOptionComponent, DropdownItem } from '@/shared/widgets/dropdown-option/dropdown-option';
 import { ZardSkeletonComponent } from '@/shared/components/skeleton';
 import { ZardEmptyComponent } from '@/shared/components/empty';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
@@ -15,9 +14,11 @@ import { YearAcademicForm } from '../../components/year-academic-form/year-acade
 import { CommonModule } from '@angular/common';
 import { YearAcademicCardComponent } from '../../components/year-academic-card/year-academic-card';
 import { PeriodForm } from '@features/academic-setup/periods/components/period-form/period-form';
-
-import { ZardDropdownMenuComponent } from '@/shared/components/dropdown';
 import { PermissionCheckStore } from '@core/stores/permission-check.store';
+import { FormsModule } from '@angular/forms';
+import { ZardInputDirective } from '@/shared/components/input';
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardFormImports } from '@/shared/components/form';
 
 const STATUS_OPTIONS = [
   { value: '', label: 'Todos' },
@@ -30,7 +31,7 @@ const STATUS_OPTIONS = [
 @Component({
   selector: 'sga-year-academic',
   standalone: true,
-  imports: [CommonModule, YearAcademicCardComponent, ZardEmptyComponent, ZardSkeletonComponent, DropdownOptionComponent, SelectOptionComponent, ListToolbarComponent],
+  imports: [CommonModule, HeaderDetail, YearAcademicCardComponent, ZardEmptyComponent, ZardSkeletonComponent, SelectOptionComponent, FormsModule, ZardInputDirective, ZardButtonComponent, ...ZardFormImports],
   templateUrl: './year-academic.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -72,6 +73,9 @@ export default class YearAcademicComponent {
   }
 
   readonly statusOptions = STATUS_OPTIONS;
+  readonly canManageAcademicYears = computed(() => this.permissionStore.has('manage_academic_year'));
+  readonly canManageAcademicPeriods = computed(() => this.permissionStore.has('manage_academic_period'));
+  readonly hasActiveFilters = computed(() => !!this.searchTerm().trim() || !!this.filterStatus());
 
   onFilterStatus(value: unknown) {
     this.filterStatus.set(value != null ? String(value) : '');
@@ -81,16 +85,12 @@ export default class YearAcademicComponent {
     this.permissionStore.filterActions(this.store.actions().filter((a) => a.typeAction === 'header')),
   );
 
-  actionDropdownItems = computed(() =>
-    this.headerActions().map((action) => ({
-      label: action.label,
-      icon: action.icon,
-      disabled: typeof action.disabled === 'function' ? action.disabled({}) : !!action.disabled,
-      action: () => this.onHeaderAction({ action, context: {} }),
-    })),
-  );
-
   rowActions = computed(() => this.store.actions().filter((a) => a.typeAction === 'row'));
+
+  clearFilters() {
+    this.searchTerm.set('');
+    this.filterStatus.set('');
+  }
 
   onHeaderAction(e: { action: ActionConfig; context: ActionContext }) {
     switch (e.action.key) {
@@ -170,11 +170,13 @@ export default class YearAcademicComponent {
   }
 
   public createFromEmpty() {
+    if (!this.canManageAcademicYears()) return;
     this.store.setCurrent(null);
     this.openForm();
   }
 
   public openForm() {
+    if (!this.canManageAcademicYears()) return;
     const ref = this.dialog.open(YearAcademicForm, {
       data: {
         current: this.store.current(),

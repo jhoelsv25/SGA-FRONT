@@ -1,6 +1,5 @@
-import { ListToolbarComponent } from '@/shared/widgets/list-toolbar/list-toolbar';
+import { HeaderDetail } from '@/shared/widgets/header-detail/header-detail';
 import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
-import { DropdownOptionComponent, DropdownItem } from '@/shared/widgets/dropdown-option/dropdown-option';
 import { ZardSkeletonComponent } from '@/shared/components/skeleton';
 import { ZardEmptyComponent } from '@/shared/components/empty';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
@@ -13,9 +12,11 @@ import { GradeLevel } from '../../types/grade-level-types';
 import { GradeLevelForm } from '../../components/grade-level-form/grade-level-form';
 import { CommonModule } from '@angular/common';
 import { GradeLevelCardComponent } from '../../components/grade-level-card/grade-level-card';
-
-import { ZardDropdownMenuComponent } from '@/shared/components/dropdown';
 import { PermissionCheckStore } from '@core/stores/permission-check.store';
+import { FormsModule } from '@angular/forms';
+import { ZardInputDirective } from '@/shared/components/input';
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardFormImports } from '@/shared/components/form';
 
 const LEVEL_OPTIONS = [
   { value: '', label: 'Todos' },
@@ -27,7 +28,7 @@ const LEVEL_OPTIONS = [
 @Component({
   selector: 'sga-grade-levels',
   standalone: true,
-  imports: [CommonModule, GradeLevelCardComponent, ZardEmptyComponent, ZardSkeletonComponent, DropdownOptionComponent, SelectOptionComponent, ListToolbarComponent],
+  imports: [CommonModule, HeaderDetail, GradeLevelCardComponent, ZardEmptyComponent, ZardSkeletonComponent, SelectOptionComponent, FormsModule, ZardInputDirective, ZardButtonComponent, ...ZardFormImports],
   templateUrl: './grade-levels.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -42,18 +43,11 @@ export default class GradeLevelsPage {
   readonly levelOptions = LEVEL_OPTIONS;
   searchTerm = signal('');
   filterLevel = signal<string>('');
+  readonly canManageGradeLevels = computed(() => this.permissionStore.has('manage_grade_level'));
+  headerConfig = computed(() => this.store.headerConfig());
 
   headerActions = computed(() =>
     this.permissionStore.filterActions(this.store.actions().filter((a) => a.typeAction === 'header')),
-  );
-
-  actionDropdownItems = computed(() =>
-    this.headerActions().map((action) => ({
-      label: action.label,
-      icon: action.icon,
-      disabled: typeof action.disabled === 'function' ? action.disabled({}) : !!action.disabled,
-      action: () => this.onHeaderAction({ action, context: {} }),
-    })),
   );
 
   data = computed(() => this.store.data());
@@ -70,6 +64,24 @@ export default class GradeLevelsPage {
   });
 
   filterCount = computed(() => (this.filterLevel() ? 1 : 0));
+  hasActiveFilters = computed(() => !!this.searchTerm().trim() || !!this.filterLevel());
+  groupedData = computed(() => {
+    const groups = {
+      primary: [] as GradeLevel[],
+      secondary: [] as GradeLevel[],
+      higher: [] as GradeLevel[],
+    };
+
+    for (const item of this.filteredData()) {
+      groups[item.level]?.push(item);
+    }
+
+    return [
+      { key: 'primary', label: 'Primaria', description: 'Grados base de educación primaria', items: groups.primary.sort((a, b) => a.gradeNumber - b.gradeNumber) },
+      { key: 'secondary', label: 'Secundaria', description: 'Grados de educación secundaria', items: groups.secondary.sort((a, b) => a.gradeNumber - b.gradeNumber) },
+      { key: 'higher', label: 'Superior', description: 'Grados o ciclos de educación superior', items: groups.higher.sort((a, b) => a.gradeNumber - b.gradeNumber) },
+    ].filter(group => group.items.length > 0);
+  });
 
   onSearch(value: string) {
     this.searchTerm.set(value);
@@ -77,6 +89,11 @@ export default class GradeLevelsPage {
 
   onFilterLevel(value: unknown) {
     this.filterLevel.set(value != null ? String(value) : '');
+  }
+
+  clearFilters() {
+    this.searchTerm.set('');
+    this.filterLevel.set('');
   }
   loading = computed(() => this.store.loading());
   pagination = computed(() => ({
@@ -130,10 +147,12 @@ export default class GradeLevelsPage {
   }
 
   createFromEmpty() {
+    if (!this.canManageGradeLevels()) return;
     this.openForm();
   }
 
   openForm(current?: GradeLevel | null) {
+    if (!this.canManageGradeLevels() && !current) return;
     const ref = this.dialog.open(GradeLevelForm, {
       data: { current: current ?? null },
       panelClass: 'dialog-top',

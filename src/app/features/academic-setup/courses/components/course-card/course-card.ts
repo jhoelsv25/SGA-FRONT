@@ -25,6 +25,7 @@ import type { Course } from '../../types/course-types';
 })
 export class CourseCardComponent {
   course = input.required<Course>();
+  canManage = input<boolean>(true);
   edit = output<Course>();
   delete = output<Course>();
 }

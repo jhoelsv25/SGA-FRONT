@@ -1,6 +1,5 @@
-import { ListToolbarComponent } from '@/shared/widgets/list-toolbar/list-toolbar';
-import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
-import { DropdownOptionComponent, DropdownItem } from '@/shared/widgets/dropdown-option/dropdown-option';
+import { HeaderDetail } from '@/shared/widgets/header-detail/header-detail';
+import { SelectOptionComponent } from '@/shared/widgets/select-option/select-option';
 import { ZardSkeletonComponent } from '@/shared/components/skeleton';
 import { ZardEmptyComponent } from '@/shared/components/empty';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
@@ -12,20 +11,23 @@ import type { Course } from '../../types/course-types';
 import { CourseForm } from '../../components/course-form/course-form';
 import { CommonModule } from '@angular/common';
 import { CourseCardComponent } from '../../components/course-card/course-card';
-
-import { ZardDropdownMenuComponent } from '@/shared/components/dropdown';
 import { PermissionCheckStore } from '@core/stores/permission-check.store';
+import { FormsModule } from '@angular/forms';
+import { ZardInputDirective } from '@/shared/components/input';
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardFormImports } from '@/shared/components/form';
 
 const TYPE_OPTIONS = [
   { value: '', label: 'Todos' },
   { value: 'mandatory', label: 'Obligatorios' },
-  { value: 'elective', label: 'Electivos' }];
+  { value: 'elective', label: 'Electivos' },
+];
 
 
 @Component({
   selector: 'sga-courses',
   standalone: true,
-  imports: [CommonModule, CourseCardComponent, ZardEmptyComponent, ZardSkeletonComponent, DropdownOptionComponent, SelectOptionComponent, ListToolbarComponent],
+  imports: [CommonModule, HeaderDetail, CourseCardComponent, ZardEmptyComponent, ZardSkeletonComponent, SelectOptionComponent, FormsModule, ZardInputDirective, ZardButtonComponent, ...ZardFormImports],
   templateUrl: './courses.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -39,18 +41,11 @@ export default class CoursesPage {
   readonly typeOptions = TYPE_OPTIONS;
   searchTerm = signal('');
   filterType = signal<string>('');
+  readonly canManageCourses = computed(() => this.permissionStore.has('manage_course'));
+  readonly headerConfig = computed(() => this.store.headerConfig());
 
   headerActions = computed(() =>
     this.permissionStore.filterActions(this.store.actions().filter((a) => a.typeAction === 'header')),
-  );
-
-  actionDropdownItems = computed(() =>
-    this.headerActions().map((action) => ({
-      label: action.label,
-      icon: action.icon,
-      disabled: typeof action.disabled === 'function' ? action.disabled({}) : !!action.disabled,
-      action: () => this.onHeaderAction({ action, context: {} }),
-    })),
   );
 
   data = computed(() => this.store.courses());
@@ -74,6 +69,28 @@ export default class CoursesPage {
   });
 
   filterCount = computed(() => (this.filterType() ? 1 : 0));
+  hasActiveFilters = computed(() => !!this.searchTerm().trim() || !!this.filterType());
+  groupedData = computed(() => {
+    const groups = new Map<string, Course[]>();
+
+    for (const course of this.filteredData()) {
+      const key = course.subjectArea?.name?.trim() || 'Sin área curricular';
+      const current = groups.get(key) ?? [];
+      current.push(course);
+      groups.set(key, current);
+    }
+
+    return Array.from(groups.entries())
+      .map(([label, items]) => ({
+        key: label,
+        label,
+        description: label === 'Sin área curricular'
+          ? 'Cursos todavía no vinculados a un área'
+          : 'Cursos agrupados dentro de la misma área curricular',
+        items: items.sort((a, b) => a.name.localeCompare(b.name)),
+      }))
+      .sort((a, b) => a.label.localeCompare(b.label));
+  });
 
   onSearch(value: string) {
     this.searchTerm.set(value);
@@ -81,6 +98,11 @@ export default class CoursesPage {
 
   onFilterType(value: unknown) {
     this.filterType.set(value != null ? String(value) : '');
+  }
+
+  clearFilters() {
+    this.searchTerm.set('');
+    this.filterType.set('');
   }
 
   onHeaderAction(e: { action: ActionConfig; context: ActionContext }) {
@@ -114,10 +136,12 @@ export default class CoursesPage {
   }
 
   createFromEmpty() {
+    if (!this.canManageCourses()) return;
     this.openForm();
   }
 
   openForm(current?: Course | null) {
+    if (!this.canManageCourses() && !current) return;
     const ref = this.dialog.open(CourseForm, {
       data: { current: current ?? null },
       panelClass: 'dialog-top',

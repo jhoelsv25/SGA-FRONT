@@ -26,6 +26,8 @@ import { YearAcademic, AcademicYearStatus, Modality } from '../../types/year-aca
 })
 export class YearAcademicCardComponent {
   year = input.required<YearAcademic>();
+  canManage = input<boolean>(false);
+  canCreatePeriod = input<boolean>(false);
   edit = output<YearAcademic>();
   delete = output<YearAcademic>();
   createPeriod = output<YearAcademic>();

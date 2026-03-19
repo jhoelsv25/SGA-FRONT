@@ -1,23 +1,38 @@
-<div class="p-6 space-y-6">
-  <z-list-toolbar zTitle="Áreas Curriculares" icon="fas fa-book-open" zDescription="Gestionar áreas curriculares"
-    [searchPlaceholder]="'Buscar áreas por nombre o código...'" [filterCount]="filterCount()"
-    (searchChange)="onSearch($event)" (refresh)="onRefresh()">
-    <div list-toolbar-actions class="flex items-center gap-2">
-      <z-dropdown [items]="actionDropdownItems()">
-        <button dropdown-trigger
-          class="flex items-center justify-center w-10 h-10 rounded-2xl border border-base-200 bg-base-100 hover:bg-base-200 transition-colors text-base-content/60 hover:text-primary"
-          aria-label="Más acciones" type="button">
-          <i class="fas fa-ellipsis-h"></i>
-        </button>
-      </z-dropdown>
+<div class="space-y-6 p-6">
+  <ng-template #filters>
+    <div class="relative flex min-w-80 flex-col gap-5 rounded-[var(--radius-xl)] bg-card p-5">
+      <div class="flex items-center justify-between border-b border-base-200 pb-3">
+        <h3 class="text-xs font-bold uppercase tracking-widest text-base-content/50">Filtros</h3>
+        @if (hasActiveFilters()) {
+          <button type="button" class="text-xs font-semibold uppercase tracking-widest text-primary transition hover:opacity-80" (click)="clearFilters()">Limpiar</button>
+        }
+      </div>
 
+      <z-form-field>
+        <label z-form-label>Buscar</label>
+        <z-form-control>
+          <input z-input placeholder="Buscar áreas por nombre o código..." [ngModel]="searchTerm()" (ngModelChange)="onSearch($event)" />
+        </z-form-control>
+      </z-form-field>
+
+      <z-form-field>
+        <label z-form-label>Tipo</label>
+        <z-form-control>
+          <z-select-option [options]="typeOptions" [ngModel]="filterType()" [placeholder]="'Todos'"
+            [searchable]="false" (ngModelChange)="onFilterType($event)"></z-select-option>
+        </z-form-control>
+      </z-form-field>
     </div>
-    <div list-toolbar-filter class="space-y-3 p-1">
-      <p class="text-sm font-semibold text-base-content">Filtrar por tipo</p>
-      <z-select-option [options]="typeOptions" [value]="filterType() || null" [placeholder]="'Todos'"
-        [searchable]="false" (valueChange)="onFilterType($event)"></z-select-option>
-    </div>
-  </z-list-toolbar>
+  </ng-template>
+
+  <sga-header-detail
+    [config]="headerConfig()"
+    [actions]="headerActions()"
+    [filterTemplate]="filters"
+    [hasActiveFilters]="hasActiveFilters()"
+    (action)="onHeaderAction($event)"
+    (refresh)="onRefresh()"
+  />
 
   <div class="grid grid-cols-1 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
     @if (loading() && !data().length) {
@@ -25,12 +40,20 @@
     <z-skeleton [class]="'h-[200px] w-full rounded-4xl border border-base-200'"></z-skeleton>
     }
     } @else {
-    @for (area of filteredData(); track area.id) {
-    <sga-subject-area-card [subjectArea]="area" (edit)="editSubjectArea(area)" (delete)="deleteSubjectArea(area)" />
+    @for (group of groupedData(); track group.key) {
+     
+        <div class="grid grid-cols-1 gap-6">
+          @for (area of group.items; track area.id) {
+            <sga-subject-area-card [subjectArea]="area" (edit)="editSubjectArea(area)" (delete)="deleteSubjectArea(area)" />
+          }
+        </div>
     } @empty {
     <div class="col-span-full">
       <z-empty zIcon="book-open" zTitle="Sin áreas curriculares"
         zDescription="Aún no hay áreas curriculares. Crea troncal, electiva u opcional para organizar las materias.">
+        @if (canManageSubjectAreas()) {
+          <button z-button type="button" class="mt-4" (click)="createFromEmpty()">Crear área</button>
+        }
       </z-empty>
     </div>
     }

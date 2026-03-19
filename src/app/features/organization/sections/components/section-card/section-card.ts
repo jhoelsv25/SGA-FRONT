@@ -7,6 +7,7 @@ import {
 } from '@/shared/components/popover/popover.component';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { computed } from '@angular/core';
 import type { Section } from '../../types/section-types';
 
 const SHIFT_LABELS: Record<string, string> = {
@@ -31,8 +32,16 @@ const SHIFT_LABELS: Record<string, string> = {
 })
 export class SectionCardComponent {
   section = input.required<Section>();
+  canManage = input<boolean>(true);
   edit = output<Section>();
   delete = output<Section>();
+
+  readonly capacityText = computed(() => {
+    const section = this.section();
+    if (section.availableSlots != null) return `${section.availableSlots} cupos`;
+    if (section.capacity != null) return `${section.capacity} estudiantes`;
+    return 'Sin definir';
+  });
 
   shiftLabel(shift?: string): string {
     return (shift && SHIFT_LABELS[shift]) || shift || '-';
