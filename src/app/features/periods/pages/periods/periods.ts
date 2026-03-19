@@ -117,7 +117,6 @@ export default class PeriodsComponent {
   private openForm(current?: Period | null): void {
     const ref = this.dialog.open(PeriodForm, {
       data: { current: current ?? null },
-      panelClass: 'dialog-top',
       width: '500px',
       maxHeight: '500px',
     });

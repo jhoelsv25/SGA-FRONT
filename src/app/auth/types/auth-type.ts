@@ -45,6 +45,8 @@ export interface CurrentUserProfile {
   roleLabel: string;
   code?: string;
   institution?: string | null;
+  institutionId?: string | null;
+  institutionName?: string | null;
   details?: Record<string, unknown>;
   stats?: Record<string, unknown>;
 }

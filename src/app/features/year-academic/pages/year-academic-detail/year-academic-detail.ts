@@ -2,17 +2,19 @@ import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardSkeletonComponent } from '@/shared/components/skeleton';
 import { ZardEmptyComponent } from '@/shared/components/empty';
 import { ZardIconComponent } from '@/shared/components/icon';
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
-import type { Period, PeriodStatus } from '@features/periods/types/period-types';
+import type { Period } from '@features/periods/types/period-types';
 import { PeriodCardComponent } from '@features/periods/components/period-card/period-card';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { PeriodForm } from '@features/periods/components/period-form/period-form';
 import { PeriodApi } from '@features/periods/services/period-api';
 import { YearAcademicApi } from '../../services/api/year-academic-api';
 import { AcademicYearStatus, Modality, type YearAcademic, type YearAcademicPeriod } from '../../types/year-academi-types';
+import { PeriodStatus } from '@features/periods/types/period-types';
+import { Toast } from '@core/services/toast';
 
 
 @Component({
@@ -28,11 +30,17 @@ export default class YearAcademicDetailComponent implements OnInit {
   private api = inject(YearAcademicApi);
   private periodApi = inject(PeriodApi);
   private dialog = inject(DialogModalService);
+  private toast = inject(Toast);
 
   year = signal<YearAcademic | null>(null);
   loading = signal(true);
 
   periods = signal<Period[]>([]);
+  periodLimitReached = computed(() => {
+    const currentYear = this.year();
+    const maxPeriods = currentYear?.periodCount ?? 0;
+    return maxPeriods > 0 && this.periods().length >= maxPeriods;
+  });
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -68,15 +76,14 @@ export default class YearAcademicDetailComponent implements OnInit {
 
   openPeriodForm(): void {
     const y = this.year();
-    if (!y) return;
+    if (!y || this.periodLimitReached()) return;
     const ref = this.dialog.open(PeriodForm, {
       data: {
         yearAcademicId: y.id,
         yearAcademicName: y.name,
       },
-      panelClass: 'dialog-top',
       width: '440px',
-      maxHeight: '530px',
+      maxHeight: '80vh',
     });
     ref.closed.subscribe(() => this.refreshPeriods());
   }
@@ -84,16 +91,42 @@ export default class YearAcademicDetailComponent implements OnInit {
   editPeriod(period: Period): void {
     this.dialog.open(PeriodForm, {
       data: { current: period },
-      panelClass: 'dialog-top',
       width: '440px',
-      maxHeight: '530px',
+      maxHeight: '80vh',
     }).closed.subscribe(() => this.refreshPeriods());
+  }
+
+  updatePeriodStatus(event: { period: Period; status: PeriodStatus }): void {
+    if (event.period.status === PeriodStatus.COMPLETED) {
+      this.toast.warning('Un período completado ya no puede cambiar de estado');
+      return;
+    }
+    if (event.period.status === event.status) return;
+    this.periodApi.update(event.period.id, { status: event.status }).subscribe({
+      next: () => {
+        this.toast.success('Estado del período actualizado');
+        this.refreshPeriods();
+      },
+      error: (error) => {
+        this.toast.error('No se pudo actualizar el estado del período', {
+          description: error?.message,
+        });
+      },
+    });
   }
 
   deletePeriod(period: Period): void {
     if (!confirm(`¿Eliminar el período "${period.name}"?`)) return;
     this.periodApi.delete(period.id).subscribe({
-      next: () => this.refreshPeriods(),
+      next: () => {
+        this.toast.success('Período eliminado correctamente');
+        this.refreshPeriods();
+      },
+      error: (error) => {
+        this.toast.error('No se pudo eliminar el período', {
+          description: error?.message,
+        });
+      },
     });
   }
 
@@ -124,6 +157,12 @@ export default class YearAcademicDetailComponent implements OnInit {
       [Modality.HYBRID]: 'Híbrido',
     };
     return labels[modality ?? ''] ?? 'No definido';
+  }
+
+  getPeriodLimitLabel(): string {
+    const maxPeriods = this.year()?.periodCount ?? 0;
+    if (maxPeriods <= 0) return 'Sin límite configurado';
+    return `${this.periods().length} de ${maxPeriods} período(s)`;
   }
 
   private refreshPeriods(): void {

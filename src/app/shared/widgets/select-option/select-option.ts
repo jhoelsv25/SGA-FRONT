@@ -55,7 +55,7 @@ export class SelectOptionComponent implements ControlValueAccessor {
     effect(() => {
       const v = this.value();
       if (v !== undefined && v !== null) {
-        this.zValue.set(v);
+        this.zValue.set(String(v));
       }
     });
   }
@@ -66,7 +66,7 @@ export class SelectOptionComponent implements ControlValueAccessor {
   String = String;
 
   writeValue(val: any): void {
-    this.zValue.set(val ?? '');
+    this.zValue.set(val === undefined || val === null ? '' : String(val));
   }
 
   registerOnChange(fn: any): void {
@@ -82,7 +82,9 @@ export class SelectOptionComponent implements ControlValueAccessor {
   }
 
   onValueChange(val: any) {
-    this.onChange(val);
-    this.valueChange.emit(val);
+    const normalized = val === undefined || val === null ? '' : String(val);
+    this.zValue.set(normalized);
+    this.onChange(normalized);
+    this.valueChange.emit(normalized);
   }
 }

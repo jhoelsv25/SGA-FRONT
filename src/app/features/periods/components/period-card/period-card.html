@@ -81,16 +81,39 @@
           <z-popover class="min-w-[160px] p-1.5 flex flex-col gap-1">
             <button z-button zType="ghost"
               class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
-              (click)="updateStatus.emit(period())">
-              <z-icon zType="activity" class="h-4 w-4" />
-              Actualizar Estado
-            </button>
-            <button z-button zType="ghost"
-              class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
               (click)="edit.emit(period())">
               <z-icon zType="settings" class="h-4 w-4" />
-              Configurar
+              Editar
             </button>
+            @if (canChangeStatus()) {
+            <button
+              z-button
+              zType="ghost"
+              class="w-full justify-between gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
+              zPopover
+              [zContent]="statusMenu"
+              [zPlacement]="'left'"
+            >
+              <span class="flex items-center gap-2.5">
+                <z-icon zType="activity" class="h-4 w-4" />
+                Cambiar estado
+              </span>
+              <z-icon zType="chevron-right" class="h-4 w-4" />
+            </button>
+            } @else {
+            <button
+              z-button
+              zType="ghost"
+              class="w-full justify-between gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl opacity-50"
+              [disabled]="true"
+            >
+              <span class="flex items-center gap-2.5">
+                <z-icon zType="activity" class="h-4 w-4" />
+                Cambiar estado
+              </span>
+              <z-icon zType="clock" class="h-4 w-4" />
+            </button>
+            }
             <div class="h-px bg-border/10 my-1 mx-2"></div>
             <button z-button zType="ghost"
               class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-destructive/10 hover:text-destructive transition-all"
@@ -98,6 +121,26 @@
               <z-icon zType="trash" class="h-4 w-4" />
               Eliminar
             </button>
+          </z-popover>
+        </ng-template>
+
+        <ng-template #statusMenu>
+          <z-popover class="min-w-[170px] p-1.5 flex flex-col gap-1">
+            <div class="px-3 pt-2 pb-1 text-[10px] font-black uppercase tracking-[0.18em] text-muted-foreground/60">
+              Estado
+            </div>
+            @for (option of statusOptions; track option.value) {
+            <button
+              z-button
+              zType="ghost"
+              class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl transition-all"
+              [ngClass]="period().status === option.value ? 'bg-primary/10 text-primary' : 'hover:bg-primary/10 hover:text-primary'"
+              (click)="onStatusSelect(option.value)"
+            >
+              <z-icon [zType]="period().status === option.value ? 'check' : 'activity'" class="h-4 w-4" />
+              {{ option.label }}
+            </button>
+            }
           </z-popover>
         </ng-template>
       </div>

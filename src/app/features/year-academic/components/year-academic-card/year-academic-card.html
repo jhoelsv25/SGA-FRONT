@@ -76,11 +76,6 @@
       </div>
 
       <div class="flex items-center gap-2">
-        <button z-button zType="ghost" zSize="icon-sm"
-          class="rounded-xl hover:bg-primary/10 hover:text-primary transition-all" title="Ver detalle"
-          (click)="viewDetail.emit(year())">
-          <z-icon zType="eye" class="h-5 w-5" />
-        </button>
 
         @if (canManage() || canCreatePeriod()) {
           <button z-button zType="ghost" zSize="icon-sm"

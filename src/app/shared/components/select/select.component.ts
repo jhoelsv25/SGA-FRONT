@@ -2,13 +2,13 @@ import { Overlay, OverlayModule, OverlayPositionBuilder, type OverlayRef } from 
 import { TemplatePortal } from '@angular/cdk/portal';
 import { isPlatformBrowser } from '@angular/common';
 import {
-  type AfterContentInit,
   afterNextRender,
   booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   computed,
   contentChildren,
+  effect,
   DestroyRef,
   ElementRef,
   forwardRef,
@@ -111,7 +111,7 @@ const COMPACT_MODE_WIDTH_THRESHOLD = 100;
     '(keydown.{enter,space,arrowdown,arrowup,escape}.prevent)': 'onTriggerKeydown($event)',
   },
 })
-export class ZardSelectComponent implements ControlValueAccessor, AfterContentInit, OnDestroy {
+export class ZardSelectComponent implements ControlValueAccessor, OnDestroy {
   private readonly destroyRef = inject(DestroyRef);
   private readonly elementRef = inject(ElementRef<HTMLElement>);
   private readonly injector = inject(Injector);
@@ -176,24 +176,26 @@ export class ZardSelectComponent implements ControlValueAccessor, AfterContentIn
     ),
   );
 
-  ngAfterContentInit() {
-    const hostWidth = this.elementRef.nativeElement.offsetWidth || 0;
-    // Setup select host reference for each item
-    let i = 0;
-    for (const item of this.selectItems()) {
-      item.setSelectHost({
-        selectedValue: () => (this.zMultiple() ? (this.zValue() as string[]) : [this.zValue() as string]),
-        selectItem: (value: string, label: string) => this.selectItem(value, label),
-        navigateTo: () => this.navigateTo(item, i),
-      });
-      item.zSize.set(this.zSize());
-      i++;
+  constructor() {
+    effect(() => {
+      const items = this.selectItems();
+      const size = this.zSize();
+      const multiple = this.zMultiple();
+      const hostWidth = this.elementRef.nativeElement.offsetWidth || 0;
+      const compact = hostWidth <= COMPACT_MODE_WIDTH_THRESHOLD;
 
-      if (hostWidth <= COMPACT_MODE_WIDTH_THRESHOLD) {
-        this.isCompact.set(true);
-        item.zMode.set('compact');
-      }
-    }
+      this.isCompact.set(compact);
+
+      items.forEach((item, index) => {
+        item.setSelectHost({
+          selectedValue: () => (multiple ? (this.zValue() as string[]) : [this.zValue() as string]),
+          selectItem: (value: string, label: string) => this.selectItem(value, label),
+          navigateTo: () => this.navigateTo(item, index),
+        });
+        item.zSize.set(size);
+        item.zMode.set(compact ? 'compact' : 'normal');
+      });
+    });
   }
 
   ngOnDestroy() {

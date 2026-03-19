@@ -28,7 +28,14 @@ export class PeriodCardComponent {
   period = input.required<Period>();
   edit = output<Period>();
   delete = output<Period>();
-  updateStatus = output<Period>();
+  updateStatus = output<{ period: Period; status: PeriodStatus }>();
+
+  readonly statusOptions = [
+    { value: PeriodStatus.PLANNED, label: 'Planificado' },
+    { value: PeriodStatus.IN_PROGRESS, label: 'En curso' },
+    { value: PeriodStatus.COMPLETED, label: 'Completado' },
+    { value: PeriodStatus.CANCELLED, label: 'Cancelado' },
+  ] as const;
 
   getStatusLabel(status: PeriodStatus | string | undefined): string {
     const labels: Record<string, string> = {
@@ -48,5 +55,14 @@ export class PeriodCardComponent {
       [PeriodStatus.CANCELLED]: 'bg-destructive/10 text-destructive border-destructive/20',
     };
     return colors[status ?? ''] ?? 'bg-muted text-muted-foreground border-border';
+  }
+
+  canChangeStatus(): boolean {
+    return this.period().status !== PeriodStatus.COMPLETED;
+  }
+
+  onStatusSelect(status: PeriodStatus): void {
+    if (!this.canChangeStatus()) return;
+    this.updateStatus.emit({ period: this.period(), status });
   }
 }

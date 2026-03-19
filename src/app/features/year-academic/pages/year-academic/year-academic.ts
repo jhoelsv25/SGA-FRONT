@@ -162,9 +162,8 @@ export default class YearAcademicComponent {
         yearAcademicId: year.id,
         yearAcademicName: year.name,
       },
-      panelClass: 'dialog-top',
-      width: '440px',
-      maxHeight: '530px',
+      width: '500px',
+      maxHeight: '80vh',
     });
     ref.closed.subscribe(() => this.onRefresh());
   }
@@ -181,9 +180,8 @@ export default class YearAcademicComponent {
       data: {
         current: this.store.current(),
       },
-      panelClass: 'dialog-top',
       width: '800px',
-      maxHeight: '700px'
+      maxHeight: '80vh'
     });
     ref.closed.subscribe(() => this.onRefresh());
   }

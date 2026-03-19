@@ -59,7 +59,7 @@
                 <div class="flex items-center gap-2 rounded-full border border-primary/10 bg-primary/5 px-3 py-1">
                   <z-icon zType="layers" class="h-3 w-3 text-primary/70" />
                   <span class="text-[10px] font-black uppercase tracking-widest text-primary/70">
-                    {{ periods().length }} período(s)
+                    {{ getPeriodLimitLabel() }}
                   </span>
                 </div>
               </div>
@@ -67,9 +67,15 @@
           </div>
 
           <div class="relative z-10 flex w-full shrink-0 items-center gap-3 lg:w-auto">
-            <button z-button zColor="primary" class="h-14 w-full rounded-2xl px-8 text-base font-bold shadow-2xl shadow-primary/30 transition-all hover:scale-105 lg:w-auto" (click)="openPeriodForm()">
+            <button
+              z-button
+              zColor="primary"
+              class="h-14 w-full rounded-4xl px-8 text-base font-bold shadow-2xl shadow-primary/30 transition-all hover:scale-105 disabled:cursor-not-allowed disabled:opacity-60 lg:w-auto"
+              [disabled]="periodLimitReached()"
+              (click)="openPeriodForm()"
+            >
               <z-icon zType="plus" class="mr-2 h-5 w-5" />
-              Crear período
+              {{ periodLimitReached() ? 'Límite alcanzado' : 'Crear período' }}
             </button>
           </div>
         </div>
@@ -86,6 +92,7 @@
             @for (period of periods(); track period.id) {
               <sga-period-card
                 [period]="period"
+                (updateStatus)="updatePeriodStatus($event)"
                 (edit)="editPeriod(period)"
                 (delete)="deletePeriod(period)"
                />

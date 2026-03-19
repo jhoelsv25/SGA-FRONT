@@ -42,10 +42,11 @@ export type YearAcademic = {
   modality: Modality;
   gradingSystem: GradingSystem;
   passingDate: Date | string;
-  passingGrade: number;
+  passingGrade: string;
   academicCalendarUrl: string;
   status: AcademicYearStatus;
-  institution: string;
+  institution: string | { id: string; name?: string };
+  periodCount?: number;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   /** Períodos del año (vienen en GET all / GET by id) */
