@@ -26,6 +26,12 @@ export default [
     data: { permissions: ['view_report'] },
   },
   {
+    path: ':id',
+    loadComponent: () => import('./pages/report-detail/report-detail'),
+    title: 'Detalle de Reporte',
+    data: { permissions: ['view_report'] },
+  },
+  {
     path: '',
     redirectTo: 'academic',
     pathMatch: 'full'

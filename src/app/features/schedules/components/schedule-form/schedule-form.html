@@ -15,6 +15,9 @@
             <z-select-option
               id="sectionCourse"
               [options]="sectionCourseOptions()"
+              [canLoadMore]="sectionCourseHasMore()"
+              [loadingMore]="loadingSectionCourses()"
+              (loadMore)="loadSectionCourses()"
               formControlName="sectionCourse"
               [placeholder]="loadingSectionCourses() ? 'Cargando asignaciones...' : 'Seleccionar curso y sección'"
               (selectionChange)="onSectionCourseSelect($event)"></z-select-option>

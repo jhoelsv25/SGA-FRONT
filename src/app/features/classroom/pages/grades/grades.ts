@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 import { AuthFacade } from '@auth/services/store/auth.acede';
 import {
@@ -23,7 +24,7 @@ type StudentHistoryItem = {
 @Component({
   selector: 'sga-classroom-grades',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './grades.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -42,10 +43,11 @@ export default class Grades implements OnInit {
   });
   readonly selectedRecordId = signal<string | null>(null);
   readonly selectedStudentId = signal<string | null>(null);
+  readonly search = signal('');
 
   readonly selectedRecord = computed(() => {
     const selectedId = this.selectedRecordId();
-    const items = this.records();
+    const items = this.filteredRecords();
     return items.find((item) => item.id === selectedId) ?? items[0] ?? null;
   });
   readonly profileType = computed(() => this.authFacade.getCurrentUser()?.profile?.type ?? 'user');
@@ -64,6 +66,11 @@ export default class Grades implements OnInit {
   readonly canViewStudentDetail = computed(() => {
     const type = this.profileType();
     return type === 'teacher' || type === 'admin' || type === 'director';
+  });
+  readonly filteredRecords = computed(() => {
+    const term = this.search().trim().toLowerCase();
+    if (!term) return this.records();
+    return this.records().filter((record) => record.name.toLowerCase().includes(term));
   });
   readonly studentOptions = computed(() => {
     const map = new Map<string, { studentId: string; studentName: string; assessments: number }>();
@@ -153,6 +160,10 @@ export default class Grades implements OnInit {
 
   selectStudent(studentId: string) {
     this.selectedStudentId.set(studentId);
+  }
+
+  clearSearch() {
+    this.search.set('');
   }
 
   statusTone(value: number, total: number) {

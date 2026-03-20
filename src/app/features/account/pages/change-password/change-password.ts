@@ -1,4 +1,3 @@
-import { ZardInputDirective } from '@/shared/components/input';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardCardComponent } from '@/shared/components/card';
 import { CommonModule } from '@angular/common';
@@ -13,7 +12,7 @@ import { AuthFacade } from '@auth/services/store/auth.acede';
 @Component({
   selector: 'sga-account-change-password',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, ZardCardComponent, ZardInputDirective, ZardButtonComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, ZardCardComponent, ZardButtonComponent],
   template: `
     <div class="space-y-6 p-4 md:p-6">
       <section class="rounded-[2rem] border border-border bg-card p-6 shadow-sm lg:p-8">

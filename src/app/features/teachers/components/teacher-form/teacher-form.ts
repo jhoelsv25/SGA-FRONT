@@ -39,6 +39,10 @@ export class TeacherForm implements OnInit {
   readonly currentYear = new Date().getFullYear();
   institutionOptions: LocalSelectOption[] = [];
   personOptions: LocalSelectOption[] = [];
+  personPage = 1;
+  readonly personPageSize = 30;
+  personHasMore = true;
+  personLoadingMore = false;
 
   contractTypeOptions: LocalSelectOption[] = [
     { value: 'full_time' satisfies TeacherContractType, label: 'Tiempo completo' },
@@ -126,19 +130,30 @@ export class TeacherForm implements OnInit {
     });
   }
 
-  private loadPersons() {
-    this.http.get<{ data?: Array<{ id: string; firstName?: string; lastName?: string; email?: string; documentNumber?: string }> }>('persons', {
-      params: { size: 999 as any },
+  loadPersons() {
+    if (!this.personHasMore || this.personLoadingMore) return;
+    this.personLoadingMore = true;
+
+    this.http.get<{ data?: Array<{ id: string; firstName?: string; lastName?: string; email?: string; documentNumber?: string }>; total?: number }>('persons', {
+      params: { page: this.personPage as any, size: this.personPageSize as any },
     }).subscribe({
       next: (res) => {
-        this.personOptions = (res.data ?? []).map((person) => ({
+        const newOptions = (res.data ?? []).map((person) => ({
           value: person.id,
           label:
-            `${person.firstName ?? ''} ${person.lastName ?? ''}`.trim() ||
-            person.email ||
-            person.documentNumber ||
+            `${person.firstName ?? ''} ${person.lastName ?? ''}`.trim() +
+              (person.email ? ` · ${person.email}` : person.documentNumber ? ` · ${person.documentNumber}` : '') ||
             person.id,
         }));
+        this.personOptions = [...this.personOptions, ...newOptions];
+        const loaded = this.personOptions.length;
+        const total = res.total ?? loaded;
+        this.personHasMore = loaded < total;
+        this.personPage += 1;
+        this.personLoadingMore = false;
+      },
+      error: () => {
+        this.personLoadingMore = false;
       },
     });
   }

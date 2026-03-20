@@ -1,12 +1,13 @@
 import { ListToolbarComponent } from '@/shared/widgets/list-toolbar/list-toolbar';
 import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
 import { ZardButtonComponent } from '@/shared/components/button';
-import { ChangeDetectionStrategy, Component, effect, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AssessmentStore } from '../../services/store/assessment.store';
 import { type Assessment, type AssessmentScore } from '../../types/assessment-types';
 import { AssessmentFiltersService } from '../../services/assessment-filters.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 type ScoreRow = Pick<AssessmentScore, 'enrollmentId' | 'score' | 'observation'> & { studentName: string };
 
@@ -20,13 +21,24 @@ type ScoreRow = Pick<AssessmentScore, 'enrollmentId' | 'score' | 'observation'> 
 export default class Grades implements OnInit {
   public readonly assessmentStore = inject(AssessmentStore);
   private readonly filters = inject(AssessmentFiltersService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   public selectedAssessmentId = signal<string>('');
   public localScores = signal<ScoreRow[]>([]);
   public assessmentOptions = signal<SelectOption[]>([]);
   public hasActiveFilters = signal(false);
+  public enrollmentContextId = signal('');
+  public studentContextName = signal('');
+  public visibleScores = computed(() =>
+    this.localScores().filter((score) => !this.enrollmentContextId() || score.enrollmentId === this.enrollmentContextId()),
+  );
 
   ngOnInit(): void {
+    this.route.queryParamMap.subscribe((params) => {
+      this.enrollmentContextId.set(params.get('enrollmentId') ?? '');
+      this.studentContextName.set(params.get('studentName') ?? '');
+    });
     this.assessmentStore.loadAll({});
   }
 
@@ -115,5 +127,16 @@ export default class Grades implements OnInit {
     this.selectedAssessmentId.set('');
     this.hasActiveFilters.set(false);
     this.localScores.set([]);
+  }
+
+  clearEnrollmentContext(): void {
+    this.router.navigate(['/assessments/grades'], {
+      queryParams: {
+        enrollmentId: null,
+        studentName: null,
+      },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
   }
 }

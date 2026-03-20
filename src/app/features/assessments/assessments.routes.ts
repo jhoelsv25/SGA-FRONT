@@ -20,6 +20,12 @@ export default [
     data: { permissions: ['view_grade', 'manage_grade'] },
   },
   {
+    path: ':id',
+    loadComponent: () => import('../assessment-management/pages/assessment-detail/assessment-detail'),
+    title: 'Detalle de Evaluación',
+    data: { permissions: ['view_assessment', 'manage_assessment'] },
+  },
+  {
     path: '',
     redirectTo: 'list',
     pathMatch: 'full'

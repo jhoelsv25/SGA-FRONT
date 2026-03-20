@@ -2,36 +2,49 @@ import { ListToolbarComponent } from '@/shared/widgets/list-toolbar/list-toolbar
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActionConfig, ActionContext } from '@core/types/action-types';
-import { DataSource } from '@shared/widgets/data-source/data-source';
 import { AssessmentStore } from '../../services/store/assessment.store';
-import { ASSESSMENT_COLUMNS } from '../../config/column.config';
-import { ASSESSMENT_ACTIONS } from '../../config/action.config';
 import { AssessmentFiltersService } from '../../services/assessment-filters.service';
+import { AssessmentCardComponent } from '../../components/assessment-card/assessment-card';
+import { Router } from '@angular/router';
+import type { Assessment } from '../../types/assessment-types';
+import { ZardEmptyComponent } from '@/shared/components/empty';
+import { ZardSkeletonComponent } from '@/shared/components/skeleton';
 
 @Component({
   selector: 'sga-assessments',
   standalone: true,
-  imports: [CommonModule, ListToolbarComponent, DataSource, ZardButtonComponent],
+  imports: [CommonModule, ListToolbarComponent, ZardButtonComponent, AssessmentCardComponent, ZardEmptyComponent, ZardSkeletonComponent],
   templateUrl: './assessments.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class Assessments implements OnInit {
   private readonly store = inject(AssessmentStore);
   private readonly filters = inject(AssessmentFiltersService);
+  private readonly router = inject(Router);
 
-  columns = computed(() => ASSESSMENT_COLUMNS);
-  data = computed(() => this.store.assessments());
+  data = computed(() =>
+    this.store.assessments().filter((assessment) => {
+      const search = this.filters.listSearch().trim().toLowerCase();
+      if (!search) return true;
+      return [
+        assessment.name,
+        assessment.status,
+        assessment.type,
+        assessment.period?.name,
+        assessment.sectionCourse?.course?.name,
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase()
+        .includes(search);
+    }),
+  );
   loading = computed(() => this.store.loading());
-  pagination = computed(() => ({
-    page: 1,
-    size: 50,
-    total: this.store.assessments().length
-  }));
-
-  rowActions = computed(() => ASSESSMENT_ACTIONS.filter((a) => a.typeAction === 'row'));
   totalAssessments = computed(() => this.data().length);
   hasListSearch = computed(() => Boolean(this.filters.listSearch()));
+  completedCount = computed(() => this.data().filter((item) => item.status === 'completed').length);
+  pendingCount = computed(() => this.data().filter((item) => item.status === 'pending').length);
+  reviewedCount = computed(() => this.data().filter((item) => item.status === 'reviewed').length);
 
   ngOnInit() {
     this.store.loadAll({ search: this.filters.listSearch() });
@@ -51,22 +64,25 @@ export default class Assessments implements OnInit {
     this.store.loadAll({});
   }
 
-  onHeaderAction(e: { action: ActionConfig; context: ActionContext }) {
-    if (e.action.key === 'refresh') {
-      this.onRefresh();
-    }
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onRowAction(e: { action: ActionConfig; context: ActionContext }) {
-    // TODO: implementar acciones
-  }
-
-  onPageChange(p: { page: number; size: number }) {
-    this.store.loadAll({ page: p.page, size: p.size });
-  }
-
   onRefresh() {
     this.store.loadAll({ search: this.filters.listSearch() });
+  }
+
+  viewDetail(assessment: Assessment): void {
+    this.router.navigate(['/assessments', assessment.id], {
+      state: { assessment },
+    });
+  }
+
+  viewScores(assessment: Assessment): void {
+    this.router.navigate(['/assessments/scores'], {
+      queryParams: { sectionCourse: assessment.sectionCourse.id },
+    });
+  }
+
+  viewGrades(assessment: Assessment): void {
+    this.router.navigate(['/assessments/grades'], {
+      queryParams: { assessmentId: assessment.id },
+    });
   }
 }

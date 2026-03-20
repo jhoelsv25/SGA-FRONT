@@ -1,31 +1,36 @@
-import { ListToolbarComponent } from '@/shared/widgets/list-toolbar/list-toolbar';
-import { ZardButtonComponent } from '@/shared/components/button';
 import { ChangeDetectionStrategy, Component, inject, OnInit, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-import { DataSource, SgaTemplate } from '@shared/widgets/data-source/data-source';
+import { HeaderDetail } from '@shared/widgets/header-detail/header-detail';
+import { ZardInputDirective } from '@/shared/components/input';
+import { ZardEmptyComponent } from '@/shared/components/empty';
+import { ZardSkeletonComponent } from '@/shared/components/skeleton';
 import { AttendanceStore } from '../../../attendances/services/store/attendance.store';
-import { DataSourceColumn } from '@core/types/data-source-types';
 import { UiFiltersService } from '@core/services/ui-filters.service';
+import { AttendanceReportCardComponent } from '../../components/attendance-report-card/attendance-report-card';
+import { HeaderConfig } from '@core/types/header-types';
+import { ActionConfig } from '@core/types/action-types';
 
 
 @Component({
   selector: 'sga-attendance-reports',
   standalone: true,
-  imports: [CommonModule, ListToolbarComponent, DataSource, SgaTemplate, ZardButtonComponent],
+  imports: [CommonModule, HeaderDetail, ZardInputDirective, ZardEmptyComponent, ZardSkeletonComponent, AttendanceReportCardComponent],
   templateUrl: './attendance-reports.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class AttendanceReportsPage implements OnInit {
   public readonly store = inject(AttendanceStore);
   private readonly filters = inject(UiFiltersService);
-  private readonly searchTerm = signal('');
-
-  columns: DataSourceColumn[] = [
-    { key: 'date', label: 'Fecha', sortable: true, type: 'date' },
-    { key: 'studentName', label: 'Estudiante', sortable: true },
-    { key: 'status', label: 'Estado', sortable: true, type: 'custom', customTemplate: 'statusTemplate' },
-    { key: 'sessionType', label: 'Sesión' }];
+  readonly searchTerm = signal('');
+  readonly headerConfig = signal<HeaderConfig>({
+    title: 'Reportes de Asistencia',
+    subtitle: 'Historial operativo y seguimiento de asistencia estudiantil',
+    showActions: true,
+    showFilters: false,
+  });
+  readonly headerActions = signal<ActionConfig[]>([
+    { key: 'refresh', label: 'Actualizar', icon: 'fas fa-sync-alt', typeAction: 'header', color: 'primary' },
+  ]);
 
   data = computed(() => {
     const term = this.searchTerm().trim().toLowerCase();
@@ -41,10 +46,18 @@ export default class AttendanceReportsPage implements OnInit {
     });
   });
   loading = computed(() => this.store.loading());
+  presentCount = computed(() => this.data().filter((row) => row.status === 'present').length);
+  lateCount = computed(() => this.data().filter((row) => row.status === 'late').length);
+  absentCount = computed(() => this.data().filter((row) => row.status === 'absent').length);
+  excusedCount = computed(() => this.data().filter((row) => row.status === 'excused').length);
 
   ngOnInit(): void {
     this.searchTerm.set(this.filters.attendanceReportsSearch());
     this.onRefresh();
+  }
+
+  onHeaderAction(event: { action: { key: string } }): void {
+    if (event.action.key === 'refresh') this.onRefresh();
   }
 
   onRefresh() {

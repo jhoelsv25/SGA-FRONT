@@ -8,6 +8,12 @@ export default [
     data: { permissions: ['manage_payment'] },
   },
   {
+    path: ':id',
+    loadComponent: () => import('./pages/payment-detail/payment-detail'),
+    title: 'Detalle de Pago',
+    data: { permissions: ['view_payment', 'manage_payment'] },
+  },
+  {
     path: 'pending',
     loadComponent: () => import('./pages/payments/payments'), // Placeholder
     title: 'Pendientes',

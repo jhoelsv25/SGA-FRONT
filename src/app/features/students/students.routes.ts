@@ -14,6 +14,12 @@ export default [
     data: { permissions: ['view_enrollment', 'manage_enrollment'] },
   },
   {
+    path: 'enrollments/:id',
+    loadComponent: () => import('../enrollments/pages/enrollment-detail/enrollment-detail').then((m) => m.default),
+    title: 'Detalle de Matrícula',
+    data: { permissions: ['view_enrollment', 'manage_enrollment'] },
+  },
+  {
     path: 'guardians',
     loadComponent: () => import('./pages/guardians/guardians').then((m) => m.default),
     title: 'Apoderados',

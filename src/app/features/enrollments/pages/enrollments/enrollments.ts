@@ -1,7 +1,6 @@
 import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
-import { DataSource } from '@shared/widgets/data-source/data-source';
 import { HeaderDetail } from '@shared/widgets/header-detail/header-detail';
 import { EnrollmentStore } from '../../services/store/enrollment.store';
 import { Enrollment } from '../../types/enrollment-types';
@@ -17,11 +16,14 @@ import { ZardInputDirective } from '@/shared/components/input';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { SelectOptionComponent } from '@/shared/widgets/select-option/select-option';
 import { ZardFormImports } from '@/shared/components/form';
+import { EnrollmentCardComponent } from '../../components/enrollment-card/enrollment-card';
+import { ZardEmptyComponent } from '@/shared/components/empty';
+import { ZardSkeletonComponent } from '@/shared/components/skeleton';
 
 @Component({
   selector: 'sga-enrollments',
   standalone: true,
-  imports: [HeaderDetail, DataSource, FormsModule, ZardInputDirective, ZardButtonComponent, SelectOptionComponent, ...ZardFormImports],
+  imports: [HeaderDetail, FormsModule, ZardInputDirective, ZardButtonComponent, SelectOptionComponent, EnrollmentCardComponent, ZardEmptyComponent, ZardSkeletonComponent, ...ZardFormImports],
   templateUrl: './enrollments.html',
   styleUrl: './enrollments.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -41,9 +43,10 @@ export default class Enrollments {
   
   public statuses = [
     { value: '', label: 'Todos' },
-    { value: 'active', label: 'Activo' },
-    { value: 'inactive', label: 'Inactivo' },
-    { value: 'graduated', label: 'Graduado' }
+    { value: 'enrolled', label: 'Matriculado' },
+    { value: 'completed', label: 'Completado' },
+    { value: 'dropped', label: 'Retirado' },
+    { value: 'graduated', label: 'Egresado' }
   ];
 
   constructor() {
@@ -58,28 +61,32 @@ export default class Enrollments {
     });
   }
   headerConfig = computed(() => this.store.headerConfig());
-  columns = computed(() => this.store.columns());
-  /** Lista completa para búsqueda y paginación en DataSource. */
-  data = computed(() =>
+  readonly enrollmentCards = computed(() =>
     this.store.enrollments()
       .filter((e) => !this.studentContextId() || e.student?.id === this.studentContextId())
-      .map((e) => ({
-      id: e.id,
-      enrollment: e,
-      studentName: `${e.student?.firstName ?? ''} ${e.student?.lastName ?? ''}`.trim() || (e.student?.studentCode ?? ''),
-      sectionName: e.section?.name ?? '',
-      enrollmentType: e.enrollmentType,
-      status: e.status,
-      enrollmentDate: e.enrollmentDate,
-    })),
+      .filter((e) => {
+        const search = this.filterSearch().trim().toLowerCase();
+        if (!search) return true;
+        const candidate = [
+          e.student?.firstName,
+          e.student?.lastName,
+          e.student?.studentCode,
+          e.section?.name,
+          e.academicYear?.year,
+        ]
+          .filter(Boolean)
+          .join(' ')
+          .toLowerCase();
+        return candidate.includes(search);
+      })
+      .filter((e) => !this.filterStatus() || e.status === this.filterStatus()),
   );
   loading = computed(() => this.store.loading());
-  pagination = computed(() => ({
-    ...this.store.pagination(),
-    total: this.store.enrollments().length,
-  }));
   headerActions = computed(() => this.store.actions().filter((a) => a.typeAction === 'header'));
-  rowActions = computed(() => this.store.actions().filter((a) => a.typeAction === 'row'));
+  readonly enrolledCount = computed(() => this.enrollmentCards().filter((item) => item.status === 'enrolled').length);
+  readonly completedCount = computed(() => this.enrollmentCards().filter((item) => item.status === 'completed').length);
+  readonly droppedCount = computed(() => this.enrollmentCards().filter((item) => item.status === 'dropped').length);
+  readonly graduatedCount = computed(() => this.enrollmentCards().filter((item) => item.status === 'graduated').length);
 
   onHeaderAction(e: { action: ActionConfig; context: ActionContext }) {
     if (e.action.key === 'create') this.openForm();
@@ -108,21 +115,25 @@ export default class Enrollments {
     });
   }
 
-  onRowAction(e: { action: ActionConfig; context: ActionContext<unknown> }) {
-    const row = e.context.row as { id: string; enrollment: Enrollment };
-    if (e.action.key === 'edit') this.openForm(row.enrollment);
-    if (e.action.key === 'delete') this.store.delete(row.id);
+  viewDetail(enrollment: Enrollment) {
+    this.router.navigate(['/students/enrollments', enrollment.id], {
+      state: { enrollment },
+    });
   }
 
-  onPageChange(p: { page: number; size: number }) {
-    this.store.setPagination(p.page, p.size);
+  editEnrollment(enrollment: Enrollment) {
+    this.openForm(enrollment);
+  }
+
+  deleteEnrollment(enrollment: Enrollment) {
+    this.store.delete(enrollment.id);
   }
 
   private openForm(current?: Enrollment | null) {
     this.dialog.open(EnrollmentForm, {
       data: { current: current ?? null },
-      panelClass: 'dialog-top',
       width: '520px',
+      maxHeight: '80vh',
     });
   }
 }

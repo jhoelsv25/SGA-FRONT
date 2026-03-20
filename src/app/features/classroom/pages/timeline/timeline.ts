@@ -1,8 +1,4 @@
-import { ZardButtonComponent } from '@/shared/components/button';
-import { ZardInputDirective } from '@/shared/components/input';
-import { ZardCardComponent } from '@/shared/components/card';
-import { ZardSkeletonComponent } from '@/shared/components/skeleton';
-import { ChangeDetectionStrategy, Component, computed, inject, signal, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthFacade } from '@auth/services/store/auth.acede';
@@ -12,7 +8,7 @@ import { ClassroomStore } from '../../services/store/classroom.store';
 @Component({
   selector: 'sga-classroom-timeline',
   standalone: true,
-  imports: [CommonModule, FormsModule, ZardButtonComponent, ZardInputDirective, ZardCardComponent, ZardSkeletonComponent],
+  imports: [CommonModule, FormsModule],
   templateUrl: './timeline.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -28,6 +24,10 @@ export default class Timeline {
     const type = this.profileType();
     return type === 'teacher' || type === 'admin' || type === 'director';
   });
+  readonly totalPosts = computed(() => this.store.feed().length);
+  readonly assignmentCount = computed(() => this.store.feed().filter((item) => item.type === 'assignment').length);
+  readonly materialCount = computed(() => this.store.feed().filter((item) => item.type === 'material').length);
+  readonly postCount = computed(() => this.store.feed().filter((item) => item.type === 'post').length);
 
   onFileSelected(event: Event) {
     if (!this.canPublish()) return;

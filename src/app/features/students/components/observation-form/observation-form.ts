@@ -1,6 +1,7 @@
 export type LocalSelectOption = { value: string | number; label: string; [key: string]: any };
 import { ObservationApi } from '../../services/api/observation-api';
 import { StudentApi } from '../../services/api/student-api';
+import { TeacherApi } from '@/features/teachers/services/api/teacher-api';
 import { StudentObservation } from '../../types/observation-types';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
 import { FormsModule, ReactiveFormsModule, Validators, FormBuilder } from '@angular/forms';
@@ -23,6 +24,7 @@ export class ObservationForm implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(ObservationApi);
   private studentApi = inject(StudentApi);
+  private teacherApi = inject(TeacherApi);
 
   form = this.fb.group({
     student: [null as string | null, [Validators.required]],
@@ -37,6 +39,15 @@ export class ObservationForm implements OnInit {
 
   current: StudentObservation | null = null;
   studentOptions: LocalSelectOption[] = [];
+  teacherOptions: LocalSelectOption[] = [];
+  studentPage = 1;
+  readonly studentPageSize = 30;
+  studentHasMore = true;
+  studentLoadingMore = false;
+  teacherPage = 1;
+  readonly teacherPageSize = 30;
+  teacherHasMore = true;
+  teacherLoadingMore = false;
 
   typeOptions: LocalSelectOption[] = [
     { value: 'behavioral', label: 'Conducta' },
@@ -59,20 +70,62 @@ export class ObservationForm implements OnInit {
       });
     }
 
-    this.studentApi.getAll({}).subscribe({
+    this.loadStudents();
+    this.loadTeachers();
+  }
+
+  loadStudents(): void {
+    if (!this.studentHasMore || this.studentLoadingMore) return;
+    this.studentLoadingMore = true;
+    this.studentApi.getAll({ page: this.studentPage, size: this.studentPageSize }).subscribe({
       next: (res) => {
-        this.studentOptions = (res.data ?? []).map((s) => {
-          const p = (s as {  person?: { firstName?: string; lastName?: string  } }).person;
+        const newOptions = (res.data ?? []).map((s) => {
+          const p = (s as { person?: { firstName?: string; lastName?: string } }).person;
           const label =
-            (s as {  name?: string  }).name ??
+            (s as { name?: string }).name ??
             (p ? `${p.firstName ?? ''} ${p.lastName ?? ''}`.trim() : null) ??
-            (s as {  studentCode?: string  }).studentCode ??
+            (s as { studentCode?: string }).studentCode ??
             s.id;
           return { value: s.id, label: label || s.id };
         });
+        this.studentOptions = [...this.studentOptions, ...newOptions];
+        const loaded = this.studentOptions.length;
+        const total = res.total ?? loaded;
+        this.studentHasMore = loaded < total;
+        this.studentPage += 1;
+        this.studentLoadingMore = false;
+      },
+      error: () => {
+        this.studentLoadingMore = false;
       },
     });
+  }
 
+  loadTeachers(): void {
+    if (!this.teacherHasMore || this.teacherLoadingMore) return;
+    this.teacherLoadingMore = true;
+    this.teacherApi.getAll({ page: this.teacherPage, size: this.teacherPageSize }).subscribe({
+      next: (res) => {
+        const newOptions = (res.data ?? []).map((teacher) => {
+          const person = typeof teacher.person === 'string' ? null : teacher.person;
+          const label =
+            `${person?.firstName ?? ''} ${person?.lastName ?? ''}`.trim() ||
+            person?.email ||
+            teacher.teacherCode ||
+            teacher.id;
+          return { value: teacher.id, label };
+        });
+        this.teacherOptions = [...this.teacherOptions, ...newOptions];
+        const loaded = this.teacherOptions.length;
+        const total = res.total ?? loaded;
+        this.teacherHasMore = loaded < total;
+        this.teacherPage += 1;
+        this.teacherLoadingMore = false;
+      },
+      error: () => {
+        this.teacherLoadingMore = false;
+      },
+    });
   }
 
   submit(): void {

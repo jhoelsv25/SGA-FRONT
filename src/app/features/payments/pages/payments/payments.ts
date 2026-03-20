@@ -4,27 +4,28 @@ import { ZardButtonComponent } from '@/shared/components/button';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActionConfig, ActionContext } from '@core/types/action-types';
-import { DataSource } from '@shared/widgets/data-source/data-source';
-
 import { PaymentStore } from '../../services/store/payment.store';
 import { Payment } from '../../types/payment-types';
 import { PaymentForm } from '../../components/payment-form/payment-form';
 import { UiFiltersService } from '@core/services/ui-filters.service';
+import { PaymentCardComponent } from '../../components/payment-card/payment-card';
+import { Router } from '@angular/router';
+import { ZardEmptyComponent } from '@/shared/components/empty';
+import { ZardSkeletonComponent } from '@/shared/components/skeleton';
 
 
 @Component({
   selector: 'sga-payments',
-  imports: [CommonModule, SelectOptionComponent, DataSource, ZardButtonComponent, ListToolbarComponent],
+  imports: [CommonModule, SelectOptionComponent, ZardButtonComponent, ListToolbarComponent, PaymentCardComponent, ZardEmptyComponent, ZardSkeletonComponent],
   templateUrl: './payments.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class PaymentsPage {
   private dialog = inject(DialogModalService);
   private store = inject(PaymentStore);
+  private router = inject(Router);
   public readonly filters = inject(UiFiltersService);
 
-  columns = computed(() => this.store.columns());
   data = computed(() => {
     const search = this.filters.paymentSearch().toLowerCase();
     const status = this.filters.paymentStatus();
@@ -40,12 +41,11 @@ export default class PaymentsPage {
     });
   });
   loading = computed(() => this.store.loading());
-  pagination = computed(() => ({
-    ...this.store.pagination(),
-    total: this.data().length,
-  }));
-  rowActions = computed(() => this.store.actions().filter((a) => a.typeAction === 'row'));
   activeFiltersCount = computed(() => [this.filters.paymentSearch(), this.filters.paymentStatus()].filter(Boolean).length);
+  pendingCount = computed(() => this.data().filter((item) => item.status === 'pending').length);
+  paidCount = computed(() => this.data().filter((item) => item.status === 'paid').length);
+  overdueCount = computed(() => this.data().filter((item) => item.status === 'overdue').length);
+  totalAmount = computed(() => this.data().reduce((sum, item) => sum + Number(item.amount || 0), 0));
 
   statusOptions = computed<SelectOption[]>(() => [
     { value: '', label: 'Todos' },
@@ -63,21 +63,6 @@ export default class PaymentsPage {
     this.filters.setPaymentStatus(String(value ?? ''));
   }
 
-  onHeaderAction(e: { action: ActionConfig; context: ActionContext }) {
-    if (e.action.key === 'create') this.openForm();
-    if (e.action.key === 'refresh') this.store.loadAll();
-  }
-
-  onRowAction(e: { action: ActionConfig; context: ActionContext<unknown> }) {
-    const row = e.context.row as Payment;
-    if (e.action.key === 'edit') this.openForm(row);
-    if (e.action.key === 'delete') this.store.delete(row.id);
-  }
-
-  onPageChange(p: { page: number; size: number }) {
-    this.store.setPagination(p.page, p.size);
-  }
-
   onRefresh(): void {
     this.store.loadAll();
   }
@@ -90,11 +75,25 @@ export default class PaymentsPage {
     this.openForm();
   }
 
+  viewDetail(payment: Payment): void {
+    this.router.navigate(['/payments', payment.id], {
+      state: { payment },
+    });
+  }
+
+  editPayment(payment: Payment): void {
+    this.openForm(payment);
+  }
+
+  deletePayment(payment: Payment): void {
+    this.store.delete(payment.id);
+  }
+
   private openForm(current?: Payment | null) {
     this.dialog.open(PaymentForm, {
       data: { current: current ?? null },
-      panelClass: 'dialog-top',
       width: '480px',
+      maxHeight: '80vh',
     });
   }
 }

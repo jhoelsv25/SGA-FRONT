@@ -48,6 +48,10 @@ export class SectionCourseForm implements OnInit {
   courseOptions = signal<SelectOption[]>([]);
   academicYearOptions = signal<SelectOption[]>([]);
   teacherOptions = signal<SelectOption[]>([]);
+  teacherPage = 1;
+  readonly teacherPageSize = 30;
+  teacherHasMore = signal(true);
+  teacherLoadingMore = signal(false);
 
   title = computed(() => (this.current ? 'Editar asignación' : 'Asignar curso a sección'));
   subTitle = computed(() => 'Complete el formulario para continuar');
@@ -78,6 +82,7 @@ export class SectionCourseForm implements OnInit {
       });
     }
     this.loadOptions();
+    this.loadMoreTeachers();
     this.cdr.markForCheck();
   }
 
@@ -86,9 +91,8 @@ export class SectionCourseForm implements OnInit {
       sections: this.sectionApi.getAll({}),
       courses: this.courseApi.getAll({}),
       years: this.yearAcademicApi.getAll({}),
-      teachers: this.teacherApi.getAll({ page: 1, size: 9999 }),
     }).subscribe({
-      next: ({ sections, courses, years, teachers }) => {
+      next: ({ sections, courses, years }) => {
         this.sectionOptions.set((sections.data ?? []).map((item: Section) => ({
           value: item.id,
           label: item.name ? `Sección ${item.name}` : item.id,
@@ -101,10 +105,29 @@ export class SectionCourseForm implements OnInit {
           value: item.id,
           label: item.name,
         })));
-        this.teacherOptions.set((teachers.data ?? []).map((item: Teacher) => ({
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  loadMoreTeachers() {
+    if (!this.teacherHasMore() || this.teacherLoadingMore()) return;
+    this.teacherLoadingMore.set(true);
+    this.teacherApi.getAll({ page: this.teacherPage, size: this.teacherPageSize }).subscribe({
+      next: (teachers) => {
+        const options = (teachers.data ?? []).map((item: Teacher) => ({
           value: item.id,
           label: this.getTeacherOptionLabel(item),
-        })));
+        }));
+        this.teacherOptions.update((current) => [...current, ...options]);
+        const loaded = this.teacherOptions().length;
+        this.teacherHasMore.set(loaded < (teachers.total ?? loaded));
+        this.teacherPage += 1;
+        this.teacherLoadingMore.set(false);
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.teacherLoadingMore.set(false);
         this.cdr.markForCheck();
       },
     });

@@ -32,6 +32,9 @@ export class ScheduleForm implements OnInit {
   selectedSectionCourseLabel = signal<string | null>(null);
   sectionCourseOptions = signal<SelectOption[]>([]);
   loadingSectionCourses = signal(false);
+  sectionCoursePage = 1;
+  readonly sectionCoursePageSize = 30;
+  sectionCourseHasMore = signal(true);
   durationPreview = signal('');
 
   dayOptions = [
@@ -76,7 +79,7 @@ export class ScheduleForm implements OnInit {
     });
 
     this.bindTimeCalculation();
-    this.loadSectionCourses();
+    this.loadSectionCourses(true);
     this.durationPreview.set(this.formatTimeDisplay(end));
 
     if (this.preselectedSectionCourse) {
@@ -89,17 +92,26 @@ export class ScheduleForm implements OnInit {
     this.selectedSectionCourseLabel.set(typed?.label ?? null);
   }
 
-  private loadSectionCourses() {
+  loadSectionCourses(reset = false) {
+    if (reset) {
+      this.sectionCoursePage = 1;
+      this.sectionCourseHasMore.set(true);
+      this.sectionCourseOptions.set([]);
+    }
+    if (!this.sectionCourseHasMore() || this.loadingSectionCourses()) return;
     this.loadingSectionCourses.set(true);
-    this.sectionCourseApi.getAll({}).subscribe({
+    this.sectionCourseApi.getAll({ page: this.sectionCoursePage, size: this.sectionCoursePageSize }).subscribe({
       next: (response: DataResponse<SectionCourse>) => {
         const options = (response.data ?? []).map((item: SectionCourse) => this.toSectionCourseOption(item));
-        this.sectionCourseOptions.set(options);
+        this.sectionCourseOptions.update((current) => [...current, ...options]);
+        const loaded = this.sectionCourseOptions().length;
+        this.sectionCourseHasMore.set(loaded < (response.total ?? loaded));
+        this.sectionCoursePage += 1;
         this.loadingSectionCourses.set(false);
 
         const currentId = this.form.get('sectionCourse')?.value;
         if (currentId) {
-          const currentOption = options.find((option: SelectOption) => option.value === currentId);
+          const currentOption = this.sectionCourseOptions().find((option: SelectOption) => option.value === currentId);
           if (currentOption) {
             this.selectedSectionCourseLabel.set(currentOption.label);
           }

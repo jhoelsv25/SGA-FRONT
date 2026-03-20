@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -28,6 +28,7 @@ export default class Tasks implements OnInit {
   public reviewingSubmissionId = signal<string | null>(null);
   public submissionDrafts = signal<Record<string, { submissionText: string; linkUrl: string; fileUrl: string; fileName: string }>>({});
   public reviewDrafts = signal<Record<string, { score: string; feedback: string }>>({});
+  public search = signal('');
   readonly profileType = computed(() => this.authFacade.getCurrentUser()?.profile?.type ?? 'user');
   readonly canSubmitTask = computed(() => this.profileType() === 'student');
   readonly canInspectStudentSubmissions = computed(() => {
@@ -44,6 +45,18 @@ export default class Tasks implements OnInit {
     if (type === 'guardian') return 'Tareas visibles para los estudiantes vinculados.';
     return 'Vista general de tareas publicadas en el aula.';
   });
+  readonly filteredTasks = computed(() => {
+    const term = this.search().trim().toLowerCase();
+    if (!term) return this.tasks();
+    return this.tasks().filter((task) =>
+      task.title.toLowerCase().includes(term) ||
+      this.statusLabel(task.status).toLowerCase().includes(term)
+    );
+  });
+  readonly pendingCount = computed(() => this.filteredTasks().filter((task) => task.status === 'pending').length);
+  readonly deliveredCount = computed(() => this.filteredTasks().filter((task) => task.status === 'delivered').length);
+  readonly gradedCount = computed(() => this.filteredTasks().filter((task) => task.status === 'graded').length);
+  readonly lateCount = computed(() => this.filteredTasks().filter((task) => task.status === 'late').length);
 
   statusLabel(status: ClassroomTask['status']) {
     if (status === 'graded') return 'Calificado';
@@ -72,6 +85,10 @@ export default class Tasks implements OnInit {
       next: (list) => this.tasks.set(Array.isArray(list) ? list : []),
       error: () => this.tasks.set([]),
     });
+  }
+
+  clearSearch() {
+    this.search.set('');
   }
 
   getSubmissionDraft(taskId: string) {

@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { AuthFacade } from '@auth/services/store/auth.acede';
 import { ClassroomStore } from '../../services/store/classroom.store';
@@ -9,7 +10,7 @@ import { ClassroomApi, type ClassroomStudentRow, type ClassroomTeacherRow } from
 @Component({
   selector: 'sga-classroom-people',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './people.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -24,6 +25,27 @@ export default class People implements OnInit {
   loadingTeachers = signal(true);
   loadingStudents = signal(true);
   profileType = signal(this.authFacade.getCurrentUser()?.profile?.type ?? 'user');
+  search = signal('');
+  filteredTeachers = computed(() => {
+    const term = this.search().trim().toLowerCase();
+    if (!term) return this.teachers();
+    return this.teachers().filter((teacher) =>
+      `${teacher.firstName} ${teacher.lastName}`.toLowerCase().includes(term) ||
+      (teacher.email ?? '').toLowerCase().includes(term)
+    );
+  });
+  filteredStudents = computed(() => {
+    const term = this.search().trim().toLowerCase();
+    if (!term) return this.students();
+    return this.students().filter((student) =>
+      student.name.toLowerCase().includes(term) ||
+      (student.code ?? '').toLowerCase().includes(term)
+    );
+  });
+
+  clearSearch(): void {
+    this.search.set('');
+  }
 
   ngOnInit(): void {
     const sectionCourseId =

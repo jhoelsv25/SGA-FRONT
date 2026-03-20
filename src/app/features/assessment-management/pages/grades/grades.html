@@ -58,10 +58,33 @@
     }
     @if (localScores().length > 0) {
       <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-success/10 text-success border border-success/20">
-        {{ localScores().length }} estudiantes cargados
+        {{ visibleScores().length }} estudiantes cargados
       </span>
     }
   </div>
+
+  @if (enrollmentContextId()) {
+    <div class="rounded-4xl border border-primary/15 bg-primary/8 px-5 py-4 text-sm text-primary dark:bg-primary/10">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="space-y-1">
+          <p class="text-[10px] font-black uppercase tracking-[0.24em] text-primary/70">Contexto de matrícula</p>
+          <p class="font-semibold">
+            Mostrando notas de
+            <span class="font-black">{{ studentContextName() || 'estudiante seleccionado' }}</span>
+          </p>
+        </div>
+        <button
+          z-button
+          zType="outline"
+          type="button"
+          class="h-9 rounded-[var(--radius-xl)] px-4 text-[10px] font-black uppercase tracking-[0.18em]"
+          (click)="clearEnrollmentContext()"
+        >
+          Ver todas
+        </button>
+      </div>
+    </div>
+  }
 
   <div class="bg-base-100 rounded-3xl shadow-sm border border-base-200 overflow-hidden">
     @if (!selectedAssessmentId()) {
@@ -82,7 +105,7 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-base-100">
-            @for (score of localScores(); track score.enrollmentId) {
+            @for (score of visibleScores(); track score.enrollmentId) {
               <tr class="hover:bg-base-200/30 transition-colors group">
                 <td class="px-6 py-4">
                   <span class="text-sm font-semibold text-base-content/80">{{ score.studentName }}</span>

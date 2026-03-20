@@ -35,6 +35,9 @@
       <z-select-option
         id="teacher"
         [options]="teacherOptions()"
+        [canLoadMore]="teacherHasMore()"
+        [loadingMore]="teacherLoadingMore()"
+        (loadMore)="loadMoreTeachers()"
         formControlName="teacher"
         placeholder="Seleccionar docente"></z-select-option>
     </div>

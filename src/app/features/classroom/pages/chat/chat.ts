@@ -1,6 +1,3 @@
-import { ZardButtonComponent } from '@/shared/components/button';
-import { ZardInputDirective } from '@/shared/components/input';
-import { ZardBadgeComponent } from '@/shared/components/badge';
 import { ChangeDetectionStrategy, Component, inject, signal, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -12,7 +9,7 @@ import type { ChatMessage } from '../../types/classroom-types';
 @Component({
   selector: 'sga-classroom-chat',
   standalone: true,
-  imports: [CommonModule, FormsModule, ZardButtonComponent, ZardInputDirective, ZardBadgeComponent],
+  imports: [CommonModule, FormsModule],
   templateUrl: './chat.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -21,6 +18,7 @@ export default class Chat {
   public readonly authStore = inject(AuthStore);
   public newMessage = signal('');
   public sending = signal(false);
+  public isComposerFocused = signal(false);
 
   isMe(msg: ChatMessage): boolean {
     const user = this.authStore.currentUser();

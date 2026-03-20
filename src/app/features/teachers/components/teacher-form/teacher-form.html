@@ -85,6 +85,9 @@
       <z-select-option
         id="person"
         [options]="personOptions"
+        [canLoadMore]="personHasMore"
+        [loadingMore]="personLoadingMore"
+        (loadMore)="loadPersons()"
         formControlName="person"
         placeholder="Seleccione persona"
       ></z-select-option>

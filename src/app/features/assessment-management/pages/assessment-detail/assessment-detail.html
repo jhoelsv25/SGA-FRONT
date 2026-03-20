@@ -1,0 +1,148 @@
+<div class="space-y-6 p-6">
+  @if (loading()) {
+    <z-skeleton [class]="'mb-6 h-12 w-40 rounded-[var(--radius-xl)]'"></z-skeleton>
+    <z-skeleton [class]="'mb-6 h-[260px] w-full rounded-[var(--radius-xl)] border border-base-200'"></z-skeleton>
+    <z-skeleton [class]="'h-[220px] w-full rounded-[var(--radius-xl)] border border-base-200'"></z-skeleton>
+  } @else {
+    @let current = assessment();
+    @if (current) {
+      <section class="relative mt-6">
+        <button
+          z-button
+          zType="ghost"
+          zSize="icon-lg"
+          class="absolute -left-4 top-1/2 z-20 -translate-y-1/2 rounded-2xl border border-base-200 bg-base-100 shadow-xl transition-all hover:-translate-x-2 hover:bg-base-200"
+          (click)="goBack()"
+          aria-label="Volver a evaluaciones"
+        >
+          <z-icon zType="arrow-left" class="h-4 w-4 text-base-content/70" />
+        </button>
+
+        <div class="relative overflow-hidden rounded-4xl border border-base-200 bg-base-100 p-8 shadow-xl shadow-primary/5">
+          <div class="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-primary/8 blur-[55px]"></div>
+          <div class="pointer-events-none absolute -left-10 -bottom-10 h-32 w-32 rounded-full bg-secondary/8 blur-[48px]"></div>
+
+          <div class="relative z-10 flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+            <div class="flex min-w-0 items-center gap-6">
+              <div class="flex h-20 w-20 shrink-0 flex-col items-center justify-center rounded-3xl bg-primary text-primary-foreground shadow-2xl shadow-primary/30">
+                <z-icon zType="file-text" class="h-8 w-8" />
+              </div>
+
+              <div class="min-w-0">
+                <div class="flex flex-wrap items-center gap-3">
+                  <h1 class="truncate text-3xl font-black tracking-tighter text-base-content">
+                    {{ current.name }}
+                  </h1>
+                  <span class="rounded-lg border border-primary/20 bg-primary/10 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest text-primary">
+                    {{ statusLabel() }}
+                  </span>
+                </div>
+
+                <p class="mt-1 text-sm font-medium text-base-content/50">
+                  {{ current.sectionCourse.course.name }} · {{ current.period.name }}
+                </p>
+
+                <div class="mt-3 flex flex-wrap gap-3">
+                  <div class="flex items-center gap-2 rounded-full border border-primary/10 bg-primary/5 px-3 py-1">
+                    <z-icon zType="badge-check" class="h-3 w-3 text-primary/70" />
+                    <span class="text-[10px] font-black uppercase tracking-widest text-primary/70">
+                      {{ typeLabel() }}
+                    </span>
+                  </div>
+                  <div class="flex items-center gap-2 rounded-full border border-primary/10 bg-primary/5 px-3 py-1">
+                    <z-icon zType="calendar" class="h-3 w-3 text-primary/70" />
+                    <span class="text-[10px] font-black uppercase tracking-widest text-primary/70">
+                      {{ current.assessmentDate | date:'dd/MM/yyyy' }}
+                    </span>
+                  </div>
+                  <div class="flex items-center gap-2 rounded-full border border-primary/10 bg-primary/5 px-3 py-1">
+                    <z-icon zType="file-text" class="h-3 w-3 text-primary/70" />
+                    <span class="text-[10px] font-black uppercase tracking-widest text-primary/70">
+                      Peso {{ current.weightPercentage }}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="relative z-10 flex w-full shrink-0 items-center gap-3 lg:w-auto">
+              <button
+                z-button
+                zColor="primary"
+                class="h-14 w-full rounded-4xl px-8 text-base font-bold shadow-2xl shadow-primary/30 transition-all hover:scale-105 lg:w-auto"
+                (click)="goToScores()"
+              >
+                <z-icon zType="badge-check" class="mr-2 h-5 w-5" />
+                Ver calificaciones
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid grid-cols-1 gap-4 lg:grid-cols-4">
+        <article class="rounded-4xl border border-base-200 bg-card p-5">
+          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Curso</p>
+          <p class="mt-3 text-3xl font-black tracking-tight">{{ current.sectionCourse.course.name }}</p>
+          <p class="mt-1 text-sm text-base-content/55">Asignación evaluada</p>
+        </article>
+        <article class="rounded-4xl border border-base-200 bg-card p-5">
+          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Período</p>
+          <p class="mt-3 text-3xl font-black tracking-tight">{{ current.period.name }}</p>
+          <p class="mt-1 text-sm text-base-content/55">Tramo académico</p>
+        </article>
+        <article class="rounded-4xl border border-base-200 bg-card p-5">
+          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Registros</p>
+          <p class="mt-3 text-3xl font-black tracking-tight">{{ scores().length }}</p>
+          <p class="mt-1 text-sm text-base-content/55">Calificaciones guardadas</p>
+        </article>
+        <article class="rounded-4xl border border-base-200 bg-card p-5">
+          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Promedio</p>
+          <p class="mt-3 text-3xl font-black tracking-tight">{{ averageScore() }}</p>
+          <p class="mt-1 text-sm text-base-content/55">Resultado actual</p>
+        </article>
+      </section>
+
+      <section class="grid grid-cols-1 gap-6 xl:grid-cols-[1.2fr_0.8fr]">
+        <div class="rounded-4xl border border-base-200 bg-card p-6">
+          <div>
+            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Accesos rápidos</p>
+            <h2 class="mt-2 text-2xl font-black tracking-tight">Operación de evaluación</h2>
+          </div>
+
+          <div class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+            <button z-button zType="outline" class="h-14 justify-start rounded-4xl px-5 text-left" (click)="goToScores()">
+              <z-icon zType="badge-check" class="mr-3 h-5 w-5" />
+              <span class="text-sm font-bold">Cargar calificaciones</span>
+            </button>
+            <button z-button zType="outline" class="h-14 justify-start rounded-4xl px-5 text-left" (click)="goToGrades()">
+              <z-icon zType="file-text" class="mr-3 h-5 w-5" />
+              <span class="text-sm font-bold">Ver notas finales</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <article class="rounded-4xl border border-base-200 bg-card p-6">
+            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Descripción</p>
+            <div class="mt-4 space-y-2">
+              <p class="text-sm text-base-content/75">{{ current.description || 'Sin descripción registrada.' }}</p>
+            </div>
+          </article>
+
+          <article class="rounded-4xl border border-base-200 bg-card p-6">
+            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Escala</p>
+            <div class="mt-4 space-y-2">
+              <p class="text-lg font-black">Máximo {{ current.maxScore }}</p>
+              <p class="text-sm text-base-content/60">Tipo {{ typeLabel() }}</p>
+            </div>
+          </article>
+        </div>
+      </section>
+    } @else {
+      <div class="rounded-[var(--radius-xl)] border border-dashed border-base-300 bg-background/60 p-8">
+        <z-empty zIcon="file-text" zTitle="Evaluación no encontrada" zDescription="No se encontró la evaluación solicitada."></z-empty>
+      </div>
+    }
+  }
+</div>

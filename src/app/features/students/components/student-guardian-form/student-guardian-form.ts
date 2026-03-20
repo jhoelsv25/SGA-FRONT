@@ -35,6 +35,10 @@ export class StudentGuardianForm implements OnInit {
   current: StudentGuardian | null = null;
   studentOptions: LocalSelectOption[] = [];
   guardianOptions: LocalSelectOption[] = [];
+  studentPage = 1;
+  readonly studentPageSize = 30;
+  studentHasMore = true;
+  studentLoadingMore = false;
 
   ngOnInit(): void {
     this.current = this.data?.current ?? null;
@@ -50,19 +54,7 @@ export class StudentGuardianForm implements OnInit {
       });
     }
 
-    this.studentApi.getAll({}).subscribe({
-      next: (res) => {
-        this.studentOptions = (res.data ?? []).map((s) => {
-          const p = (s as {  person?: { firstName?: string; lastName?: string  } }).person;
-          const label =
-            (s as {  name?: string  }).name ??
-            (p ? `${p.firstName ?? ''} ${p.lastName ?? ''}`.trim() : null) ??
-            (s as {  studentCode?: string  }).studentCode ??
-            s.id;
-          return { value: s.id, label: label || s.id };
-        });
-      },
-    });
+    this.loadStudents();
 
     this.api.getAll({}).subscribe({
       next: (res) => {
@@ -73,6 +65,33 @@ export class StudentGuardianForm implements OnInit {
           const label = namePart || occ || g.id;
           return { value: g.id, label };
         });
+      },
+    });
+  }
+
+  loadStudents(): void {
+    if (!this.studentHasMore || this.studentLoadingMore) return;
+    this.studentLoadingMore = true;
+    this.studentApi.getAll({ page: this.studentPage, size: this.studentPageSize }).subscribe({
+      next: (res) => {
+        const newOptions = (res.data ?? []).map((s) => {
+          const p = (s as { person?: { firstName?: string; lastName?: string } }).person;
+          const label =
+            (s as { name?: string }).name ??
+            (p ? `${p.firstName ?? ''} ${p.lastName ?? ''}`.trim() : null) ??
+            (s as { studentCode?: string }).studentCode ??
+            s.id;
+          return { value: s.id, label: label || s.id };
+        });
+        this.studentOptions = [...this.studentOptions, ...newOptions];
+        const loaded = this.studentOptions.length;
+        const total = res.total ?? loaded;
+        this.studentHasMore = loaded < total;
+        this.studentPage += 1;
+        this.studentLoadingMore = false;
+      },
+      error: () => {
+        this.studentLoadingMore = false;
       },
     });
   }

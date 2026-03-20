@@ -1,30 +1,40 @@
-import { ListToolbarComponent } from '@/shared/widgets/list-toolbar/list-toolbar';
 import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
-import { ZardButtonComponent } from '@/shared/components/button';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActionConfig, ActionContext } from '@core/types/action-types';
-import { DataSource } from '@shared/widgets/data-source/data-source';
-
 import { BehaviorStore } from '../../services/store/behavior.store';
 import { Behavior } from '../../types/behavior-types';
 import { BehaviorForm } from '../../components/behavior-form/behavior-form';
 import { UiFiltersService } from '@core/services/ui-filters.service';
+import { HeaderDetail } from '@shared/widgets/header-detail/header-detail';
+import { ZardInputDirective } from '@/shared/components/input';
+import { BehaviorCardComponent } from '../../components/behavior-card/behavior-card';
+import { ZardEmptyComponent } from '@/shared/components/empty';
+import { ZardSkeletonComponent } from '@/shared/components/skeleton';
+import { Router } from '@angular/router';
 
 
 @Component({
   selector: 'sga-behaviors',
-  imports: [CommonModule, SelectOptionComponent, DataSource, ZardButtonComponent, ListToolbarComponent],
+  imports: [
+    CommonModule,
+    HeaderDetail,
+    SelectOptionComponent,
+    ZardInputDirective,
+    BehaviorCardComponent,
+    ZardEmptyComponent,
+    ZardSkeletonComponent,
+  ],
   templateUrl: './behaviors.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class BehaviorsPage {
   private dialog = inject(DialogModalService);
   private store = inject(BehaviorStore);
+  private router = inject(Router);
   public readonly filters = inject(UiFiltersService);
 
-  columns = computed(() => this.store.columns());
+  headerConfig = computed(() => this.store.headerConfig());
   data = computed(() => {
     const search = this.filters.behaviorSearch().toLowerCase();
     const type = this.filters.behaviorType();
@@ -42,15 +52,15 @@ export default class BehaviorsPage {
     });
   });
   loading = computed(() => this.store.loading());
-  pagination = computed(() => ({
-    ...this.store.pagination(),
-    total: this.data().length,
-  }));
-  rowActions = computed(() => this.store.actions().filter((a) => a.typeAction === 'row'));
+  headerActions = computed(() => this.store.actions().filter((a) => a.typeAction === 'header'));
   activeFiltersCount = computed(() =>
     [this.filters.behaviorSearch(), this.filters.behaviorType(), this.filters.behaviorSeverity()].filter(Boolean)
       .length
   );
+  incidentCount = computed(() => this.data().filter((item) => item.type === 'incident').length);
+  achievementCount = computed(() => this.data().filter((item) => item.type === 'achievement').length);
+  criticalCount = computed(() => this.data().filter((item) => item.severity === 'critical').length);
+  observedCount = computed(() => this.data().filter((item) => item.type === 'observation').length);
 
   typeOptions = computed<SelectOption[]>(() => [
     { value: '', label: 'Todos' },
@@ -78,19 +88,23 @@ export default class BehaviorsPage {
     this.filters.setBehaviorSeverity(String(value ?? ''));
   }
 
-  onHeaderAction(e: { action: ActionConfig; context: ActionContext }) {
+  onHeaderAction(e: { action: { key: string } }) {
     if (e.action.key === 'create') this.openForm();
     if (e.action.key === 'refresh') this.store.loadAll();
   }
 
-  onRowAction(e: { action: ActionConfig; context: ActionContext<unknown> }) {
-    const row = e.context.row as Behavior;
-    if (e.action.key === 'edit') this.openForm(row);
-    if (e.action.key === 'delete') this.store.delete(row.id);
+  viewDetail(behavior: Behavior): void {
+    this.router.navigate(['/behavior', behavior.id], {
+      state: { behavior },
+    });
   }
 
-  onPageChange(p: { page: number; size: number }) {
-    this.store.setPagination(p.page, p.size);
+  editBehavior(behavior: Behavior): void {
+    this.openForm(behavior);
+  }
+
+  deleteBehavior(behavior: Behavior): void {
+    this.store.delete(behavior.id);
   }
 
   onRefresh(): void {
@@ -108,8 +122,8 @@ export default class BehaviorsPage {
   private openForm(current?: Behavior | null) {
     this.dialog.open(BehaviorForm, {
       data: { current: current ?? null },
-      panelClass: 'dialog-top',
-      width: '480px',
+      width: '520px',
+      maxHeight: '80vh',
     });
   }
 }

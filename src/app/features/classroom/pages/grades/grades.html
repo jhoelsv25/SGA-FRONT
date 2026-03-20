@@ -1,4 +1,29 @@
 <div class="space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+  <section class="rounded-4xl border border-base-200 bg-card p-5">
+    <div class="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
+      <div class="space-y-2">
+        <label class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Buscar evaluación</label>
+        <input
+          type="text"
+          [ngModel]="search()"
+          (ngModelChange)="search.set($event)"
+          placeholder="Buscar por nombre de actividad..."
+          class="h-12 w-full rounded-[var(--radius-xl)] border border-base-300 bg-background px-4 text-sm font-medium outline-none transition-all focus:border-primary/20 focus:ring-4 focus:ring-primary/5 dark:bg-base-100"
+        />
+      </div>
+      <div class="flex items-center gap-3 lg:justify-end">
+        <button
+          type="button"
+          class="rounded-4xl border border-base-300 px-5 py-3 text-xs font-black uppercase tracking-[0.18em] text-base-content/70 transition hover:border-primary/20 hover:text-primary disabled:opacity-50"
+          [disabled]="!search().trim()"
+          (click)="clearSearch()"
+        >
+          Limpiar
+        </button>
+      </div>
+    </div>
+  </section>
+
   <section
     class="card-premium p-10 bg-gradient-to-br from-indigo-900 to-primary text-white border-none relative overflow-hidden">
     <div class="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full -mr-40 -mt-40 blur-3xl"></div>
@@ -30,7 +55,7 @@
     <div class="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin mb-4"></div>
     <p class="text-sm font-black text-base-content/40 uppercase tracking-widest">Sincronizando calificaciones...</p>
   </div>
-  } @else if (records().length === 0) {
+  } @else if (filteredRecords().length === 0) {
   <div class="py-24 card-premium bg-base-100/50 border-dashed flex flex-col items-center justify-center text-center">
     <div class="w-20 h-20 bg-base-200/50 rounded-3xl flex items-center justify-center text-base-content/10 mb-6">
       <i class="fa-solid fa-graduation-cap text-3xl"></i>
@@ -49,7 +74,7 @@
       </div>
 
       <div class="space-y-4">
-        @for (record of records(); track record.id) {
+        @for (record of filteredRecords(); track record.id) {
         <div (click)="selectRecord(record.id)"
           class="group card-premium p-6 cursor-pointer border-transparent transition-all duration-300 relative overflow-hidden"
           [ngClass]="selectedRecord().id === record.id ? 'bg-primary text-white shadow-xl shadow-primary/20 scale-[1.02]' : 'bg-white dark:bg-zinc-900 hover:border-primary/20 hover:shadow-lg'">

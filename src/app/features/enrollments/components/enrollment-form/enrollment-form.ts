@@ -36,6 +36,10 @@ export class EnrollmentForm implements OnInit {
 
   current: Enrollment | null = null;
   studentOptions: LocalSelectOption[] = [];
+  studentPage = 1;
+  readonly studentPageSize = 30;
+  studentHasMore = true;
+  studentLoadingMore = false;
 
   typeOptions: LocalSelectOption[] = [
     { value: 'new', label: 'Nuevo' },
@@ -62,12 +66,31 @@ export class EnrollmentForm implements OnInit {
       });
     }
 
-    this.studentApi.getAll({}).subscribe({
+    this.loadStudents();
+  }
+
+  loadStudents(): void {
+    if (!this.studentHasMore || this.studentLoadingMore) return;
+    this.studentLoadingMore = true;
+    this.studentApi.getAll({ page: this.studentPage, size: this.studentPageSize }).subscribe({
       next: (res) => {
-        this.studentOptions = (res.data ?? []).map((s) => ({
+        const newOptions = (res.data ?? []).map((s) => ({
           value: s.id,
-          label: (s as {  name?: string  }).name ?? (`${(s as {  firstName?: string  }).firstName ?? ''} ${(s as {  lastName?: string  }).lastName ?? ''}`.trim() || s.id),
+          label:
+            (s as { name?: string }).name ||
+            `${(s as { firstName?: string }).firstName ?? ''} ${(s as { lastName?: string }).lastName ?? ''}`.trim() ||
+            s.studentCode ||
+            s.id,
         }));
+        this.studentOptions = [...this.studentOptions, ...newOptions];
+        const loaded = this.studentOptions.length;
+        const total = res.total ?? loaded;
+        this.studentHasMore = loaded < total;
+        this.studentPage += 1;
+        this.studentLoadingMore = false;
+      },
+      error: () => {
+        this.studentLoadingMore = false;
       },
     });
   }

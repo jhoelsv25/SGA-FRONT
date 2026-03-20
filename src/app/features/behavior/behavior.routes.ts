@@ -14,6 +14,12 @@ export default [
     data: { permissions: ['view_behavior'] },
   },
   {
+    path: ':id',
+    loadComponent: () => import('./pages/behavior-detail/behavior-detail'),
+    title: 'Detalle de Conducta',
+    data: { permissions: ['view_behavior', 'manage_behavior'] },
+  },
+  {
     path: '',
     redirectTo: 'records',
     pathMatch: 'full'

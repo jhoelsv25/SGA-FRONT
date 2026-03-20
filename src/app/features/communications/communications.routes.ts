@@ -20,6 +20,12 @@ export default [
     data: { permissions: ['view_email_log'] },
   },
   {
+    path: ':id',
+    loadComponent: () => import('./pages/communication-detail/communication-detail'),
+    title: 'Detalle de Comunicación',
+    data: { permissions: ['view_announcement', 'manage_announcement', 'view_notification'] },
+  },
+  {
     path: '',
     redirectTo: 'announcements',
     pathMatch: 'full'
