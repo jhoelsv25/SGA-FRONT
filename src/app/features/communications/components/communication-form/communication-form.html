@@ -1,29 +1,74 @@
-<form [formGroup]="form" class="grid gap-4" (ngSubmit)="submit()">
-  <header class="flex items-center justify-between mb-4">
-    <h2 class="text-lg font-semibold">{{ current ? 'Editar comunicación' : 'Nueva comunicación' }}</h2>
+<form [formGroup]="form" class="flex max-h-[calc(80vh-2rem)] flex-col overflow-hidden" (ngSubmit)="submit()">
+  <header class="mb-4 flex items-center justify-between">
+    <div>
+      <h2 class="text-xl font-black tracking-tight">{{ current ? 'Editar comunicación' : 'Nueva comunicación' }}</h2>
+      <p class="mt-1 text-sm text-muted-foreground">Configura audiencia, alcance y modo de envío.</p>
+    </div>
     <button type="button" z-button zColor="secondary" zType="ghost" zShape="circle" (click)="close()">
       <i class="fas fa-times"></i>
     </button>
   </header>
-  <div class="grid gap-4">
-    <div>
+  <div class="flex-1 space-y-5 overflow-y-auto pr-1">
+    <section class="grid gap-4 rounded-4xl border border-border/60 bg-card p-5 shadow-sm">
+      <div class="grid gap-2">
+        <p class="text-xs font-black uppercase tracking-[0.24em] text-primary">Mensaje</p>
+        <p class="text-sm text-muted-foreground">Define qué se enviará y a quién.</p>
+      </div>
+      <div class="grid gap-4 md:grid-cols-2">
+        <div class="md:col-span-2">
       <label class="label-form" for="subject">Asunto</label>
       <input z-input w-full id="subject" formControlName="subject" placeholder="Asunto de la comunicación"  />
-    </div>
-    <div>
+        </div>
+        <div>
       <label class="label-form" for="type">Tipo</label>
       <z-select-option id="type" formControlName="type" [options]="typeOptions" placeholder="Tipo de comunicación"></z-select-option>
-    </div>
-    <div>
+        </div>
+        <div>
+      <label class="label-form" for="audience">Audiencia</label>
+      <z-select-option id="audience" formControlName="audience" [options]="audienceOptions" placeholder="Selecciona la audiencia"></z-select-option>
+        </div>
+        <div class="md:col-span-2">
       <label class="label-form" for="body">Mensaje</label>
-      <input z-input w-full id="body" formControlName="body" placeholder="Contenido del mensaje"  />
-    </div>
-    <div>
-      <label class="label-form" for="scheduledAt">Programar envío</label>
-      <input z-input w-full id="scheduledAt" type="date" formControlName="scheduledAt" placeholder="Fecha de envío (opcional)"  />
-    </div>
+      <textarea id="body" formControlName="body" rows="5" class="w-full rounded-[var(--radius-xl)] border border-input bg-base-100 px-4 py-3 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20" placeholder="Contenido del mensaje"></textarea>
+        </div>
+        <div class="md:col-span-2">
+      <label class="label-form" for="sectionId">Sección (opcional)</label>
+      <z-select-option id="sectionId" formControlName="sectionId" [options]="sectionOptions" placeholder="Todas las secciones"></z-select-option>
+      <p class="mt-1 text-xs text-muted-foreground">Si eliges sección, la notificación se limita a esa sección y su grado implícito.</p>
+        </div>
+      </div>
+    </section>
+    <section class="grid gap-4 rounded-4xl border border-border/60 bg-card p-5 shadow-sm">
+      <div class="grid gap-2">
+        <p class="text-xs font-black uppercase tracking-[0.24em] text-primary">Entrega</p>
+        <p class="text-sm text-muted-foreground">Elige si sale ahora o queda programado para más tarde.</p>
+      </div>
+      <div class="grid gap-4 md:grid-cols-2">
+        <div>
+          <label class="label-form" for="sendMode">Modo de envío</label>
+          <z-select-option id="sendMode" formControlName="sendMode" [options]="sendModeOptions" placeholder="Modo de envío"></z-select-option>
+        </div>
+        @if (form.get('sendMode')?.value === 'scheduled') {
+          <div>
+            <label class="label-form" for="scheduledAt">Fecha y hora programada</label>
+            <input z-input w-full id="scheduledAt" type="datetime-local" formControlName="scheduledAt" />
+            <p class="mt-1 text-xs text-muted-foreground">Se publicará automáticamente por cron cuando llegue la hora.</p>
+          </div>
+        }
+        @if (form.get('sendMode')?.value === 'scheduled') {
+          <div class="rounded-[var(--radius-xl)] border border-dashed border-primary/30 bg-primary/5 px-4 py-3 text-sm text-muted-foreground">
+            Se guardará como anuncio programado y el backend lo publicará automáticamente cuando llegue la fecha.
+          </div>
+        } @else {
+          <div>
+            <label class="label-form" for="status">Acción</label>
+            <z-select-option id="status" formControlName="status" [options]="statusOptions" placeholder="Acción del anuncio"></z-select-option>
+          </div>
+        }
+      </div>
+    </section>
   </div>
-  <footer class="flex justify-end gap-2 mt-4">
+  <footer class="mt-4 flex shrink-0 justify-end gap-2 border-t border-border/60 pt-4">
     <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">Cancelar</button>
     <button type="submit" z-button zColor="primary" [disabled]="form.invalid">Guardar</button>
   </footer>

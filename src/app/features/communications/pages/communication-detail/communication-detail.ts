@@ -49,6 +49,20 @@ export default class CommunicationDetailPage implements OnInit {
     return map[this.communication()?.type ?? ''] ?? (this.communication()?.type || 'Sin tipo');
   });
 
+  readonly audienceLabel = computed(() => {
+    const map: Record<string, string> = {
+      students: 'Estudiantes',
+      teachers: 'Docentes',
+      guardians: 'Apoderados',
+      all: 'Todos',
+    };
+    return map[this.communication()?.audience ?? ''] ?? 'Sin audiencia';
+  });
+
+  readonly deliveryLabel = computed(() =>
+    this.communication()?.status === 'scheduled' ? 'Programado' : 'Inmediato',
+  );
+
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) {

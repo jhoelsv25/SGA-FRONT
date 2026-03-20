@@ -10,6 +10,7 @@ export interface SocketMessage {
   senderId: string;
   content: string;
   senderName: string;
+  senderAvatar?: string;
   isMe: boolean;
   timestamp: string;
 }

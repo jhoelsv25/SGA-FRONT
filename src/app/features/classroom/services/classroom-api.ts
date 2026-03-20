@@ -121,6 +121,8 @@ export interface ClassroomGradeScore {
   id: string;
   studentId: string;
   studentName: string;
+  studentCode?: string;
+  studentPhotoUrl?: string;
   score: number;
   observation?: string;
 }
@@ -130,12 +132,16 @@ export interface ClassroomTeacherRow {
   firstName: string;
   lastName: string;
   email?: string;
+  photoUrl?: string;
+  role?: string;
 }
 
 export interface ClassroomStudentRow {
   id: string;
   name: string;
   code: string;
+  photoUrl?: string;
+  status?: string;
 }
 
 export interface ClassroomPeopleResponse {
@@ -146,8 +152,12 @@ export interface ClassroomPeopleResponse {
 export interface ClassroomGradeRecord {
   id: string;
   name: string;
+  description?: string;
   date: string;
   total: number;
+  type?: string;
+  status?: string;
+  weightPercentage?: number;
   average: number;
   studentsCount: number;
   scores: ClassroomGradeScore[];

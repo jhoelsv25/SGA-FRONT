@@ -3,10 +3,12 @@ import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-opt
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardInputDirective } from '@/shared/components/input';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
-import { ChangeDetectionStrategy, Component, inject, OnInit, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommunicationStore } from '../../services/store/communication.store';
 import { Communication, CommunicationCreate } from '../../types/communication-types';
+import { SectionApi } from '@features/sections/services/api/section-api';
+import { Section } from '@features/sections/types/section-types';
 
 
 @Component({
@@ -17,33 +19,88 @@ import { Communication, CommunicationCreate } from '../../types/communication-ty
 })
 export class CommunicationForm implements OnInit {
   private store = inject(CommunicationStore);
+  private sectionApi = inject(SectionApi);
   private data = inject(Z_MODAL_DATA, { optional: true });
   private ref = inject(ZardDialogRef);
   private fb = inject(FormBuilder);
 
   form!: FormGroup;
   current: Communication | null = null;
+  sectionOptions: LocalSelectOption[] = [];
+  sendModeOptions: LocalSelectOption[] = [
+    { value: 'now', label: 'Enviar ahora' },
+    { value: 'scheduled', label: 'Programar envío' },
+  ];
 
   typeOptions: LocalSelectOption[] = [
-    { value: 'email', label: 'Email' },
-    { value: 'sms', label: 'SMS' },
-    { value: 'notification', label: 'Notificación' },
     { value: 'announcement', label: 'Anuncio' },
-    { value: 'other', label: 'Otro' }];
+  ];
+
+  audienceOptions: LocalSelectOption[] = [
+    { value: 'students', label: 'Estudiantes' },
+    { value: 'teachers', label: 'Docentes' },
+    { value: 'guardians', label: 'Apoderados' },
+    { value: 'all', label: 'Todos' },
+  ];
+
+  statusOptions: LocalSelectOption[] = [
+    { value: 'published', label: 'Publicar ahora' },
+    { value: 'draft', label: 'Guardar como borrador' },
+  ];
 
   ngOnInit() {
     this.current = this.data?.current ?? null;
+    const initialScheduledAt = this.current?.sentAt ? this.toDateTimeLocal(this.current.sentAt) : '';
+    const initialSendMode = this.current?.status === 'scheduled' || initialScheduledAt ? 'scheduled' : 'now';
     this.form = this.fb.group({
       subject: [this.current?.subject ?? '', [Validators.required]],
       body: [this.current?.body ?? ''],
-      type: [this.current?.type ?? 'notification', [Validators.required]],
-      scheduledAt: [this.current?.sentAt?.slice(0, 16) ?? ''],
+      type: [this.current?.type ?? 'announcement', [Validators.required]],
+      audience: [this.current?.audience ?? 'students', [Validators.required]],
+      status: [this.current?.status === 'draft' ? 'draft' : 'published', [Validators.required]],
+      sendMode: [initialSendMode, [Validators.required]],
+      sectionId: [this.current?.sectionId ?? ''],
+      scheduledAt: [initialScheduledAt],
+    });
+
+    this.form.get('sendMode')?.valueChanges.subscribe(mode => {
+      const statusControl = this.form.get('status');
+      const scheduledAtControl = this.form.get('scheduledAt');
+      if (mode === 'scheduled') {
+        statusControl?.setValue('published', { emitEvent: false });
+        scheduledAtControl?.addValidators([Validators.required]);
+      } else {
+        scheduledAtControl?.clearValidators();
+        scheduledAtControl?.setValue('', { emitEvent: false });
+        if (statusControl?.value !== 'draft') {
+          statusControl?.setValue('published', { emitEvent: false });
+        }
+      }
+      scheduledAtControl?.updateValueAndValidity({ emitEvent: false });
+    });
+
+    this.sectionApi.getAll().subscribe({
+      next: (res) => {
+        this.sectionOptions = (res.data ?? []).map((section: Section) => ({
+          value: section.id,
+          label: section.name,
+        }));
+      },
     });
   }
 
   submit() {
     if (this.form.invalid) return;
-    const v = this.form.value as CommunicationCreate;
+    const raw = this.form.getRawValue();
+    const v: CommunicationCreate = {
+      subject: raw.subject,
+      body: raw.body,
+      type: raw.type,
+      audience: raw.audience,
+      sectionId: raw.sectionId || null,
+      scheduledAt: raw.sendMode === 'scheduled' ? raw.scheduledAt : undefined,
+      status: raw.status,
+    };
     if (this.current?.id) {
       this.store.update(this.current.id, v);
       this.ref.close();
@@ -55,5 +112,13 @@ export class CommunicationForm implements OnInit {
 
   close() {
     this.ref.close();
+  }
+
+  private toDateTimeLocal(value: string) {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return '';
+    const offset = date.getTimezoneOffset();
+    const local = new Date(date.getTime() - offset * 60_000);
+    return local.toISOString().slice(0, 16);
   }
 }

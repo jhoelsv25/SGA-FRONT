@@ -48,6 +48,16 @@ export class CommunicationCardComponent {
     return map[this.communication().type] ?? this.communication().type;
   });
 
+  readonly audienceLabel = computed(() => {
+    const map: Record<string, string> = {
+      students: 'Estudiantes',
+      teachers: 'Docentes',
+      guardians: 'Apoderados',
+      all: 'Todos',
+    };
+    return map[this.communication().audience ?? ''] ?? 'Sin audiencia';
+  });
+
   readonly statusClass = computed(() => {
     const map: Record<string, string> = {
       draft: 'border-base-300 bg-base-200 text-base-content/70',
@@ -56,5 +66,9 @@ export class CommunicationCardComponent {
       failed: 'border-danger/30 bg-danger/10 text-danger-700 dark:text-danger',
     };
     return map[this.communication().status] ?? 'border-base-300 bg-base-200 text-base-content/70';
+  });
+
+  readonly deliveryLabel = computed(() => {
+    return this.communication().status === 'scheduled' ? 'Programado' : 'Inmediato';
   });
 }

@@ -102,12 +102,19 @@
         <div
           class="group card-premium p-5 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 bg-white dark:bg-zinc-900 border-base-200/50 dark:border-zinc-800">
           <div class="flex items-center gap-5">
-            <div
-              class="w-14 h-14 shrink-0 flex items-center justify-center rounded-2xl bg-gradient-to-tr from-primary to-indigo-500 text-white font-black text-lg shadow-lg shadow-primary/20 group-hover:rotate-6 transition-transform">
-              {{ t.firstName[0] || '' }}{{ t.lastName[0] || '' }}
-            </div>
+            @if (t.photoUrl) {
+              <img [src]="t.photoUrl" [alt]="t.firstName + ' ' + t.lastName" class="h-14 w-14 shrink-0 rounded-2xl object-cover shadow-lg shadow-primary/10" />
+            } @else {
+              <div
+                class="w-14 h-14 shrink-0 flex items-center justify-center rounded-2xl bg-gradient-to-tr from-primary to-indigo-500 text-white font-black text-lg shadow-lg shadow-primary/20 group-hover:rotate-6 transition-transform">
+                {{ t.firstName[0] || '' }}{{ t.lastName[0] || '' }}
+              </div>
+            }
             <div class="min-w-0">
               <p class="font-black text-base-content truncate pr-4 text-base">{{ t.firstName }} {{ t.lastName }}</p>
+              @if (t.role) {
+                <p class="mt-1 text-[10px] font-black uppercase tracking-widest text-primary/60">{{ t.role }}</p>
+              }
               @if (t.email) {
               <p class="text-xs font-bold text-base-content/40 truncate mt-1">{{ t.email }}</p>
               }
@@ -143,10 +150,14 @@
         <div
           class="group card-premium p-5 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 bg-white dark:bg-zinc-900 border-base-200/50 dark:border-zinc-800">
           <div class="flex items-center gap-5">
-            <div
-              class="w-14 h-14 shrink-0 flex items-center justify-center rounded-2xl bg-zinc-100 dark:bg-zinc-800 font-black text-base-content/40 text-lg border border-zinc-200/50 dark:border-zinc-700/50 group-hover:bg-primary/10 group-hover:text-primary group-hover:border-primary/20 transition-all">
-              {{ s.name[0] || '?' }}
-            </div>
+            @if (s.photoUrl) {
+              <img [src]="s.photoUrl" [alt]="s.name" class="h-14 w-14 shrink-0 rounded-2xl object-cover border border-zinc-200/50 shadow-sm dark:border-zinc-700/50" />
+            } @else {
+              <div
+                class="w-14 h-14 shrink-0 flex items-center justify-center rounded-2xl bg-zinc-100 dark:bg-zinc-800 font-black text-base-content/40 text-lg border border-zinc-200/50 dark:border-zinc-700/50 group-hover:bg-primary/10 group-hover:text-primary group-hover:border-primary/20 transition-all">
+                {{ s.name[0] || '?' }}
+              </div>
+            }
             <div class="min-w-0">
               <p class="font-black text-base-content truncate pr-4 text-base">{{ s.name }}</p>
               @if (s.code) {
@@ -154,6 +165,9 @@
                 <div class="w-1 w-1 h-1 rounded-full bg-emerald-500"></div>
                 <p class="text-[10px] font-black text-base-content/30 uppercase tracking-widest">{{ s.code }}</p>
               </div>
+              }
+              @if (s.status) {
+                <p class="mt-1 text-[10px] font-black uppercase tracking-widest text-primary/50">{{ s.status }}</p>
               }
             </div>
           </div>

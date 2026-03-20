@@ -4,11 +4,11 @@ import { HeaderDetail } from '@shared/widgets/header-detail/header-detail';
 import { ZardInputDirective } from '@/shared/components/input';
 import { ZardEmptyComponent } from '@/shared/components/empty';
 import { ZardSkeletonComponent } from '@/shared/components/skeleton';
-import { SectionCourseApi } from '@features/section-courses/services/section-course-api';
-import type { SectionCourse } from '@features/section-courses/types/section-course-types';
 import { ClassroomCourseCardComponent } from '../../components/classroom-course-card/classroom-course-card';
 import { HeaderConfig } from '@core/types/header-types';
 import { ActionConfig } from '@core/types/action-types';
+import { VirtualClassroomApi } from '../../services/virtual-classroom-api';
+import type { VirtualClassroomItem } from '../../types/virtual-classroom-types';
 
 
 @Component({
@@ -92,7 +92,7 @@ import { ActionConfig } from '@core/types/action-types';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ClassroomList implements OnInit {
-  private readonly sectionCourseApi = inject(SectionCourseApi);
+  private readonly virtualClassroomApi = inject(VirtualClassroomApi);
   readonly search = signal('');
   readonly headerConfig = signal<HeaderConfig>({
     title: 'Aulas Virtuales',
@@ -104,20 +104,23 @@ export default class ClassroomList implements OnInit {
     { key: 'refresh', label: 'Actualizar', icon: 'fas fa-sync-alt', typeAction: 'header', color: 'primary' },
   ]);
 
-  public courses = signal<SectionCourse[]>([]);
+  public courses = signal<VirtualClassroomItem[]>([]);
   public loading = signal(true);
   readonly filteredCourses = computed(() => {
     const term = this.search().trim().toLowerCase();
     if (!term) return this.courses();
     return this.courses().filter((course) => {
-      const teacher = [course.teacher?.person?.firstName, course.teacher?.person?.lastName].filter(Boolean).join(' ').toLowerCase();
-      const courseName = course.course?.name?.toLowerCase() ?? '';
-      const sectionName = course.section?.name?.toLowerCase() ?? '';
+      const teacher = [
+        course.sectionCourse?.teacher?.person?.firstName,
+        course.sectionCourse?.teacher?.person?.lastName,
+      ].filter(Boolean).join(' ').toLowerCase();
+      const courseName = course.sectionCourse?.course?.name?.toLowerCase() ?? '';
+      const sectionName = course.sectionCourse?.section?.name?.toLowerCase() ?? '';
       return courseName.includes(term) || sectionName.includes(term) || teacher.includes(term);
     });
   });
-  readonly teacherCount = computed(() => this.filteredCourses().filter((course) => !!course.teacher?.id).length);
-  readonly enrolledCount = computed(() => this.filteredCourses().reduce((sum, course) => sum + (course.enrolledStudents || 0), 0));
+  readonly teacherCount = computed(() => this.filteredCourses().filter((course) => !!course.sectionCourse?.teacher?.id).length);
+  readonly enrolledCount = computed(() => this.filteredCourses().reduce((sum, course) => sum + (course.sectionCourse?.enrolledStudents || 0), 0));
   readonly activeCount = computed(() => this.filteredCourses().filter((course) => (course.status || '').toLowerCase() !== 'inactive').length);
 
   onHeaderAction(event: { action: { key: string } }): void {
@@ -132,7 +135,7 @@ export default class ClassroomList implements OnInit {
 
   private loadCourses(): void {
     this.loading.set(true);
-    this.sectionCourseApi.getAll().subscribe({
+    this.virtualClassroomApi.getAll({ page: 1, size: 100 }).subscribe({
       next: (res) => {
         this.courses.set(res?.data ?? []);
         this.loading.set(false);

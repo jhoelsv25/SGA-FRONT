@@ -91,6 +91,11 @@
                   [ngClass]="selectedRecord().id === record.id ? 'text-white/60' : 'text-base-content/40'">
                   {{ record.date | date:'mediumDate' }}
                 </p>
+                @if (record.type) {
+                  <p class="mt-2 text-[10px] font-black uppercase tracking-widest" [ngClass]="selectedRecord().id === record.id ? 'text-white/50' : 'text-primary/60'">
+                    {{ record.type }}
+                  </p>
+                }
               </div>
               <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-xs font-black"
                 [ngClass]="selectedRecord().id === record.id ? 'bg-white/20 text-white' : 'bg-base-200 text-base-content/40'">
@@ -130,12 +135,19 @@
               <h3 class="text-3xl font-black text-base-content tracking-tighter">{{ record.name }}</h3>
               <p class="text-sm text-base-content/50 font-medium">{{ record.studentsCount }} estudiantes registrados con
                 puntajes de hasta {{ record.total }} puntos.</p>
+              @if (record.description) {
+                <p class="max-w-2xl text-sm text-base-content/45">{{ record.description }}</p>
+              }
             </div>
 
             <div class="flex items-center gap-4">
               <div class="p-6 rounded-3xl bg-emerald-500/5 border border-emerald-500/10 text-center min-w-[140px]">
                 <p class="text-[10px] font-black uppercase tracking-widest text-emerald-600/50">Promedio Gral</p>
                 <p class="text-4xl font-black text-emerald-600 mt-2">{{ record.average | number:'1.1-1' }}</p>
+              </div>
+              <div class="p-6 rounded-3xl bg-primary/5 border border-primary/10 text-center min-w-[140px]">
+                <p class="text-[10px] font-black uppercase tracking-widest text-primary/50">Peso</p>
+                <p class="text-4xl font-black text-primary mt-2">{{ record.weightPercentage || 0 }}%</p>
               </div>
             </div>
           </div>
@@ -171,10 +183,22 @@
             <div
               class="group p-6 rounded-[1.8rem] bg-zinc-50 dark:bg-zinc-800/50 border border-transparent hover:bg-white dark:hover:bg-zinc-800 hover:border-base-200 dark:hover:border-zinc-700 transition-all duration-300">
               <div class="flex items-center justify-between">
-                <div class="min-w-0">
+                <div class="flex min-w-0 items-center gap-4">
+                  @if (score.studentPhotoUrl) {
+                    <img [src]="score.studentPhotoUrl" [alt]="score.studentName" class="h-12 w-12 shrink-0 rounded-2xl object-cover border border-base-200/70" />
+                  } @else {
+                    <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-base-200 text-sm font-black text-base-content/45">
+                      {{ score.studentName[0] }}
+                    </div>
+                  }
+                  <div class="min-w-0">
                   <p class="font-black text-base-content truncate pr-4">{{ score.studentName }}</p>
+                  @if (score.studentCode) {
+                    <p class="mt-1 text-[10px] font-black uppercase tracking-widest text-primary/50">{{ score.studentCode }}</p>
+                  }
                   <p class="text-xs font-medium text-base-content/40 mt-1 italic">{{ score.observation || 'Sin
                     observaciones registradas' }}</p>
+                  </div>
                 </div>
 
                 <div

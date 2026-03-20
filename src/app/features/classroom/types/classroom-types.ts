@@ -29,6 +29,7 @@ export interface ChatMessage {
   id: string;
   senderId: string;
   senderName: string;
+  senderAvatar?: string;
   content: string;
   timestamp: string;
   isMe: boolean;

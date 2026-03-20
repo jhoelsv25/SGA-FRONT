@@ -6,12 +6,13 @@ import { ClassroomStore } from '../../services/store/classroom.store';
 import { ClassroomSocketService } from '../../services/classroom-socket';
 import { SectionCourseApi } from '@features/section-courses/services/section-course-api';
 import type { ClassroomFeedItem } from '../../types/classroom-types';
+import Chat from '../chat/chat';
 
 
 @Component({
   selector: 'sga-classroom',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, Chat],
   templateUrl: './classroom.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -26,6 +27,7 @@ export default class Classroom implements OnInit, OnDestroy {
   sectionName = signal('Aula Virtual');
   notifications = signal<{ type: string; title: string; body?: string }[]>([]);
   showNotificationPanel = signal(false);
+  showFloatingChat = signal(false);
 
   ngOnInit(): void {
     this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {

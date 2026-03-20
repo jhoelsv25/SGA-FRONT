@@ -124,7 +124,7 @@
         <div class="flex justify-between items-start">
           <div class="flex items-center gap-5">
             <div
-              class="w-14 h-14 rounded-2xl flex items-center justify-center text-white font-black text-xl transition-all duration-500 shadow-xl"
+              class="w-14 h-14 rounded-2xl flex items-center justify-center overflow-hidden text-white font-black text-xl transition-all duration-500 shadow-xl"
               [ngClass]="{
                         'bg-gradient-to-tr from-primary to-indigo-600 shadow-primary/20': item.type === 'assignment',
                         'bg-gradient-to-tr from-emerald-500 to-teal-600 shadow-emerald-500/20': item.type === 'material',
@@ -134,6 +134,8 @@
               <i class="fa-solid fa-clipboard-list"></i>
               } @else if(item.type === 'material') {
               <i class="fa-solid fa-book-bookmark"></i>
+              } @else if (item.author.avatar) {
+              <img [src]="item.author.avatar" [alt]="item.author.name" class="h-full w-full object-cover" />
               } @else {
               <span class="text-lg lowercase">{{ item.author.name[0] }}</span>
               }

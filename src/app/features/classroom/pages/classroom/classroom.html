@@ -20,8 +20,7 @@
             { path: 'timeline', label: 'Muro', icon: 'fa-house' },
             { path: 'tasks', label: 'Tareas', icon: 'fa-list-check' },
             { path: 'people', label: 'Personas', icon: 'fa-users' },
-            { path: 'grades', label: 'Notas', icon: 'fa-chart-simple' },
-            { path: 'chat', label: 'Chat', icon: 'fa-comment' }
+            { path: 'grades', label: 'Notas', icon: 'fa-chart-simple' }
           ];
           @for (nav of navs; track nav.path) {
             <a [routerLink]="nav.path" 
@@ -101,4 +100,20 @@
   <main class="max-w-5xl mx-auto py-8 sm:py-12 px-4 sm:px-6">
     <router-outlet></router-outlet>
   </main>
+
+  <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-4 sm:bottom-8 sm:right-8">
+    @if (showFloatingChat()) {
+      <sga-classroom-chat [floating]="true" (requestClose)="showFloatingChat.set(false)"></sga-classroom-chat>
+    }
+
+    <button
+      type="button"
+      class="flex h-16 w-16 items-center justify-center rounded-[1.75rem] bg-primary text-white shadow-[0_18px_40px_-18px_rgba(0,0,0,0.45)] ring-1 ring-white/30 transition-all hover:scale-105 hover:shadow-[0_24px_52px_-20px_rgba(0,0,0,0.55)]"
+      (click)="showFloatingChat.set(!showFloatingChat())"
+      aria-label="Abrir chat del aula"
+      title="Abrir chat"
+    >
+      <i class="fa-solid" [class.fa-xmark]="showFloatingChat()" [class.fa-comment-dots]="!showFloatingChat()"></i>
+    </button>
+  </div>
 </div>
