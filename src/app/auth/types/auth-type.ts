@@ -26,6 +26,7 @@ export interface CurrentUserPerson {
   firstName?: string;
   lastName?: string;
   documentType?: string;
+  documentNumber?: string;
   birthDate?: string;
   gender?: string;
   birthPlace?: string;
