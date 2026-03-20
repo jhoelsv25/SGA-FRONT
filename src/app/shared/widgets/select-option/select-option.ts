@@ -1,8 +1,9 @@
-import { Component, input, output, model, forwardRef, ChangeDetectionStrategy, effect } from '@angular/core';
+import { Component, input, output, model, forwardRef, ChangeDetectionStrategy, effect, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
 import { ZardSelectComponent } from '@/shared/components/select/select.component';
 import { ZardSelectItemComponent } from '@/shared/components/select/select-item.component';
+import { ZardInputDirective } from '@/shared/components/input';
 
 export interface SelectOption {
   label: string;
@@ -13,18 +14,39 @@ export interface SelectOption {
 @Component({
   selector: 'z-select-option',
   standalone: true,
-  imports: [CommonModule, FormsModule, ZardSelectComponent, ZardSelectItemComponent],
+  imports: [CommonModule, FormsModule, ZardSelectComponent, ZardSelectItemComponent, ZardInputDirective],
   template: `
     <z-select
       [zPlaceholder]="placeholder()"
       [zDisabled]="disabled()"
       [(zValue)]="zValue"
       (zSelectionChange)="onValueChange($event)"
+      [zCanLoadMore]="canLoadMore()"
+      (zScrolledToEnd)="onLoadMore()"
       [class]="customClass()"
     >
-      @for (option of options(); track option.value) {
+      <div class="sticky top-0 z-10 border-b border-border/50 bg-popover p-2">
+        <input
+          z-input
+          [ngModel]="searchTerm()"
+          (ngModelChange)="onSearch($event)"
+          placeholder="Buscar..."
+          class="w-full"
+        />
+      </div>
+      @for (option of filteredOptions(); track option.value) {
         <z-select-item [zValue]="String(option.value)" [zDisabled]="option.disabled">
           {{ option.label }}
+        </z-select-item>
+      }
+      @if (!filteredOptions().length && !loadingMore()) {
+        <z-select-item zValue="__empty__" [zDisabled]="true">
+          Sin resultados
+        </z-select-item>
+      }
+      @if (loadingMore()) {
+        <z-select-item zValue="__loading__" [zDisabled]="true">
+          Cargando más...
         </z-select-item>
       }
     </z-select>
@@ -44,12 +66,21 @@ export class SelectOptionComponent implements ControlValueAccessor {
   readonly disabled = input<boolean>(false);
   readonly searchable = input<boolean>(true);
   readonly customClass = input<string>('');
+  readonly canLoadMore = input<boolean>(false);
+  readonly loadingMore = input<boolean>(false);
   
   // Legacy compatibility inputs/outputs
   readonly value = input<any>(null);
   readonly valueChange = output<any>();
+  readonly loadMore = output<void>();
   
   zValue = model<any>('');
+  searchTerm = signal('');
+  filteredOptions = computed(() => {
+    const term = this.searchTerm().trim().toLowerCase();
+    if (!term) return this.options();
+    return this.options().filter((option) => option.label.toLowerCase().includes(term));
+  });
 
   constructor() {
     effect(() => {
@@ -86,5 +117,15 @@ export class SelectOptionComponent implements ControlValueAccessor {
     this.zValue.set(normalized);
     this.onChange(normalized);
     this.valueChange.emit(normalized);
+  }
+
+  onLoadMore() {
+    if (this.canLoadMore() && !this.loadingMore()) {
+      this.loadMore.emit();
+    }
+  }
+
+  onSearch(value: string) {
+    this.searchTerm.set(value ?? '');
   }
 }

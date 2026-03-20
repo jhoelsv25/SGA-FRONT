@@ -86,6 +86,7 @@ const COMPACT_MODE_WIDTH_THRESHOLD = 100;
         [class]="contentClasses()"
         role="listbox"
         [attr.data-state]="'open'"
+        (scroll)="onDropdownScroll($event)"
         (keydown.{arrowdown,arrowup,enter,space,escape,home,end}.prevent)="onDropdownKeydown($event)"
         tabindex="-1"
       >
@@ -134,8 +135,10 @@ export class ZardSelectComponent implements ControlValueAccessor, OnDestroy {
   readonly zPlaceholder = input<string>('Select an option...');
   readonly zSize = input<ZardSelectSizeVariants>('default');
   readonly zValue = model<string | string[]>(this.zMultiple() ? [] : '');
+  readonly zCanLoadMore = input(false, { transform: booleanAttribute });
 
   readonly zSelectionChange = output<string | string[]>();
+  readonly zScrolledToEnd = output<void>();
 
   readonly isOpen = signal(false);
   readonly focusedIndex = signal<number>(-1);
@@ -258,6 +261,16 @@ export class ZardSelectComponent implements ControlValueAccessor, OnDestroy {
       this.close();
     } else {
       this.open();
+    }
+  }
+
+  onDropdownScroll(event: Event) {
+    if (!this.zCanLoadMore()) return;
+    const target = event.target as HTMLElement | null;
+    if (!target) return;
+    const remaining = target.scrollHeight - target.scrollTop - target.clientHeight;
+    if (remaining <= 32) {
+      this.zScrolledToEnd.emit();
     }
   }
 
