@@ -3,6 +3,7 @@ import { patchState, signalStore, withHooks, withMethods, withState } from '@ngr
 import { NotificationApi, Notification } from '../services/api/notification-api';
 import { Toast } from '@core/services/toast';
 import { AuthStore } from '@/auth/services/store/auth.store';
+import { NotificationSocketService } from '../services/notification-socket.service';
 
 type NotificationState = {
   data: Notification[];
@@ -24,12 +25,18 @@ export const NotificationStore = signalStore(
   { providedIn: 'root' },
   withState<NotificationState>(initialState),
   withMethods(
-    (store, api = inject(NotificationApi), auth = inject(AuthStore), toast = inject(Toast)) => ({
+    (
+      store,
+      api = inject(NotificationApi),
+      auth = inject(AuthStore),
+      toast = inject(Toast),
+      socket = inject(NotificationSocketService),
+    ) => ({
       loadInitial(params: Record<string, unknown> = {}) {
         const user = auth.currentUser();
         if (!user) return;
         patchState(store, { loading: true, error: null });
-        api.findAllCursor({ ...params, recipientId: user.id, limit: 10 }).subscribe({
+        api.findAllCursor({ ...params, limit: 10 }).subscribe({
           next: (res) => {
             patchState(store, {
               data: res.data ?? [],
@@ -53,7 +60,6 @@ export const NotificationStore = signalStore(
         api
           .findAllCursor({
             ...params,
-            recipientId: auth.currentUser()?.id,
             cursorDate: cursor.date,
             cursorId: cursor.id,
             limit: 10,
@@ -87,11 +93,39 @@ export const NotificationStore = signalStore(
           },
         });
       },
+
+      markAllAsRead() {
+        api.markAllAsRead().subscribe({
+          next: () => {
+            patchState(store, {
+              data: store.data().map(notification => ({ ...notification, isRead: true })),
+              unreadCount: 0,
+            });
+          },
+          error: () => {
+            toast.error('No se pudo marcar todo como leído');
+          },
+        });
+      },
+
+      connectRealtime() {
+        socket.connect();
+        socket.notification$.subscribe(notification => {
+          const exists = store.data().some(item => item.id === notification.id);
+          if (exists) return;
+
+          patchState(store, {
+            data: [notification, ...store.data()],
+            unreadCount: store.unreadCount() + (notification.isRead ? 0 : 1),
+          });
+        });
+      },
     }),
   ),
   withHooks({
     onInit(store) {
       store.loadInitial();
+      store.connectRealtime();
     },
   }),
 );

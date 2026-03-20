@@ -38,7 +38,6 @@ export class NotificationApi {
   }
 
   markAllAsRead(): Observable<any> {
-    // Backend should support this, or we call multiple times. Assuming a sync endpint.
-    return this.http.get(`${this.baseUrl}/mark-all-read`);
+    return this.http.patch(`${this.baseUrl}/mark-all-read`, {});
   }
 }
