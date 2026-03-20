@@ -17,7 +17,9 @@ export default class Timeline {
   private readonly authFacade = inject(AuthFacade);
   
   public postContent = signal('');
+  public externalResourceUrl = signal('');
   public attachments = signal<{ url: string; name: string }[]>([]);
+  public resourceMode = signal<'none' | 'file' | 'link'>('none');
   public isAssignment = signal(false);
   readonly profileType = computed(() => this.authFacade.getCurrentUser()?.profile?.type ?? 'user');
   readonly canPublish = computed(() => {
@@ -34,15 +36,31 @@ export default class Timeline {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (file) {
-      this.store.uploadFile(file).subscribe({
+      this.store.uploadFile(file, { category: 'classroom' }).subscribe({
         next: (res: { url: string; name: string }) => this.attachments.update(prev => [...prev, res]),
         error: (err) => console.error('Upload failed', err)
       });
+      input.value = '';
     }
   }
 
   removeAttachment(idx: number) {
     this.attachments.update(prev => prev.filter((_, i) => i !== idx));
+  }
+
+  addExternalLink() {
+    const value = this.externalResourceUrl().trim();
+    if (!value) return;
+
+    try {
+      const parsed = new URL(value);
+      const label = parsed.hostname.replace(/^www\./, '') || 'Recurso externo';
+      this.attachments.update((prev) => [...prev, { url: value, name: label }]);
+      this.externalResourceUrl.set('');
+      this.resourceMode.set('none');
+    } catch {
+      console.error('Invalid external resource URL');
+    }
   }
 
   publish() {
@@ -54,7 +72,9 @@ export default class Timeline {
       this.store.publishPost(this.postContent(), this.attachments().length ? this.attachments() : undefined)?.subscribe({
         next: () => {
           this.postContent.set('');
+          this.externalResourceUrl.set('');
           this.attachments.set([]);
+          this.resourceMode.set('none');
           this.isAssignment.set(false);
         }
       });

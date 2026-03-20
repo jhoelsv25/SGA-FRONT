@@ -39,10 +39,16 @@ export class ClassroomApi {
     return this.http.post<ChatMessage>(`${this.baseUrl}/chat/${sectionCourseId}`, { content });
   }
 
-  uploadFile(file: File): Observable<{ url: string; name: string }> {
+  uploadFile(
+    file: File,
+    options?: { category?: string; entityCode?: string; preserveName?: boolean },
+  ): Observable<{ url: string; name: string; storedName?: string; category?: string }> {
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post<{ url: string; name: string }>(`${this.baseUrl}/upload`, formData);
+    if (options?.category) formData.append('category', options.category);
+    if (options?.entityCode) formData.append('entityCode', options.entityCode);
+    if (options?.preserveName !== undefined) formData.append('preserveName', String(options.preserveName));
+    return this.http.post<{ url: string; name: string; storedName?: string; category?: string }>(`uploads`, formData);
   }
 
   /** Profesores asignados al curso-sección. Backend puede exponer GET classroom/:sectionCourseId/teachers */

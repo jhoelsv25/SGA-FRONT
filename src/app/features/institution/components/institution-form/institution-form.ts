@@ -6,6 +6,7 @@ import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { InstitutionStore } from '@features/admin-services/store/institution.store';
+import { UploadApi } from '@core/services/api/upload-api';
 import { Institution } from '../../types/institution-types';
 
 
@@ -24,9 +25,11 @@ export class InstitutionForm implements OnInit {
   public subTitle = computed(() => this.data?.subTitle ?? 'Complete el formulario para continuar');
   private ref = inject(ZardDialogRef);
   private fb = inject(FormBuilder);
+  private uploadApi = inject(UploadApi);
 
   public institutionForm: FormGroup;
   private current: Institution | null = null;
+  public logoUploading = false;
 
   public managementTypes = [
     { value: 'publica', label: 'Pública' },
@@ -94,5 +97,28 @@ export class InstitutionForm implements OnInit {
 
   onClose() {
     this.ref.close();
+  }
+
+  onLogoSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    this.logoUploading = true;
+    this.uploadApi.upload(file, {
+      category: 'institutions',
+      entityCode: this.institutionForm.get('modularCode')?.value || this.current?.modularCode || undefined,
+      preserveName: false,
+    }).subscribe({
+      next: (res) => {
+        this.institutionForm.patchValue({ logoUrl: res.url });
+        this.logoUploading = false;
+        input.value = '';
+      },
+      error: () => {
+        this.logoUploading = false;
+        input.value = '';
+      },
+    });
   }
 }

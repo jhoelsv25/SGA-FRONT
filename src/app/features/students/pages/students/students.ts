@@ -192,8 +192,6 @@ export default class StudentsPage {
         firstName: 'Juan',
         lastName: 'Pérez',
         email: 'estudiante@ejemplo.com',
-        age: 15,
-        grade: '1ro',
         studentCode: 'A2024001',
       },
       { sheetName: 'Estudiantes', fileName: 'plantilla_estudiantes.xlsx' },

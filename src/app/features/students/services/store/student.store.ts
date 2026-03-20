@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { PaginationType } from '@core/types/pagination-types';
-import { Student, StudentCreate } from '@features/students/types/student-types';
+import { Student, StudentCreate, StudentUpdate } from '@features/students/types/student-types';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { StudentApi } from '../api/student-api';
 import { Toast } from '@core/services/toast';
@@ -72,7 +72,7 @@ export const StudentStore = signalStore(
         }),
       );
     },
-    update: (id: string, student: Partial<Student>) => {
+    update: (id: string, student: StudentUpdate) => {
       patchState(store, { loading: true });
       return api.update(id, student).pipe(
         tap({

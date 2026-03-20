@@ -21,6 +21,7 @@ export type Teacher = {
     lastName?: string;
     email?: string;
     phone?: string;
+    photoUrl?: string;
   };
 };
 
@@ -46,6 +47,7 @@ export type TeacherCreate = {
   employmentStatus: TeacherEmploymentStatus;
   institution: string;
   person: string;
+  photoUrl?: string;
 };
 export type TeacherUpdate = Partial<TeacherCreate>;
 

@@ -51,6 +51,14 @@ export default class StudentDetailPage implements OnInit {
     () => this.guardians().find((guardian) => guardian.isPrimary) ?? this.guardians()[0] ?? null,
   );
   readonly latestObservation = computed(() => this.observations()[0] ?? null);
+  readonly initials = computed(() =>
+    (this.fullName() || this.student()?.studentCode || 'ST')
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase() ?? '')
+      .join(''),
+  );
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -144,9 +152,9 @@ export default class StudentDetailPage implements OnInit {
   private loadStudent(id: string): void {
     this.loading.set(true);
 
-    this.studentApi.getAll({ size: 999 }).subscribe({
+    this.studentApi.getById(id).subscribe({
       next: (res) => {
-        const current = (res.data ?? []).find((student) => student.id === id) ?? this.student();
+        const current = res.data ?? this.student();
         if (!current) {
           this.loading.set(false);
           this.router.navigate(['/students/list']);

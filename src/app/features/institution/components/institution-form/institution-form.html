@@ -118,9 +118,25 @@
     </z-form-field>
 
     <z-form-field>
-      <label z-form-label for="logoUrl">Logo (URL)</label>
+      <label z-form-label for="logoUrl">Logo</label>
       <z-form-control>
-        <input z-input w-full id="logoUrl" type="text" formControlName="logoUrl" placeholder="URL del logo" />
+        <div class="space-y-3">
+          <input #logoInput type="file" accept="image/*" class="hidden" (change)="onLogoSelected($event)" />
+          <div class="flex flex-wrap items-center gap-3">
+            <button type="button" z-button zType="outline" zColor="secondary" (click)="logoInput.click()" [disabled]="logoUploading">
+              <i class="fas fa-upload mr-2"></i>
+              {{ logoUploading ? 'Subiendo...' : 'Subir logo' }}
+            </button>
+            @if (institutionForm.get('logoUrl')?.value) {
+              <span class="text-xs font-semibold text-base-content/60 truncate max-w-[220px]">{{ institutionForm.get('logoUrl')?.value }}</span>
+            }
+          </div>
+          @if (institutionForm.get('logoUrl')?.value) {
+            <div class="h-20 w-20 overflow-hidden rounded-2xl border border-base-200 bg-base-100">
+              <img [src]="institutionForm.get('logoUrl')?.value" alt="Logo de institución" class="h-full w-full object-cover" />
+            </div>
+          }
+        </div>
       </z-form-control>
     </z-form-field>
 

@@ -78,8 +78,8 @@ export const ClassroomStore = signalStore(
         })
       );
     },
-    uploadFile: (file: File) => {
-      return api.uploadFile(file);
+    uploadFile: (file: File, options?: { category?: string; entityCode?: string; preserveName?: boolean }) => {
+      return api.uploadFile(file, options);
     },
     receiveMessage: (msg: ChatMessage) => {
       const current = store.chatMessages();

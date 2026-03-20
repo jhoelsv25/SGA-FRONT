@@ -19,8 +19,8 @@ export class StudentApi {
     return this.http.get<DataResponse<Student>>(`${this.baseUrl}`, { params });
   }
 
-  getById(id: string): Observable<DataResponse<Student>> {
-    return this.http.get<DataResponse<Student>>(`${this.baseUrl}/${id}`);
+  getById(id: string): Observable<StudentResponse> {
+    return this.http.get<StudentResponse>(`${this.baseUrl}/${id}`);
   }
 
   create(student: StudentCreate): Observable<StudentResponse> {
@@ -28,7 +28,7 @@ export class StudentApi {
   }
 
   update(id: string, student: StudentUpdate): Observable<StudentResponse> {
-    return this.http.put<StudentResponse>(`${this.baseUrl}/${id}`, student);
+    return this.http.patch<StudentResponse>(`${this.baseUrl}/${id}`, student);
   }
 
   delete(id: string): Observable<DataResponse<StudentResponse>> {

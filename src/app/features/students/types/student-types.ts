@@ -14,6 +14,9 @@ export type Student = {
   age: number;
   grade: string;
   isActive: boolean;
+  photoUrl?: string;
+  personId?: string;
+  institution?: string | { id: string; name?: string };
 };
 
 export type StudentCreate = {
@@ -29,8 +32,9 @@ export type StudentCreate = {
   username: string;
   password?: string;
   studentCode: string;
-  age: number;
-  grade: string;
+  photoUrl?: string;
+  institution?: string;
+  isActive?: boolean;
 };
 
 export type StudentUpdate = Partial<StudentCreate> & { isActive?: boolean };

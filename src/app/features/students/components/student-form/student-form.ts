@@ -1,11 +1,12 @@
 export type LocalSelectOption = { value: string | number; label: string; [key: string]: any };
+import { UploadApi } from '@core/services/api/upload-api';
 import { StudentStore } from '../../services/store/student.store';
 import { Student, StudentCreate } from '../../types/student-types';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
-import { FormsModule, ReactiveFormsModule, Validators, FormBuilder, FormGroup } from '@angular/forms';
-import { CommonModule, NgClass, NgIf, NgFor, NgSwitch } from '@angular/common';
-import { Component, OnInit, inject, signal, input, ChangeDetectionStrategy } from '@angular/core';
-import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
+import { ReactiveFormsModule, Validators, FormBuilder, FormGroup } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { SelectOptionComponent } from '@/shared/widgets/select-option/select-option';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardInputDirective } from '@/shared/components/input';
 
@@ -22,11 +23,14 @@ export class StudentForm implements OnInit {
   private data = inject(Z_MODAL_DATA, { optional: true });
   private ref = inject(ZardDialogRef);
   private fb = inject(FormBuilder);
+  private uploadApi = inject(UploadApi);
 
   form!: FormGroup;
   current: Student | null = null;
   saving = signal(false);
   activeTab = signal<'personal' | 'user' | 'academic'>('personal');
+  photoUrl = '';
+  photoUploading = false;
 
   docTypeOptions: LocalSelectOption[] = [
     { value: 'DNI', label: 'DNI' },
@@ -38,8 +42,13 @@ export class StudentForm implements OnInit {
     { value: 'F', label: 'Femenino' },
     { value: 'O', label: 'Otro' }];
 
+  get fullName() {
+    return `${this.form?.get('firstName')?.value ?? this.current?.firstName ?? ''} ${this.form?.get('lastName')?.value ?? this.current?.lastName ?? ''}`.trim();
+  }
+
   ngOnInit() {
     this.current = this.data?.current ?? null;
+    this.photoUrl = this.current?.photoUrl ?? '';
     this.form = this.fb.group({
       firstName: [this.current?.firstName ?? '', [Validators.required, Validators.minLength(2)]],
       lastName: [this.current?.lastName ?? '', [Validators.required, Validators.minLength(2)]],
@@ -53,8 +62,7 @@ export class StudentForm implements OnInit {
       username: [this.current?.username ?? '', [Validators.required]],
       password: ['', this.current ? [] : [Validators.required, Validators.minLength(6)]],
       studentCode: [this.current?.studentCode ?? '', [Validators.required]],
-      age: [this.current?.age ?? null, [Validators.required, Validators.min(1), Validators.max(120)]],
-      grade: [this.current?.grade ?? '', [Validators.required, Validators.maxLength(20)]],
+      isActive: [this.current?.isActive ?? true],
     });
   }
 
@@ -68,8 +76,6 @@ export class StudentForm implements OnInit {
     if (c.errors?.['required']) return 'Campo requerido';
     if (c.errors?.['email']) return 'Email inválido';
     if (c.errors?.['minlength']) return `Mínimo ${c.errors['minlength'].requiredLength} caracteres`;
-    if (c.errors?.['min']) return 'Edad mínima: 1';
-    if (c.errors?.['max']) return controlName === 'age' ? 'Edad máxima: 120' : 'Valor máximo excedido';
     if (c.errors?.['maxlength']) return `Máximo ${c.errors['maxlength'].requiredLength} caracteres`;
     return null;
   }
@@ -82,9 +88,13 @@ export class StudentForm implements OnInit {
     }
     this.saving.set(true);
     const v = this.form.getRawValue() as StudentCreate;
+    const payload: StudentCreate = {
+      ...v,
+      photoUrl: this.photoUrl || undefined,
+    };
     const op = this.current?.id
-      ? this.store.update(this.current.id, v)
-      : this.store.create(v);
+      ? this.store.update(this.current.id, payload)
+      : this.store.create(payload);
     op.subscribe({
       next: () => this.ref.close(),
       error: () => this.saving.set(false),
@@ -102,6 +112,53 @@ export class StudentForm implements OnInit {
     } else {
       this.setTab('academic');
     }
+  }
+
+  get computedAge(): number | null {
+    const value = this.form?.get('birthDate')?.value;
+    if (!value) return null;
+    const birthDate = new Date(value);
+    if (Number.isNaN(birthDate.getTime())) return null;
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return Math.max(age, 0);
+  }
+
+  photoInitials(): string {
+    const name = this.fullName || this.current?.studentCode || 'ST';
+    return name
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase() ?? '')
+      .join('');
+  }
+
+  onPhotoSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    this.photoUploading = true;
+    this.uploadApi.upload(file, {
+      category: 'persons',
+      entityCode: this.form.get('studentCode')?.value || this.current?.studentCode || undefined,
+      preserveName: false,
+    }).subscribe({
+      next: (res) => {
+        this.photoUrl = res.url;
+        this.photoUploading = false;
+        input.value = '';
+      },
+      error: () => {
+        this.photoUploading = false;
+        input.value = '';
+      },
+    });
   }
 
   close() {

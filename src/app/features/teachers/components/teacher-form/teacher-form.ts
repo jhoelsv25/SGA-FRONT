@@ -6,6 +6,7 @@ import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-opt
 import { ChangeDetectionStrategy, Component, inject, OnInit, input } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { UploadApi } from '@core/services/api/upload-api';
 import { InstitutionApi } from '@features/admin-services/api/institution-api';
 import { TeacherStore } from '../../services/store/teacher.store';
 import {
@@ -32,6 +33,7 @@ export class TeacherForm implements OnInit {
   private fb = inject(FormBuilder);
   private institutionApi = inject(InstitutionApi);
   private http = inject(HttpClient);
+  private uploadApi = inject(UploadApi);
 
   form!: FormGroup;
   current: Teacher | null = null;
@@ -43,6 +45,8 @@ export class TeacherForm implements OnInit {
   readonly personPageSize = 30;
   personHasMore = true;
   personLoadingMore = false;
+  personPhotoUrl = '';
+  photoUploading = false;
 
   contractTypeOptions: LocalSelectOption[] = [
     { value: 'full_time' satisfies TeacherContractType, label: 'Tiempo completo' },
@@ -95,6 +99,8 @@ export class TeacherForm implements OnInit {
 
     this.loadInstitutions();
     this.loadPersons();
+    this.personPhotoUrl =
+      (typeof this.current?.person === 'string' ? '' : this.current?.person?.photoUrl) ?? '';
   }
 
   submit() {
@@ -102,15 +108,28 @@ export class TeacherForm implements OnInit {
     const v = this.form.getRawValue() as TeacherCreate;
     const payload: TeacherCreate = {
       ...v,
+      photoUrl: this.personPhotoUrl || undefined,
       terminationDate: v.terminationDate || undefined,
     };
+    const personId = String(this.form.get('person')?.value || '');
+    const persistPhoto = () => {
+      if (!personId || !this.personPhotoUrl) {
+        this.ref.close();
+        return;
+      }
+      this.http.patch(`persons/${personId}`, { photoUrl: this.personPhotoUrl }).subscribe({
+        next: () => this.ref.close(),
+        error: () => this.ref.close(),
+      });
+    };
+
     if (this.current?.id) {
       this.store.update(this.current.id, payload).subscribe({
-        next: () => this.ref.close(),
+        next: () => persistPhoto(),
       });
     } else {
       this.store.create(payload).subscribe({
-        next: () => this.ref.close(),
+        next: () => persistPhoto(),
       });
     }
   }
@@ -154,6 +173,29 @@ export class TeacherForm implements OnInit {
       },
       error: () => {
         this.personLoadingMore = false;
+      },
+    });
+  }
+
+  onPersonPhotoSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    this.photoUploading = true;
+    this.uploadApi.upload(file, {
+      category: 'persons',
+      entityCode: this.form.get('teacherCode')?.value || this.current?.teacherCode || undefined,
+      preserveName: false,
+    }).subscribe({
+      next: (res) => {
+        this.personPhotoUrl = res.url;
+        this.photoUploading = false;
+        input.value = '';
+      },
+      error: () => {
+        this.photoUploading = false;
+        input.value = '';
       },
     });
   }

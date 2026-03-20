@@ -97,7 +97,13 @@ export class ClassroomSocketService implements OnDestroy {
         return;
       }
 
-      this.socket.emit('newPost', { room, post }, (response: FeedPost) => {
+      this.socket.emit('newPost', {
+        room,
+        post: {
+          content: post.content,
+          attachmentUrl: post.attachments?.[0]?.url,
+        },
+      }, (response: FeedPost) => {
         subscriber.next(response);
         subscriber.complete();
       });

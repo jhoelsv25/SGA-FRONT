@@ -3,10 +3,18 @@
   <div class="flex flex-col gap-6">
     <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
       <div class="flex min-w-0 flex-1 items-start gap-4">
-        <div
-          class="flex size-14 shrink-0 items-center justify-center rounded-[var(--radius-xl)] border border-primary/15 bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-          <z-icon zType="graduation-cap" class="h-6 w-6" />
-        </div>
+        @if (student().photoUrl) {
+          <img
+            [src]="student().photoUrl"
+            [alt]="fullName()"
+            class="size-14 shrink-0 rounded-[var(--radius-xl)] border border-primary/15 object-cover shadow-sm"
+          />
+        } @else {
+          <div
+            class="flex size-14 shrink-0 items-center justify-center rounded-[var(--radius-xl)] border border-primary/15 bg-primary/10 text-sm font-black text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+            {{ initials() }}
+          </div>
+        }
 
         <div class="min-w-0 space-y-1.5">
           <div class="flex flex-wrap items-center gap-2.5">

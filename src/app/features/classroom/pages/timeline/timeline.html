@@ -40,6 +40,43 @@
             class="w-full bg-base-200/30 dark:bg-zinc-800/50 rounded-[1.5rem] border-transparent focus:border-primary/30 focus:bg-white dark:focus:bg-zinc-800 p-5 text-base font-medium transition-all duration-300 outline-none min-h-[120px] resize-none"></textarea>
         </div>
 
+        <div class="flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            (click)="resourceMode.set('file'); fileInput.click()"
+            class="rounded-[1.5rem] bg-base-200/40 px-5 py-3 text-sm font-black uppercase tracking-[0.12em] text-base-content transition-all hover:bg-base-200"
+          >
+            Subir archivo
+          </button>
+          <button
+            type="button"
+            (click)="resourceMode.set(resourceMode() === 'link' ? 'none' : 'link')"
+            class="rounded-[1.5rem] bg-base-200/40 px-5 py-3 text-sm font-black uppercase tracking-[0.12em] text-base-content transition-all hover:bg-base-200"
+          >
+            Agregar URL
+          </button>
+        </div>
+
+        @if (resourceMode() === 'link') {
+        <div class="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_auto]">
+          <input
+            type="url"
+            [ngModel]="externalResourceUrl()"
+            (ngModelChange)="externalResourceUrl.set($event)"
+            placeholder="Pega un recurso externo: YouTube, Google Docs, Sheets, Drive..."
+            class="w-full bg-base-200/30 dark:bg-zinc-800/50 rounded-[1.5rem] border-transparent focus:border-primary/30 focus:bg-white dark:focus:bg-zinc-800 px-5 py-3 text-sm font-medium transition-all duration-300 outline-none"
+          />
+          <button
+            type="button"
+            (click)="addExternalLink()"
+            [disabled]="!externalResourceUrl().trim()"
+            class="rounded-[1.5rem] bg-base-200/40 px-5 py-3 text-sm font-black uppercase tracking-[0.12em] text-base-content transition-all hover:bg-base-200 disabled:opacity-50"
+          >
+            Confirmar URL
+          </button>
+        </div>
+        }
+
         @if (attachments().length > 0) {
         <div class="flex flex-wrap gap-3">
           @for (file of attachments(); track $index) {
@@ -185,13 +222,13 @@
               class="flex items-center gap-4 bg-base-200/30 dark:bg-zinc-800/50 p-4 rounded-[1.5rem] border border-transparent hover:border-primary/20 hover:bg-white dark:hover:bg-zinc-800 hover:shadow-lg transition-all group/file">
               <div
                 class="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary group-hover/file:bg-primary group-hover/file:text-white transition-colors duration-500">
-                <i class="fa-solid fa-file-arrow-down text-lg"></i>
+                <i class="fa-solid fa-link text-lg"></i>
               </div>
               <div class="flex flex-col min-w-0">
                 <span class="text-sm font-black text-base-content truncate pr-4">{{ file.name }}</span>
                 <span
-                  class="text-[10px] font-bold uppercase tracking-[0.1em] text-primary group-hover/file:translate-x-1 transition-transform">Descargar
-                  archivo</span>
+                  class="text-[10px] font-bold uppercase tracking-[0.1em] text-primary group-hover/file:translate-x-1 transition-transform">Abrir
+                  recurso</span>
               </div>
             </a>
             }

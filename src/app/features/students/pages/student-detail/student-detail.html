@@ -24,9 +24,17 @@
 
           <div class="relative z-10 flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
             <div class="flex min-w-0 items-center gap-6">
-              <div class="flex h-20 w-20 shrink-0 flex-col items-center justify-center rounded-3xl bg-primary text-primary-foreground shadow-2xl shadow-primary/30">
-                <z-icon zType="graduation-cap" class="h-8 w-8" />
-              </div>
+              @if (current.photoUrl) {
+                <img
+                  [src]="current.photoUrl"
+                  [alt]="fullName()"
+                  class="h-20 w-20 shrink-0 rounded-3xl border border-primary/15 object-cover shadow-2xl shadow-primary/15"
+                />
+              } @else {
+                <div class="flex h-20 w-20 shrink-0 flex-col items-center justify-center rounded-3xl bg-primary text-2xl font-black text-primary-foreground shadow-2xl shadow-primary/30">
+                  {{ initials() }}
+                </div>
+              }
 
               <div class="min-w-0">
                 <div class="flex flex-wrap items-center gap-3">
