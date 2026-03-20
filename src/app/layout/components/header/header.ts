@@ -104,6 +104,20 @@ export class Header implements OnInit, OnDestroy {
     ];
   });
 
+  private resolveProfileType(): string {
+    const profileType = this.currentUser()?.profile?.type;
+    if (profileType) return profileType;
+
+    const roleName = (this.currentUser()?.role?.name ?? '').toLowerCase();
+    if (roleName.includes('super')) return 'superadmin';
+    if (roleName.includes('admin')) return 'admin';
+    if (roleName.includes('director')) return 'director';
+    if (roleName.includes('docente') || roleName.includes('teacher')) return 'teacher';
+    if (roleName.includes('estudiante') || roleName.includes('student') || roleName.includes('alumno')) return 'student';
+    if (roleName.includes('apoderado') || roleName.includes('guardian')) return 'guardian';
+    return 'user';
+  }
+
   ngOnInit() {
     // Cerrar menú al hacer clic fuera
     document.addEventListener('click', this.handleOutsideClick.bind(this));
@@ -207,6 +221,144 @@ export class Header implements OnInit, OnDestroy {
   goSessions = () => this.router.navigateByUrl('/administration/sessions');
   goSettings = () => this.router.navigateByUrl('/account/settings');
   goChangePass = () => this.router.navigateByUrl('/account/change-password');
+  goClassrooms = () => this.router.navigateByUrl('/virtual-classroom/list');
+  goPaymentsHistory = () => this.router.navigateByUrl('/payments/history');
+  goPaymentsPending = () => this.router.navigateByUrl('/payments/pending');
+  goStudents = () => this.router.navigateByUrl('/students/list');
+
+  public userMenuActions = computed<UserMenuAction[]>(() => {
+    const roleType = this.resolveProfileType();
+    const theme = this.currentTheme();
+    const themeAction: UserMenuAction = {
+      label:
+        theme === 'light'
+          ? 'Tema Claro'
+          : theme === 'dark'
+            ? 'Tema Oscuro'
+            : 'Tema del Sistema',
+      icon: 'theme-' + theme,
+      type: 'theme',
+    };
+
+    const baseActions: UserMenuAction[] = [
+      {
+        label: 'Mi Perfil',
+        icon: 'fas fa-user',
+        action: this.goProfile,
+        type: 'profile',
+      },
+    ];
+
+    if (roleType === 'teacher') {
+      return [
+        ...baseActions,
+        {
+          label: 'Mis aulas',
+          icon: 'fa-chalkboard',
+          action: this.goClassrooms,
+          type: 'classroom',
+        },
+        {
+          label: 'Configuración',
+          icon: 'fas fa-cog',
+          action: this.goSettings,
+          type: 'settings',
+        },
+        {
+          label: 'Cambiar contraseña',
+          icon: 'fas fa-key',
+          action: this.goChangePass,
+          type: 'change-password',
+        },
+        themeAction,
+      ];
+    }
+
+    if (roleType === 'student') {
+      return [
+        ...baseActions,
+        {
+          label: 'Mis aulas',
+          icon: 'fa-chalkboard',
+          action: this.goClassrooms,
+          type: 'classroom',
+        },
+        {
+          label: 'Mis pagos',
+          icon: 'fa-money-bill-wave',
+          action: this.goPaymentsHistory,
+          type: 'payments',
+        },
+        {
+          label: 'Configuración',
+          icon: 'fas fa-cog',
+          action: this.goSettings,
+          type: 'settings',
+        },
+        {
+          label: 'Cambiar contraseña',
+          icon: 'fas fa-key',
+          action: this.goChangePass,
+          type: 'change-password',
+        },
+        themeAction,
+      ];
+    }
+
+    if (roleType === 'guardian') {
+      return [
+        ...baseActions,
+        {
+          label: 'Mis estudiantes',
+          icon: 'fa-user-graduate',
+          action: this.goStudents,
+          type: 'students',
+        },
+        {
+          label: 'Pagos',
+          icon: 'fa-money-bill-wave',
+          action: this.goPaymentsPending,
+          type: 'payments',
+        },
+        {
+          label: 'Configuración',
+          icon: 'fas fa-cog',
+          action: this.goSettings,
+          type: 'settings',
+        },
+        {
+          label: 'Cambiar contraseña',
+          icon: 'fas fa-key',
+          action: this.goChangePass,
+          type: 'change-password',
+        },
+        themeAction,
+      ];
+    }
+
+    return [
+      ...baseActions,
+      {
+        label: 'Configuración',
+        icon: 'fas fa-cog',
+        action: this.goSettings,
+        type: 'settings',
+      },
+      {
+        label: 'Sesiones',
+        icon: 'fas fa-history',
+        action: this.goSessions,
+        type: 'sessions',
+      },
+      {
+        label: 'Cambiar contraseña',
+        icon: 'fas fa-key',
+        action: this.goChangePass,
+        type: 'change-password',
+      },
+      themeAction,
+    ];
+  });
 
   onAction(event: UserMenuAction) {
     if (event.type === 'logout') {

@@ -21,6 +21,7 @@ import { ZardEmptyComponent } from '@/shared/components/empty';
           zType="ghost"
           zSize="xs"
           class="text-[9px] font-bold uppercase tracking-widest text-primary hover:bg-primary/5"
+          (click)="markAllRead()"
         >
           Marcar todo como leído
         </button>
@@ -130,13 +131,20 @@ export class AsideNotifications implements OnInit {
     this.store.markAsRead(id);
   }
 
+  markAllRead() {
+    this.store.markAllAsRead();
+  }
+
   getIcon(type: string): any {
-    switch (type) {
-      case 'CHAT':
-        return 'chat';
-      case 'SYSTEM':
+    switch ((type || '').toLowerCase()) {
+      case 'alert':
+      case 'error':
+        return 'triangle-alert';
+      case 'warning':
         return 'shield';
-      case 'ACADEMIC':
+      case 'success':
+        return 'circle-check';
+      case 'info':
         return 'graduation-cap';
       default:
         return 'bell';

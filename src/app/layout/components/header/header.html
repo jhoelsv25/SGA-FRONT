@@ -90,41 +90,7 @@
 
     <!-- User Menu -->
     <sga-user-menu [name]="getUserDisplayName()" [role]="getUserRole()" [code]="getUserCode()"
-      [initials]="getUserInitials()" [dropdownPlacement]="'bottom'" [statsItems]="userMenuStats()" [actions]="[
-        {
-          label: 'Mi Perfil',
-          icon: 'fas fa-user',
-          action: goProfile,
-          type: 'profile',
-        },
-        {
-          label: 'Configuración',
-          icon: 'fas fa-cog',
-          action: goSettings,
-          type: 'settings',
-        },
-        {
-          label: 'Sesiones',
-          icon: 'fas fa-history',
-          action: goSessions,
-          type: 'sessions',
-        },
-        {
-          label: 'Cambiar contraseña',
-          icon: 'fas fa-key',
-          action: goChangePass,
-          type: 'change-password',
-        },
-        {
-          label:
-            currentTheme() === 'light'
-              ? 'Tema Claro'
-              : currentTheme() === 'dark'
-                ? 'Tema Oscuro'
-                : 'Tema del Sistema',
-          icon: 'theme-' + currentTheme(),
-          type: 'theme',
-        },
-      ]" (actionSelected)="onAction($event)" />
+      [initials]="getUserInitials()" [dropdownPlacement]="'bottom'" [statsItems]="userMenuStats()" [actions]="userMenuActions()"
+      (actionSelected)="onAction($event)" />
   </div>
 </div>

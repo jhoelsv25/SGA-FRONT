@@ -188,7 +188,7 @@ export class Sidebar implements OnInit, OnDestroy {
     }
 
     const allowedTopLevelByRole: Record<string, Set<string>> = {
-      teacher: new Set(['dashboard', 'teachers', 'students', 'attendance', 'assessments', 'behavior', 'virtual-classroom', 'communications', 'reports']),
+      teacher: new Set(['dashboard', 'students', 'attendance', 'assessments', 'behavior', 'virtual-classroom', 'communications', 'reports']),
       student: new Set(['dashboard', 'virtual-classroom', 'communications', 'payments', 'reports']),
       guardian: new Set(['dashboard', 'students', 'communications', 'payments', 'reports']),
       guest: new Set(['dashboard']),
@@ -212,20 +212,19 @@ export class Sidebar implements OnInit, OnDestroy {
 
     const allowByRoleAndParent: Record<string, Record<string, Set<string>>> = {
       teacher: {
-        teachers: new Set(['teachers-list', 'teacher-attendances']),
         students: new Set(['students-list', 'student-observations']),
         attendance: new Set(['attendance-register', 'attendance-reports']),
         assessments: new Set(['assessments-list', 'assessment-scores', 'grades']),
         behavior: new Set(['behavior-records', 'behavior-reports']),
-        'virtual-classroom': new Set(['virtual-classrooms-list', 'learning-modules', 'learning-materials', 'assignments', 'assignment-submissions', 'forums', 'chat']),
+        'virtual-classroom': new Set(['virtual-classrooms-list']),
         communications: new Set(['announcements', 'notifications']),
         reports: new Set(['reports-academic', 'reports-attendance', 'reports-behavior']),
       },
       student: {
-        'virtual-classroom': new Set(['virtual-classrooms-list', 'learning-modules', 'learning-materials', 'assignments', 'assignment-submissions', 'forums', 'chat']),
+        'virtual-classroom': new Set(['virtual-classrooms-list']),
         communications: new Set(['announcements', 'notifications']),
         payments: new Set(['payments-pending', 'payments-history']),
-        reports: new Set(['reports-academic', 'reports-attendance', 'reports-behavior']),
+        reports: new Set(['reports-academic', 'reports-attendance']),
       },
       guardian: {
         students: new Set(['students-list', 'student-observations']),
@@ -504,6 +503,140 @@ export class Sidebar implements OnInit, OnDestroy {
       { label: 'Prom.', value: stats?.average ?? '0.0' }];
   });
 
+  private getRoleScopedMenuActions(): UserMenuAction[] {
+    const roleType = this.resolveProfileType();
+    const theme = this.layout.theme();
+    const themeAction: UserMenuAction = {
+      label:
+        theme === 'light'
+          ? 'Tema Claro'
+          : theme === 'dark'
+            ? 'Tema Oscuro'
+            : 'Tema del Sistema',
+      icon: 'theme-' + theme,
+      type: 'theme',
+    };
+
+    const baseActions: UserMenuAction[] = [
+      {
+        label: 'Mi Perfil',
+        icon: 'fas fa-user',
+        type: 'profile',
+        action: () => this.router.navigate(['/account/profile']),
+      },
+    ];
+
+    if (roleType === 'teacher') {
+      return [
+        ...baseActions,
+        {
+          label: 'Mis aulas',
+          icon: 'fa-chalkboard',
+          type: 'classroom',
+          action: () => this.router.navigate(['/virtual-classroom/list']),
+        },
+        {
+          label: 'Configuración',
+          icon: 'fas fa-cog',
+          type: 'settings',
+          action: () => this.router.navigate(['/account/settings']),
+        },
+        {
+          label: 'Cambiar contraseña',
+          icon: 'fas fa-key',
+          type: 'change-password',
+          action: () => this.router.navigate(['/account/change-password']),
+        },
+        themeAction,
+      ];
+    }
+
+    if (roleType === 'student') {
+      return [
+        ...baseActions,
+        {
+          label: 'Mis aulas',
+          icon: 'fa-chalkboard',
+          type: 'classroom',
+          action: () => this.router.navigate(['/virtual-classroom/list']),
+        },
+        {
+          label: 'Mis pagos',
+          icon: 'fa-money-bill-wave',
+          type: 'payments',
+          action: () => this.router.navigate(['/payments/history']),
+        },
+        {
+          label: 'Configuración',
+          icon: 'fas fa-cog',
+          type: 'settings',
+          action: () => this.router.navigate(['/account/settings']),
+        },
+        {
+          label: 'Cambiar contraseña',
+          icon: 'fas fa-key',
+          type: 'change-password',
+          action: () => this.router.navigate(['/account/change-password']),
+        },
+        themeAction,
+      ];
+    }
+
+    if (roleType === 'guardian') {
+      return [
+        ...baseActions,
+        {
+          label: 'Mis estudiantes',
+          icon: 'fa-user-graduate',
+          type: 'students',
+          action: () => this.router.navigate(['/students/list']),
+        },
+        {
+          label: 'Pagos',
+          icon: 'fa-money-bill-wave',
+          type: 'payments',
+          action: () => this.router.navigate(['/payments/pending']),
+        },
+        {
+          label: 'Configuración',
+          icon: 'fas fa-cog',
+          type: 'settings',
+          action: () => this.router.navigate(['/account/settings']),
+        },
+        {
+          label: 'Cambiar contraseña',
+          icon: 'fas fa-key',
+          type: 'change-password',
+          action: () => this.router.navigate(['/account/change-password']),
+        },
+        themeAction,
+      ];
+    }
+
+    return [
+      ...baseActions,
+      {
+        label: 'Configuración',
+        icon: 'fas fa-cog',
+        type: 'settings',
+        action: () => this.router.navigate(['/account/settings']),
+      },
+      {
+        label: 'Sesiones',
+        icon: 'fas fa-history',
+        type: 'sessions',
+        action: () => this.router.navigate(['/administration/sessions']),
+      },
+      {
+        label: 'Cambiar contraseña',
+        icon: 'fas fa-key',
+        type: 'change-password',
+        action: () => this.router.navigate(['/account/change-password']),
+      },
+      themeAction,
+    ];
+  }
+
   private mapStatLabel(key: string): string {
     const labels: Record<string, string> = {
       weeklyHours: 'Horas',
@@ -529,36 +662,7 @@ export class Sidebar implements OnInit, OnDestroy {
 
   // User Menu Actions Configuration
   userMenuActions = computed<UserMenuAction[]>(() => {
-    const theme = this.layout.theme();
-    return [
-      {
-        label: 'Mi Perfil',
-        icon: 'fas fa-user',
-        type: 'profile',
-        action: () => this.router.navigate(['/account/profile']),
-      },
-      {
-        label: 'Configuración',
-        icon: 'fas fa-cog',
-        type: 'settings',
-        action: () => this.router.navigate(['/account/settings']),
-      },
-      {
-        label: 'Cambiar contraseña',
-        icon: 'fas fa-key',
-        type: 'change-password',
-        action: () => this.router.navigate(['/account/change-password']),
-      },
-      {
-        label:
-          theme === 'light'
-            ? 'Tema Claro'
-            : theme === 'dark'
-              ? 'Tema Oscuro'
-              : 'Tema del Sistema',
-        icon: 'theme-' + theme,
-        type: 'theme',
-      }];
+    return this.getRoleScopedMenuActions();
   });
 
   onUserMenuAction(action: UserMenuAction) {
