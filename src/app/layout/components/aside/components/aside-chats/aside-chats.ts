@@ -4,7 +4,6 @@ import { ZardIconComponent } from '@/shared/components/icon';
 import { ZardBadgeComponent } from '@/shared/components/badge';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardEmptyComponent } from '@/shared/components/empty';
-import { ZardInputDirective } from '@/shared/components/input';
 
 @Component({
   selector: 'sga-aside-chats',
@@ -15,7 +14,6 @@ import { ZardInputDirective } from '@/shared/components/input';
     ZardBadgeComponent,
     ZardButtonComponent,
     ZardEmptyComponent,
-    ZardInputDirective,
   ],
   template: `
     <div class="flex flex-col h-full bg-card/10 backdrop-blur-3xl overflow-hidden">
