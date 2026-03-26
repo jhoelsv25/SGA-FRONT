@@ -1,0 +1,26 @@
+<section class="rounded-4xl border border-base-200 bg-card p-5">
+  <div class="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
+    <div class="space-y-2">
+      <label class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70"
+        >Buscar tareas</label
+      >
+      <input
+        type="text"
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+        placeholder="Buscar por nombre o estado..."
+        class="h-12 w-full rounded-xl border border-base-300 bg-background px-4 text-sm font-medium outline-none transition-all focus:border-primary/20 focus:ring-4 focus:ring-primary/5 dark:bg-base-100"
+      />
+    </div>
+    <div class="flex items-center gap-3 lg:justify-end">
+      <button
+        type="button"
+        class="rounded-4xl border border-base-300 px-5 py-3 text-xs font-black uppercase tracking-[0.18em] text-base-content/70 transition hover:border-primary/20 hover:text-primary disabled:opacity-50"
+        [disabled]="!search().trim()"
+        (click)="onClear.emit()"
+      >
+        Limpiar
+      </button>
+    </div>
+  </div>
+</section>

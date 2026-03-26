@@ -1,8 +1,5 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-
 import { AuthFacade } from '@auth/services/store/auth.acede';
 import {
   ClassroomApi,
@@ -10,6 +7,11 @@ import {
   type ClassroomGradesResponse,
 } from '../../services/classroom-api';
 import { ClassroomStore } from '../../services/store/classroom.store';
+import { ClassroomGradesFilters } from '../../components/classroom-grades-filters/classroom-grades-filters';
+import { ClassroomGradesHeader } from '../../components/classroom-grades-header/classroom-grades-header';
+import { ClassroomGradesSidebar } from '../../components/classroom-grades-sidebar/classroom-grades-sidebar';
+import { ClassroomGradeDetail } from '../../components/classroom-grade-detail/classroom-grade-detail';
+import { ClassroomStudentHistory } from '../../components/classroom-student-history/classroom-student-history';
 
 type StudentHistoryItem = {
   recordId: string;
@@ -20,11 +22,15 @@ type StudentHistoryItem = {
   observation: string | undefined;
 };
 
-
 @Component({
   selector: 'sga-classroom-grades',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    ClassroomGradesFilters,
+    ClassroomGradesHeader,
+    ClassroomGradesSidebar,
+    ClassroomGradeDetail,
+    ClassroomStudentHistory,
+  ],
   templateUrl: './grades.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -51,28 +57,35 @@ export default class Grades implements OnInit {
     const items = this.filteredRecords();
     return items.find((item) => item.id === selectedId) ?? items[0] ?? null;
   });
+  
   readonly profileType = computed(() => this.authFacade.getCurrentUser()?.profile?.type ?? 'user');
+  
   readonly pageTitle = computed(() => {
     const type = this.profileType();
     if (type === 'student') return 'Mis calificaciones';
     if (type === 'guardian') return 'Calificaciones de vinculados';
     return 'Rendimiento del aula';
   });
+  
   readonly pageDescription = computed(() => {
     const type = this.profileType();
     if (type === 'student') return 'Vista de tus evaluaciones y puntajes registrados.';
     if (type === 'guardian') return 'Vista de evaluaciones y puntajes de los estudiantes vinculados.';
     return 'Vista consolidada de evaluaciones registradas para este curso-seccion.';
   });
+  
   readonly canViewStudentDetail = computed(() => {
     const type = this.profileType();
     return type === 'teacher' || type === 'admin' || type === 'director';
   });
+  
   readonly filteredRecords = computed(() => {
     const term = this.search().trim().toLowerCase();
-    if (!term) return this.records();
-    return this.records().filter((record) => record.name.toLowerCase().includes(term));
+    const list = this.records();
+    if (!term) return list;
+    return list.filter((record) => record.name.toLowerCase().includes(term));
   });
+  
   readonly studentOptions = computed(() => {
     const map = new Map<string, { studentId: string; studentName: string; assessments: number }>();
 
@@ -91,11 +104,13 @@ export default class Grades implements OnInit {
 
     return Array.from(map.values()).sort((left, right) => left.studentName.localeCompare(right.studentName));
   });
+  
   readonly selectedStudent = computed(() => {
     const studentId = this.selectedStudentId();
     const items = this.studentOptions();
     return items.find((item) => item.studentId === studentId) ?? items[0] ?? null;
   });
+  
   readonly selectedStudentHistory = computed(() => {
     const student = this.selectedStudent();
     if (!student) return [] as StudentHistoryItem[];
@@ -115,11 +130,13 @@ export default class Grades implements OnInit {
       })
       .filter((item): item is StudentHistoryItem => item !== null);
   });
+  
   readonly selectedStudentAverage = computed(() => {
     const history = this.selectedStudentHistory();
     if (!history.length) return 0;
     return history.reduce((acc, item) => acc + item.score, 0) / history.length;
   });
+  
   readonly selectedStudentCompletion = computed(() => {
     const history = this.selectedStudentHistory();
     const totalAssessments = this.summary().assessments;
@@ -128,15 +145,12 @@ export default class Grades implements OnInit {
   });
 
   ngOnInit(): void {
-    const sectionCourseId =
-      this.store.selectedSectionId() ??
-      (this.route.parent?.snapshot?.paramMap?.get('id') ?? '');
+    const id = this.store.selectedSectionId() ?? (this.route.parent?.snapshot?.paramMap?.get('id') ?? '');
+    if (id) this.loadGrades(id);
+    else this.loading.set(false);
+  }
 
-    if (!sectionCourseId) {
-      this.loading.set(false);
-      return;
-    }
-
+  loadGrades(sectionCourseId: string) {
     this.api.getGrades(sectionCourseId).subscribe({
       next: (response) => {
         this.records.set(response?.data ?? []);
@@ -167,19 +181,11 @@ export default class Grades implements OnInit {
     this.search.set('');
   }
 
-  statusTone(value: number, total: number) {
-    const ratio = total > 0 ? value / total : 0;
-    if (ratio >= 0.85) return 'success';
-    if (ratio >= 0.65) return 'info';
-    return 'danger';
-  }
-
   private getDefaultStudentId(records: ClassroomGradeRecord[]) {
     for (const record of records) {
       const studentId = record.scores[0]?.studentId;
       if (studentId) return studentId;
     }
-
     return null;
   }
 }

@@ -1,0 +1,31 @@
+<section
+  class="card-premium p-10 bg-linear-to-br from-zinc-900 to-black text-white border-none relative overflow-hidden"
+>
+  <div
+    class="absolute top-0 right-0 w-80 h-80 bg-primary/20 rounded-full -mr-40 -mt-40 blur-3xl animate-pulse"
+  ></div>
+  <div class="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+    <div class="space-y-2">
+      <h2 class="text-3xl sm:text-4xl font-black tracking-tighter">Trabajos y tareas</h2>
+      <p class="text-white/50 font-bold uppercase tracking-[0.2em] text-[10px]">
+        {{ pageLabel() }}
+      </p>
+    </div>
+    <div class="flex items-center gap-3">
+      <div
+        class="px-5 py-2.5 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/10 text-xs font-black uppercase tracking-widest"
+      >
+        {{ totalVisibleTasks() }} Tareas visibles
+      </div>
+      @if (canCreateTask()) {
+        <button
+          type="button"
+          class="rounded-2xl bg-white px-5 py-3 text-[10px] font-black uppercase tracking-[0.18em] text-zinc-900 transition hover:scale-[1.02] active:scale-[0.98]"
+          (click)="onCreate.emit()"
+        >
+          Crear tarea
+        </button>
+      }
+    </div>
+  </div>
+</section>

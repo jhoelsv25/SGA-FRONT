@@ -1,0 +1,665 @@
+<div
+  class="card-premium bg-white dark:bg-zinc-900 overflow-hidden"
+>
+  <div class="p-8">
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+      <div class="flex items-start gap-6 flex-1 min-w-0">
+        <div
+          class="w-16 h-16 shrink-0 flex items-center justify-center rounded-2xl bg-base-100 dark:bg-zinc-800 text-base-content/20 group-hover:bg-primary group-hover:text-white transition-all duration-500 shadow-inner border border-base-200/50 dark:border-zinc-700/50"
+        >
+          <i class="fa-solid fa-clipboard-check text-2xl"></i>
+        </div>
+        <div class="min-w-0 space-y-2">
+          <h3
+            class="text-xl sm:text-2xl font-black text-base-content leading-tight hover:text-primary transition-colors cursor-pointer truncate"
+          >
+            {{ task().title }}
+          </h3>
+          <div class="flex flex-wrap items-center gap-3">
+            <span
+              class="px-3 py-1 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 text-[10px] font-black uppercase tracking-widest rounded-lg border border-red-100 dark:border-red-500/20"
+            >
+              Vence: {{ task().date | date: 'mediumDate' }}
+            </span>
+            @if (task().type) {
+              <span
+                class="px-3 py-1 bg-primary/5 text-primary text-[10px] font-black uppercase tracking-widest rounded-lg border border-primary/10"
+              >
+                {{ task().type }}
+              </span>
+            }
+            @if (task().questionsCount) {
+              <span
+                class="px-3 py-1 bg-violet-500/5 text-violet-600 dark:text-violet-400 text-[10px] font-black uppercase tracking-widest rounded-lg border border-violet-500/10"
+              >
+                {{ task().questionsCount }} pregunta{{ task().questionsCount === 1 ? '' : 's' }}
+              </span>
+            }
+            <span class="w-1 h-1 rounded-full bg-base-300"></span>
+            <span
+              class="text-[10px] font-bold text-base-content/40 uppercase tracking-widest"
+              >Valor: {{ task().points }} Puntos puros</span
+            >
+          </div>
+          @if (task().description) {
+            <p class="max-w-3xl text-sm font-medium leading-relaxed text-base-content/55">
+              {{ task().description }}
+            </p>
+          }
+          @if (canCreateTask()) {
+            <div class="flex flex-wrap gap-2">
+              <button
+                type="button"
+                class="inline-flex items-center gap-2 rounded-2xl border border-base-300 bg-base-100 px-4 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-base-content/70 transition hover:border-primary/20 hover:text-primary"
+                (click)="onEdit.emit(task().id)"
+              >
+                <i class="fa-solid fa-pen"></i>
+                Editar
+              </button>
+              <button
+                type="button"
+                class="inline-flex items-center gap-2 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-rose-600 transition hover:bg-rose-100"
+                (click)="onDelete.emit(task())"
+              >
+                <i class="fa-solid fa-trash"></i>
+                Eliminar
+              </button>
+            </div>
+          }
+          @if (task().resourceUrl) {
+            <a
+              [href]="task().resourceUrl"
+              target="_blank"
+              class="inline-flex items-center gap-2 rounded-2xl border border-primary/15 bg-primary/5 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-primary transition hover:bg-primary/10"
+            >
+              <i class="fa-solid fa-link"></i>
+              Abrir recurso adjunto
+            </a>
+          }
+        </div>
+      </div>
+
+      <div class="flex items-center gap-6 self-end lg:self-center">
+        <div class="flex flex-col items-end gap-2">
+          @if (task().status === 'pending') {
+            <span
+              class="px-4 py-1.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 text-xs font-black uppercase tracking-widest border border-amber-500/20"
+              >Pendiente</span
+            >
+          } @else if (task().status === 'delivered') {
+            <span
+              class="px-4 py-1.5 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 text-xs font-black uppercase tracking-widest border border-blue-500/20"
+              >Entregado</span
+            >
+          } @else if (task().status === 'late') {
+            <span
+              class="px-4 py-1.5 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 text-xs font-black uppercase tracking-widest border border-rose-500/20"
+              >Tardío</span
+            >
+          } @else if (task().status === 'graded') {
+            <div class="flex flex-col items-end">
+              <span
+                class="px-4 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-black uppercase tracking-widest border border-emerald-500/20"
+                >Calificado</span
+              >
+              @if (task().grade !== undefined && task().grade !== null) {
+                <span class="text-2xl font-black text-emerald-600 mt-1"
+                  >{{ task().grade
+                  }}<span class="text-xs text-base-content/30 ml-1"
+                    >/{{ task().points }}</span
+                  ></span
+                >
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    @if (canSubmitTask() && task().status !== 'graded') {
+      <div
+        class="mt-8 pt-8 border-t border-base-100 flex flex-col gap-6 animate-in fade-in slide-in-from-top-4"
+      >
+        <div class="flex items-center gap-3">
+          <div
+            class="w-8 h-8 rounded-lg bg-primary/5 flex items-center justify-center text-primary"
+          >
+            <i class="fa-solid fa-paper-plane text-xs"></i>
+          </div>
+          <span class="text-sm font-black uppercase tracking-widest text-base-content">
+            {{ isQuiz(task()) ? 'Resolver quiz' : 'Entregar actividad' }}
+          </span>
+        </div>
+
+        @if (isQuiz(task())) {
+          <div class="grid gap-5">
+            @if (task().questions?.length) {
+              @for (
+                question of task().questions;
+                track question.id;
+                let questionIndex = $index
+              ) {
+                <article
+                  class="rounded-4xl border border-base-200 bg-base-100/70 p-6 space-y-4"
+                >
+                  <div
+                    class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"
+                  >
+                    <div class="space-y-2">
+                      <div class="flex items-center gap-2">
+                        <span
+                          class="inline-flex h-8 min-w-8 items-center justify-center rounded-full bg-primary/10 px-3 text-[10px] font-black uppercase tracking-[0.18em] text-primary"
+                        >
+                          {{ questionIndex + 1 }}
+                        </span>
+                        <span
+                          class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45"
+                        >
+                          {{
+                            question.type === 'single_choice'
+                              ? 'Seleccion unica'
+                              : question.type === 'multiple_choice'
+                                ? 'Seleccion multiple'
+                                : 'Respuesta corta'
+                          }}
+                        </span>
+                        @if (question.required) {
+                          <span
+                            class="rounded-full border border-rose-500/20 bg-rose-500/10 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-rose-600"
+                          >
+                            Obligatoria
+                          </span>
+                        }
+                      </div>
+                      <h4 class="text-base font-black leading-snug text-base-content">
+                        {{ question.prompt }}
+                      </h4>
+                    </div>
+                    <span
+                      class="rounded-full border border-primary/15 bg-primary/5 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-primary"
+                    >
+                      {{ question.points }} pt{{ question.points === 1 ? '' : 's' }}
+                    </span>
+                  </div>
+
+                  @if (question.type === 'short_answer') {
+                    <textarea
+                      class="min-h-[120px] w-full rounded-xl border border-base-200 bg-white p-5 text-sm font-medium text-base-content outline-none transition focus:border-primary/20 focus:ring-4 focus:ring-primary/5 dark:bg-zinc-900"
+                      placeholder="Escribe tu respuesta..."
+                      [ngModel]="getQuizQuestionDraft(question.id).answerText"
+                      (ngModelChange)="
+                        updateQuizAnswer(question.id, { answerText: $event })
+                      "
+                    ></textarea>
+                  } @else {
+                    <div class="grid gap-3">
+                      @for (option of question.options; track option.id) {
+                        <button
+                          type="button"
+                          class="flex w-full items-center justify-between gap-4 rounded-[1.4rem] border px-5 py-4 text-left transition"
+                          [class.border-primary]="
+                            getQuizQuestionDraft(
+                              question.id
+                            ).selectedOptionIds.includes(option.id)
+                          "
+                          [class.bg-primary/5]="
+                            getQuizQuestionDraft(
+                              question.id
+                            ).selectedOptionIds.includes(option.id)
+                          "
+                          [class.text-primary]="
+                            getQuizQuestionDraft(
+                              question.id
+                            ).selectedOptionIds.includes(option.id)
+                          "
+                          [class.border-base-200]="
+                            !getQuizQuestionDraft(
+                              question.id
+                            ).selectedOptionIds.includes(option.id)
+                          "
+                          [class.bg-base-100/70]="
+                            !getQuizQuestionDraft(
+                              question.id
+                            ).selectedOptionIds.includes(option.id)
+                          "
+                          (click)="
+                            toggleQuizOption(
+                              question.id,
+                              option.id,
+                              question.type === 'multiple_choice'
+                            )
+                          "
+                        >
+                          <div class="flex items-center gap-3">
+                            <span
+                              class="inline-flex h-8 w-8 items-center justify-center rounded-full border text-[10px] font-black uppercase tracking-[0.18em]"
+                              [class.border-primary]="
+                                getQuizQuestionDraft(
+                                  question.id
+                                ).selectedOptionIds.includes(option.id)
+                              "
+                              [class.bg-primary]="
+                                getQuizQuestionDraft(
+                                  question.id
+                                ).selectedOptionIds.includes(option.id)
+                              "
+                              [class.text-white]="
+                                getQuizQuestionDraft(
+                                  question.id
+                                ).selectedOptionIds.includes(option.id)
+                              "
+                              [class.border-base-300]="
+                                !getQuizQuestionDraft(
+                                  question.id
+                                ).selectedOptionIds.includes(option.id)
+                              "
+                              [class.text-base-content/55]="
+                                !getQuizQuestionDraft(
+                                  question.id
+                                ).selectedOptionIds.includes(option.id)
+                              "
+                            >
+                              {{ question.type === 'multiple_choice' ? 'CHK' : 'OPT' }}
+                            </span>
+                            <span class="text-sm font-semibold leading-relaxed">{{
+                              option.label
+                            }}</span>
+                          </div>
+                          @if (
+                            getQuizQuestionDraft(
+                              question.id
+                            ).selectedOptionIds.includes(option.id)
+                          ) {
+                            <i class="fa-solid fa-check text-sm"></i>
+                          }
+                        </button>
+                      }
+                    </div>
+                  }
+                </article>
+              }
+            } @else {
+              <div
+                class="rounded-4xl border border-dashed border-base-300 bg-base-100/60 px-6 py-10 text-center"
+              >
+                <p class="text-sm font-semibold text-base-content/55">
+                  Este quiz aun no tiene preguntas configuradas.
+                </p>
+              </div>
+            }
+
+            <div
+              class="flex flex-col gap-3 rounded-4xl border border-primary/10 bg-primary/5 p-5 sm:flex-row sm:items-center sm:justify-between"
+            >
+              <p class="text-sm font-semibold text-base-content/65">
+                Responde las preguntas y envía el quiz. Las preguntas objetivas se califican
+                automáticamente.
+              </p>
+              <button
+                type="button"
+                [disabled]="submitting()"
+                (click)="submitTask()"
+                class="h-14 rounded-2xl bg-primary px-8 text-sm font-black uppercase tracking-widest text-white shadow-lg shadow-primary/20 transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
+              >
+                @if (submitting()) {
+                  <i class="fa-solid fa-circle-notch animate-spin mr-2"></i> Procesando
+                } @else {
+                  Enviar quiz
+                }
+              </button>
+            </div>
+          </div>
+        } @else {
+          <div class="grid gap-4">
+            <textarea
+              class="w-full min-h-[140px] rounded-xl border-transparent bg-base-200/50 focus:bg-white dark:bg-zinc-800/50 dark:focus:bg-zinc-800 p-6 text-sm font-medium transition-all duration-300 outline-none focus:ring-4 focus:ring-primary/5 resize-none"
+              placeholder="Escribe tus comentarios o detalles de la entrega aquí..."
+              [ngModel]="submissionDraft().submissionText"
+              (ngModelChange)="submissionDraft.update(v => ({...v, submissionText: $event}))"
+            ></textarea>
+
+            <div class="flex flex-col sm:flex-row items-center gap-4">
+              <div class="relative w-full">
+                <i
+                  class="fa-solid fa-link absolute left-5 top-1/2 -translate-y-1/2 text-base-content/30"
+                ></i>
+                <input
+                  type="url"
+                  class="w-full h-14 pl-12 pr-6 rounded-2xl border-transparent bg-base-200/50 focus:bg-white dark:bg-zinc-800/50 dark:focus:bg-zinc-800 text-sm font-medium transition-all duration-300 outline-none focus:ring-4 focus:ring-primary/5"
+                  placeholder="Enlace de entrega (Drive, GitHub, etc.)"
+                  [ngModel]="submissionDraft().linkUrl"
+                  (ngModelChange)="submissionDraft.update(v => ({...v, linkUrl: $event}))"
+                />
+              </div>
+
+              <div class="flex items-center gap-3 w-full sm:w-auto">
+                <input
+                  type="file"
+                  #taskFileInput
+                  class="hidden"
+                  (change)="onFileSelected($event)"
+                />
+                <button
+                  type="button"
+                  (click)="taskFileInput.click()"
+                  class="h-14 px-6 rounded-2xl bg-base-200/80 dark:bg-zinc-800 text-sm font-black uppercase tracking-widest text-base-content/60 hover:text-primary hover:bg-white transition-all border-none flex-1 sm:flex-initial whitespace-nowrap"
+                >
+                  <i class="fa-solid fa-paperclip mr-2"></i>
+                  {{
+                    submissionDraft().fileName ? 'Cambiar archivo' : 'Adjuntar'
+                  }}
+                </button>
+
+                <button
+                  type="button"
+                  [disabled]="submitting()"
+                  (click)="submitTask()"
+                  class="h-14 px-10 rounded-2xl bg-primary text-white text-sm font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all flex-1 sm:flex-initial whitespace-nowrap disabled:opacity-50"
+                >
+                  @if (submitting()) {
+                    <i class="fa-solid fa-circle-notch animate-spin mr-2"></i> Procesando
+                  } @else {
+                    Enviar ahora
+                  }
+                </button>
+              </div>
+            </div>
+            @if (submissionDraft().fileName) {
+              <div
+                class="flex items-center gap-2 text-[10px] font-black text-emerald-600 bg-emerald-500/5 px-4 py-2 rounded-lg border border-emerald-500/10 w-fit"
+              >
+                <i class="fa-solid fa-file-check"></i>
+                {{ submissionDraft().fileName }}
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    @if (
+      task().submissionSummary ||
+      (canInspectStudentSubmissions() && task().studentSubmissions?.length)
+    ) {
+      <div class="mt-8 pt-8 border-t border-base-100 space-y-8">
+        @if (task().submissionSummary) {
+          <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="p-6 rounded-3xl bg-blue-500/5 border border-blue-500/10 group/stat">
+              <p
+                class="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600/50 group-hover/stat:text-blue-600 transition-colors"
+              >
+                Entregados
+              </p>
+              <p class="mt-3 text-3xl font-black text-blue-600">
+                {{ task().submissionSummary?.deliveredCount }}
+              </p>
+            </div>
+            <div
+              class="p-6 rounded-3xl bg-emerald-500/5 border border-emerald-500/10 group/stat"
+            >
+              <p
+                class="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600/50 group-hover/stat:text-emerald-600 transition-colors"
+              >
+                Calificados
+              </p>
+              <p class="mt-3 text-3xl font-black text-emerald-600">
+                {{ task().submissionSummary?.gradedCount }}
+              </p>
+            </div>
+            <div
+              class="p-6 rounded-3xl bg-amber-500/5 border border-amber-500/10 group/stat col-span-2 lg:col-span-1"
+            >
+              <p
+                class="text-[10px] font-black uppercase tracking-[0.2em] text-amber-600/50 group-hover/stat:text-amber-600 transition-colors"
+              >
+                Pendientes
+              </p>
+              <p class="mt-3 text-3xl font-black text-amber-600">
+                {{ task().submissionSummary?.pendingCount }}
+              </p>
+            </div>
+          </div>
+        }
+
+        @if (canInspectStudentSubmissions() && task().studentSubmissions?.length) {
+          <div class="space-y-4">
+            <div class="flex items-center gap-3 mb-2">
+              <i class="fa-solid fa-users-viewfinder text-primary"></i>
+              <span
+                class="text-xs font-black uppercase tracking-widest text-base-content/40"
+                >Revisiones de estudiantes</span
+              >
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              @for (
+                submission of task().studentSubmissions;
+                track submission.studentId ?? submission.studentName
+              ) {
+                <div
+                  class="p-6 rounded-4xl bg-base-100/50 border border-base-200/50 hover:bg-white dark:hover:bg-zinc-800 transition-all group/rev"
+                >
+                  <div class="flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-4 min-w-0">
+                      <div
+                        class="w-10 h-10 rounded-xl bg-linear-to-tr from-base-200 to-base-300 flex items-center justify-center font-black text-sm text-base-content/40 group-hover/rev:from-primary group-hover/rev:to-indigo-500 group-hover/rev:text-white transition-all duration-500"
+                      >
+                        {{ submission.studentName[0] }}
+                      </div>
+                      <div class="min-w-0">
+                        <p class="truncate text-sm font-black text-base-content">
+                          {{ submission.studentName }}
+                        </p>
+                        <p
+                          class="text-[10px] font-bold text-base-content/40 uppercase mt-0.5"
+                        >
+                          {{ statusLabel(submission.status) }}
+                          @if (submission.submittedAt) {
+                            • {{ submission.submittedAt | date: 'mediumDate' }}
+                          }
+                        </p>
+                      </div>
+                    </div>
+                    @if (submission.score !== undefined && submission.score !== null) {
+                      <div class="text-right">
+                        <span class="text-lg font-black text-primary">{{
+                          submission.score
+                        }}</span>
+                        <span class="text-[10px] text-base-content/30 ml-0.5">pts</span>
+                      </div>
+                    }
+                  </div>
+
+                  @if (submission.feedback) {
+                    <div
+                      class="mt-4 p-4 rounded-2xl bg-blue-500/5 border border-blue-500/10"
+                    >
+                      <p class="text-xs font-medium text-blue-600 leading-relaxed italic">
+                        "{{ submission.feedback }}"
+                      </p>
+                    </div>
+                  }
+
+                  @if (canReviewTask() && submission.submissionId) {
+                    <div class="mt-6 pt-6 border-t border-base-200/50 grid gap-4">
+                      <div class="flex flex-col sm:flex-row gap-3">
+                        <input
+                          type="number"
+                          min="0"
+                          [max]="task().points"
+                          class="h-12 w-full sm:w-28 rounded-xl border-transparent bg-base-200/50 focus:bg-white dark:bg-zinc-800 p-4 text-sm font-black text-primary transition-all outline-none"
+                          placeholder="Nota"
+                          [ngModel]="getReviewDraft(submission.submissionId).score"
+                          (ngModelChange)="
+                            updateReviewDraft(submission.submissionId, { score: $event })
+                          "
+                        />
+                        <input
+                          type="text"
+                          class="h-12 flex-1 rounded-xl border-transparent bg-base-200/50 focus:bg-white dark:bg-zinc-800 p-4 text-sm font-medium text-base-content transition-all outline-none"
+                          placeholder="Feedback..."
+                          [ngModel]="getReviewDraft(submission.submissionId).feedback"
+                          (ngModelChange)="
+                            updateReviewDraft(submission.submissionId, { feedback: $event })
+                          "
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        class="h-12 w-full rounded-xl bg-zinc-900 dark:bg-white dark:text-zinc-900 text-white text-[10px] font-black uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
+                        [disabled]="reviewingSubmissionId() === submission.submissionId"
+                        (click)="reviewSubmission(submission.submissionId)"
+                      >
+                        @if (reviewingSubmissionId() === submission.submissionId) {
+                          <i class="fa-solid fa-circle-notch animate-spin mr-2"></i>
+                          Guardando
+                        } @else {
+                          Confirmar Calificación
+                        }
+                      </button>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <div class="mt-8 pt-8 border-t border-base-100 space-y-5">
+      <div class="flex items-center justify-between gap-4">
+        <button
+          type="button"
+          class="inline-flex items-center gap-3 text-base-content/45 transition hover:text-primary"
+          (click)="toggleComments()"
+        >
+          <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-base-200/50">
+            <i class="fa-regular fa-comments text-sm"></i>
+          </span>
+          <span class="text-xs font-black uppercase tracking-[0.18em]">
+            {{ task().commentsCount || 0 }} comentario{{
+              (task().commentsCount || 0) === 1 ? '' : 's'
+            }}
+          </span>
+        </button>
+        <span class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/30">
+          {{ commentsExpanded() ? 'Ocultar hilo' : 'Abrir hilo' }}
+        </span>
+      </div>
+
+      @if (commentsExpanded()) {
+        <div class="space-y-4 rounded-[2rem] border border-base-200 bg-base-100/45 p-5">
+          @if (task().comments?.length) {
+            <div class="space-y-3">
+              @for (comment of task().comments; track comment.id) {
+                <div class="rounded-[1.5rem] border border-base-200 bg-white/80 p-4 dark:bg-zinc-900/80">
+                  <div class="flex items-start justify-between gap-4">
+                    <div class="flex min-w-0 items-start gap-3">
+                      <div class="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-primary/10 font-black text-primary">
+                        @if (comment.author.avatar) {
+                          <img [src]="comment.author.avatar" [alt]="comment.author.name" class="h-full w-full object-cover" />
+                        } @else {
+                          {{ comment.author.name[0] }}
+                        }
+                      </div>
+                      <div class="min-w-0">
+                        <div class="flex flex-wrap items-center gap-2">
+                          <span class="text-sm font-black text-base-content">{{ comment.author.name }}</span>
+                          @if (comment.author.role) {
+                            <span class="text-[10px] font-black uppercase tracking-[0.16em] text-primary/55">
+                              {{ comment.author.role }}
+                            </span>
+                          }
+                          <span class="text-[10px] font-black uppercase tracking-[0.16em] text-base-content/35">
+                            {{ comment.date | date: 'short' }}
+                          </span>
+                        </div>
+                        @if (editingCommentId() === comment.id) {
+                          <div class="mt-3 space-y-3">
+                            <textarea
+                              [ngModel]="editingCommentContent()"
+                              (ngModelChange)="editingCommentContent.set($event)"
+                              class="min-h-[90px] w-full rounded-2xl border border-primary/10 bg-base-200/40 px-4 py-3 text-sm outline-none transition focus:border-primary/20 focus:ring-4 focus:ring-primary/5 dark:bg-zinc-800/60"
+                            ></textarea>
+                            <div class="flex gap-2">
+                              <button
+                                type="button"
+                                class="rounded-xl bg-primary px-4 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-white"
+                                [disabled]="savingComment()"
+                                (click)="saveCommentUpdate(comment.id)"
+                              >
+                                Guardar
+                              </button>
+                              <button
+                                type="button"
+                                class="rounded-xl border border-base-300 px-4 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-base-content/60"
+                                (click)="cancelEditComment()"
+                              >
+                                Cancelar
+                              </button>
+                            </div>
+                          </div>
+                        } @else {
+                          <p class="mt-2 whitespace-pre-wrap text-sm font-medium text-base-content/70">
+                            {{ comment.content }}
+                          </p>
+                        }
+                      </div>
+                    </div>
+
+                    @if (canManageComment(comment)) {
+                      <div class="flex shrink-0 items-center gap-2">
+                        <button
+                          type="button"
+                          class="rounded-xl px-3 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-base-content/50 transition hover:bg-primary/5 hover:text-primary"
+                          (click)="editingCommentId() === comment.id ? cancelEditComment() : startEditComment(comment)"
+                        >
+                          {{ editingCommentId() === comment.id ? 'Cancelar' : 'Editar' }}
+                        </button>
+                        <button
+                          type="button"
+                          class="rounded-xl px-3 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-red-500 transition hover:bg-red-500/5"
+                          [disabled]="deletingCommentId() === comment.id"
+                          (click)="deleteComment(comment.id)"
+                        >
+                          {{ deletingCommentId() === comment.id ? 'Eliminando' : 'Eliminar' }}
+                        </button>
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="rounded-[1.5rem] border border-dashed border-base-300 bg-base-100/70 px-5 py-6 text-center text-sm font-semibold text-base-content/50">
+              Todavía no hay comentarios en esta tarea.
+            </div>
+          }
+
+          @if (canCommentTask()) {
+            <div class="rounded-[1.5rem] border border-primary/10 bg-primary/5 p-4">
+              <div class="space-y-3">
+                <textarea
+                  [ngModel]="commentDraft()"
+                  (ngModelChange)="commentDraft.set($event)"
+                  placeholder="Escribe un comentario sobre esta tarea..."
+                  class="min-h-[100px] w-full rounded-2xl border border-primary/10 bg-white px-4 py-3 text-sm outline-none transition focus:border-primary/20 focus:ring-4 focus:ring-primary/5 dark:bg-zinc-900"
+                ></textarea>
+                <div class="flex justify-end">
+                  <button
+                    type="button"
+                    class="rounded-2xl bg-primary px-5 py-3 text-[10px] font-black uppercase tracking-[0.18em] text-white transition hover:bg-primary/90 disabled:opacity-50"
+                    [disabled]="savingComment() || !commentDraft().trim()"
+                    (click)="submitComment()"
+                  >
+                    {{ savingComment() ? 'Publicando' : 'Comentar' }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</div>

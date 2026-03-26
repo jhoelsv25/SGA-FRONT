@@ -1,0 +1,41 @@
+<div
+  class="group card-premium p-5 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 bg-white dark:bg-zinc-900 border-base-200/50 dark:border-zinc-800">
+  <div class="flex items-center gap-5">
+    @if (person().photoUrl) {
+      <img [src]="person().photoUrl" [alt]="displayName()"
+        class="h-14 w-14 shrink-0 rounded-2xl object-cover shadow-lg border border-zinc-200/50 dark:border-zinc-700/50"
+        [ngClass]="type() === 'teacher' ? 'shadow-primary/10' : 'shadow-sm'" />
+    } @else {
+      <div
+        class="w-14 h-14 shrink-0 flex items-center justify-center rounded-2xl font-black text-lg transition-all"
+        [ngClass]="{
+          'bg-gradient-to-tr from-primary to-indigo-500 text-white shadow-lg shadow-primary/20 group-hover:rotate-6': type() === 'teacher' || person().role,
+          'bg-zinc-100 dark:bg-zinc-800 text-base-content/40 border border-zinc-200/50 dark:border-zinc-700/50 group-hover:bg-primary/10 group-hover:text-primary group-hover:border-primary/20': type() === 'student' && !person().role
+        }">
+        {{ initials() }}
+      </div>
+    }
+    <div class="min-w-0 flex-1">
+      <p class="font-black text-base-content truncate pr-4 text-base">{{ displayName() }}</p>
+
+      @if (type() === 'teacher') {
+        @if (person().role) {
+          <p class="mt-1 text-[10px] font-black uppercase tracking-widest text-primary/60">{{ person().role }}</p>
+        }
+        @if (person().email) {
+          <p class="text-xs font-bold text-base-content/40 truncate mt-1">{{ person().email }}</p>
+        }
+      } @else {
+        @if (person().code) {
+          <div class="flex items-center gap-1.5 mt-1">
+            <div class="w-1 h-1 rounded-full bg-emerald-500"></div>
+            <p class="text-[10px] font-black text-base-content/30 uppercase tracking-widest">{{ person().code }}</p>
+          </div>
+        }
+        @if (person().status) {
+          <p class="mt-1 text-[10px] font-black uppercase tracking-widest text-primary/50">{{ person().status }}</p>
+        }
+      }
+    </div>
+  </div>
+</div>

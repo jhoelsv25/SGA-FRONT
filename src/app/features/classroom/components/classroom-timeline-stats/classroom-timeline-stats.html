@@ -1,0 +1,22 @@
+<section class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+  <article class="rounded-4xl border border-base-200 bg-card p-5">
+    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Feed total</p>
+    <p class="mt-3 text-3xl font-black tracking-tight">{{ totalPosts() }}</p>
+    <p class="mt-1 text-sm text-base-content/55">Publicaciones visibles</p>
+  </article>
+  <article class="rounded-4xl border border-base-200 bg-card p-5">
+    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Tareas</p>
+    <p class="mt-3 text-3xl font-black tracking-tight">{{ assignmentCount() }}</p>
+    <p class="mt-1 text-sm text-base-content/55">Actividades asignadas</p>
+  </article>
+  <article class="rounded-4xl border border-base-200 bg-card p-5">
+    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Materiales</p>
+    <p class="mt-3 text-3xl font-black tracking-tight">{{ materialCount() }}</p>
+    <p class="mt-1 text-sm text-base-content/55">Recursos compartidos</p>
+  </article>
+  <article class="rounded-4xl border border-base-200 bg-card p-5">
+    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Anuncios</p>
+    <p class="mt-3 text-3xl font-black tracking-tight">{{ postCount() }}</p>
+    <p class="mt-1 text-sm text-base-content/55">Mensajes del muro</p>
+  </article>
+</section>

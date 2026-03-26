@@ -1,0 +1,22 @@
+<section class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+  <article class="rounded-4xl border border-base-200 bg-card p-5">
+    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Pendientes</p>
+    <p class="mt-3 text-3xl font-black tracking-tight">{{ pendingCount() }}</p>
+    <p class="mt-1 text-sm text-base-content/55">Por entregar</p>
+  </article>
+  <article class="rounded-4xl border border-base-200 bg-card p-5">
+    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Entregadas</p>
+    <p class="mt-3 text-3xl font-black tracking-tight">{{ deliveredCount() }}</p>
+    <p class="mt-1 text-sm text-base-content/55">Pendientes de revisión</p>
+  </article>
+  <article class="rounded-4xl border border-base-200 bg-card p-5">
+    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Calificadas</p>
+    <p class="mt-3 text-3xl font-black tracking-tight">{{ gradedCount() }}</p>
+    <p class="mt-1 text-sm text-base-content/55">Con nota registrada</p>
+  </article>
+  <article class="rounded-4xl border border-base-200 bg-card p-5">
+    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Tardías</p>
+    <p class="mt-3 text-3xl font-black tracking-tight">{{ lateCount() }}</p>
+    <p class="mt-1 text-sm text-base-content/55">Fuera de plazo</p>
+  </article>
+</section>

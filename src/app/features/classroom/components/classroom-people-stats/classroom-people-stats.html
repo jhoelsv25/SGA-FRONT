@@ -1,0 +1,22 @@
+<section class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+  <article class="rounded-4xl border border-base-200 bg-card p-5">
+    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Docentes</p>
+    <p class="mt-3 text-3xl font-black tracking-tight">{{ teachersCount() }}</p>
+    <p class="mt-1 text-sm text-base-content/55">Equipo docente visible</p>
+  </article>
+  <article class="rounded-4xl border border-base-200 bg-card p-5">
+    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Estudiantes</p>
+    <p class="mt-3 text-3xl font-black tracking-tight">{{ studentsCount() }}</p>
+    <p class="mt-1 text-sm text-base-content/55">Participantes del aula</p>
+  </article>
+  <article class="rounded-4xl border border-base-200 bg-card p-5">
+    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Con correo</p>
+    <p class="mt-3 text-3xl font-black tracking-tight">{{ teachersWithEmailCount() }}</p>
+    <p class="mt-1 text-sm text-base-content/55">Contacto disponible</p>
+  </article>
+  <article class="rounded-4xl border border-base-200 bg-card p-5">
+    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Códigos</p>
+    <p class="mt-3 text-3xl font-black tracking-tight">{{ studentsWithCodeCount() }}</p>
+    <p class="mt-1 text-sm text-base-content/55">Estudiantes identificados</p>
+  </article>
+</section>

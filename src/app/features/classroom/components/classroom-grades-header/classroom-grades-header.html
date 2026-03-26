@@ -1,0 +1,28 @@
+<section
+  class="card-premium p-10 bg-gradient-to-br from-indigo-900 to-primary text-white border-none relative overflow-hidden">
+  <div class="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full -mr-40 -mt-40 blur-3xl"></div>
+  <div class="relative flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8">
+    <div class="space-y-2">
+      <h2 class="text-3xl sm:text-4xl font-black tracking-tighter">{{ pageTitle() }}</h2>
+      <p class="text-white/60 font-bold uppercase tracking-[0.2em] text-[10px]">{{ pageDescription() }}</p>
+    </div>
+
+    <div class="grid grid-cols-3 gap-4">
+      <div class="px-6 py-3 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/10 text-center">
+        <p class="text-[10px] font-black uppercase tracking-widest text-white/50">Evaluaciones</p>
+        <p class="text-2xl font-black">{{ assessmentsCount() }}</p>
+      </div>
+      <div class="px-6 py-3 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/10 text-center">
+        <p class="text-[10px] font-black uppercase tracking-widest text-white/50">Registros</p>
+        <p class="text-2xl font-black">{{ scoresCount() }}</p>
+      </div>
+      <div class="px-6 py-3 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/10 text-center">
+        <p class="text-[10px] font-black uppercase tracking-widest text-white/50">Promedio</p>
+        <p class="text-2xl font-black">{{ average() | number:'1.1-1' }}</p>
+        @if (averageLabel()) {
+        <p class="mt-1 text-[10px] font-black uppercase tracking-[0.18em] text-emerald-200">{{ averageLabel() }}</p>
+        }
+      </div>
+    </div>
+  </div>
+</section>
