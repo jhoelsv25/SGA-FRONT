@@ -9,6 +9,7 @@ import { HeaderConfig } from '@core/types/header-types';
 import { ActionConfig } from '@core/types/action-types';
 import { VirtualClassroomApi } from '../../services/virtual-classroom-api';
 import type { VirtualClassroomItem } from '../../types/virtual-classroom-types';
+import { AuthStore } from '@auth/services/store/auth.store';
 
 
 @Component({
@@ -93,6 +94,7 @@ import type { VirtualClassroomItem } from '../../types/virtual-classroom-types';
 })
 export default class ClassroomList implements OnInit {
   private readonly virtualClassroomApi = inject(VirtualClassroomApi);
+  private readonly authStore = inject(AuthStore);
   readonly search = signal('');
   readonly headerConfig = signal<HeaderConfig>({
     title: 'Aulas Virtuales',
@@ -130,7 +132,25 @@ export default class ClassroomList implements OnInit {
   }
 
   ngOnInit(): void {
+    this.syncHeaderByRole();
     this.loadCourses();
+  }
+
+  private syncHeaderByRole(): void {
+    const roleType = this.authStore.currentUser()?.profile?.type ?? 'user';
+    const subtitle =
+      roleType === 'teacher'
+        ? 'Tus aulas asignadas como docente'
+        : roleType === 'student'
+          ? 'Tus aulas virtuales según matrícula activa'
+          : roleType === 'guardian'
+            ? 'Aulas virtuales vinculadas a tus estudiantes'
+            : 'Acceso a cursos, secciones y entornos académicos en línea';
+
+    this.headerConfig.update((config) => ({
+      ...config,
+      subtitle,
+    }));
   }
 
   private loadCourses(): void {

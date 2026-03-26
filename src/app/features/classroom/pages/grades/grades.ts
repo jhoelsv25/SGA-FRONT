@@ -40,6 +40,7 @@ export default class Grades implements OnInit {
     assessments: 0,
     scores: 0,
     average: 0,
+    averageLabel: undefined,
   });
   readonly selectedRecordId = signal<string | null>(null);
   readonly selectedStudentId = signal<string | null>(null);
@@ -139,14 +140,14 @@ export default class Grades implements OnInit {
     this.api.getGrades(sectionCourseId).subscribe({
       next: (response) => {
         this.records.set(response?.data ?? []);
-        this.summary.set(response?.summary ?? { assessments: 0, scores: 0, average: 0 });
+        this.summary.set(response?.summary ?? { assessments: 0, scores: 0, average: 0, averageLabel: undefined });
         this.selectedRecordId.set(response?.data?.[0]?.id ?? null);
         this.selectedStudentId.set(this.getDefaultStudentId(response?.data ?? []));
         this.loading.set(false);
       },
       error: () => {
         this.records.set([]);
-        this.summary.set({ assessments: 0, scores: 0, average: 0 });
+        this.summary.set({ assessments: 0, scores: 0, average: 0, averageLabel: undefined });
         this.selectedRecordId.set(null);
         this.selectedStudentId.set(null);
         this.loading.set(false);

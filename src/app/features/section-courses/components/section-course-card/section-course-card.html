@@ -38,6 +38,21 @@
           Máx. {{ sectionCourse().maxStudents }} estudiantes
           }
         </p>
+        @if (sectionCourse().maxStudents) {
+        <div class="mt-3 space-y-2">
+          <div class="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.18em]">
+            <span class="text-base-content/45">{{ occupancyLabel() }}</span>
+            <span class="text-primary">{{ occupancyPercent() | number:'1.0-0' }}%</span>
+          </div>
+          <div class="h-2.5 overflow-hidden rounded-full bg-base-200">
+            <div
+              class="h-full rounded-full transition-all duration-300"
+              [class]="occupancyTone()"
+              [style.width.%]="occupancyPercent()"
+            ></div>
+          </div>
+        </div>
+        }
         }
       </div>
     </div>
@@ -126,6 +141,15 @@
       Sección: <span class="text-foreground font-mono">{{ sectionCourse().section?.name ?? '-' }}</span>
     </div>
     <div class="flex items-center gap-3">
+      <button
+        z-button
+        zType="outline"
+        type="button"
+        class="h-9 rounded-[var(--radius-xl)] px-4 text-[10px] font-black uppercase tracking-[0.18em]"
+        (click)="assignStudents.emit(sectionCourse())"
+      >
+        Asignar estudiantes
+      </button>
       <button
         z-button
         zType="outline"

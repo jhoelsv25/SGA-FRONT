@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, HostListener, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HeaderDetail } from '@/shared/widgets/header-detail/header-detail';
@@ -21,6 +21,7 @@ import { STUDENT_COLUMN } from '../../config/column.config';
 import { StudentApi } from '../../services/api/student-api';
 import { StudentStore } from '../../services/store/student.store';
 import { Student } from '../../types/student-types';
+import { AuthStore } from '@auth/services/store/auth.store';
 
 const EXCEL_COLUMNS = STUDENT_COLUMN.map((c) => ({ key: c.key, label: c.label }));
 
@@ -44,6 +45,7 @@ type ImportResult = { created: number; errors: { row: number; message: string }[
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class StudentsPage {
+  private readonly pageSize = 50;
   private readonly dialog = inject(DialogModalService);
   private readonly store = inject(StudentStore);
   private readonly studentApi = inject(StudentApi);
@@ -52,20 +54,36 @@ export default class StudentsPage {
   private readonly toast = inject(Toast);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly authStore = inject(AuthStore);
 
   readonly skeletonItems = [1, 2, 3, 4];
   readonly searchTerm = signal('');
+  readonly page = signal(1);
   readonly actions = STUDENT_ACTIONS;
-  readonly headerConfig = {
-    title: 'Estudiantes',
-    subtitle: 'Gestión integral de estudiantes del sistema',
-    showActions: true,
-    showFilters: true,
-  };
+  readonly headerConfig = computed(() => {
+    const roleType = this.authStore.currentUser()?.profile?.type ?? 'user';
+    const subtitle =
+      roleType === 'teacher'
+        ? 'Estudiantes vinculados a tus secciones asignadas'
+        : roleType === 'student'
+          ? 'Tu ficha académica visible en el sistema'
+          : roleType === 'guardian'
+            ? 'Estudiantes vinculados a tu perfil de apoderado'
+            : 'Gestión integral de estudiantes del sistema';
+
+    return {
+      title: 'Estudiantes',
+      subtitle,
+      showActions: true,
+      showFilters: true,
+    };
+  });
 
   readonly canManageStudents = computed(() => this.permissionStore.has('manage_student'));
   readonly loading = computed(() => this.store.loading());
   readonly data = computed(() => this.store.students());
+  readonly pagination = computed(() => this.store.pagination());
+  readonly canLoadMore = computed(() => this.data().length < this.pagination().total);
   readonly filteredData = computed(() => {
     const search = this.searchTerm().toLowerCase().trim();
     if (!search) return this.data();
@@ -85,7 +103,13 @@ export default class StudentsPage {
   constructor() {
     this.route.queryParamMap.subscribe((params) => {
       this.searchTerm.set(params.get('search') ?? '');
-      this.store.loadAll({ size: 999 });
+      this.page.set(1);
+      this.store.loadAll({
+        params: {
+          page: 1,
+          size: this.pageSize,
+        },
+      });
     });
   }
 
@@ -118,7 +142,26 @@ export default class StudentsPage {
   }
 
   onRefresh() {
-    this.store.loadAll({ size: 999 });
+    this.page.set(1);
+    this.store.loadAll({
+      params: {
+        page: 1,
+        size: this.pageSize,
+      },
+    });
+  }
+
+  @HostListener('window:scroll')
+  onWindowScroll(): void {
+    if (this.loading() || !this.canLoadMore()) return;
+
+    const threshold = 300;
+    const position = window.innerHeight + window.scrollY;
+    const height = document.documentElement.scrollHeight;
+
+    if (height - position <= threshold) {
+      this.loadMore();
+    }
   }
 
   editStudent(student: Student) {
@@ -225,6 +268,18 @@ export default class StudentsPage {
         sheetName: 'Estudiantes',
         fileName: `estudiantes_${new Date().toISOString().slice(0, 10)}.xlsx`,
       });
+    });
+  }
+
+  private loadMore() {
+    const nextPage = this.page() + 1;
+    this.page.set(nextPage);
+    this.store.loadAll({
+      append: true,
+      params: {
+        page: nextPage,
+        size: this.pageSize,
+      },
     });
   }
 }

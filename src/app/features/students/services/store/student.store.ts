@@ -8,6 +8,11 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { Params } from '@angular/router';
 import { pipe, switchMap, tap } from 'rxjs';
 
+type StudentLoadParams = {
+  params?: Params;
+  append?: boolean;
+};
+
 type studentState = {
   students: Student[];
   pagination: PaginationType;
@@ -30,15 +35,22 @@ export const StudentStore = signalStore(
   { providedIn: 'root' },
   withState<studentState>(initialStudentState),
   withMethods((store, api = inject(StudentApi), toast = inject(Toast)) => ({
-    loadAll: rxMethod<Params | void>(
+    loadAll: rxMethod<StudentLoadParams | Params | void>(
       pipe(
-        switchMap((params) => {
+        switchMap((request) => {
+          const normalized =
+            request && typeof request === 'object' && ('params' in request || 'append' in request)
+              ? (request as StudentLoadParams)
+              : { params: (request as Params | undefined) ?? {}, append: false };
+
           patchState(store, { loading: true });
-          return api.getAll(params || {}).pipe(
+          return api.getAll(normalized.params || {}).pipe(
             tap({
               next: (response) => {
+                const incoming = response.data ?? [];
+                const students = normalized.append ? [...store.students(), ...incoming] : incoming;
                 patchState(store, {
-                  students: response.data ?? [],
+                  students,
                   pagination: {
                     page: response.page ?? 1,
                     size: response.size ?? 10,

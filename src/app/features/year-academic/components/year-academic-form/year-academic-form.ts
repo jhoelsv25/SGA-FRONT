@@ -3,11 +3,11 @@ import { ZardDatePickerComponent } from '@/shared/components/date-picker';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardInputDirective } from '@/shared/components/input';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal, input } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthFacade } from '@auth/services/store/auth.acede';
 
-import { AcademicYearStatus, GradingSystem, Modality, YearAcademic } from '../../types/year-academi-types';
+import { AcademicYearStatus, GradingSystem, Modality, YearAcademic, YearAcademicGradeScale } from '../../types/year-academi-types';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
 import { InstitutionApi } from '@features/admin-services/api/institution-api';
 import { YearAcademicStore } from '../../services/store/year-academic.store';
@@ -16,7 +16,7 @@ import { YearAcademicStore } from '../../services/store/year-academic.store';
 @Component({
   selector: 'sga-year-academic-form',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, SelectOptionComponent, ZardButtonComponent, ZardDatePickerComponent, ZardInputDirective],
+  imports: [ReactiveFormsModule, FormsModule, CommonModule, SelectOptionComponent, ZardButtonComponent, ZardDatePickerComponent, ZardInputDirective],
   templateUrl: './year-academic-form.html',
   styleUrls: ['./year-academic-form.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -61,6 +61,7 @@ export class YearAcademicForm implements OnInit {
     { value: AcademicYearStatus.COMPLETED, label: 'Cerrado' },
     { value: AcademicYearStatus.CANCELLED, label: 'Cancelado' }];
   institutions = signal<{ value: string; label: string }[]>([]);
+  gradeScales = signal<YearAcademicGradeScale[]>([]);
   passingGradeLabel = computed(() => {
     switch (this.form.get('gradingSystem')?.value) {
       case GradingSystem.LETTER:
@@ -71,6 +72,8 @@ export class YearAcademicForm implements OnInit {
         return 'Nota mínima aprobatoria';
     }
   });
+
+  readonly showGradeScaleTable = computed(() => this.form.get('gradingSystem')?.value === GradingSystem.LETTER);
   passingGradePlaceholder = computed(() => {
     switch (this.form.get('gradingSystem')?.value) {
       case GradingSystem.LETTER:
@@ -138,14 +141,56 @@ export class YearAcademicForm implements OnInit {
           institution: this.getEntityId(current.institution as string | { id: string } | undefined),
           periodCount: current.periods?.length ?? current.periodCount ?? 0,
         });
+        this.gradeScales.set(
+          current.gradeScales?.length
+            ? current.gradeScales.map((scale, index) => ({
+                label: scale.label,
+                minScore: Number(scale.minScore),
+                maxScore: Number(scale.maxScore),
+                orderIndex: scale.orderIndex ?? index + 1,
+              }))
+            : [
+                { label: 'AD', minScore: 18, maxScore: 20, orderIndex: 1 },
+                { label: 'A', minScore: 14, maxScore: 17, orderIndex: 2 },
+                { label: 'B', minScore: 11, maxScore: 13, orderIndex: 3 },
+                { label: 'C', minScore: 0, maxScore: 10, orderIndex: 4 },
+              ],
+        );
         this.form.get('periodCount')?.disable({ emitEvent: false });
       } else {
+        this.gradeScales.set([
+          { label: 'AD', minScore: 18, maxScore: 20, orderIndex: 1 },
+          { label: 'A', minScore: 14, maxScore: 17, orderIndex: 2 },
+          { label: 'B', minScore: 11, maxScore: 13, orderIndex: 3 },
+          { label: 'C', minScore: 0, maxScore: 10, orderIndex: 4 },
+        ]);
         const defaultInstitutionId = this.resolveDefaultInstitutionId(institutionOptions);
         if (defaultInstitutionId) {
           this.form.patchValue({ institution: defaultInstitutionId });
         }
       }
     });
+  }
+
+  addGradeScale() {
+    this.gradeScales.update((current) => [
+      ...current,
+      { label: '', minScore: 0, maxScore: 0, orderIndex: current.length + 1 },
+    ]);
+  }
+
+  removeGradeScale(index: number) {
+    this.gradeScales.update((current) =>
+      current
+        .filter((_, itemIndex) => itemIndex !== index)
+        .map((item, itemIndex) => ({ ...item, orderIndex: itemIndex + 1 })),
+    );
+  }
+
+  updateGradeScale(index: number, patch: Partial<YearAcademicGradeScale>) {
+    this.gradeScales.update((current) =>
+      current.map((item, itemIndex) => (itemIndex === index ? { ...item, ...patch } : item)),
+    );
   }
 
   onClose() {
@@ -171,6 +216,17 @@ export class YearAcademicForm implements OnInit {
       passingDate: this.toDateString(raw.passingDate),
       academicCalendarUrl: raw.academicCalendarUrl ?? '',
       periodCount: Math.max(0, Math.floor(Number(raw.periodCount ?? 0))),
+      gradeScales:
+        raw.gradingSystem === GradingSystem.LETTER
+          ? this.gradeScales()
+              .filter((scale) => scale.label.trim())
+              .map((scale, index) => ({
+                label: scale.label.trim(),
+                minScore: Number(scale.minScore),
+                maxScore: Number(scale.maxScore),
+                orderIndex: index + 1,
+              }))
+          : [],
     };
     const current = this.data.current as YearAcademic | null | undefined;
     const payload = current?.id

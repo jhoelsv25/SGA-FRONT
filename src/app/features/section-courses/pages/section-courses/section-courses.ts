@@ -120,6 +120,16 @@ export default class SectionCoursesPage {
     this.openForm(sc);
   }
 
+  assignStudents(sc: SectionCourse) {
+    this.router.navigate(['/students/enrollments'], {
+      queryParams: {
+        sectionCourse: sc.id,
+        sectionName: sc.section?.name ?? '',
+        courseName: sc.course?.name ?? '',
+      },
+    });
+  }
+
   goToSchedules(sc: SectionCourse) {
     this.router.navigate(['/organization/schedules'], {
       queryParams: {

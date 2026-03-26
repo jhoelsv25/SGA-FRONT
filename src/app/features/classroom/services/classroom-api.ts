@@ -32,6 +32,33 @@ export class ClassroomApi {
     return this.http.post<{ id: string }>(`${this.baseUrl}/publish`, body);
   }
 
+  createComment(sectionCourseId: string, postId: string, content: string): Observable<ClassroomFeedItem> {
+    return this.http.post<ClassroomFeedItem>(`${this.baseUrl}/${sectionCourseId}/posts/${postId}/comments`, { content });
+  }
+
+  updatePost(
+    sectionCourseId: string,
+    postId: string,
+    data: { content?: string; attachmentUrl?: string | null },
+  ): Observable<ClassroomFeedItem> {
+    return this.http.patch<ClassroomFeedItem>(`${this.baseUrl}/${sectionCourseId}/posts/${postId}`, data);
+  }
+
+  deletePost(sectionCourseId: string, postId: string): Observable<{ id: string; deleted: boolean }> {
+    return this.http.delete<{ id: string; deleted: boolean }>(`${this.baseUrl}/${sectionCourseId}/posts/${postId}`);
+  }
+
+  updateComment(sectionCourseId: string, postId: string, commentId: string, content: string): Observable<ClassroomFeedItem> {
+    return this.http.patch<ClassroomFeedItem>(
+      `${this.baseUrl}/${sectionCourseId}/posts/${postId}/comments/${commentId}`,
+      { content },
+    );
+  }
+
+  deleteComment(sectionCourseId: string, postId: string, commentId: string): Observable<ClassroomFeedItem> {
+    return this.http.delete<ClassroomFeedItem>(`${this.baseUrl}/${sectionCourseId}/posts/${postId}/comments/${commentId}`);
+  }
+
   sendChatMessage(
     sectionCourseId: string,
     content: string
@@ -67,6 +94,83 @@ export class ClassroomApi {
     return this.http.get<ClassroomTask[]>(`${this.baseUrl}/${sectionCourseId}/tasks`);
   }
 
+  getTaskEditor(sectionCourseId: string, assignmentId: string): Observable<ClassroomTaskEditorPayload> {
+    return this.http.get<ClassroomTaskEditorPayload>(`${this.baseUrl}/${sectionCourseId}/tasks/${assignmentId}/editor`);
+  }
+
+  createTask(
+    sectionCourseId: string,
+    data: {
+      title: string;
+      description?: string;
+      instructions?: string;
+      dueDate: string;
+      maxScore?: number;
+      lateSubmissionAllowed?: boolean;
+      maxAttempts?: number;
+      type?: 'homework' | 'project' | 'quiz' | 'exam' | string;
+      resourceUrl?: string;
+      questions?: Array<{
+        prompt: string;
+        type: 'single_choice' | 'multiple_choice' | 'short_answer';
+        points?: number;
+        required?: boolean;
+        options?: Array<{ label: string; isCorrect?: boolean }>;
+      }>;
+    },
+  ): Observable<ClassroomTask> {
+    return this.http.post<ClassroomTask>(`${this.baseUrl}/${sectionCourseId}/tasks`, data);
+  }
+
+  updateTask(
+    sectionCourseId: string,
+    assignmentId: string,
+    data: {
+      title: string;
+      description?: string;
+      instructions?: string;
+      dueDate: string;
+      maxScore?: number;
+      lateSubmissionAllowed?: boolean;
+      maxAttempts?: number;
+      type?: 'homework' | 'project' | 'quiz' | 'exam' | string;
+      resourceUrl?: string;
+      questions?: Array<{
+        prompt: string;
+        type: 'single_choice' | 'multiple_choice' | 'short_answer';
+        points?: number;
+        required?: boolean;
+        options?: Array<{ label: string; isCorrect?: boolean }>;
+      }>;
+    },
+  ): Observable<ClassroomTaskEditorPayload> {
+    return this.http.patch<ClassroomTaskEditorPayload>(`${this.baseUrl}/${sectionCourseId}/tasks/${assignmentId}`, data);
+  }
+
+  deleteTask(sectionCourseId: string, assignmentId: string): Observable<{ id: string; deleted: boolean }> {
+    return this.http.delete<{ id: string; deleted: boolean }>(`${this.baseUrl}/${sectionCourseId}/tasks/${assignmentId}`);
+  }
+
+  createTaskComment(sectionCourseId: string, assignmentId: string, content: string): Observable<ClassroomTask> {
+    return this.http.post<ClassroomTask>(`${this.baseUrl}/${sectionCourseId}/tasks/${assignmentId}/comments`, { content });
+  }
+
+  updateTaskComment(
+    sectionCourseId: string,
+    assignmentId: string,
+    commentId: string,
+    content: string,
+  ): Observable<ClassroomTask> {
+    return this.http.patch<ClassroomTask>(
+      `${this.baseUrl}/${sectionCourseId}/tasks/${assignmentId}/comments/${commentId}`,
+      { content },
+    );
+  }
+
+  deleteTaskComment(sectionCourseId: string, assignmentId: string, commentId: string): Observable<ClassroomTask> {
+    return this.http.delete<ClassroomTask>(`${this.baseUrl}/${sectionCourseId}/tasks/${assignmentId}/comments/${commentId}`);
+  }
+
   submitTask(
     sectionCourseId: string,
     assignmentId: string,
@@ -75,9 +179,14 @@ export class ClassroomApi {
       fileUrl?: string;
       fileName?: string;
       linkUrl?: string;
+      answers?: Array<{
+        questionId: string;
+        selectedOptionIds?: string[];
+        answerText?: string;
+      }>;
     },
-  ): Observable<{ id: string; status: ClassroomTask['status']; submittedAt: string }> {
-    return this.http.post<{ id: string; status: ClassroomTask['status']; submittedAt: string }>(
+  ): Observable<{ id: string; status: ClassroomTask['status']; submittedAt: string; score?: number }> {
+    return this.http.post<{ id: string; status: ClassroomTask['status']; submittedAt: string; score?: number }>(
       `${this.baseUrl}/${sectionCourseId}/tasks/${assignmentId}/submit`,
       data,
     );
@@ -103,10 +212,35 @@ export class ClassroomApi {
 export interface ClassroomTask {
   id: string;
   title: string;
+  description?: string;
+  instructions?: string;
   date: string;
+  type?: string;
+  resourceUrl?: string;
+  questionsCount?: number;
+  questions?: Array<{
+    id: string;
+    prompt: string;
+    type: 'single_choice' | 'multiple_choice' | 'short_answer';
+    points: number;
+    required: boolean;
+    options: Array<{ id: string; label: string }>;
+  }>;
   status: 'pending' | 'delivered' | 'graded' | 'late';
   points: number;
   grade?: number;
+  commentsCount?: number;
+  comments?: Array<{
+    id: string;
+    content: string;
+    date: string;
+    author: {
+      id?: string;
+      name: string;
+      avatar?: string;
+      role?: string;
+    };
+  }>;
   submissionSummary?: {
     deliveredCount: number;
     gradedCount: number;
@@ -123,6 +257,27 @@ export interface ClassroomTask {
   }>;
 }
 
+export interface ClassroomTaskEditorPayload {
+  id: string;
+  title: string;
+  description?: string;
+  instructions?: string;
+  dueDate: string;
+  maxScore: number;
+  maxAttempts: number;
+  lateSubmissionAllowed: boolean;
+  type: 'homework' | 'project' | 'quiz' | 'exam' | string;
+  resourceUrl?: string;
+  questions: Array<{
+    id: string;
+    prompt: string;
+    type: 'single_choice' | 'multiple_choice' | 'short_answer';
+    points: number;
+    required: boolean;
+    options: Array<{ id: string; label: string; isCorrect: boolean }>;
+  }>;
+}
+
 export interface ClassroomGradeScore {
   id: string;
   studentId: string;
@@ -130,6 +285,7 @@ export interface ClassroomGradeScore {
   studentCode?: string;
   studentPhotoUrl?: string;
   score: number;
+  gradeLabel?: string;
   observation?: string;
 }
 
@@ -165,6 +321,7 @@ export interface ClassroomGradeRecord {
   status?: string;
   weightPercentage?: number;
   average: number;
+  averageLabel?: string;
   studentsCount: number;
   scores: ClassroomGradeScore[];
 }
@@ -175,5 +332,6 @@ export interface ClassroomGradesResponse {
     assessments: number;
     scores: number;
     average: number;
+    averageLabel?: string;
   };
 }

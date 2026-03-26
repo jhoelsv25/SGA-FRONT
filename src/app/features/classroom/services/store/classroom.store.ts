@@ -89,6 +89,16 @@ export const ClassroomStore = signalStore(
     receiveFeedUpdate: (item: ClassroomFeedItem) => {
       const current = store.feed();
       patchState(store, { feed: [item, ...current] });
-    }
+    },
+    replaceFeedItem: (item: ClassroomFeedItem) => {
+      patchState(store, {
+        feed: store.feed().map((current) => (current.id === item.id ? item : current)),
+      });
+    },
+    removeFeedItem: (id: string) => {
+      patchState(store, {
+        feed: store.feed().filter((item) => item.id !== id),
+      });
+    },
   })),
 );

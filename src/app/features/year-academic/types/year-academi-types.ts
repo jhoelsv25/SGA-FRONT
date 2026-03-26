@@ -32,6 +32,14 @@ export type YearAcademicPeriod = {
   status?: string; // 'planned' | 'in_progress' | 'completed' | 'cancelled'
 };
 
+export type YearAcademicGradeScale = {
+  id?: string;
+  label: string;
+  minScore: number;
+  maxScore: number;
+  orderIndex?: number;
+};
+
 // Main type for the form (optional, for typing)
 export type YearAcademic = {
   id: string;
@@ -51,6 +59,7 @@ export type YearAcademic = {
   updatedAt?: Date | string;
   /** Períodos del año (vienen en GET all / GET by id) */
   periods?: YearAcademicPeriod[];
+  gradeScales?: YearAcademicGradeScale[];
 };
 
 export type YearAcademicFormModel = Omit<YearAcademic, 'id' | 'createdAt' | 'updatedAt'>;

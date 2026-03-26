@@ -29,6 +29,7 @@ export class SectionCourseCardComponent {
   edit = output<SectionCourse>();
   delete = output<SectionCourse>();
   assignTeacher = output<SectionCourse>();
+  assignStudents = output<SectionCourse>();
   viewSchedules = output<SectionCourse>();
   createSchedule = output<SectionCourse>();
 
@@ -48,5 +49,26 @@ export class SectionCourseCardComponent {
 
   hasTeacher(): boolean {
     return !!this.sectionCourse().teacher;
+  }
+
+  occupancyPercent(): number {
+    const enrolled = Number(this.sectionCourse().enrolledStudents ?? 0);
+    const max = Number(this.sectionCourse().maxStudents ?? 0);
+    if (!max || max <= 0) return 0;
+    return Math.min(Math.max((enrolled / max) * 100, 0), 100);
+  }
+
+  occupancyTone(): string {
+    const percent = this.occupancyPercent();
+    if (percent >= 100) return 'bg-danger';
+    if (percent >= 80) return 'bg-warning';
+    return 'bg-success';
+  }
+
+  occupancyLabel(): string {
+    const percent = this.occupancyPercent();
+    if (percent >= 100) return 'Capacidad completa';
+    if (percent >= 80) return 'Capacidad alta';
+    return 'Capacidad disponible';
   }
 }
