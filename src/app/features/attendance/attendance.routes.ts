@@ -8,6 +8,12 @@ export default [
     data: { permissions: ['manage_attendance'] },
   },
   {
+    path: 'quick-register',
+    loadComponent: () => import('./pages/attendance-quick-register/attendance-quick-register'),
+    title: 'Registro rápido de asistencia',
+    data: { permissions: ['manage_attendance'] },
+  },
+  {
     path: 'reports',
     loadComponent: () => import('./pages/attendance-reports/attendance-reports'),
     title: 'Reportes de Asistencia',

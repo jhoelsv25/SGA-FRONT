@@ -23,6 +23,16 @@ export type Teacher = {
     phone?: string;
     photoUrl?: string;
   };
+  credential?: TeacherCredential;
+};
+
+export type TeacherCredential = {
+  id: string;
+  credentialCode: string;
+  qrValue: string;
+  active: boolean;
+  issuedAt?: string | null;
+  expiresAt?: string | null;
 };
 
 export type TeacherContractType = 'full_time' | 'part_time' | 'temporary' | 'permanent';
@@ -65,5 +75,10 @@ export type TeacherParams = {
 
 export type TeacherResponse = {
   data: Teacher;
+  message: string;
+};
+
+export type TeacherCredentialResponse = {
+  data: TeacherCredential;
   message: string;
 };

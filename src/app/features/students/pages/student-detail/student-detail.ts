@@ -16,6 +16,7 @@ import { GuardianApi } from '../../services/api/guardian-api';
 import type { StudentGuardian } from '../../types/guardian-types';
 import { ObservationApi } from '../../services/api/observation-api';
 import type { StudentObservation } from '../../types/observation-types';
+import type { StudentCredential } from '../../types/student-types';
 
 @Component({
   selector: 'sga-student-detail',
@@ -39,6 +40,8 @@ export default class StudentDetailPage implements OnInit {
   readonly enrollments = signal<Enrollment[]>([]);
   readonly guardians = signal<StudentGuardian[]>([]);
   readonly observations = signal<StudentObservation[]>([]);
+  readonly credential = signal<StudentCredential | null>(null);
+  readonly credentialLoading = signal(false);
 
   readonly fullName = computed(() => {
     const current = this.student();
@@ -102,6 +105,28 @@ export default class StudentDetailPage implements OnInit {
     });
   }
 
+  regenerateCredential(): void {
+    const student = this.student();
+    if (!student) return;
+
+    this.credentialLoading.set(true);
+    this.studentApi.regenerateCredential(student.id).subscribe({
+      next: (res) => {
+        this.credential.set(res.data);
+        this.credentialLoading.set(false);
+        this.toast.success('Carnet regenerado');
+      },
+      error: () => {
+        this.credentialLoading.set(false);
+        this.toast.error('No se pudo regenerar el carnet');
+      },
+    });
+  }
+
+  printCredential(): void {
+    window.print();
+  }
+
   goToGuardians(): void {
     const student = this.student();
     if (!student) return;
@@ -141,6 +166,18 @@ export default class StudentDetailPage implements OnInit {
   guardianName(guardian: StudentGuardian | null): string {
     if (!guardian?.guardian?.person) return 'Sin apoderado';
     return `${guardian.guardian.person.firstName ?? ''} ${guardian.guardian.person.lastName ?? ''}`.trim() || 'Sin apoderado';
+  }
+
+  credentialPreviewLines(): string[] {
+    const value = this.credential()?.qrValue ?? '';
+    if (!value) return [];
+    const compact = value.replace(/\s+/g, '');
+    const chunkSize = 18;
+    const lines: string[] = [];
+    for (let index = 0; index < Math.min(compact.length, 126); index += chunkSize) {
+      lines.push(compact.slice(index, index + chunkSize));
+    }
+    return lines.slice(0, 7);
   }
 
   private reload(): void {
@@ -196,6 +233,18 @@ export default class StudentDetailPage implements OnInit {
       error: () => {
         this.observations.set([]);
         this.loading.set(false);
+      },
+    });
+
+    this.credentialLoading.set(true);
+    this.studentApi.getCredential(studentId).subscribe({
+      next: (res) => {
+        this.credential.set(res.data);
+        this.credentialLoading.set(false);
+      },
+      error: () => {
+        this.credential.set(null);
+        this.credentialLoading.set(false);
       },
     });
   }

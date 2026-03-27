@@ -30,6 +30,10 @@ export default [
         loadComponent: () => import('./pages/tasks/tasks'),
       },
       {
+        path: 'tasks/:taskId',
+        loadComponent: () => import('./pages/task-detail/task-detail'),
+      },
+      {
         path: 'grades',
         loadComponent: () => import('./pages/grades/grades'),
       },

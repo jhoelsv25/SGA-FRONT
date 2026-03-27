@@ -1,64 +1,68 @@
 <div class="flex flex-col gap-6 animate-in fade-in duration-500">
-  <z-list-toolbar
-    title="Registro de Calificaciones"
-    description="Registra notas por evaluación con validación rápida de estado"
-    icon="fas fa-pen-square"
-    [showSearch]="false"
-    [filterCount]="selectedAssessment() ? 2 : (selectedSectionCourse() ? 1 : 0)"
-  >
-    <div list-toolbar-filter class="flex flex-col gap-4 min-w-[280px]">
-      <h4 class="text-[10px] font-bold text-base-content/40 uppercase tracking-[0.2em] mb-1">Filtros</h4>
-      
+  <sga-header-detail
+    [config]="headerConfig()"
+    [actions]="headerActions()"
+    [filterTemplate]="scoreFilters"
+    [hasActiveFilters]="hasActiveFilters()"
+    (action)="onHeaderAction($event)"
+  />
+
+  <ng-template #scoreFilters>
+    <div class="flex min-w-[300px] flex-col gap-4 p-4">
+      <h4 class="text-[10px] font-black uppercase tracking-[0.2em] text-base-content/40">Filtros de evaluación</h4>
+
       <div class="flex flex-col gap-1.5">
-        <label for="section-course-select" class="text-[11px] font-bold text-base-content/60 uppercase">Curso / Sección</label>
+        <label for="section-course-select" class="text-[11px] font-black uppercase tracking-[0.18em] text-base-content/55">Curso / Sección</label>
         <z-select-option
           id="section-course-select"
           [options]="sectionCourseOptions()"
           [value]="selectedSectionCourse()"
           (valueChange)="onSectionCourseChange($event)"
-          placeholder="Seleccione uno..."></z-select-option>
+          placeholder="Seleccione un curso..."
+        ></z-select-option>
       </div>
 
       <div class="flex flex-col gap-1.5">
-        <label for="assessment-select" class="text-[11px] font-bold text-base-content/60 uppercase">Evaluación</label>
+        <label for="assessment-select" class="text-[11px] font-black uppercase tracking-[0.18em] text-base-content/55">Evaluación</label>
         <z-select-option
           id="assessment-select"
           [options]="filteredAssessments()"
           [value]="selectedAssessment()"
           (valueChange)="onAssessmentChange($event)"
           [disabled]="!selectedSectionCourse()"
-          placeholder="Seleccione..."></z-select-option>
+          placeholder="Seleccione una evaluación..."
+        ></z-select-option>
       </div>
     </div>
+  </ng-template>
 
-    <div list-toolbar-actions>
-      <button
-        z-button
-        zType="ghost"
-        zColor="secondary"
-        zShape="circle"
-        [disabled]="!hasActiveFilters()"
-        (click)="clearFilters()"
-      >
-        <i class="fas fa-filter-circle-xmark mr-2"></i>
-        Limpiar
-      </button>
-      <button
-        z-button
-        zColor="primary"
-        zShape="circle"
-        [disabled]="!canSave() || store.loading()"
-        (click)="saveScores()"
-      >
-        @if (store.loading()) {
-          <i class="fas fa-spinner fa-spin mr-2"></i>
-        } @else {
-          <i class="fas fa-save mr-2"></i>
-        }
-        Guardar Notas
-      </button>
-    </div>
-  </z-list-toolbar>
+  <section class="grid grid-cols-2 gap-4 xl:grid-cols-4">
+    <article class="rounded-4xl border border-base-200 bg-card p-5 shadow-sm">
+      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Evaluación activa</p>
+      <p class="mt-3 text-lg font-black tracking-tight text-base-content">
+        {{ selectedAssessmentLabel() || 'Sin seleccionar' }}
+      </p>
+      <p class="mt-1 text-sm text-base-content/55">{{ selectedSectionLabel() || 'Selecciona un curso para empezar' }}</p>
+    </article>
+
+    <article class="rounded-4xl border border-base-200 bg-card p-5 shadow-sm">
+      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Estudiantes</p>
+      <p class="mt-3 text-3xl font-black tracking-tight">{{ studentScores().length }}</p>
+      <p class="mt-1 text-sm text-base-content/55">Registros listos para editar</p>
+    </article>
+
+    <article class="rounded-4xl border border-success/20 bg-success/8 p-5 shadow-sm">
+      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-success-700 dark:text-success">Aprobados</p>
+      <p class="mt-3 text-3xl font-black tracking-tight text-success-700 dark:text-success">{{ approvedCount() }}</p>
+      <p class="mt-1 text-sm text-success-700/75 dark:text-success/80">Notas con puntaje aprobatorio</p>
+    </article>
+
+    <article class="rounded-4xl border border-warning/20 bg-warning/8 p-5 shadow-sm">
+      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-warning-700 dark:text-warning">Promedio</p>
+      <p class="mt-3 text-3xl font-black tracking-tight text-warning-700 dark:text-warning">{{ scoreAverage() }}</p>
+      <p class="mt-1 text-sm text-warning-700/75 dark:text-warning/80">{{ pendingCount() }} sin nota final</p>
+    </article>
+  </section>
 
   <div class="flex flex-wrap items-center gap-2 px-1">
     @if (selectedSectionLabel()) {
@@ -79,7 +83,7 @@
   </div>
 
   @if (!selectedSectionCourse()) {
-    <div class="rounded-2xl border border-dashed border-base-300 bg-base-100 p-10 text-center">
+    <div class="rounded-4xl border border-dashed border-base-300 bg-base-100 p-10 text-center">
       <div class="w-14 h-14 rounded-2xl bg-base-200 text-base-content/50 mx-auto mb-3 flex items-center justify-center">
         <i class="fa-solid fa-filter-circle-xmark"></i>
       </div>

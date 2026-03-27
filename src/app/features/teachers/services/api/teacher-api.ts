@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Params } from '@angular/router';
 import { DataResponse } from '@core/types/pagination-types';
-import { Teacher, TeacherResponse } from '@features/teachers/types/teacher-types';
+import { Teacher, TeacherCredentialResponse, TeacherResponse } from '@features/teachers/types/teacher-types';
 import { catchError, forkJoin, map, Observable, of } from 'rxjs';
 
 @Injectable({
@@ -26,12 +26,20 @@ export class TeacherApi {
     return this.http.get<TeacherResponse>(`${this.baseUrl}/${id}`);
   }
 
+  getCredential(id: string): Observable<TeacherCredentialResponse> {
+    return this.http.get<TeacherCredentialResponse>(`${this.baseUrl}/${id}/credential`);
+  }
+
   create(teacher: Partial<Teacher>): Observable<TeacherResponse> {
     return this.http.post<TeacherResponse>(`${this.baseUrl}`, teacher);
   }
 
   update(id: string, teacher: Partial<Teacher>): Observable<TeacherResponse> {
     return this.http.put<TeacherResponse>(`${this.baseUrl}/${id}`, teacher);
+  }
+
+  regenerateCredential(id: string): Observable<TeacherCredentialResponse> {
+    return this.http.post<TeacherCredentialResponse>(`${this.baseUrl}/${id}/credential/regenerate`, {});
   }
 
   delete(id: string): Observable<TeacherResponse> {

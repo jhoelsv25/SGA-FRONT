@@ -1,19 +1,21 @@
-import { ListToolbarComponent } from '@/shared/widgets/list-toolbar/list-toolbar';
 import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
-import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardInputDirective } from '@/shared/components/input';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
-
+import { DialogModalService } from '@shared/widgets/dialog-modal';
+import { ImportDialog } from '@shared/widgets/import-dialog/import-dialog';
 import { DataSource, SgaTemplate } from '@shared/widgets/data-source/data-source';
-
 import { AssessmentStore } from '../../services/store/assessment.store';
 import { EnrollmentApi } from '../../../enrollments/services/enrollment-api';
 import { SectionCourseApi } from '@features/section-courses/services/section-course-api';
 import { DataSourceColumn } from '@core/types/data-source-types';
 import { AssessmentFiltersService } from '../../services/assessment-filters.service';
+import { HeaderDetail } from '@shared/widgets/header-detail/header-detail';
+import { HeaderConfig } from '@core/types/header-types';
+import { ActionConfig } from '@core/types/action-types';
+import { AssessmentApi } from '../../services/assessment-api';
+import { map, of } from 'rxjs';
 
 type ScoreRow = {
   id?: string;
@@ -28,7 +30,7 @@ type ScoreRow = {
 @Component({
   selector: 'sga-assessment-scores',
   standalone: true,
-  imports: [CommonModule, FormsModule, DataSource, SgaTemplate, ZardInputDirective, SelectOptionComponent, ZardButtonComponent, ListToolbarComponent],
+  imports: [CommonModule, FormsModule, DataSource, SgaTemplate, ZardInputDirective, SelectOptionComponent, HeaderDetail],
   templateUrl: './scores.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -37,6 +39,8 @@ export default class AssessmentScoresPage implements OnInit {
   private readonly enrollmentApi = inject(EnrollmentApi);
   private readonly sectionCourseApi = inject(SectionCourseApi);
   private readonly filters = inject(AssessmentFiltersService);
+  private readonly dialog = inject(DialogModalService);
+  private readonly assessmentApi = inject(AssessmentApi);
 
   public selectedSectionCourse = signal<string>('');
   public selectedAssessment = signal<string>('');
@@ -69,6 +73,54 @@ export default class AssessmentScoresPage implements OnInit {
     const selected = this.selectedAssessment();
     return this.filteredAssessments().find((o) => String(o.value ?? '') === selected)?.label ?? '';
   });
+
+  public readonly headerConfig = computed<HeaderConfig>(() => ({
+    title: 'Registro de calificaciones',
+    subtitle: this.selectedAssessment()
+      ? 'Administra notas por evaluación con edición rápida y contexto académico.'
+      : 'Selecciona curso y evaluación para cargar la grilla editable de puntajes.',
+    icon: 'fa-pen-to-square',
+    showFilters: true,
+    showActions: true,
+  }));
+
+  public readonly headerActions = computed<ActionConfig[]>(() => [
+    {
+      key: 'clear',
+      label: 'Limpiar',
+      icon: 'fa-solid fa-filter-circle-xmark',
+      color: 'secondary',
+      typeAction: 'header',
+      disabled: !this.hasActiveFilters(),
+    },
+    {
+      key: 'import',
+      label: 'Importar Excel',
+      icon: 'fa-solid fa-file-import',
+      color: 'secondary',
+      typeAction: 'header',
+      disabled: !this.selectedAssessment() || this.studentScores().length === 0,
+    },
+    {
+      key: 'save',
+      label: 'Guardar notas',
+      icon: this.store.loading() ? 'fa-solid fa-spinner fa-spin' : 'fa-solid fa-save',
+      color: 'primary',
+      typeAction: 'header',
+      disabled: !this.canSave() || this.store.loading(),
+    },
+  ]);
+
+  public readonly scoreAverage = computed(() => {
+    const rows = this.studentScores();
+    if (!rows.length) return 0;
+    const total = rows.reduce((acc, row) => acc + Number(row.score || 0), 0);
+    return Number((total / rows.length).toFixed(1));
+  });
+
+  public readonly approvedCount = computed(() => this.studentScores().filter((row) => Number(row.score) >= 11).length);
+
+  public readonly pendingCount = computed(() => this.studentScores().filter((row) => Number(row.score) <= 0).length);
 
   constructor() {
     // Aplica selección previa guardada de sección
@@ -119,6 +171,22 @@ export default class AssessmentScoresPage implements OnInit {
 
   ngOnInit(): void {
     this.loadSectionCourses();
+  }
+
+  onHeaderAction(event: { action: ActionConfig }): void {
+    if (event.action.key === 'clear') {
+      this.clearFilters();
+      return;
+    }
+
+    if (event.action.key === 'import') {
+      this.openImportDialog();
+      return;
+    }
+
+    if (event.action.key === 'save') {
+      this.saveScores();
+    }
   }
 
   private loadSectionCourses(): void {
@@ -211,5 +279,85 @@ export default class AssessmentScoresPage implements OnInit {
     this.selectedAssessment.set('');
     this.studentScores.set([]);
     this.store.loadAll({});
+  }
+
+  openImportDialog(): void {
+    const assessmentId = this.selectedAssessment();
+    const currentAssessment = this.store.assessments().find((item) => item.id === assessmentId);
+    if (!assessmentId || !currentAssessment || this.studentScores().length === 0) {
+      return;
+    }
+
+    const rowsByCode = new Map(this.studentScores().map((row) => [String(row.studentCode ?? '').trim().toLowerCase(), row]));
+    const maxScore = Number(currentAssessment.maxScore || 20);
+
+    this.dialog.open(ImportDialog, {
+      width: '920px',
+      maxHeight: '85vh',
+      data: {
+        title: 'Importar calificaciones desde Excel',
+        templateSheetName: 'Notas',
+        columns: [
+          { key: 'studentCode', label: 'Código estudiante', required: true },
+          { key: 'studentName', label: 'Estudiante' },
+          { key: 'score', label: 'Calificación', required: true },
+          { key: 'observation', label: 'Observación' },
+        ],
+        exampleRow: {
+          studentCode: this.studentScores()[0]?.studentCode ?? '20230001',
+          studentName: this.studentScores()[0]?.studentName ?? 'Juan Pérez',
+          score: Math.min(18, maxScore),
+          observation: 'Buen desempeño',
+        },
+        validateRow: (row: Record<string, unknown>, _index: number) => {
+          const code = String(row['studentCode'] ?? '').trim().toLowerCase();
+          if (!code) return 'El código del estudiante es obligatorio.';
+          if (!rowsByCode.has(code)) return 'El estudiante no pertenece al curso seleccionado.';
+          const score = Number(row['score']);
+          if (Number.isNaN(score)) return 'La calificación debe ser numérica.';
+          if (score < 0 || score > maxScore) return `La calificación debe estar entre 0 y ${maxScore}.`;
+          return null;
+        },
+        importRows: (rows: Record<string, unknown>[]) => {
+          const request = {
+            assessmentId,
+            scores: rows
+              .map((row: Record<string, unknown>) => {
+                const code = String(row['studentCode'] ?? '').trim().toLowerCase();
+                const match = rowsByCode.get(code);
+                if (!match) return null;
+                return {
+                  enrollmentId: match.enrollmentId,
+                  score: Number(row['score']),
+                  observation: String(row['observation'] ?? '').trim(),
+                };
+              })
+              .filter(
+                (item: { enrollmentId: string; score: number; observation: string } | null): item is {
+                  enrollmentId: string;
+                  score: number;
+                  observation: string;
+                } => item !== null,
+              ),
+          };
+
+          if (!request.scores.length) {
+            return of({ created: 0, errors: [{ row: 0, message: 'No se encontraron filas válidas para importar.' }] });
+          }
+
+          return this.assessmentApi.saveScoresBulk(request).pipe(
+            map((response) => ({
+              created: Number(response?.processed ?? request.scores.length),
+              errors: [],
+            })),
+          );
+        },
+      },
+    }).closed.subscribe((rawResult) => {
+      const result = rawResult as { created?: number } | null | undefined;
+      if (result?.created) {
+        this.loadData(assessmentId);
+      }
+    });
   }
 }

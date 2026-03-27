@@ -7,6 +7,7 @@ import { ClassroomSocketService } from '../../services/classroom-socket';
 import { SectionCourseApi } from '@features/section-courses/services/section-course-api';
 import type { ClassroomFeedItem } from '../../types/classroom-types';
 import Chat from '../chat/chat';
+import { AuthStore } from '@auth/services/store/auth.store';
 
 
 @Component({
@@ -22,14 +23,17 @@ export default class Classroom implements OnInit, OnDestroy {
   public readonly store = inject(ClassroomStore);
   private readonly socket = inject(ClassroomSocketService);
   private readonly sectionCourseApi = inject(SectionCourseApi);
+  private readonly authStore = inject(AuthStore);
 
   sectionId = signal('');
   sectionName = signal('Aula Virtual');
+  roleTitle = signal('Aula Virtual');
   notifications = signal<{ type: string; title: string; body?: string }[]>([]);
   showNotificationPanel = signal(false);
   showFloatingChat = signal(false);
 
   ngOnInit(): void {
+    this.syncRoleTitle();
     this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       const id = params['id'] ?? '';
       this.sectionId.set(id);
@@ -76,5 +80,18 @@ export default class Classroom implements OnInit, OnDestroy {
   clearNotifications(): void {
     this.notifications.set([]);
     this.showNotificationPanel.set(false);
+  }
+
+  private syncRoleTitle(): void {
+    const roleType = this.authStore.currentUser()?.profile?.type ?? 'user';
+    this.roleTitle.set(
+      roleType === 'teacher'
+        ? 'Mi aula virtual'
+        : roleType === 'student'
+          ? 'Mi espacio de clase'
+          : roleType === 'guardian'
+            ? 'Seguimiento del aula'
+            : 'Aula Virtual',
+    );
   }
 }

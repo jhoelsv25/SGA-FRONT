@@ -12,6 +12,7 @@ import { BehaviorCardComponent } from '../../components/behavior-card/behavior-c
 import { ZardEmptyComponent } from '@/shared/components/empty';
 import { ZardSkeletonComponent } from '@/shared/components/skeleton';
 import { Router } from '@angular/router';
+import { AuthStore } from '@auth/services/store/auth.store';
 
 
 @Component({
@@ -32,9 +33,36 @@ export default class BehaviorsPage {
   private dialog = inject(DialogModalService);
   private store = inject(BehaviorStore);
   private router = inject(Router);
+  private authStore = inject(AuthStore);
   public readonly filters = inject(UiFiltersService);
 
-  headerConfig = computed(() => this.store.headerConfig());
+  roleType = computed(() => this.authStore.currentUser()?.profile?.type ?? 'user');
+  headerConfig = computed(() => {
+    const base = this.store.headerConfig();
+    const roleType = this.roleType();
+    if (roleType === 'teacher') {
+      return {
+        ...base,
+        title: 'Conducta de mis estudiantes',
+        subtitle: 'Seguimiento de incidencias, logros y observaciones en tus aulas.',
+      };
+    }
+    if (roleType === 'student') {
+      return {
+        ...base,
+        title: 'Mi conducta',
+        subtitle: 'Consulta observaciones, reconocimientos e incidencias asociadas a tu seguimiento.',
+      };
+    }
+    if (roleType === 'guardian') {
+      return {
+        ...base,
+        title: 'Conducta del hogar',
+        subtitle: 'Revisa el seguimiento conductual de tus estudiantes vinculados.',
+      };
+    }
+    return base;
+  });
   data = computed(() => {
     const search = this.filters.behaviorSearch().toLowerCase();
     const type = this.filters.behaviorType();
@@ -53,6 +81,7 @@ export default class BehaviorsPage {
   });
   loading = computed(() => this.store.loading());
   headerActions = computed(() => this.store.actions().filter((a) => a.typeAction === 'header'));
+  hasActiveFilters = computed(() => this.activeFiltersCount() > 0);
   activeFiltersCount = computed(() =>
     [this.filters.behaviorSearch(), this.filters.behaviorType(), this.filters.behaviorSeverity()].filter(Boolean)
       .length

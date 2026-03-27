@@ -220,6 +220,40 @@ type DetailRow = { label: string; value: string };
                   </div>
                 </div>
               </section>
+
+              <section class="border-t border-base-200 pt-6">
+                <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">{{ roleSectionTitle() }}</p>
+                    <p class="mt-1 text-sm text-base-content/60">{{ roleSectionDescription() }}</p>
+                  </div>
+                  <span class="rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-primary">
+                    {{ roleBadge() }}
+                  </span>
+                </div>
+
+                @if (roleEditGroups().length) {
+                  <div class="space-y-4">
+                    @for (group of roleEditGroups(); track group.key) {
+                      <div class="rounded-[1.75rem] border border-base-200 bg-base-100/70 p-4">
+                        <p class="text-[10px] font-black uppercase tracking-[0.18em] text-primary/70">{{ group.title }}</p>
+                        <div class="mt-3 grid gap-3 md:grid-cols-2">
+                          @for (item of group.rows; track item.label) {
+                            <div class="rounded-[var(--radius-xl)] border border-base-200 bg-card px-4 py-3">
+                              <p class="text-[10px] font-black uppercase tracking-[0.16em] text-base-content/40">{{ item.label }}</p>
+                              <p class="mt-2 text-sm font-semibold text-base-content/80">{{ item.value }}</p>
+                            </div>
+                          }
+                        </div>
+                      </div>
+                    }
+                  </div>
+                } @else {
+                  <div class="rounded-[1.75rem] border border-dashed border-base-300 bg-base-100/60 px-4 py-4 text-sm text-base-content/55">
+                    Este perfil no tiene metadatos adicionales editables o visibles para su rol.
+                  </div>
+                }
+              </section>
             </form>
           }
         </z-card>
@@ -330,6 +364,7 @@ export default class AccountProfilePage {
   });
 
   protected readonly roleBadge = computed(() => this.user()?.profile?.roleLabel || this.user()?.role?.name || 'Perfil');
+  protected readonly roleType = computed(() => this.user()?.profile?.type || 'user');
 
   protected readonly heroDescription = computed(() => {
     const type = this.user()?.profile?.type;
@@ -369,6 +404,72 @@ export default class AccountProfilePage {
     }
 
     return rows;
+  });
+
+  protected readonly roleSectionTitle = computed(() => {
+    switch (this.roleType()) {
+      case 'teacher':
+        return 'Contexto docente';
+      case 'student':
+        return 'Contexto estudiantil';
+      case 'guardian':
+        return 'Contexto familiar';
+      case 'director':
+      case 'admin':
+      case 'superadmin':
+      case 'subdirector':
+      case 'ugel':
+        return 'Contexto institucional';
+      default:
+        return 'Contexto del rol';
+    }
+  });
+
+  protected readonly roleSectionDescription = computed(() => {
+    switch (this.roleType()) {
+      case 'teacher':
+        return 'Información académica y operativa asociada a tu función docente.';
+      case 'student':
+        return 'Datos de matrícula, seguimiento académico y vínculo con tu aula.';
+      case 'guardian':
+        return 'Relación con estudiantes vinculados y canales de contacto del hogar.';
+      case 'director':
+      case 'admin':
+      case 'superadmin':
+      case 'subdirector':
+      case 'ugel':
+        return 'Datos de gestión, rol institucional y alcance operativo actual.';
+      default:
+        return 'Metadatos asociados a tu cuenta actual.';
+    }
+  });
+
+  protected readonly roleEditGroups = computed(() => {
+    const rows = this.roleRows();
+    if (!rows.length) return [];
+
+    const groups = {
+      identity: [] as DetailRow[],
+      academic: [] as DetailRow[],
+      operational: [] as DetailRow[],
+    };
+
+    for (const row of rows) {
+      const label = row.label.toLowerCase();
+      if (/(grado|curso|secci|competenc|matr|aula|student|alumno|promedio|nota)/.test(label)) {
+        groups.academic.push(row);
+      } else if (/(instit|rol|estado|modul|sesion|carga|horas|docente|apoderado|famil)/.test(label)) {
+        groups.operational.push(row);
+      } else {
+        groups.identity.push(row);
+      }
+    }
+
+    return [
+      { key: 'identity', title: 'Identidad del rol', rows: groups.identity },
+      { key: 'academic', title: 'Contexto académico', rows: groups.academic },
+      { key: 'operational', title: 'Operación actual', rows: groups.operational },
+    ].filter((group) => group.rows.length);
   });
 
   protected readonly profileRows = computed<DetailRow[]>(() => {

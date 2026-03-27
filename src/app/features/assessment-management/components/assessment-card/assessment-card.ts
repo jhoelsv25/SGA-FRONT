@@ -26,6 +26,8 @@ export class AssessmentCardComponent {
   viewDetail = output<Assessment>();
   viewScores = output<Assessment>();
   viewGrades = output<Assessment>();
+  edit = output<Assessment>();
+  remove = output<Assessment>();
 
   readonly typeLabel = computed(() => {
     const map: Record<string, string> = {

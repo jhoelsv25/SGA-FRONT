@@ -8,6 +8,7 @@ import { ReportCardComponent } from '../../components/report-card/report-card';
 import { ZardEmptyComponent } from '@/shared/components/empty';
 import { ZardSkeletonComponent } from '@/shared/components/skeleton';
 import { Router } from '@angular/router';
+import { AuthStore } from '@auth/services/store/auth.store';
 
 
 @Component({
@@ -20,8 +21,35 @@ export default class ReportsPage {
   private dialog = inject(DialogModalService);
   private store = inject(ReportStore);
   private router = inject(Router);
+  private authStore = inject(AuthStore);
 
-  headerConfig = computed(() => this.store.headerConfig());
+  roleType = computed(() => this.authStore.currentUser()?.profile?.type ?? 'user');
+  headerConfig = computed(() => {
+    const base = this.store.headerConfig();
+    const roleType = this.roleType();
+    if (roleType === 'teacher') {
+      return {
+        ...base,
+        title: 'Mis reportes',
+        subtitle: 'Consulta reportes académicos, asistencia y seguimiento de tus aulas.',
+      };
+    }
+    if (roleType === 'student') {
+      return {
+        ...base,
+        title: 'Mis reportes',
+        subtitle: 'Revisa tus reportes académicos, asistencia y avances personales.',
+      };
+    }
+    if (roleType === 'guardian') {
+      return {
+        ...base,
+        title: 'Reportes del hogar',
+        subtitle: 'Consulta reportes académicos y de asistencia de tus estudiantes vinculados.',
+      };
+    }
+    return base;
+  });
   data = computed(() => this.store.data());
   loading = computed(() => this.store.loading());
   headerActions = computed(() => this.store.actions().filter((a) => a.typeAction === 'header'));

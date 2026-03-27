@@ -43,6 +43,11 @@
             class="flex items-center justify-between p-5 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/[0.08] transition-all">
             <div class="min-w-0">
               <p class="font-bold truncate">{{ item.assessment }}</p>
+              @if (item.periodName || item.competencyName) {
+                <p class="mt-1 text-[10px] font-black uppercase tracking-widest text-white/35">
+                  {{ item.periodName || 'Sin período' }} · {{ item.competencyName || 'Sin competencia' }}
+                </p>
+              }
               <p class="text-[10px] font-black uppercase tracking-widest text-white/30 mt-1">{{ item.date |
                 date:'mediumDate' }}</p>
             </div>
@@ -53,6 +58,7 @@
               <div class="text-right min-w-[60px]">
                 <span class="text-xl font-black">{{ item.score }}</span>
                 <span class="text-[10px] text-white/30 ml-1">/{{ item.total }}</span>
+                <p class="mt-1 text-[10px] font-black uppercase tracking-[0.16em] text-indigo-200/70">{{ item.weightPercentage }}%</p>
               </div>
             </div>
           </div>

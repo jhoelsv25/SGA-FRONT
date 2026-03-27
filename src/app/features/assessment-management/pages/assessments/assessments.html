@@ -1,27 +1,27 @@
-<div class="p-6 space-y-4">
+<div class="p-6 max-w-7xl mx-auto space-y-4">
   <z-list-toolbar
-    title="Evaluaciones"
-    description="Gestión de evaluaciones y criterios de calificación"
+    [title]="pageTitle()"
+    [description]="pageDescription()"
     icon="fas fa-file-alt"
-    [searchPlaceholder]="'Buscar por nombre o estado...'"
+    [searchPlaceholder]="searchPlaceholder()"
     [showFilter]="false"
     (refresh)="onRefresh()"
     (searchChange)="onSearch($event)"
   >
-    <div list-toolbar-actions>
+    <div list-toolbar-actions class="flex items-center gap-3">
       <button z-button zType="ghost" zColor="secondary" zShape="circle" [disabled]="!hasListSearch()" (click)="clearFilters()">
         <i class="fas fa-filter-circle-xmark mr-2"></i>
         Limpiar Filtros
       </button>
       <button z-button zColor="primary" zShape="circle" (click)="onCreate()">
         <i class="fas fa-plus mr-2"></i>
-        Nueva Evaluación
+        {{ createLabel() }}
       </button>
-    
-    </div></z-list-toolbar>
+    </div>
+  </z-list-toolbar>
 
   <div class="flex items-center justify-between px-1">
-    <p class="text-sm text-base-content/60">Administra evaluaciones, pesos y fechas en un solo lugar.</p>
+    <p class="text-sm text-base-content/60">{{ pageSummary() }}</p>
     <span class="px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
       {{ totalAssessments() }} registradas
     </span>
@@ -31,17 +31,17 @@
     <article class="rounded-4xl border border-base-200 bg-card p-5">
       <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Pendientes</p>
       <p class="mt-3 text-3xl font-black tracking-tight">{{ pendingCount() }}</p>
-      <p class="mt-1 text-sm text-base-content/55">Evaluaciones por completar</p>
+      <p class="mt-1 text-sm text-base-content/55">{{ pendingDescription() }}</p>
     </article>
     <article class="rounded-4xl border border-base-200 bg-card p-5">
       <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Completadas</p>
       <p class="mt-3 text-3xl font-black tracking-tight">{{ completedCount() }}</p>
-      <p class="mt-1 text-sm text-base-content/55">Con calificaciones registradas</p>
+      <p class="mt-1 text-sm text-base-content/55">{{ completedDescription() }}</p>
     </article>
     <article class="rounded-4xl border border-base-200 bg-card p-5">
       <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Revisadas</p>
       <p class="mt-3 text-3xl font-black tracking-tight">{{ reviewedCount() }}</p>
-      <p class="mt-1 text-sm text-base-content/55">Listas para consulta</p>
+      <p class="mt-1 text-sm text-base-content/55">{{ reviewedDescription() }}</p>
     </article>
   </section>
 
@@ -58,6 +58,8 @@
           (viewDetail)="viewDetail($event)"
           (viewScores)="viewScores($event)"
           (viewGrades)="viewGrades($event)"
+          (edit)="editAssessment($event)"
+          (remove)="deleteAssessment($event)"
         />
       }
     </section>
@@ -65,8 +67,8 @@
     <div class="rounded-[var(--radius-xl)] border border-dashed border-base-300 bg-background/60 p-8">
       <z-empty
         zIcon="file-text"
-        zTitle="Sin evaluaciones"
-        zDescription="No se encontraron evaluaciones con los filtros actuales."
+        [zTitle]="emptyTitle()"
+        [zDescription]="emptyDescription()"
       ></z-empty>
     </div>
   }

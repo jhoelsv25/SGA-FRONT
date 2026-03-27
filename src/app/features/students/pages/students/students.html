@@ -25,6 +25,28 @@
           />
         </z-form-control>
       </z-form-field>
+
+      <z-form-field>
+        <label z-form-label>Sección</label>
+        <z-form-control>
+          <z-select-option
+            [options]="sectionOptions()"
+            [value]="filterSectionId()"
+            (valueChange)="onFilterSection($event)"
+          ></z-select-option>
+        </z-form-control>
+      </z-form-field>
+
+      <z-form-field>
+        <label z-form-label>Año académico</label>
+        <z-form-control>
+          <z-select-option
+            [options]="academicYearOptions()"
+            [value]="filterAcademicYearId()"
+            (valueChange)="onFilterAcademicYear($event)"
+          ></z-select-option>
+        </z-form-control>
+      </z-form-field>
     </div>
   </ng-template>
 

@@ -17,6 +17,9 @@ type StudentHistoryItem = {
   recordId: string;
   assessment: string;
   date: string;
+  weightPercentage: number;
+  periodName?: string;
+  competencyName?: string;
   score: number;
   total: number;
   observation: string | undefined;
@@ -24,6 +27,7 @@ type StudentHistoryItem = {
 
 @Component({
   selector: 'sga-classroom-grades',
+  standalone: true,
   imports: [
     ClassroomGradesFilters,
     ClassroomGradesHeader,
@@ -123,6 +127,9 @@ export default class Grades implements OnInit {
           recordId: record.id,
           assessment: record.name,
           date: record.date,
+          weightPercentage: Number(record.weightPercentage || 0),
+          periodName: record.period?.name,
+          competencyName: record.competency?.name,
           score: score.score,
           total: record.total,
           observation: score.observation,
@@ -134,7 +141,11 @@ export default class Grades implements OnInit {
   readonly selectedStudentAverage = computed(() => {
     const history = this.selectedStudentHistory();
     if (!history.length) return 0;
-    return history.reduce((acc, item) => acc + item.score, 0) / history.length;
+    const totalWeight = history.reduce((acc, item) => acc + Math.max(Number(item.weightPercentage || 0), 0), 0);
+    if (totalWeight <= 0) {
+      return history.reduce((acc, item) => acc + item.score, 0) / history.length;
+    }
+    return history.reduce((acc, item) => acc + item.score * Math.max(Number(item.weightPercentage || 0), 0), 0) / totalWeight;
   });
   
   readonly selectedStudentCompletion = computed(() => {

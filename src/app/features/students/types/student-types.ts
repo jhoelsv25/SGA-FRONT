@@ -17,6 +17,16 @@ export type Student = {
   photoUrl?: string;
   personId?: string;
   institution?: string | { id: string; name?: string };
+  credential?: StudentCredential;
+};
+
+export type StudentCredential = {
+  id: string;
+  credentialCode: string;
+  qrValue: string;
+  active: boolean;
+  issuedAt?: string | null;
+  expiresAt?: string | null;
 };
 
 export type StudentCreate = {
@@ -47,5 +57,10 @@ export type StudentParams = {
 };
 export type StudentResponse = {
   data: Student;
+  message: string;
+};
+
+export type StudentCredentialResponse = {
+  data: StudentCredential;
   message: string;
 };

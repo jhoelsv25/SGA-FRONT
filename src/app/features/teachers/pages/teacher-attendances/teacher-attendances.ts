@@ -136,6 +136,22 @@ export default class TeacherAttendancesPage implements OnInit {
     });
   }
 
+  openQuickRegister(): void {
+    const queryParams: Record<string, string> = {
+      mode: 'teacher',
+      date: this.attendanceDate(),
+    };
+
+    if (this.teacherContextId()) {
+      const teacher = this.teachers().find((item) => item.id === this.teacherContextId());
+      if (teacher?.teacherCode) {
+        queryParams['code'] = teacher.teacherCode;
+      }
+    }
+
+    this.router.navigate(['/attendance/quick-register'], { queryParams });
+  }
+
   setStatus(teacherId: string, status: TeacherAttendanceStatus): void {
     const currentRow = this.rows().find((row) => row.teacherId === teacherId);
     if (!currentRow || currentRow.status === status || this.rowSyncing().has(teacherId)) return;

@@ -9,17 +9,17 @@
     <article class="rounded-4xl border border-base-200 bg-card p-5">
       <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Académicos</p>
       <p class="mt-3 text-3xl font-black tracking-tight">{{ academicCount() }}</p>
-      <p class="mt-1 text-sm text-base-content/55">Reportes curriculares</p>
+      <p class="mt-1 text-sm text-base-content/55">{{ roleType() === 'student' ? 'Tus avances académicos' : roleType() === 'teacher' ? 'Resultados de tus aulas' : 'Reportes curriculares' }}</p>
     </article>
     <article class="rounded-4xl border border-base-200 bg-card p-5">
       <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Asistencia</p>
       <p class="mt-3 text-3xl font-black tracking-tight">{{ attendanceCount() }}</p>
-      <p class="mt-1 text-sm text-base-content/55">Seguimiento de presencia</p>
+      <p class="mt-1 text-sm text-base-content/55">{{ roleType() === 'student' ? 'Tu historial de asistencia' : roleType() === 'teacher' ? 'Seguimiento de tus estudiantes' : 'Seguimiento de presencia' }}</p>
     </article>
     <article class="rounded-4xl border border-base-200 bg-card p-5">
       <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Financieros</p>
       <p class="mt-3 text-3xl font-black tracking-tight">{{ financialCount() }}</p>
-      <p class="mt-1 text-sm text-base-content/55">Cortes de pagos y caja</p>
+      <p class="mt-1 text-sm text-base-content/55">{{ roleType() === 'student' || roleType() === 'guardian' ? 'Estado económico relacionado' : 'Cortes de pagos y caja' }}</p>
     </article>
     <article class="rounded-4xl border border-base-200 bg-card p-5">
       <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Descargables</p>

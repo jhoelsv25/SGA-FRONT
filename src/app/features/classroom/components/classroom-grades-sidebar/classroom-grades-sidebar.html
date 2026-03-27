@@ -27,6 +27,12 @@
                 {{ record.type }}
               </p>
             }
+            @if (record.period?.name || record.competency?.name) {
+              <p class="mt-2 text-[10px] font-bold"
+                [ngClass]="selectedRecordId() === record.id ? 'text-white/55' : 'text-base-content/45'">
+                {{ record.period?.name || 'Sin período' }} · {{ record.competency?.name || 'Sin competencia' }}
+              </p>
+            }
           </div>
           <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-xs font-black"
             [ngClass]="selectedRecordId() === record.id ? 'bg-white/20 text-white' : 'bg-base-200 text-base-content/40'">

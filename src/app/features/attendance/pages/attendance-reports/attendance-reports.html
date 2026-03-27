@@ -9,12 +9,12 @@
     <article class="rounded-4xl border border-base-200 bg-card p-5">
       <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Presentes</p>
       <p class="mt-3 text-3xl font-black tracking-tight">{{ presentCount() }}</p>
-      <p class="mt-1 text-sm text-base-content/55">Asistencia efectiva</p>
+      <p class="mt-1 text-sm text-base-content/55">{{ roleType() === 'student' ? 'Tus asistencias efectivas' : 'Asistencia efectiva' }}</p>
     </article>
     <article class="rounded-4xl border border-base-200 bg-card p-5">
       <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Tardanzas</p>
       <p class="mt-3 text-3xl font-black tracking-tight">{{ lateCount() }}</p>
-      <p class="mt-1 text-sm text-base-content/55">Ingresos fuera de hora</p>
+      <p class="mt-1 text-sm text-base-content/55">{{ roleType() === 'student' ? 'Tus ingresos fuera de hora' : 'Ingresos fuera de hora' }}</p>
     </article>
     <article class="rounded-4xl border border-base-200 bg-card p-5">
       <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Faltas</p>
@@ -36,7 +36,7 @@
           z-input
           type="text"
           [value]="searchTerm()"
-          placeholder="Buscar por estudiante, estado o sesión..."
+          [placeholder]="roleType() === 'student' ? 'Buscar por estado o sesión...' : 'Buscar por estudiante, estado o sesión...'"
           (input)="onSearch(($any($event.target).value ?? '').toString())"
         />
       </div>

@@ -12,7 +12,7 @@ import {
 @Injectable({ providedIn: 'root' })
 export class BehaviorApi {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'behaviors';
+  private readonly baseUrl = 'behavior-records';
 
   getAll(params?: Params): Observable<BehaviorsListResponse> {
     return this.http.get<BehaviorsListResponse>(this.baseUrl, { params: params ?? {} });

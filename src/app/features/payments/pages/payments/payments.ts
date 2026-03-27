@@ -12,6 +12,7 @@ import { PaymentCardComponent } from '../../components/payment-card/payment-card
 import { Router } from '@angular/router';
 import { ZardEmptyComponent } from '@/shared/components/empty';
 import { ZardSkeletonComponent } from '@/shared/components/skeleton';
+import { AuthStore } from '@auth/services/store/auth.store';
 
 
 @Component({
@@ -24,7 +25,28 @@ export default class PaymentsPage {
   private dialog = inject(DialogModalService);
   private store = inject(PaymentStore);
   private router = inject(Router);
+  private authStore = inject(AuthStore);
   public readonly filters = inject(UiFiltersService);
+  roleType = computed(() => this.authStore.currentUser()?.profile?.type ?? 'user');
+  pageTitle = computed(() => {
+    const roleType = this.roleType();
+    if (roleType === 'student') return 'Mis pagos';
+    if (roleType === 'guardian') return 'Pagos del hogar';
+    return 'Registro de Pagos';
+  });
+  pageDescription = computed(() => {
+    const roleType = this.roleType();
+    if (roleType === 'student') return 'Consulta tus pagos, vencimientos y estado actual.';
+    if (roleType === 'guardian') return 'Revisa pagos pendientes e historial de tus estudiantes vinculados.';
+    return 'Administra pagos por estudiante, estado y vencimientos';
+  });
+  searchPlaceholder = computed(() => {
+    const roleType = this.roleType();
+    if (roleType === 'student') return 'Buscar por concepto o referencia...';
+    if (roleType === 'guardian') return 'Buscar por estudiante, concepto o referencia...';
+    return 'Buscar por estudiante, concepto o referencia...';
+  });
+  createLabel = computed(() => (this.roleType() === 'student' || this.roleType() === 'guardian' ? 'Reportar pago' : 'Registrar Pago'));
 
   data = computed(() => {
     const search = this.filters.paymentSearch().toLowerCase();

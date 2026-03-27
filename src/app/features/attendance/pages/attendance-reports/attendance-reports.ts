@@ -9,6 +9,7 @@ import { UiFiltersService } from '@core/services/ui-filters.service';
 import { AttendanceReportCardComponent } from '../../components/attendance-report-card/attendance-report-card';
 import { HeaderConfig } from '@core/types/header-types';
 import { ActionConfig } from '@core/types/action-types';
+import { AuthStore } from '@auth/services/store/auth.store';
 
 
 @Component({
@@ -21,13 +22,25 @@ import { ActionConfig } from '@core/types/action-types';
 export default class AttendanceReportsPage implements OnInit {
   public readonly store = inject(AttendanceStore);
   private readonly filters = inject(UiFiltersService);
+  private readonly authStore = inject(AuthStore);
   readonly searchTerm = signal('');
-  readonly headerConfig = signal<HeaderConfig>({
-    title: 'Reportes de Asistencia',
-    subtitle: 'Historial operativo y seguimiento de asistencia estudiantil',
+  readonly roleType = computed(() => this.authStore.currentUser()?.profile?.type ?? 'user');
+  readonly headerConfig = computed<HeaderConfig>(() => ({
+    title:
+      this.roleType() === 'student'
+        ? 'Mi asistencia'
+        : this.roleType() === 'teacher'
+          ? 'Asistencia de mis estudiantes'
+          : 'Reportes de Asistencia',
+    subtitle:
+      this.roleType() === 'student'
+        ? 'Consulta tu historial de asistencia, tardanzas y faltas.'
+        : this.roleType() === 'teacher'
+          ? 'Seguimiento operativo de asistencia en tus aulas.'
+          : 'Historial operativo y seguimiento de asistencia estudiantil',
     showActions: true,
     showFilters: false,
-  });
+  }));
   readonly headerActions = signal<ActionConfig[]>([
     { key: 'refresh', label: 'Actualizar', icon: 'fas fa-sync-alt', typeAction: 'header', color: 'primary' },
   ]);

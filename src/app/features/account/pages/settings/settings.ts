@@ -31,13 +31,37 @@ type ToggleKey =
   imports: [CommonModule, RouterLink, ZardCardComponent],
   template: `
     <div class="space-y-6 p-4 md:p-6">
-      <section class="rounded-[2rem] border border-border bg-card p-6 shadow-sm lg:p-8">
-        <h1 class="text-3xl font-semibold tracking-tight text-foreground">Configuracion de cuenta</h1>
-        <p class="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
-          Preferencias y actividad conectadas a la cuenta autenticada.
-        </p>
+      <section class="relative overflow-hidden rounded-[2rem] border border-border bg-card p-6 shadow-sm lg:p-8">
+        <div class="pointer-events-none absolute -right-10 -top-12 h-36 w-36 rounded-full bg-primary/10 blur-[55px]"></div>
+        <div class="pointer-events-none absolute -left-12 bottom-0 h-28 w-28 rounded-full bg-secondary/10 blur-[45px]"></div>
 
-        <div class="mt-5 flex flex-wrap gap-2">
+        <div class="relative z-10 flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-primary">
+                {{ roleBadge() }}
+              </span>
+              <span class="rounded-full border border-border bg-background px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                Ajustes de cuenta
+              </span>
+            </div>
+            <h1 class="mt-3 text-3xl font-semibold tracking-tight text-foreground">Configuracion de cuenta</h1>
+            <p class="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
+              Preferencias, seguridad y actividad conectadas a la cuenta autenticada.
+            </p>
+          </div>
+
+          <div class="grid min-w-[280px] grid-cols-2 gap-3">
+            @for (item of settingsHeroPills(); track item.label) {
+              <div class="rounded-2xl border border-border bg-background/80 px-4 py-3">
+                <p class="text-[10px] font-black uppercase tracking-[0.16em] text-muted-foreground">{{ item.label }}</p>
+                <p class="mt-2 text-sm font-semibold text-foreground">{{ item.value }}</p>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="relative z-10 mt-5 flex flex-wrap gap-2">
           @for (section of sections(); track section.id) {
             <button
               type="button"
@@ -105,6 +129,23 @@ type ToggleKey =
                     </div>
                   }
                 </div>
+
+                @if (roleSettingsRows().length) {
+                  <div class="border-border/70 border-t p-6">
+                    <div class="mb-4">
+                      <p class="text-[10px] font-black uppercase tracking-[0.18em] text-primary/70">Contexto del rol</p>
+                      <p class="mt-1 text-sm text-muted-foreground">Datos operativos cargados específicamente para este perfil.</p>
+                    </div>
+                    <div class="grid gap-4 md:grid-cols-2">
+                      @for (item of roleSettingsRows(); track item.label) {
+                        <div class="rounded-xl border border-border bg-background/80 p-4">
+                          <p class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">{{ item.label }}</p>
+                          <p class="mt-2 text-sm font-medium text-foreground">{{ item.value }}</p>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
               }
 
               <div class="border-border/70 flex flex-wrap gap-3 border-t p-6">
@@ -383,6 +424,8 @@ export default class AccountSettingsPage {
   protected readonly currentTheme = computed(() => this.layout.currentTheme());
   protected readonly currentUser = computed(() => this.authFacade.getCurrentUser());
   protected readonly modules = computed(() => this.authFacade.getModules());
+  protected readonly roleType = computed(() => this.currentUser()?.profile?.type || 'user');
+  protected readonly roleBadge = computed(() => this.currentUser()?.profile?.roleLabel || this.currentUser()?.role?.name || 'Perfil');
   protected readonly accountUser = computed<AccountUserDetail | null>(() => {
     const detail = this.userDetail();
     if (detail) return detail;
@@ -411,14 +454,29 @@ export default class AccountSettingsPage {
     browserAlerts: false,
     newDeviceAlerts: true,
   });
-  protected readonly sections = computed(() => [
-    { id: 'general' as SettingsSectionId, label: 'General', description: 'Cuenta y datos personales.', icon: 'fa-solid fa-user' },
-    { id: 'appearance' as SettingsSectionId, label: 'Apariencia', description: 'Tema del sistema.', icon: 'fa-solid fa-palette' },
-    { id: 'notifications' as SettingsSectionId, label: 'Notificaciones', description: 'Preferencias guardadas.', icon: 'fa-solid fa-bell' },
-    { id: 'email' as SettingsSectionId, label: 'Correo', description: 'Historial de envios.', icon: 'fa-solid fa-envelope' },
-    { id: 'security' as SettingsSectionId, label: 'Seguridad', description: 'Estado y control.', icon: 'fa-solid fa-shield-halved' },
-    { id: 'logs' as SettingsSectionId, label: 'Logs', description: 'Auditoria reciente.', icon: 'fa-solid fa-clipboard-list' },
-    { id: 'sessions' as SettingsSectionId, label: 'Sesiones', description: 'Accesos activos.', icon: 'fa-solid fa-laptop' }]);
+  protected readonly sections = computed(() => {
+    const roleType = this.roleType();
+    const base = [
+      { id: 'general' as SettingsSectionId, label: 'General', description: 'Cuenta y datos personales.', icon: 'fa-solid fa-user' },
+      { id: 'appearance' as SettingsSectionId, label: 'Apariencia', description: 'Tema del sistema.', icon: 'fa-solid fa-palette' },
+      { id: 'notifications' as SettingsSectionId, label: 'Notificaciones', description: 'Preferencias guardadas.', icon: 'fa-solid fa-bell' },
+      { id: 'email' as SettingsSectionId, label: 'Correo', description: 'Historial de envios.', icon: 'fa-solid fa-envelope' },
+      { id: 'security' as SettingsSectionId, label: 'Seguridad', description: 'Estado y control.', icon: 'fa-solid fa-shield-halved' },
+    ];
+
+    if (roleType === 'admin' || roleType === 'superadmin' || roleType === 'director' || roleType === 'subdirector' || roleType === 'ugel') {
+      return [
+        ...base,
+        { id: 'logs' as SettingsSectionId, label: 'Logs', description: 'Auditoria reciente.', icon: 'fa-solid fa-clipboard-list' },
+        { id: 'sessions' as SettingsSectionId, label: 'Sesiones', description: 'Accesos activos.', icon: 'fa-solid fa-laptop' },
+      ];
+    }
+
+    return [
+      ...base,
+      { id: 'sessions' as SettingsSectionId, label: 'Sesiones', description: 'Dispositivos y accesos activos.', icon: 'fa-solid fa-laptop' },
+    ];
+  });
   protected readonly themeOptions = computed(() => [
     { value: 'light' as ThemeConfig, label: 'Claro', description: 'Entorno luminoso.' },
     { value: 'dark' as ThemeConfig, label: 'Oscuro', description: 'Reduce brillo.' },
@@ -436,6 +494,26 @@ export default class AccountSettingsPage {
       { label: 'Telefono', value: person?.mobile || person?.phone || 'No registrado' },
       { label: 'Direccion', value: person?.address || 'No registrada' },
       { label: 'Ubicacion', value: location || 'No registrada' }];
+  });
+  protected readonly settingsHeroPills = computed(() => {
+    const user = this.accountUser();
+    return [
+      { label: 'Rol', value: this.roleBadge() },
+      { label: 'Módulos', value: String(this.modules().length) },
+      { label: 'Tema', value: this.currentTheme() },
+      { label: 'Estado', value: user?.isActive ? 'Activa' : 'Inactiva' },
+    ];
+  });
+  protected readonly roleSettingsRows = computed(() => {
+    const details = this.currentUser()?.profile?.details ?? {};
+    const stats = this.currentUser()?.profile?.stats ?? {};
+    return [...Object.entries(details), ...Object.entries(stats)]
+      .filter(([, value]) => value !== null && value !== undefined && value !== '')
+      .map(([key, value]) => ({
+        label: this.humanizeKey(key),
+        value: String(value),
+      }))
+      .slice(0, 8);
   });
   protected readonly notificationRows = computed(() => [
     { key: 'digest' as ToggleKey, label: 'Resumen diario', description: 'Consolida pendientes y eventos.' },
@@ -649,5 +727,14 @@ export default class AccountSettingsPage {
         this.toast.success('Sesion revocada');
         this.loadSessions(userId);
       });
+  }
+
+  private humanizeKey(key: string) {
+    return key
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .replace(/_/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .replace(/^./, (char) => char.toUpperCase());
   }
 }

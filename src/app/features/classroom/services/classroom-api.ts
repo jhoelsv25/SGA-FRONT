@@ -320,6 +320,16 @@ export interface ClassroomGradeRecord {
   type?: string;
   status?: string;
   weightPercentage?: number;
+  period?: {
+    id: string;
+    name: string;
+    periodNumber?: number;
+  };
+  competency?: {
+    id: string;
+    code: string;
+    name: string;
+  };
   average: number;
   averageLabel?: string;
   studentsCount: number;

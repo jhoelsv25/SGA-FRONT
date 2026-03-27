@@ -8,7 +8,7 @@ import { ZardSkeletonComponent } from '@/shared/components/skeleton';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { Toast } from '@core/services/toast';
 import { TeacherApi } from '../../services/api/teacher-api';
-import type { Teacher } from '../../types/teacher-types';
+import type { Teacher, TeacherCredential } from '../../types/teacher-types';
 import { TeacherForm } from '../../components/teacher-form/teacher-form';
 import { SectionCourseApi } from '@features/section-courses/services/section-course-api';
 import type { SectionCourse } from '@features/section-courses/types/section-course-types';
@@ -39,6 +39,8 @@ export default class TeacherDetailPage implements OnInit {
   readonly assignments = signal<SectionCourse[]>([]);
   readonly schedules = signal<Schedule[]>([]);
   readonly attendances = signal<TeacherAttendance[]>([]);
+  readonly credential = signal<TeacherCredential | null>(null);
+  readonly credentialLoading = signal(false);
 
   readonly fullName = computed(() => {
     const person = this.person();
@@ -70,6 +72,28 @@ export default class TeacherDetailPage implements OnInit {
         maxHeight: '80vh',
       })
       .closed.subscribe(() => this.reload());
+  }
+
+  regenerateCredential(): void {
+    const teacher = this.teacher();
+    if (!teacher) return;
+
+    this.credentialLoading.set(true);
+    this.teacherApi.regenerateCredential(teacher.id).subscribe({
+      next: (res) => {
+        this.credential.set(res.data);
+        this.credentialLoading.set(false);
+        this.toast.success('Carnet regenerado');
+      },
+      error: () => {
+        this.credentialLoading.set(false);
+        this.toast.error('No se pudo regenerar el carnet');
+      },
+    });
+  }
+
+  printCredential(): void {
+    window.print();
   }
 
   goToAssignments(): void {
@@ -142,6 +166,18 @@ export default class TeacherDetailPage implements OnInit {
     return map[latest.status] ?? latest.status;
   }
 
+  credentialPreviewLines(): string[] {
+    const value = this.credential()?.qrValue ?? '';
+    if (!value) return [];
+    const compact = value.replace(/\s+/g, '');
+    const chunkSize = 18;
+    const lines: string[] = [];
+    for (let index = 0; index < Math.min(compact.length, 126); index += chunkSize) {
+      lines.push(compact.slice(index, index + chunkSize));
+    }
+    return lines.slice(0, 7);
+  }
+
   assignmentLabel(item: SectionCourse): string {
     return [item.course?.name, item.section?.name].filter(Boolean).join(' · ') || 'Asignación sin detalle';
   }
@@ -196,6 +232,18 @@ export default class TeacherDetailPage implements OnInit {
       error: () => {
         this.attendances.set([]);
         this.loading.set(false);
+      },
+    });
+
+    this.credentialLoading.set(true);
+    this.teacherApi.getCredential(teacherId).subscribe({
+      next: (res) => {
+        this.credential.set(res.data);
+        this.credentialLoading.set(false);
+      },
+      error: () => {
+        this.credential.set(null);
+        this.credentialLoading.set(false);
       },
     });
   }

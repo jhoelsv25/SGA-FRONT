@@ -5,6 +5,7 @@ import { DataResponse } from '@core/types/pagination-types';
 import {
   Student,
   StudentCreate,
+  StudentCredentialResponse,
   StudentResponse,
   StudentUpdate,
 } from '@features/students/types/student-types';
@@ -23,12 +24,20 @@ export class StudentApi {
     return this.http.get<StudentResponse>(`${this.baseUrl}/${id}`);
   }
 
+  getCredential(id: string): Observable<StudentCredentialResponse> {
+    return this.http.get<StudentCredentialResponse>(`${this.baseUrl}/${id}/credential`);
+  }
+
   create(student: StudentCreate): Observable<StudentResponse> {
     return this.http.post<StudentResponse>(`${this.baseUrl}`, student);
   }
 
   update(id: string, student: StudentUpdate): Observable<StudentResponse> {
     return this.http.patch<StudentResponse>(`${this.baseUrl}/${id}`, student);
+  }
+
+  regenerateCredential(id: string): Observable<StudentCredentialResponse> {
+    return this.http.post<StudentCredentialResponse>(`${this.baseUrl}/${id}/credential/regenerate`, {});
   }
 
   delete(id: string): Observable<DataResponse<StudentResponse>> {

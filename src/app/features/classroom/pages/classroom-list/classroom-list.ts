@@ -28,7 +28,7 @@ import { AuthStore } from '@auth/services/store/auth.store';
         <article class="rounded-4xl border border-base-200 bg-card p-5">
           <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Aulas</p>
           <p class="mt-3 text-3xl font-black tracking-tight">{{ filteredCourses().length }}</p>
-          <p class="mt-1 text-sm text-base-content/55">Entornos disponibles</p>
+          <p class="mt-1 text-sm text-base-content/55">{{ roleSummaryDescription() }}</p>
         </article>
         <article class="rounded-4xl border border-base-200 bg-card p-5">
           <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Docentes</p>
@@ -50,12 +50,12 @@ import { AuthStore } from '@auth/services/store/auth.store';
       <section class="rounded-4xl border border-base-200 bg-card p-5">
         <div class="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
           <div class="space-y-2">
-            <label class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Buscar</label>
+            <label class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">{{ roleSummaryTitle() }}</label>
             <input
               z-input
               type="text"
               [value]="search()"
-              placeholder="Buscar por curso, sección o docente..."
+              [placeholder]="searchPlaceholder()"
               (input)="search.set(($any($event.target).value ?? '').toString())"
             />
           </div>
@@ -108,6 +108,7 @@ export default class ClassroomList implements OnInit {
 
   public courses = signal<VirtualClassroomItem[]>([]);
   public loading = signal(true);
+  readonly roleType = computed(() => this.authStore.currentUser()?.profile?.type ?? 'user');
   readonly filteredCourses = computed(() => {
     const term = this.search().trim().toLowerCase();
     if (!term) return this.courses();
@@ -124,6 +125,26 @@ export default class ClassroomList implements OnInit {
   readonly teacherCount = computed(() => this.filteredCourses().filter((course) => !!course.sectionCourse?.teacher?.id).length);
   readonly enrolledCount = computed(() => this.filteredCourses().reduce((sum, course) => sum + (course.sectionCourse?.enrolledStudents || 0), 0));
   readonly activeCount = computed(() => this.filteredCourses().filter((course) => (course.status || '').toLowerCase() !== 'inactive').length);
+  readonly roleSummaryTitle = computed(() => {
+    const roleType = this.roleType();
+    if (roleType === 'teacher') return 'Tus espacios de trabajo';
+    if (roleType === 'student') return 'Tus aulas activas';
+    if (roleType === 'guardian') return 'Aulas vinculadas al hogar';
+    return 'Aulas disponibles';
+  });
+  readonly roleSummaryDescription = computed(() => {
+    const roleType = this.roleType();
+    if (roleType === 'teacher') return 'Accede rápido a tus cursos, publicaciones y tareas.';
+    if (roleType === 'student') return 'Entra a clases, revisa tareas y sigue tus notas.';
+    if (roleType === 'guardian') return 'Consulta el entorno académico relacionado con tus estudiantes.';
+    return 'Acceso a cursos, secciones y entornos académicos en línea.';
+  });
+  readonly searchPlaceholder = computed(() => {
+    const roleType = this.roleType();
+    if (roleType === 'teacher') return 'Buscar por curso, sección o aula asignada...';
+    if (roleType === 'student') return 'Buscar por curso o sección...';
+    return 'Buscar por curso, sección o docente...';
+  });
 
   onHeaderAction(event: { action: { key: string } }): void {
     if (event.action.key === 'refresh') {
@@ -138,6 +159,14 @@ export default class ClassroomList implements OnInit {
 
   private syncHeaderByRole(): void {
     const roleType = this.authStore.currentUser()?.profile?.type ?? 'user';
+    const title =
+      roleType === 'teacher'
+        ? 'Mi Aula Virtual'
+        : roleType === 'student'
+          ? 'Mis Aulas'
+          : roleType === 'guardian'
+            ? 'Aulas Vinculadas'
+            : 'Aulas Virtuales';
     const subtitle =
       roleType === 'teacher'
         ? 'Tus aulas asignadas como docente'
@@ -149,6 +178,7 @@ export default class ClassroomList implements OnInit {
 
     this.headerConfig.update((config) => ({
       ...config,
+      title,
       subtitle,
     }));
   }

@@ -8,6 +8,7 @@ import { ZardSkeletonComponent } from '@/shared/components/skeleton';
 import { ZardInputDirective } from '@/shared/components/input';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardFormImports } from '@/shared/components/form';
+import { SelectOptionComponent } from '@/shared/widgets/select-option/select-option';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 import { ExcelService } from '@core/services/excel.service';
@@ -22,6 +23,10 @@ import { StudentApi } from '../../services/api/student-api';
 import { StudentStore } from '../../services/store/student.store';
 import { Student } from '../../types/student-types';
 import { AuthStore } from '@auth/services/store/auth.store';
+import { SectionApi } from '@features/sections/services/api/section-api';
+import { YearAcademicApi } from '@features/year-academic/services/api/year-academic-api';
+import type { Section } from '@features/sections/types/section-types';
+import type { YearAcademic } from '@features/year-academic/types/year-academi-types';
 
 const EXCEL_COLUMNS = STUDENT_COLUMN.map((c) => ({ key: c.key, label: c.label }));
 
@@ -39,6 +44,7 @@ type ImportResult = { created: number; errors: { row: number; message: string }[
     ZardSkeletonComponent,
     ZardInputDirective,
     ZardButtonComponent,
+    SelectOptionComponent,
     ...ZardFormImports,
   ],
   templateUrl: './students.html',
@@ -55,10 +61,16 @@ export default class StudentsPage {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly authStore = inject(AuthStore);
+  private readonly sectionApi = inject(SectionApi);
+  private readonly yearAcademicApi = inject(YearAcademicApi);
 
   readonly skeletonItems = [1, 2, 3, 4];
   readonly searchTerm = signal('');
+  readonly filterSectionId = signal('');
+  readonly filterAcademicYearId = signal('');
   readonly page = signal(1);
+  readonly sectionOptions = signal<Array<{ value: string; label: string }>>([{ value: '', label: 'Todas' }]);
+  readonly academicYearOptions = signal<Array<{ value: string; label: string }>>([{ value: '', label: 'Todos' }]);
   readonly actions = STUDENT_ACTIONS;
   readonly headerConfig = computed(() => {
     const roleType = this.authStore.currentUser()?.profile?.type ?? 'user';
@@ -84,30 +96,28 @@ export default class StudentsPage {
   readonly data = computed(() => this.store.students());
   readonly pagination = computed(() => this.store.pagination());
   readonly canLoadMore = computed(() => this.data().length < this.pagination().total);
-  readonly filteredData = computed(() => {
-    const search = this.searchTerm().toLowerCase().trim();
-    if (!search) return this.data();
-    return this.data().filter((s) =>
-      s.firstName?.toLowerCase().includes(search) ||
-      s.lastName?.toLowerCase().includes(search) ||
-      s.email?.toLowerCase().includes(search) ||
-      s.studentCode?.toLowerCase().includes(search) ||
-      String(s.grade ?? '').toLowerCase().includes(search),
-    );
-  });
-  readonly hasActiveFilters = computed(() => !!this.searchTerm().trim());
+  readonly filteredData = computed(() => this.data());
+  readonly hasActiveFilters = computed(
+    () => !!this.searchTerm().trim() || !!this.filterSectionId() || !!this.filterAcademicYearId(),
+  );
   readonly headerActions = computed(() =>
     this.permissionStore.filterActions(this.actions.filter((a) => a.typeAction === 'header')),
   );
 
   constructor() {
+    this.loadFilterOptions();
     this.route.queryParamMap.subscribe((params) => {
       this.searchTerm.set(params.get('search') ?? '');
+      this.filterSectionId.set(params.get('sectionId') ?? '');
+      this.filterAcademicYearId.set(params.get('academicYearId') ?? '');
       this.page.set(1);
       this.store.loadAll({
         params: {
           page: 1,
           size: this.pageSize,
+          search: params.get('search') ?? undefined,
+          sectionId: params.get('sectionId') ?? undefined,
+          academicYearId: params.get('academicYearId') ?? undefined,
         },
       });
     });
@@ -123,6 +133,7 @@ export default class StudentsPage {
 
   onSearch(value: string) {
     this.searchTerm.set(value);
+    this.page.set(1);
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { search: value || null },
@@ -131,11 +142,35 @@ export default class StudentsPage {
     });
   }
 
-  clearFilters() {
-    this.searchTerm.set('');
+  onFilterSection(value: unknown) {
+    this.filterSectionId.set(value != null ? String(value) : '');
+    this.page.set(1);
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { search: null },
+      queryParams: { sectionId: this.filterSectionId() || null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
+  }
+
+  onFilterAcademicYear(value: unknown) {
+    this.filterAcademicYearId.set(value != null ? String(value) : '');
+    this.page.set(1);
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { academicYearId: this.filterAcademicYearId() || null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
+  }
+
+  clearFilters() {
+    this.searchTerm.set('');
+    this.filterSectionId.set('');
+    this.filterAcademicYearId.set('');
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { search: null, sectionId: null, academicYearId: null },
       queryParamsHandling: 'merge',
       replaceUrl: true,
     });
@@ -147,6 +182,9 @@ export default class StudentsPage {
       params: {
         page: 1,
         size: this.pageSize,
+        search: this.searchTerm() || undefined,
+        sectionId: this.filterSectionId() || undefined,
+        academicYearId: this.filterAcademicYearId() || undefined,
       },
     });
   }
@@ -255,7 +293,14 @@ export default class StudentsPage {
   }
 
   private export() {
-    this.studentApi.getAll({ size: 9999 }).subscribe((res) => {
+    this.studentApi
+      .getAll({
+        size: 9999,
+        search: this.searchTerm() || undefined,
+        sectionId: this.filterSectionId() || undefined,
+        academicYearId: this.filterAcademicYearId() || undefined,
+      })
+      .subscribe((res) => {
       const data = (res.data ?? []).map((s) => ({
         firstName: s.firstName,
         lastName: s.lastName,
@@ -279,6 +324,31 @@ export default class StudentsPage {
       params: {
         page: nextPage,
         size: this.pageSize,
+        search: this.searchTerm() || undefined,
+        sectionId: this.filterSectionId() || undefined,
+        academicYearId: this.filterAcademicYearId() || undefined,
+      },
+    });
+  }
+
+  private loadFilterOptions(): void {
+    this.sectionApi.getAll().subscribe({
+      next: (res) => {
+        const options = (res.data ?? []).map((section: Section) => ({
+          value: section.id,
+          label: section.name,
+        }));
+        this.sectionOptions.set([{ value: '', label: 'Todas' }, ...options]);
+      },
+    });
+
+    this.yearAcademicApi.getAll({ size: 100 }).subscribe({
+      next: (res) => {
+        const options = (res.data ?? []).map((year: YearAcademic) => ({
+          value: year.id,
+          label: year.name || String(year.year),
+        }));
+        this.academicYearOptions.set([{ value: '', label: 'Todos' }, ...options]);
       },
     });
   }
