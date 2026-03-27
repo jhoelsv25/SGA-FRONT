@@ -217,11 +217,42 @@ export class Header implements OnInit, OnDestroy {
     return '/logo.jpeg';
   }
 
+  private getTeacherProfileId(): string {
+    const details = this.currentUser()?.profile?.details;
+    if (!details || typeof details !== 'object') return '';
+    const teacherId = (details as Record<string, unknown>)['teacherId'];
+    return typeof teacherId === 'string' ? teacherId : '';
+  }
+
+  private getTeacherProfileName(): string {
+    return this.getUserDisplayName() || this.currentUser()?.profile?.code || '';
+  }
+
   goProfile = () => this.router.navigateByUrl('/account/profile');
   goSessions = () => this.router.navigateByUrl('/administration/sessions');
   goSettings = () => this.router.navigateByUrl('/account/settings');
   goChangePass = () => this.router.navigateByUrl('/account/change-password');
   goClassrooms = () => this.router.navigateByUrl('/virtual-classroom/list');
+  goTeacherAssignments = () => {
+    const teacherId = this.getTeacherProfileId();
+    const teacherName = this.getTeacherProfileName();
+    this.router.navigate(['/organization/section-courses'], {
+      queryParams: {
+        ...(teacherId ? { teacherId } : {}),
+        ...(teacherName ? { teacherName } : {}),
+      },
+    });
+  };
+  goTeacherSchedules = () => {
+    const teacherId = this.getTeacherProfileId();
+    const teacherName = this.getTeacherProfileName();
+    this.router.navigate(['/organization/schedules'], {
+      queryParams: {
+        ...(teacherId ? { teacherId } : {}),
+        ...(teacherName ? { teacherName } : {}),
+      },
+    });
+  };
   goPaymentsHistory = () => this.router.navigateByUrl('/payments/history');
   goPaymentsPending = () => this.router.navigateByUrl('/payments/pending');
   goStudents = () => this.router.navigateByUrl('/students/list');
@@ -253,7 +284,19 @@ export class Header implements OnInit, OnDestroy {
       return [
         ...baseActions,
         {
-          label: 'Mis aulas',
+          label: 'Mis cursos y secciones',
+          icon: 'fa-book',
+          action: this.goTeacherAssignments,
+          type: 'assignments',
+        },
+        {
+          label: 'Mis horarios',
+          icon: 'fa-calendar-alt',
+          action: this.goTeacherSchedules,
+          type: 'schedules',
+        },
+        {
+          label: 'Mi aula virtual',
           icon: 'fa-chalkboard',
           action: this.goClassrooms,
           type: 'classroom',
@@ -278,7 +321,7 @@ export class Header implements OnInit, OnDestroy {
       return [
         ...baseActions,
         {
-          label: 'Mis aulas',
+          label: 'Mi aula virtual',
           icon: 'fa-chalkboard',
           action: this.goClassrooms,
           type: 'classroom',

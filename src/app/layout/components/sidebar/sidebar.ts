@@ -147,7 +147,7 @@ export class Sidebar implements OnInit, OnDestroy {
 
   public getVisibleMenuItems(): MenuItem[] {
     const permitted = this.filterByPermissions(this.menuItems());
-    const roleScoped = this.filterByRoleProfile(permitted);
+    const roleScoped = this.relabelMenuTree(this.filterByRoleProfile(permitted));
     const term = this.sidebarSearch().trim().toLowerCase();
     if (!term) return roleScoped;
 
@@ -165,6 +165,79 @@ export class Sidebar implements OnInit, OnDestroy {
     };
 
     return filterTree(roleScoped);
+  }
+
+  private relabelMenuTree(items: MenuItem[]): MenuItem[] {
+    const roleType = this.resolveProfileType();
+    const labelMapByRole: Record<string, Record<string, string>> = {
+      teacher: {
+        dashboard: 'Inicio',
+        students: 'Mis estudiantes',
+        attendance: 'Asistencia',
+        assessments: 'Evaluaciones',
+        behavior: 'Conducta',
+        'virtual-classroom': 'Mi aula virtual',
+        communications: 'Comunicaciones',
+        reports: 'Mis reportes',
+        'students-list': 'Listado',
+        'student-observations': 'Observaciones',
+        'attendance-register': 'Registrar asistencia',
+        'attendance-reports': 'Reportes',
+        'assessments-list': 'Evaluaciones',
+        'assessment-scores': 'Calificar',
+        grades: 'Notas finales',
+        'behavior-records': 'Registros',
+        'behavior-reports': 'Reportes',
+        'virtual-classrooms-list': 'Ingresar',
+        announcements: 'Avisos',
+        notifications: 'Notificaciones',
+        'reports-academic': 'Académicos',
+        'reports-attendance': 'Asistencia',
+        'reports-behavior': 'Conducta',
+      },
+      student: {
+        dashboard: 'Inicio',
+        'virtual-classroom': 'Mi aula virtual',
+        communications: 'Comunicaciones',
+        payments: 'Mis pagos',
+        reports: 'Mis reportes',
+        'virtual-classrooms-list': 'Ingresar',
+        announcements: 'Avisos',
+        notifications: 'Notificaciones',
+        'payments-pending': 'Pendientes',
+        'payments-history': 'Historial',
+        'reports-academic': 'Académicos',
+        'reports-attendance': 'Asistencia',
+      },
+      guardian: {
+        dashboard: 'Inicio',
+        students: 'Mis estudiantes',
+        communications: 'Comunicaciones',
+        payments: 'Pagos',
+        reports: 'Reportes',
+        'students-list': 'Listado',
+        'student-observations': 'Observaciones',
+        announcements: 'Avisos',
+        notifications: 'Notificaciones',
+        'payments-pending': 'Pendientes',
+        'payments-history': 'Historial',
+        'reports-academic': 'Académicos',
+        'reports-attendance': 'Asistencia',
+        'reports-behavior': 'Conducta',
+      },
+    };
+
+    const map = labelMapByRole[roleType];
+    if (!map) return items;
+
+    const relabel = (entries: MenuItem[]): MenuItem[] =>
+      entries.map((item) => ({
+        ...item,
+        label: map[item.id] ?? item.label,
+        children: relabel(item.children || []),
+      }));
+
+    return relabel(items);
   }
 
   private filterByPermissions(items: MenuItem[]): MenuItem[] {
@@ -251,6 +324,17 @@ export class Sidebar implements OnInit, OnDestroy {
     if (roleName.includes('estudiante') || roleName.includes('student') || roleName.includes('alumno')) return 'student';
     if (roleName.includes('apoderado') || roleName.includes('guardian')) return 'guardian';
     return 'user';
+  }
+
+  private getTeacherProfileId(): string {
+    const details = this.currentUser()?.profile?.details;
+    if (!details || typeof details !== 'object') return '';
+    const teacherId = (details as Record<string, unknown>)['teacherId'];
+    return typeof teacherId === 'string' ? teacherId : '';
+  }
+
+  private getTeacherProfileName(): string {
+    return this.getUserDisplayName() || this.currentUser()?.profile?.code || '';
   }
 
   // --- Interaction & Navigation ---
@@ -530,7 +614,31 @@ export class Sidebar implements OnInit, OnDestroy {
       return [
         ...baseActions,
         {
-          label: 'Mis aulas',
+          label: 'Mis cursos y secciones',
+          icon: 'fa-book',
+          type: 'assignments',
+          action: () =>
+            this.router.navigate(['/organization/section-courses'], {
+              queryParams: {
+                ...(this.getTeacherProfileId() ? { teacherId: this.getTeacherProfileId() } : {}),
+                ...(this.getTeacherProfileName() ? { teacherName: this.getTeacherProfileName() } : {}),
+              },
+            }),
+        },
+        {
+          label: 'Mis horarios',
+          icon: 'fa-calendar-alt',
+          type: 'schedules',
+          action: () =>
+            this.router.navigate(['/organization/schedules'], {
+              queryParams: {
+                ...(this.getTeacherProfileId() ? { teacherId: this.getTeacherProfileId() } : {}),
+                ...(this.getTeacherProfileName() ? { teacherName: this.getTeacherProfileName() } : {}),
+              },
+            }),
+        },
+        {
+          label: 'Mi aula virtual',
           icon: 'fa-chalkboard',
           type: 'classroom',
           action: () => this.router.navigate(['/virtual-classroom/list']),
