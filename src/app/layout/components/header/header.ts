@@ -233,6 +233,8 @@ export class Header implements OnInit, OnDestroy {
   goSettings = () => this.router.navigateByUrl('/account/settings');
   goChangePass = () => this.router.navigateByUrl('/account/change-password');
   goClassrooms = () => this.router.navigateByUrl('/virtual-classroom/list');
+  goAssessments = () => this.router.navigateByUrl('/assessments/list');
+  goAttendanceReports = () => this.router.navigateByUrl('/attendance/reports');
   goTeacherAssignments = () => {
     const teacherId = this.getTeacherProfileId();
     const teacherName = this.getTeacherProfileName();
@@ -284,7 +286,7 @@ export class Header implements OnInit, OnDestroy {
       return [
         ...baseActions,
         {
-          label: 'Mis cursos y secciones',
+          label: 'Mis cursos',
           icon: 'fa-book',
           action: this.goTeacherAssignments,
           type: 'assignments',
@@ -300,6 +302,12 @@ export class Header implements OnInit, OnDestroy {
           icon: 'fa-chalkboard',
           action: this.goClassrooms,
           type: 'classroom',
+        },
+        {
+          label: 'Mis evaluaciones',
+          icon: 'fa-clipboard-list',
+          action: this.goAssessments,
+          type: 'assessments',
         },
         {
           label: 'Configuración',
@@ -321,10 +329,22 @@ export class Header implements OnInit, OnDestroy {
       return [
         ...baseActions,
         {
-          label: 'Mi aula virtual',
+          label: 'Mis cursos',
           icon: 'fa-chalkboard',
           action: this.goClassrooms,
           type: 'classroom',
+        },
+        {
+          label: 'Mis evaluaciones',
+          icon: 'fa-clipboard-list',
+          action: this.goAssessments,
+          type: 'assessments',
+        },
+        {
+          label: 'Mi asistencia',
+          icon: 'fa-clipboard-check',
+          action: this.goAttendanceReports,
+          type: 'attendance',
         },
         {
           label: 'Mis pagos',

@@ -2,6 +2,7 @@ import { computed, inject } from '@angular/core';
 import { signalStore, withComputed, withMethods } from '@ngrx/signals';
 import { AuthStore } from '@auth/services/store/auth.store';
 import { Module } from '@auth/types/auth-type';
+import { expandPermissionAliases } from '@core/utils/permission.utils';
 
 // Tipo genérico para acciones con permisos opcionales
 type WithPermission = {
@@ -121,7 +122,8 @@ export const PermissionCheckStore = signalStore(
      * @param permission - Permiso completo ej: "users:delete"
      */
     has(permission: string): boolean {
-      return store.allPermissions().has(permission);
+      const aliases = expandPermissionAliases(permission);
+      return aliases.some((candidate) => store.allPermissions().has(candidate));
     },
 
     /**

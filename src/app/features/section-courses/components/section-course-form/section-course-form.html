@@ -16,30 +16,19 @@
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <div>
       <label class="label-form" for="section">Sección</label>
-      <z-select-option
-        id="section"
-        [options]="sectionOptions()"
-        formControlName="section"
-        placeholder="Seleccionar sección"></z-select-option>
+      <sga-section-select id="section" formControlName="section" placeholder="Seleccionar sección"></sga-section-select>
     </div>
     <div>
       <label class="label-form" for="course">Curso</label>
-      <z-select-option id="course" [options]="courseOptions()" formControlName="course" placeholder="Seleccionar curso"></z-select-option>
+      <sga-course-select id="course" formControlName="course" placeholder="Seleccionar curso"></sga-course-select>
     </div>
     <div>
       <label class="label-form" for="academicYear">Año académico</label>
-      <z-select-option id="academicYear" [options]="academicYearOptions()" formControlName="academicYear" placeholder="Seleccionar año"></z-select-option>
+      <sga-year-academic-select id="academicYear" formControlName="academicYear" placeholder="Seleccionar año"></sga-year-academic-select>
     </div>
     <div>
       <label class="label-form" for="teacher">Docente</label>
-      <z-select-option
-        id="teacher"
-        [options]="teacherOptions()"
-        [canLoadMore]="teacherHasMore()"
-        [loadingMore]="teacherLoadingMore()"
-        (loadMore)="loadMoreTeachers()"
-        formControlName="teacher"
-        placeholder="Seleccionar docente"></z-select-option>
+      <sga-teacher-select id="teacher" formControlName="teacher" placeholder="Seleccionar docente"></sga-teacher-select>
     </div>
     <div>
       <label class="label-form" for="modality">Modalidad</label>

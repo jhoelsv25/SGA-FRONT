@@ -1,4 +1,4 @@
-import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
+import { SelectOptionComponent } from '@/shared/widgets/select-option/select-option';
 import { ZardDatePickerComponent } from '@/shared/components/date-picker';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardInputDirective } from '@/shared/components/input';
@@ -11,12 +11,13 @@ import { AcademicYearStatus, GradingSystem, Modality, YearAcademic, YearAcademic
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
 import { InstitutionApi } from '@features/admin-services/api/institution-api';
 import { YearAcademicStore } from '../../services/store/year-academic.store';
+import { InstitutionSelect } from '@/shared/widgets/selects';
 
 
 @Component({
   selector: 'sga-year-academic-form',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, CommonModule, SelectOptionComponent, ZardButtonComponent, ZardDatePickerComponent, ZardInputDirective],
+  imports: [ReactiveFormsModule, FormsModule, CommonModule, SelectOptionComponent, ZardButtonComponent, ZardDatePickerComponent, ZardInputDirective, InstitutionSelect],
   templateUrl: './year-academic-form.html',
   styleUrls: ['./year-academic-form.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -60,7 +61,6 @@ export class YearAcademicForm implements OnInit {
     { value: AcademicYearStatus.ONGOING, label: 'En curso' },
     { value: AcademicYearStatus.COMPLETED, label: 'Cerrado' },
     { value: AcademicYearStatus.CANCELLED, label: 'Cancelado' }];
-  institutions = signal<{ value: string; label: string }[]>([]);
   gradeScales = signal<YearAcademicGradeScale[]>([]);
   passingGradeLabel = computed(() => {
     switch (this.form.get('gradingSystem')?.value) {
@@ -124,7 +124,6 @@ export class YearAcademicForm implements OnInit {
   ngOnInit() {
     this.institutionApi.getAll({}).subscribe((data) => {
       const institutionOptions = data.map((i) => ({ value: i.id, label: i.name }));
-      this.institutions.set(institutionOptions);
       const current = this.data.current as YearAcademic | null | undefined;
       if (current) {
         this.form.patchValue({

@@ -70,6 +70,7 @@
 
             <div class="relative z-10 flex w-full shrink-0 items-center gap-3 lg:w-auto">
               <button
+                *sgaHasPermission="'enrollment:update'"
                 z-button
                 zColor="primary"
                 class="h-14 w-full rounded-4xl px-8 text-base font-bold shadow-2xl shadow-primary/30 transition-all hover:scale-105 lg:w-auto"
@@ -117,19 +118,39 @@
           </div>
 
           <div class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
-            <button z-button zType="outline" class="h-14 justify-start rounded-4xl px-5 text-left" (click)="goToStudent()">
+            <button
+              z-button
+              zType="outline"
+              class="h-14 justify-start rounded-4xl px-5 text-left"
+              [sgaDisableIfNoPermission]="'student:view'"
+              (click)="goToStudent()">
               <z-icon zType="graduation-cap" class="mr-3 h-5 w-5" />
               <span class="text-sm font-bold">Ver estudiante</span>
             </button>
-            <button z-button zType="outline" class="h-14 justify-start rounded-4xl px-5 text-left" (click)="openEdit()">
+            <button
+              *sgaHasPermission="'enrollment:update'"
+              z-button
+              zType="outline"
+              class="h-14 justify-start rounded-4xl px-5 text-left"
+              (click)="openEdit()">
               <z-icon zType="settings" class="mr-3 h-5 w-5" />
               <span class="text-sm font-bold">Editar matrícula</span>
             </button>
-            <button z-button zType="outline" class="h-14 justify-start rounded-4xl px-5 text-left" (click)="goToAttendance()">
+            <button
+              z-button
+              zType="outline"
+              class="h-14 justify-start rounded-4xl px-5 text-left"
+              [sgaDisableIfNoPermission]="'attendance:register'"
+              (click)="goToAttendance()">
               <z-icon zType="check" class="mr-3 h-5 w-5" />
               <span class="text-sm font-bold">Asistencia</span>
             </button>
-            <button z-button zType="outline" class="h-14 justify-start rounded-4xl px-5 text-left" (click)="goToGrades()">
+            <button
+              z-button
+              zType="outline"
+              class="h-14 justify-start rounded-4xl px-5 text-left"
+              [sgaDisableIfNoPermission]="'grade:view'"
+              (click)="goToGrades()">
               <z-icon zType="badge-check" class="mr-3 h-5 w-5" />
               <span class="text-sm font-bold">Notas</span>
             </button>
@@ -147,7 +168,13 @@
           <article class="rounded-4xl border border-base-200 bg-card p-6">
             <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Acción crítica</p>
             <div class="mt-4">
-              <button z-button zType="outline" zColor="destructive" class="w-full rounded-4xl" (click)="deleteCurrent()">
+              <button
+                *sgaHasPermission="'enrollment:delete'"
+                z-button
+                zType="outline"
+                zColor="destructive"
+                class="w-full rounded-4xl"
+                (click)="deleteCurrent()">
                 <z-icon zType="trash" class="mr-2 h-4 w-4" />
                 Eliminar matrícula
               </button>

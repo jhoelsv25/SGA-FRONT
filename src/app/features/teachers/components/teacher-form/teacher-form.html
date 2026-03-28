@@ -95,24 +95,19 @@
     </div>
     <div>
       <label class="label-form" for="institution">Institución</label>
-      <z-select-option
+      <sga-institution-select
         id="institution"
-        [options]="institutionOptions"
         formControlName="institution"
         placeholder="Seleccione institución"
-      ></z-select-option>
+      ></sga-institution-select>
     </div>
     <div>
       <label class="label-form" for="person">Persona</label>
-      <z-select-option
+      <sga-person-select
         id="person"
-        [options]="personOptions"
-        [canLoadMore]="personHasMore"
-        [loadingMore]="personLoadingMore"
-        (loadMore)="loadPersons()"
         formControlName="person"
         placeholder="Seleccione persona"
-      ></z-select-option>
+      ></sga-person-select>
     </div>
   </div>
 

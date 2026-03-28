@@ -1,10 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AuthStore } from '@auth/services/store/auth.store';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardEmptyComponent } from '@/shared/components/empty';
 import { ZardIconComponent } from '@/shared/components/icon';
 import { ZardSkeletonComponent } from '@/shared/components/skeleton';
+import { SgaDisableIfNoPermissionDirective } from '@/shared/core/directives/permission/disable-if-no-permission.directive';
+import { SgaHasPermissionDirective } from '@/shared/core/directives/permission/has-permission.directive';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { Toast } from '@core/services/toast';
 import { TeacherApi } from '../../services/api/teacher-api';
@@ -20,13 +23,22 @@ import type { TeacherAttendance } from '../../types/teacher-attendance-types';
 @Component({
   selector: 'sga-teacher-detail',
   standalone: true,
-  imports: [CommonModule, ZardButtonComponent, ZardIconComponent, ZardEmptyComponent, ZardSkeletonComponent],
+  imports: [
+    CommonModule,
+    ZardButtonComponent,
+    ZardIconComponent,
+    ZardEmptyComponent,
+    ZardSkeletonComponent,
+    SgaHasPermissionDirective,
+    SgaDisableIfNoPermissionDirective,
+  ],
   templateUrl: './teacher-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class TeacherDetailPage implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly authStore = inject(AuthStore);
   private readonly teacherApi = inject(TeacherApi);
   private readonly sectionCourseApi = inject(SectionCourseApi);
   private readonly scheduleApi = inject(ScheduleApi);
@@ -41,6 +53,9 @@ export default class TeacherDetailPage implements OnInit {
   readonly attendances = signal<TeacherAttendance[]>([]);
   readonly credential = signal<TeacherCredential | null>(null);
   readonly credentialLoading = signal(false);
+  readonly roleType = computed(() => this.authStore.currentUser()?.profile?.type ?? 'user');
+  readonly isPublicViewer = computed(() => ['student', 'guardian'].includes(this.roleType()));
+  readonly canViewOperational = computed(() => !this.isPublicViewer());
 
   readonly fullName = computed(() => {
     const person = this.person();
@@ -151,7 +166,92 @@ export default class TeacherDetailPage implements OnInit {
   }
 
   teacherPhone(): string {
-    return this.person()?.phone ?? 'Sin teléfono';
+    return this.person()?.mobile ?? this.person()?.phone ?? 'Sin teléfono';
+  }
+
+  documentLabel(): string {
+    const person = this.person();
+    if (!person?.documentNumber) return 'Sin documento';
+    const typeMap: Record<string, string> = {
+      dni: 'DNI',
+      passport: 'Pasaporte',
+      other: 'Otro documento',
+    };
+    const type = typeMap[person.documentType ?? ''] ?? (person.documentType || 'Documento');
+    return `${type}: ${person.documentNumber}`;
+  }
+
+  laborRegimeLabel(): string {
+    const value = this.teacher()?.laborRegime;
+    const map: Record<string, string> = {
+      public: 'Público',
+      private: 'Privado',
+    };
+    return map[value ?? ''] ?? (value || 'Sin régimen');
+  }
+
+  workloadLabel(): string {
+    const value = this.teacher()?.workloadType;
+    const map: Record<string, string> = {
+      '20_hours': '20 horas',
+      '30_hours': '30 horas',
+      '40_hours': '40 horas',
+    };
+    return map[value ?? ''] ?? (value || 'Sin carga');
+  }
+
+  genderLabel(): string {
+    const value = this.person()?.gender;
+    const map: Record<string, string> = {
+      MALE: 'Masculino',
+      FEMALE: 'Femenino',
+      OTHER: 'Otro',
+    };
+    return map[value ?? ''] ?? (value || 'No especificado');
+  }
+
+  locationLabel(): string {
+    const person = this.person();
+    return [person?.district, person?.province, person?.department].filter(Boolean).join(' · ') || 'Sin ubicación';
+  }
+
+  teacherAddress(): string {
+    return this.person()?.address ?? 'Sin dirección registrada';
+  }
+
+  nationalityLabel(): string {
+    return this.person()?.nationality ?? 'No especificada';
+  }
+
+  birthDateLabel(): string {
+    const value = this.person()?.birthDate;
+    if (!value) return 'Sin fecha';
+    return new Intl.DateTimeFormat('es-PE', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    }).format(new Date(value));
+  }
+
+  publicProfileSummary(): string {
+    const current = this.teacher();
+    if (!current) return '';
+    return [
+      current.professionalTitle,
+      current.specialization,
+      current.teachingLevel ? `Nivel ${current.teachingLevel}` : '',
+    ]
+      .filter(Boolean)
+      .join(' · ');
+  }
+
+  assignedCoursesPreview(): string {
+    const items = this.assignments()
+      .slice(0, 3)
+      .map((item) => this.assignmentLabel(item))
+      .filter(Boolean);
+    if (!items.length) return 'Aún no hay cursos visibles para este docente.';
+    return items.join(' · ');
   }
 
   latestAttendanceLabel(): string {
@@ -248,12 +348,12 @@ export default class TeacherDetailPage implements OnInit {
     });
   }
 
-  private person(): { firstName?: string; lastName?: string; email?: string; phone?: string } | null {
+  person(): Teacher['person'] extends string ? never : Exclude<Teacher['person'], string> | null {
     const value = this.teacher()?.person;
     return value && typeof value === 'object' ? value : null;
   }
 
-  private institution(): { id: string; name?: string } | null {
+  institution(): { id: string; name?: string } | null {
     const value = this.teacher()?.institution;
     return value && typeof value === 'object' ? value : null;
   }

@@ -1,4 +1,4 @@
-import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
+import { SelectOptionComponent } from '@/shared/widgets/select-option/select-option';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardInputDirective } from '@/shared/components/input';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
@@ -6,13 +6,13 @@ import { ChangeDetectionStrategy, Component, inject, OnInit, signal, input } fro
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { GradeLevelStore } from '../../services/store/grade-level.store';
 import { GradeLevel, GradeLevelCreate } from '../../types/grade-level-types';
-import { InstitutionApi } from '@features/admin-services/api/institution-api';
+import { InstitutionSelect } from '@/shared/widgets/selects';
 
 
 @Component({
   selector: 'sga-grade-level-form',
   standalone: true,
-  imports: [ReactiveFormsModule, ZardButtonComponent, SelectOptionComponent, ZardInputDirective],
+  imports: [ReactiveFormsModule, ZardButtonComponent, SelectOptionComponent, ZardInputDirective, InstitutionSelect],
   templateUrl: './grade-level-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -21,11 +21,8 @@ export class GradeLevelForm implements OnInit {
   private data = inject(Z_MODAL_DATA, { optional: true });
   private ref = inject(ZardDialogRef);
   private fb = inject(FormBuilder);
-  private institutionApi = inject(InstitutionApi);
-
   form!: FormGroup;
   current: GradeLevel | null = null;
-  institutionOptions: { value: string; label: string }[] = [];
   saving = signal(false);
 
   levelOptions = [
@@ -47,12 +44,6 @@ export class GradeLevelForm implements OnInit {
       description: [this.current?.description ?? ''],
       maxCapacity: [this.current?.maxCapacity ?? 30, [Validators.required, Validators.min(1)]],
       institution: [instId ?? null, [Validators.required]],
-    });
-    this.institutionApi.getAll({}).subscribe((list) => {
-      this.institutionOptions = (list ?? []).map((i: { id: string; name: string }) => ({
-        value: i.id,
-        label: i.name,
-      }));
     });
   }
 

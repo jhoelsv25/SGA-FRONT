@@ -172,41 +172,39 @@ export class Sidebar implements OnInit, OnDestroy {
     const labelMapByRole: Record<string, Record<string, string>> = {
       teacher: {
         dashboard: 'Inicio',
-        students: 'Mis estudiantes',
-        attendance: 'Asistencia',
-        assessments: 'Evaluaciones',
-        behavior: 'Conducta',
+        students: 'Mis cursos',
+        attendance: 'Mi asistencia',
+        assessments: 'Mis evaluaciones',
+        behavior: 'Seguimiento',
         'virtual-classroom': 'Mi aula virtual',
         communications: 'Comunicaciones',
         reports: 'Mis reportes',
-        'students-list': 'Listado',
+        'students-list': 'Cursos y alumnos',
         'student-observations': 'Observaciones',
-        'attendance-register': 'Registrar asistencia',
-        'attendance-reports': 'Reportes',
-        'assessments-list': 'Evaluaciones',
-        'assessment-scores': 'Calificar',
-        grades: 'Notas finales',
-        'behavior-records': 'Registros',
-        'behavior-reports': 'Reportes',
-        'virtual-classrooms-list': 'Ingresar',
+        'attendance-register': 'Pasar lista',
+        'attendance-reports': 'Historial',
+        'assessments-list': 'Lista de evaluaciones',
+        'assessment-scores': 'Registrar notas',
+        grades: 'Consolidado',
+        'behavior-records': 'Incidencias',
+        'behavior-reports': 'Resumen',
         announcements: 'Avisos',
         notifications: 'Notificaciones',
-        'reports-academic': 'Académicos',
+        'reports-academic': 'Rendimiento',
         'reports-attendance': 'Asistencia',
-        'reports-behavior': 'Conducta',
+        'reports-behavior': 'Convivencia',
       },
       student: {
         dashboard: 'Inicio',
-        'virtual-classroom': 'Mi aula virtual',
-        communications: 'Comunicaciones',
+        'virtual-classroom': 'Mis cursos',
+        communications: 'Mis avisos',
         payments: 'Mis pagos',
-        reports: 'Mis reportes',
-        'virtual-classrooms-list': 'Ingresar',
+        reports: 'Mi progreso',
         announcements: 'Avisos',
         notifications: 'Notificaciones',
-        'payments-pending': 'Pendientes',
+        'payments-pending': 'Por pagar',
         'payments-history': 'Historial',
-        'reports-academic': 'Académicos',
+        'reports-academic': 'Notas',
         'reports-attendance': 'Asistencia',
       },
       guardian: {
@@ -335,6 +333,24 @@ export class Sidebar implements OnInit, OnDestroy {
 
   private getTeacherProfileName(): string {
     return this.getUserDisplayName() || this.currentUser()?.profile?.code || '';
+  }
+
+  private navigateToTeacherAssignments(): void {
+    this.router.navigate(['/organization/section-courses'], {
+      queryParams: {
+        ...(this.getTeacherProfileId() ? { teacherId: this.getTeacherProfileId() } : {}),
+        ...(this.getTeacherProfileName() ? { teacherName: this.getTeacherProfileName() } : {}),
+      },
+    });
+  }
+
+  private navigateToTeacherSchedules(): void {
+    this.router.navigate(['/organization/schedules'], {
+      queryParams: {
+        ...(this.getTeacherProfileId() ? { teacherId: this.getTeacherProfileId() } : {}),
+        ...(this.getTeacherProfileName() ? { teacherName: this.getTeacherProfileName() } : {}),
+      },
+    });
   }
 
   // --- Interaction & Navigation ---
@@ -617,25 +633,13 @@ export class Sidebar implements OnInit, OnDestroy {
           label: 'Mis cursos y secciones',
           icon: 'fa-book',
           type: 'assignments',
-          action: () =>
-            this.router.navigate(['/organization/section-courses'], {
-              queryParams: {
-                ...(this.getTeacherProfileId() ? { teacherId: this.getTeacherProfileId() } : {}),
-                ...(this.getTeacherProfileName() ? { teacherName: this.getTeacherProfileName() } : {}),
-              },
-            }),
+          action: () => this.navigateToTeacherAssignments(),
         },
         {
           label: 'Mis horarios',
           icon: 'fa-calendar-alt',
           type: 'schedules',
-          action: () =>
-            this.router.navigate(['/organization/schedules'], {
-              queryParams: {
-                ...(this.getTeacherProfileId() ? { teacherId: this.getTeacherProfileId() } : {}),
-                ...(this.getTeacherProfileName() ? { teacherName: this.getTeacherProfileName() } : {}),
-              },
-            }),
+          action: () => this.navigateToTeacherSchedules(),
         },
         {
           label: 'Mi aula virtual',

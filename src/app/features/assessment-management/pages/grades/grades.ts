@@ -1,4 +1,4 @@
-import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
+import { AssessmentSelect } from '@/shared/widgets/selects';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -16,7 +16,7 @@ type ScoreRow = Pick<AssessmentScore, 'enrollmentId' | 'score' | 'observation'> 
 @Component({
   selector: 'sga-grades',
   standalone: true,
-  imports: [CommonModule, FormsModule, SelectOptionComponent, HeaderDetail],
+  imports: [CommonModule, FormsModule, AssessmentSelect, HeaderDetail],
   templateUrl: './grades.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -30,7 +30,6 @@ export default class Grades implements OnInit {
   public selectedAssessmentId = signal<string>('');
   public localScores = signal<ScoreRow[]>([]);
   public consolidatedRows = signal<PeriodCompetencyGrade[]>([]);
-  public assessmentOptions = signal<SelectOption[]>([]);
   public hasActiveFilters = signal(false);
   public enrollmentContextId = signal('');
   public studentContextName = signal('');
@@ -111,19 +110,11 @@ export default class Grades implements OnInit {
   constructor() {
     effect(() => {
       const assessments = this.assessmentStore.assessments();
-      this.assessmentOptions.set([
-        { value: '', label: 'Seleccione una evaluación...' },
-        ...assessments.map((a: Assessment) => ({
-          value: a.id,
-          label: `${a.name} - ${a.sectionCourse?.course?.name ?? ''} (${a.sectionCourse?.id ?? ''})`,
-        }))]);
-
-      const options = this.assessmentOptions().filter((o) => o.value);
-      if (options.length === 0) return;
+      if (assessments.length === 0) return;
 
       const saved = this.filters.gradesAssessmentId();
-      const fallback = options[0]?.value?.toString() ?? '';
-      const next = (saved && options.some((o) => o.value?.toString() === saved)) ? saved : fallback;
+      const fallback = assessments[0]?.id ?? '';
+      const next = saved && assessments.some((assessment) => assessment.id === saved) ? saved : fallback;
 
       if (next && next !== this.selectedAssessmentId()) {
         this.onAssessmentChange(next);
@@ -218,8 +209,9 @@ export default class Grades implements OnInit {
   }
 
   getSelectedAssessmentLabel(): string {
-    const selected = this.selectedAssessmentId();
-    return this.assessmentOptions().find((o) => String(o.value ?? '') === selected)?.label ?? '';
+    const assessment = this.selectedAssessment();
+    if (!assessment) return '';
+    return `${assessment.name} - ${assessment.sectionCourse?.course?.name ?? ''}`.trim();
   }
 
   clearFilters(): void {

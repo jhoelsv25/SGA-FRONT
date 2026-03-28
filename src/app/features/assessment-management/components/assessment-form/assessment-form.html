@@ -65,35 +65,30 @@
 
       <div>
         <label class="label-form" for="assessment-period">Período</label>
-        <z-select-option
+        <sga-period-select
           id="assessment-period"
           formControlName="period"
-          [options]="periodOptions()"
-          [searchable]="true"
           placeholder="Selecciona un período"
-        ></z-select-option>
+        ></sga-period-select>
       </div>
 
       <div>
         <label class="label-form" for="assessment-sectionCourse">Curso - Sección</label>
-        <z-select-option
+        <sga-section-course-select
           id="assessment-sectionCourse"
           formControlName="sectionCourse"
-          [options]="sectionCourseOptions()"
-          [searchable]="true"
           placeholder="Selecciona un curso-sección"
-        ></z-select-option>
+        ></sga-section-course-select>
       </div>
 
       <div class="md:col-span-2">
         <label class="label-form" for="assessment-competency">Competencia</label>
-        <z-select-option
+        <sga-competency-select
           id="assessment-competency"
           formControlName="competency"
-          [options]="competencyOptions()"
-          [searchable]="true"
+          [courseId]="sectionCourses().find((item) => item.id === form.controls.sectionCourse.value)?.course?.id ?? null"
           placeholder="Selecciona una competencia"
-        ></z-select-option>
+        ></sga-competency-select>
       </div>
 
       <div class="md:col-span-2 rounded-3xl border border-primary/15 bg-primary/8 px-4 py-3 text-sm text-primary">

@@ -4,18 +4,36 @@
   [zPlaceholder]="placeholder()"
   [zValue]="selectedItem()?.id || ''"
   (zSelectionChange)="onZardSelectionChange($event)"
+  [zCanLoadMore]="hasMore()"
+  (zScrolledToEnd)="loadMore()"
+  (click)="openDropdown()"
 >
+  <div class="sticky top-0 z-10 border-b border-border/50 bg-popover p-2">
+    <input
+      z-input
+      [ngModel]="searchTerm()"
+      (ngModelChange)="onSearchInput($event)"
+      placeholder="Buscar docente..."
+      class="w-full"
+    />
+  </div>
   @for (item of allItems(); track item.id) {
     <z-select-item [zValue]="item.id">
-      <div class="flex items-center gap-2">
-        <div
-          class="flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary font-semibold text-xs shrink-0"
-        >
-          {{ getInitials(item) }}
+      <div class="flex min-w-0 items-center gap-3 py-0.5">
+        <div class="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-primary/10 text-[11px] font-semibold uppercase tracking-[0.22em] text-primary">
+          @if (getPhoto(item)) {
+            <img [src]="getPhoto(item)!" [alt]="getLabel(item)" class="h-full w-full object-cover" />
+          } @else {
+            {{ getInitials(item) }}
+          }
         </div>
-        <div class="flex flex-col min-w-0">
-          <span class="font-medium text-sm">{{ getLabel(item) }}</span>
+        <div class="min-w-0 flex-1">
+          <span data-select-label class="block truncate text-sm font-semibold">{{ getLabel(item) }}</span>
+          <span class="mt-0.5 block truncate text-xs text-muted-foreground">{{ getSubtitle(item) }}</span>
         </div>
+        <span class="shrink-0 rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
+          {{ item.teacherCode }}
+        </span>
       </div>
     </z-select-item>
   } @empty {

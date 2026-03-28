@@ -1,10 +1,10 @@
 import { ZardSelectComponent, ZardSelectItemComponent } from '@/shared/components/select';
-import { SelectOption } from '@/shared/widgets/select-option/select-option';
 import { ChangeDetectionStrategy, Component, computed, ElementRef, forwardRef, HostListener, inject, input, output, signal, viewChild, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { YearAcademicApi } from '@features/year-academic/services/api/year-academic-api';
 import type { YearAcademic } from '@features/year-academic/types/year-academi-types';
+import { ZardInputDirective } from '@/shared/components/input';
 
 function getLabel(y: YearAcademic): string {
   return y.name ?? String(y.year ?? y.id);
@@ -16,11 +16,16 @@ function getInitials(y: YearAcademic): string {
     .toUpperCase();
 }
 
+function getSubtitle(y: YearAcademic): string {
+  const parts = [y.status, y.startDate, y.endDate].filter(Boolean);
+  return parts.join(' · ') || 'Año académico';
+}
+
 
 @Component({
   selector: 'sga-year-academic-select',
   standalone: true,
-  imports: [CommonModule, ZardSelectComponent, ZardSelectItemComponent],
+  imports: [CommonModule, FormsModule, ZardSelectComponent, ZardSelectItemComponent, ZardInputDirective],
   templateUrl: './year-academic-select.html',
   providers: [
     { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => YearAcademicSelect), multi: true },
@@ -69,9 +74,10 @@ export class YearAcademicSelect implements ControlValueAccessor, OnInit {
 
   getLabel = getLabel;
   getInitials = getInitials;
+  getSubtitle = getSubtitle;
 
-  onSearchInput(e: Event) {
-    this.searchTerm.set((e.target as HTMLInputElement).value);
+  onSearchInput(value: string) {
+    this.searchTerm.set(value ?? '');
   }
 
   onTriggerKeyDown(e: KeyboardEvent) {

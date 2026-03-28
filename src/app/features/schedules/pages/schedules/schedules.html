@@ -11,7 +11,7 @@
       <z-form-field>
         <label z-form-label>Buscar</label>
         <z-form-control>
-          <input z-input placeholder="Buscar por curso, sección o aula..." [ngModel]="searchTerm()" (ngModelChange)="onSearch($event)" />
+          <input z-input [placeholder]="searchPlaceholder()" [ngModel]="searchTerm()" (ngModelChange)="onSearch($event)" />
         </z-form-control>
       </z-form-field>
     </div>

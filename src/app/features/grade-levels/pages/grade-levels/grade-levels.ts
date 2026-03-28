@@ -43,7 +43,9 @@ export default class GradeLevelsPage {
   readonly levelOptions = LEVEL_OPTIONS;
   searchTerm = signal('');
   filterLevel = signal<string>('');
-  readonly canManageGradeLevels = computed(() => this.permissionStore.has('manage_grade_level'));
+  readonly canManageGradeLevels = computed(() =>
+    this.permissionStore.hasAny('grade_level:create', 'grade_level:update', 'grade_level:delete'),
+  );
   headerConfig = computed(() => this.store.headerConfig());
 
   headerActions = computed(() =>

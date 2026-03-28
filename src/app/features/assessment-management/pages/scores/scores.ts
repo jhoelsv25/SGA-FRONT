@@ -16,6 +16,7 @@ import { HeaderConfig } from '@core/types/header-types';
 import { ActionConfig } from '@core/types/action-types';
 import { AssessmentApi } from '../../services/assessment-api';
 import { map, of } from 'rxjs';
+import { SectionCourseSelect } from '@/shared/widgets/selects';
 
 type ScoreRow = {
   id?: string;
@@ -30,7 +31,7 @@ type ScoreRow = {
 @Component({
   selector: 'sga-assessment-scores',
   standalone: true,
-  imports: [CommonModule, FormsModule, DataSource, SgaTemplate, ZardInputDirective, SelectOptionComponent, HeaderDetail],
+  imports: [CommonModule, FormsModule, DataSource, SgaTemplate, ZardInputDirective, SelectOptionComponent, HeaderDetail, SectionCourseSelect],
   templateUrl: './scores.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -99,6 +100,7 @@ export default class AssessmentScoresPage implements OnInit {
       icon: 'fa-solid fa-file-import',
       color: 'secondary',
       typeAction: 'header',
+      permissions: ['assessment-score:import'],
       disabled: !this.selectedAssessment() || this.studentScores().length === 0,
     },
     {
@@ -107,6 +109,7 @@ export default class AssessmentScoresPage implements OnInit {
       icon: this.store.loading() ? 'fa-solid fa-spinner fa-spin' : 'fa-solid fa-save',
       color: 'primary',
       typeAction: 'header',
+      permissions: ['assessment-score:update'],
       disabled: !this.canSave() || this.store.loading(),
     },
   ]);

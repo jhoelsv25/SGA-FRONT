@@ -7,11 +7,12 @@ import { ChangeDetectionStrategy, Component, inject, OnInit, input } from '@angu
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BehaviorStore } from '../../services/store/behavior.store';
 import { Behavior, BehaviorCreate } from '../../types/behavior-types';
+import { StudentSelect } from '@/shared/widgets/selects';
 
 
 @Component({
   selector: 'sga-behavior-form',
-  imports: [ReactiveFormsModule, ZardButtonComponent, ZardInputDirective, SelectOptionComponent],
+  imports: [ReactiveFormsModule, ZardButtonComponent, ZardInputDirective, SelectOptionComponent, StudentSelect],
   templateUrl: './behavior-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

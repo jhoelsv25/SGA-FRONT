@@ -37,4 +37,10 @@ export class ClassroomTaskItem {
     return 'Pendiente';
   }
 
+  publicationLabel(status?: ClassroomTask['publicationStatus']) {
+    if (status === 'scheduled') return 'Programada';
+    if (status === 'closed') return 'Cerrada';
+    return 'Publicada';
+  }
+
 }

@@ -6,7 +6,7 @@ import { HeaderDetail } from '@shared/widgets/header-detail/header-detail';
 import { HeaderConfig } from '@core/types/header-types';
 import { ActionConfig } from '@core/types/action-types';
 import { ZardInputDirective } from '@/shared/components/input';
-import { SelectOption, SelectOptionComponent } from '@/shared/widgets/select-option/select-option';
+import { SectionCourseSelect } from '@/shared/widgets/selects';
 import { Toast } from '@core/services/toast';
 import { AttendanceApi } from '../../../attendances/services/attendance-api';
 import { AttendanceStatus } from '../../../attendances/types/attendance-types';
@@ -47,7 +47,7 @@ type QuickEntry = {
 @Component({
   selector: 'sga-attendance-quick-register',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderDetail, ZardInputDirective, SelectOptionComponent],
+  imports: [CommonModule, FormsModule, HeaderDetail, ZardInputDirective, SectionCourseSelect],
   templateUrl: './attendance-quick-register.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -65,7 +65,6 @@ export default class AttendanceQuickRegisterPage implements OnInit {
   readonly date = signal(new Date().toISOString().split('T')[0]);
   readonly sectionCourseId = signal('');
   readonly scanCode = signal('');
-  readonly sectionCourseOptions = signal<SelectOption[]>([]);
   readonly studentCatalog = signal<QuickStudentCatalog[]>([]);
   readonly teacherCatalog = signal<QuickTeacherCatalog[]>([]);
   readonly entries = signal<QuickEntry[]>([]);
@@ -116,11 +115,13 @@ export default class AttendanceQuickRegisterPage implements OnInit {
   readonly excusedCount = computed(() => this.entries().filter((entry) => entry.status === 'excused').length);
 
   readonly selectedSectionLabel = computed(() => {
-    const current = this.sectionCourseOptions().find(
-      (option) => String(option.value ?? '') === this.sectionCourseId(),
-    );
-    return current?.label ?? 'Sin curso seleccionado';
+    const sectionCourse = this.studentCatalogSectionCourse();
+    if (!sectionCourse) return 'Sin curso seleccionado';
+    return sectionCourse.course?.name && sectionCourse.section?.name
+      ? `${sectionCourse.course.name} - ${sectionCourse.section.name}`
+      : sectionCourse.id;
   });
+  readonly studentCatalogSectionCourse = signal<SectionCourse | null>(null);
 
   constructor() {
     effect(() => {
@@ -173,19 +174,7 @@ export default class AttendanceQuickRegisterPage implements OnInit {
   }
 
   loadSectionCourses() {
-    this.sectionCourseApi.getAll({ size: 999 }).subscribe({
-      next: (res) => {
-        this.sectionCourseOptions.set(
-          (res.data ?? []).map((sectionCourse: SectionCourse) => ({
-            value: sectionCourse.id,
-            label:
-              sectionCourse.course?.name && sectionCourse.section?.name
-                ? `${sectionCourse.course.name} - ${sectionCourse.section.name}`
-                : sectionCourse.id,
-          })),
-        );
-      },
-    });
+    return;
   }
 
   loadTeachers() {
@@ -214,8 +203,14 @@ export default class AttendanceQuickRegisterPage implements OnInit {
     this.entries.set([]);
     if (!sectionCourseId) {
       this.studentCatalog.set([]);
+      this.studentCatalogSectionCourse.set(null);
       return;
     }
+
+    this.sectionCourseApi.getById(sectionCourseId).subscribe({
+      next: (sectionCourse) => this.studentCatalogSectionCourse.set(sectionCourse),
+      error: () => this.studentCatalogSectionCourse.set(null),
+    });
 
     this.enrollmentApi.getAll({ sectionCourse: sectionCourseId, size: 999 }).subscribe({
       next: (res) => {

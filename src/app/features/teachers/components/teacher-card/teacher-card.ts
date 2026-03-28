@@ -5,6 +5,7 @@ import { ZardIconComponent } from '@/shared/components/icon';
 import { ZardPopoverComponent, ZardPopoverDirective } from '@/shared/components/popover';
 import { ZardCardComponent } from '@/shared/components/card';
 import { Teacher } from '../../types/teacher-types';
+import { SgaHasPermissionDirective } from '@/shared/core';
 
 @Component({
   selector: 'sga-teacher-card',
@@ -16,6 +17,7 @@ import { Teacher } from '../../types/teacher-types';
     ZardPopoverDirective,
     ZardPopoverComponent,
     ZardCardComponent,
+    SgaHasPermissionDirective,
   ],
   templateUrl: './teacher-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

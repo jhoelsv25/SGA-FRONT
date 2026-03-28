@@ -2,7 +2,8 @@ export type LocalSelectOption = { value: string | number; label: string; [key: s
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardInputDirective } from '@/shared/components/input';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
-import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
+import { SelectOptionComponent } from '@/shared/widgets/select-option/select-option';
+import { InstitutionSelect, PersonSelect } from '@/shared/widgets/selects';
 import { ChangeDetectionStrategy, Component, inject, OnInit, input } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -22,7 +23,7 @@ import {
 @Component({
   selector: 'sga-teacher-form',
   standalone: true,
-  imports: [ReactiveFormsModule, ZardButtonComponent, ZardInputDirective, SelectOptionComponent],
+  imports: [ReactiveFormsModule, ZardButtonComponent, ZardInputDirective, SelectOptionComponent, InstitutionSelect, PersonSelect],
   templateUrl: './teacher-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -39,12 +40,6 @@ export class TeacherForm implements OnInit {
   current: Teacher | null = null;
   readonly uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   readonly currentYear = new Date().getFullYear();
-  institutionOptions: LocalSelectOption[] = [];
-  personOptions: LocalSelectOption[] = [];
-  personPage = 1;
-  readonly personPageSize = 30;
-  personHasMore = true;
-  personLoadingMore = false;
   personPhotoUrl = '';
   photoUploading = false;
 
@@ -97,8 +92,6 @@ export class TeacherForm implements OnInit {
       person: [this.getEntityId(this.current?.person), [Validators.required, Validators.pattern(this.uuidPattern)]],
     });
 
-    this.loadInstitutions();
-    this.loadPersons();
     this.personPhotoUrl =
       (typeof this.current?.person === 'string' ? '' : this.current?.person?.photoUrl) ?? '';
   }
@@ -136,45 +129,6 @@ export class TeacherForm implements OnInit {
 
   close() {
     this.ref.close();
-  }
-
-  private loadInstitutions() {
-    this.institutionApi.getAll({}).subscribe({
-      next: (list) => {
-        this.institutionOptions = (list ?? []).map((institution) => ({
-          value: institution.id,
-          label: institution.name,
-        }));
-      },
-    });
-  }
-
-  loadPersons() {
-    if (!this.personHasMore || this.personLoadingMore) return;
-    this.personLoadingMore = true;
-
-    this.http.get<{ data?: Array<{ id: string; firstName?: string; lastName?: string; email?: string; documentNumber?: string }>; total?: number }>('persons', {
-      params: { page: this.personPage as any, size: this.personPageSize as any },
-    }).subscribe({
-      next: (res) => {
-        const newOptions = (res.data ?? []).map((person) => ({
-          value: person.id,
-          label:
-            `${person.firstName ?? ''} ${person.lastName ?? ''}`.trim() +
-              (person.email ? ` · ${person.email}` : person.documentNumber ? ` · ${person.documentNumber}` : '') ||
-            person.id,
-        }));
-        this.personOptions = [...this.personOptions, ...newOptions];
-        const loaded = this.personOptions.length;
-        const total = res.total ?? loaded;
-        this.personHasMore = loaded < total;
-        this.personPage += 1;
-        this.personLoadingMore = false;
-      },
-      error: () => {
-        this.personLoadingMore = false;
-      },
-    });
   }
 
   onPersonPhotoSelected(event: Event) {

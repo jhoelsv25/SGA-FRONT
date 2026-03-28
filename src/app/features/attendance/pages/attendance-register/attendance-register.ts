@@ -11,7 +11,6 @@ import { SectionCourseApi } from '@features/section-courses/services/section-cou
 import type { SectionCourse } from '@features/section-courses/types/section-course-types';
 import { EnrollmentApi } from '../../../enrollments/services/enrollment-api';
 import { HeaderDetail } from '@shared/widgets/header-detail/header-detail';
-import { SelectOption, SelectOptionComponent } from '@/shared/widgets/select-option/select-option';
 import { ZardInputDirective } from '@/shared/components/input';
 import { ZardDatePickerComponent } from '@/shared/components/date-picker';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
@@ -19,6 +18,7 @@ import { Toast } from '@core/services/toast';
 import { UiFiltersService } from '@core/services/ui-filters.service';
 import { ActionConfig } from '@core/types/action-types';
 import { HeaderConfig } from '@core/types/header-types';
+import { SectionCourseSelect } from '@/shared/widgets/selects';
 
 type StudentRow = {
   id: string;
@@ -30,7 +30,7 @@ type StudentRow = {
 @Component({
   selector: 'sga-attendance-register',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderDetail, ZardInputDirective, ZardDatePickerComponent, SelectOptionComponent],
+  imports: [CommonModule, FormsModule, HeaderDetail, ZardInputDirective, ZardDatePickerComponent, SectionCourseSelect],
   templateUrl: './attendance-register.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -50,7 +50,8 @@ export default class AttendanceRegisterPage implements OnInit {
   public studentContextId = signal('');
   public studentContextName = signal('');
   public allowedSectionIds = signal<string[]>([]);
-  public sectionCourseOptions = signal<SelectOption[]>([]);
+  public allowedSectionCourseIds = signal<string[]>([]);
+  public sectionCourseOptions = signal<Array<{ value: string; label: string }>>([]);
   public students = signal<StudentRow[]>([]);
   public search = signal('');
 
@@ -102,6 +103,7 @@ export default class AttendanceRegisterPage implements OnInit {
       icon: 'fa-solid fa-save',
       color: 'primary',
       typeAction: 'header',
+      permissions: ['attendance:register'],
       disabled: !this.canSave() || this.store.loading(),
     },
     {
@@ -110,6 +112,7 @@ export default class AttendanceRegisterPage implements OnInit {
       icon: 'fa-solid fa-file-excel',
       color: 'secondary',
       typeAction: 'header',
+      permissions: ['attendance:import'],
       disabled: !this.selectedSectionCourse(),
     },
     {
@@ -118,6 +121,7 @@ export default class AttendanceRegisterPage implements OnInit {
       icon: 'fa-solid fa-qrcode',
       color: 'secondary',
       typeAction: 'header',
+      permissions: ['attendance:quick-register'],
     },
   ]);
 
@@ -184,6 +188,7 @@ export default class AttendanceRegisterPage implements OnInit {
   }
 
   private applySectionCourseOptions(list: SectionCourse[]) {
+    this.allowedSectionCourseIds.set(list.map((sectionCourse) => sectionCourse.id));
     this.sectionCourseOptions.set(
       list.map((sectionCourse) => ({
         value: sectionCourse.id,

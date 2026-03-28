@@ -7,7 +7,7 @@ export const SECTION_ACTIONS: ActionConfig[] = [
     icon: 'fas fa-plus',
     typeAction: 'header',
     color: 'success',
-    permission: 'manage_section',
+    permission: 'section:create',
   },
   {
     key: 'refresh',
@@ -15,7 +15,7 @@ export const SECTION_ACTIONS: ActionConfig[] = [
     icon: 'fas fa-sync-alt',
     typeAction: 'header',
     color: 'primary',
-    permission: 'view_section',
+    permission: 'section:view',
   },
   {
     key: 'edit',
@@ -23,7 +23,7 @@ export const SECTION_ACTIONS: ActionConfig[] = [
     icon: 'fas fa-edit',
     typeAction: 'row',
     color: 'primary',
-    permission: 'manage_section',
+    permission: 'section:update',
   },
   {
     key: 'delete',
@@ -31,6 +31,6 @@ export const SECTION_ACTIONS: ActionConfig[] = [
     icon: 'fas fa-trash',
     typeAction: 'row',
     color: 'danger',
-    permission: 'manage_section',
+    permission: 'section:delete',
   },
 ];

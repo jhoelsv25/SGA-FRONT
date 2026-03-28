@@ -15,11 +15,12 @@ import { AssessmentForm } from '../../components/assessment-form/assessment-form
 import { AssessmentApi } from '../../services/assessment-api';
 import { Toast } from '@core/services/toast';
 import { AuthStore } from '@auth/services/store/auth.store';
+import { SgaHasPermissionDirective } from '@/shared/core';
 
 @Component({
   selector: 'sga-assessments',
   standalone: true,
-  imports: [CommonModule, ListToolbarComponent, ZardButtonComponent, AssessmentCardComponent, ZardEmptyComponent, ZardSkeletonComponent],
+  imports: [CommonModule, ListToolbarComponent, ZardButtonComponent, AssessmentCardComponent, ZardEmptyComponent, ZardSkeletonComponent, SgaHasPermissionDirective],
   templateUrl: './assessments.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -6,6 +6,7 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { switchMap, catchError, map, timeout, tap } from 'rxjs/operators';
 import { AuthApi } from '../api/auth-api';
 import { TokenManager } from '../api/token-manager';
+import { expandPermissionAliases } from '@core/utils/permission.utils';
 
 interface AuthState {
   currentUser: CurrentUser | null;
@@ -226,7 +227,8 @@ export const AuthStore = signalStore(
           }, [] as string[]);
 
         const allPermissions = flatten(store.modules());
-        return allPermissions.includes(permission);
+        const aliases = expandPermissionAliases(permission);
+        return aliases.some((candidate) => allPermissions.includes(candidate));
       },
     };
   }),

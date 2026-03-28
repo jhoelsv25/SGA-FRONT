@@ -4,11 +4,11 @@ import {
   computed,
   effect,
   inject,
-  signal,
   viewChild,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { LayoutStore } from '@core/stores/layout.store';
-import { ZardIconComponent } from '@/shared/components/icon';
+import { ZardIconComponent, type ZardIcon } from '@/shared/components/icon';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardTabComponent, ZardTabGroupComponent } from '@/shared/components/tabs';
 import { AsideNotifications } from './components/aside-notifications/aside-notifications';
@@ -32,10 +32,20 @@ import { AsideChats } from './components/aside-chats/aside-chats';
 })
 export class Aside {
   private layout = inject(LayoutStore);
+  private router = inject(Router);
   public tabGroup = viewChild(ZardTabGroupComponent);
 
   public isShowAside = computed(() => this.layout.isShowAside());
   public asideType = computed(() => this.layout.titleAside());
+  public activeMeta = computed(() => {
+    const type = this.asideType();
+    const meta: Record<string, { icon: ZardIcon; label: string }> = {
+      notifications: { icon: 'bell', label: 'Notificaciones' },
+      calendar: { icon: 'calendar', label: 'Calendario' },
+      chats: { icon: 'chat', label: 'Chats' },
+    };
+    return meta[type] ?? { icon: 'layers', label: 'Centro de Actividad' };
+  });
 
   constructor() {
     effect(() => {
@@ -55,5 +65,20 @@ export class Aside {
 
   public closeAside(): void {
     this.layout.closeAside();
+  }
+
+  public openSettings(): void {
+    this.router.navigateByUrl('/account/settings');
+    this.closeAside();
+  }
+
+  public openHelp(): void {
+    this.closeAside();
+    window.dispatchEvent(new CustomEvent('open-search-global'));
+  }
+
+  public openFeedback(): void {
+    this.router.navigateByUrl('/communications/list');
+    this.closeAside();
   }
 }

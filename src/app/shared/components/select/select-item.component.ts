@@ -35,9 +35,9 @@ interface SelectHost {
         <z-icon zType="check" [zStrokeWidth]="strokeWidth()" aria-hidden="true" data-testid="check-icon" />
       </span>
     }
-    <span class="truncate">
+    <div class="min-w-0 flex-1">
       <ng-content />
-    </span>
+    </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
@@ -65,7 +65,8 @@ export class ZardSelectItemComponent {
 
   readonly label = linkedSignal<string>(() => {
     const element = this.elementRef.nativeElement;
-    return (element.textContent ?? element.innerText)?.trim() ?? '';
+    const preferred = element.querySelector('[data-select-label]') as HTMLElement | null;
+    return (preferred?.textContent ?? element.textContent ?? element.innerText)?.trim() ?? '';
   });
 
   readonly zMode = signal<ZardSelectItemModeVariants>('normal');

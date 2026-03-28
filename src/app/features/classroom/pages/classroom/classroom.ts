@@ -56,11 +56,18 @@ export default class Classroom implements OnInit, OnDestroy {
           .pipe(takeUntil(this.destroy$))
           .subscribe((msg) => this.store.receiveMessage(msg));
 
-        this.socket.feedUpdate$
+        this.socket.feedEvent$
           .pipe(takeUntil(this.destroy$))
-          .subscribe((item) =>
-            this.store.receiveFeedUpdate(item as ClassroomFeedItem)
-          );
+          .subscribe((event) => {
+            if (event.action === 'deleted' && event.id) {
+              this.store.removeFeedItem(event.id);
+              return;
+            }
+
+            if (event.item) {
+              this.store.receiveFeedUpdate(event.item as ClassroomFeedItem);
+            }
+          });
 
         this.socket.notification$
           .pipe(takeUntil(this.destroy$))

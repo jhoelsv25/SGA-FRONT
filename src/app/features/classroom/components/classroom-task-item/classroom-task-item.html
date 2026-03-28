@@ -17,6 +17,11 @@
             @if (task().type) {
               <span class="px-3 py-1 bg-primary/5 text-primary text-[9px] font-black uppercase tracking-[0.2em] rounded-lg border border-primary/10">{{ task().type }}</span>
             }
+            @if (task().publicationStatus === 'scheduled') {
+              <span class="px-3 py-1 bg-amber-500/5 text-amber-600 text-[9px] font-black uppercase tracking-[0.2em] rounded-lg border border-amber-500/10">
+                {{ publicationLabel(task().publicationStatus) }}
+              </span>
+            }
             <span class="text-[9px] font-black text-rose-500 uppercase tracking-[0.2em] bg-rose-500/5 px-3 py-1 rounded-lg border border-rose-500/10">Vence: {{ task().date | date: 'dd MMM' }}</span>
           </div>
 
@@ -35,6 +40,11 @@
           @if (task().description) {
             <p class="max-w-2xl text-sm font-medium leading-relaxed text-base-content/45 line-clamp-1 italic">
               "{{ task().description }}"
+            </p>
+          }
+          @if (task().publicationStatus === 'scheduled' && task().publishAt) {
+            <p class="text-xs font-bold uppercase tracking-[0.18em] text-amber-600/80">
+              Se publicará el {{ task().publishAt | date:'dd/MM/yyyy HH:mm' }}
             </p>
           }
         </div>

@@ -11,7 +11,7 @@
       <z-form-field>
         <label z-form-label>Buscar</label>
         <z-form-control>
-          <input z-input placeholder="Buscar por curso o sección..." [ngModel]="searchTerm()" (ngModelChange)="onSearch($event)" />
+          <input z-input [placeholder]="searchPlaceholder()" [ngModel]="searchTerm()" (ngModelChange)="onSearch($event)" />
         </z-form-control>
       </z-form-field>
     </div>
@@ -65,8 +65,8 @@
       (assignTeacher)="assignTeacher(sc)" (assignStudents)="assignStudents(sc)" (viewSchedules)="goToSchedules(sc)" (createSchedule)="createSchedule(sc)" />
     } @empty {
     <div class="col-span-full">
-      <z-empty zIcon="chalkboard-teacher" zTitle="Sin asignaciones"
-        zDescription="Aún no hay cursos asignados a secciones. Crea la primera asignación.">
+      <z-empty zIcon="chalkboard-teacher" [zTitle]="emptyTitle()"
+        [zDescription]="emptyDescription()">
       </z-empty>
     </div>
     }

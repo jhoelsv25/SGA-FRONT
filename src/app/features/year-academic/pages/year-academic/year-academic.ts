@@ -73,8 +73,12 @@ export default class YearAcademicComponent {
   }
 
   readonly statusOptions = STATUS_OPTIONS;
-  readonly canManageAcademicYears = computed(() => this.permissionStore.has('manage_academic_year'));
-  readonly canManageAcademicPeriods = computed(() => this.permissionStore.has('manage_academic_period'));
+  readonly canManageAcademicYears = computed(() =>
+    this.permissionStore.hasAny('academic_year:create', 'academic_year:update', 'academic_year:delete'),
+  );
+  readonly canManageAcademicPeriods = computed(() =>
+    this.permissionStore.hasAny('academic_period:create', 'academic_period:update', 'academic_period:delete'),
+  );
   readonly hasActiveFilters = computed(() => !!this.searchTerm().trim() || !!this.filterStatus());
 
   onFilterStatus(value: unknown) {
@@ -85,7 +89,9 @@ export default class YearAcademicComponent {
     this.permissionStore.filterActions(this.store.actions().filter((a) => a.typeAction === 'header')),
   );
 
-  rowActions = computed(() => this.store.actions().filter((a) => a.typeAction === 'row'));
+  rowActions = computed(() =>
+    this.permissionStore.filterActions(this.store.actions().filter((a) => a.typeAction === 'row')),
+  );
 
   clearFilters() {
     this.searchTerm.set('');

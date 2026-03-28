@@ -18,6 +18,35 @@
       <label class="label-form" for="format">Formato</label>
       <z-select-option id="format" formControlName="format" [options]="formatOptions" placeholder="Formato de salida"></z-select-option>
     </div>
+
+    @if (isAcademicReport()) {
+      <div class="rounded-3xl border border-base-200 bg-base-100/60 p-4">
+        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Parámetros académicos</p>
+        <div class="mt-4 grid gap-4 md:grid-cols-2">
+          <div>
+            <label class="label-form" for="sectionCourse">Curso - sección</label>
+            <sga-section-course-select id="sectionCourse" formControlName="sectionCourse" placeholder="Seleccionar curso y sección"></sga-section-course-select>
+          </div>
+          <div>
+            <label class="label-form" for="period">Período</label>
+            <sga-period-select id="period" formControlName="period" placeholder="Seleccionar período"></sga-period-select>
+          </div>
+          <div>
+            <label class="label-form" for="competency">Competencia</label>
+            <sga-competency-select
+              id="competency"
+              formControlName="competency"
+              [courseId]="selectedSectionCourseId()"
+              placeholder="Seleccionar competencia"
+            ></sga-competency-select>
+          </div>
+          <div>
+            <label class="label-form" for="student">Estudiante</label>
+            <sga-student-select id="student" formControlName="student" placeholder="Todos o un estudiante"></sga-student-select>
+          </div>
+        </div>
+      </div>
+    }
   </div>
   <footer class="flex justify-end gap-2 mt-4">
     <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">Cancelar</button>

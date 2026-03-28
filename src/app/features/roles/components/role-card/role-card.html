@@ -59,7 +59,7 @@
 
     <!-- Right Section: Actions -->
     <div class="flex items-center justify-end gap-2 shrink-0" (click)="$event.stopPropagation()">
-      <button z-button zType="ghost" zSize="icon-sm"
+      <button *sgaHasPermission="'role:update'" z-button zType="ghost" zSize="icon-sm"
         class="rounded-xl hover:bg-primary/10 hover:text-primary transition-all" title="Configurar Rol"
         (click)="editClicked.emit(role())">
         <z-icon zType="settings" class="h-5 w-5" />
@@ -73,7 +73,7 @@
 
       <ng-template #roleActionsMenu>
         <z-popover class="min-w-[160px] p-1.5 flex flex-col gap-1">
-          <button z-button zType="ghost"
+          <button *sgaHasPermission="'role:update'" z-button zType="ghost"
             class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
             (click)="editClicked.emit(role())">
             <z-icon zType="settings" class="h-4 w-4" />
@@ -82,7 +82,7 @@
 
           @if (!role().isSystem) {
           <div class="h-px bg-border/10 my-1 mx-2"></div>
-          <button z-button zType="ghost"
+          <button *sgaHasPermission="'role:delete'" z-button zType="ghost"
             class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-destructive/10 hover:text-destructive transition-all"
             (click)="confirmDelete()">
             <z-icon zType="trash" class="h-4 w-4" />

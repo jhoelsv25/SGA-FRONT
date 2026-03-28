@@ -1,5 +1,7 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { LayoutStore } from '@core/stores/layout.store';
 import { ScheduleStore } from '@features/schedules/services/store/schedule.store';
 import { ZardIconComponent } from '@/shared/components/icon';
 import { ZardButtonComponent } from '@/shared/components/button';
@@ -57,8 +59,10 @@ import { ZardEmptyComponent } from '@/shared/components/empty';
 
       <div class="flex-1 overflow-y-auto p-4 space-y-4" id="sch-scroll">
         @for (sch of todaySchedules(); track sch.id) {
-          <div
-            class="group relative pl-6 border-l-2 border-primary/20 hover:border-primary transition-all duration-300"
+          <button
+            type="button"
+            class="group relative w-full pl-6 border-l-2 border-primary/20 hover:border-primary transition-all duration-300 text-left"
+            (click)="openSchedule(sch)"
           >
             <div
               class="absolute -left-2 top-0 size-4 rounded-full bg-card border-2 border-primary/30 flex items-center justify-center overflow-hidden"
@@ -107,7 +111,7 @@ import { ZardEmptyComponent } from '@/shared/components/empty';
                 </div>
               </div>
             </div>
-          </div>
+          </button>
         } @empty {
           <div class="h-full flex flex-col items-center justify-center py-20 opacity-40">
             <z-empty
@@ -126,6 +130,7 @@ import { ZardEmptyComponent } from '@/shared/components/empty';
           zType="outline"
           zSize="lg"
           class="w-full rounded-2xl gap-3 font-black uppercase tracking-[0.2em] text-[10px] shadow-sm active:scale-95 transition-all h-14"
+          (click)="goToSchedules()"
         >
           <z-icon zType="layout-grid" class="size-4" />
           Ver Horario Completo
@@ -151,16 +156,39 @@ import { ZardEmptyComponent } from '@/shared/components/empty';
 })
 export class AsideCalendar implements OnInit {
   public store = inject(ScheduleStore);
+  private readonly router = inject(Router);
+  private readonly layout = inject(LayoutStore);
   public now = new Date();
+  private readonly dayMap = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
+  readonly todaySchedules = computed(() => {
+    const todayKey = this.dayMap[this.now.getDay()];
+    return this.store
+      .data()
+      .filter((schedule) => schedule.dayOfWeek === todayKey)
+      .sort((a, b) => String(a.startAt).localeCompare(String(b.startAt)));
+  });
 
   ngOnInit() {
     this.store.loadAll();
   }
 
-  // Filtrar horarios que correspondan al día de hoy o mockeados para demo
-  todaySchedules() {
-    // En SGA backend dayOfWeek es un ENUM. Tendríamos que mapearlo si quisiéramos ser precisos.
-    // Por ahora mostramos los cargados en el store.
-    return this.store.data();
+  goToSchedules(): void {
+    this.router.navigateByUrl('/organization/schedules');
+    this.layout.closeAside();
+  }
+
+  openSchedule(schedule: any): void {
+    const sectionCourseId =
+      typeof schedule?.sectionCourse === 'string'
+        ? schedule.sectionCourse
+        : schedule?.sectionCourse?.id;
+
+    if (sectionCourseId) {
+      this.router.navigateByUrl(`/virtual-classroom/${sectionCourseId}/timeline`);
+    } else {
+      this.router.navigateByUrl('/organization/schedules');
+    }
+
+    this.layout.closeAside();
   }
 }

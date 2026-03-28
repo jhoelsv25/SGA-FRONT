@@ -8,26 +8,18 @@
   <div class="grid grid-cols-1 gap-4">
     <div>
       <label class="label-form" for="student">Estudiante</label>
-      <z-select-option
+      <sga-student-select
         id="student"
-        [options]="studentOptions"
-        [canLoadMore]="studentHasMore"
-        [loadingMore]="studentLoadingMore"
-        (loadMore)="loadStudents()"
         formControlName="student"
-        placeholder="Seleccionar estudiante"></z-select-option>
+        placeholder="Seleccionar estudiante"></sga-student-select>
     </div>
     <div class="grid grid-cols-2 gap-4">
       <div>
         <label class="label-form" for="teacher">Docente</label>
-        <z-select-option
+        <sga-teacher-select
           id="teacher"
-          [options]="teacherOptions"
-          [canLoadMore]="teacherHasMore"
-          [loadingMore]="teacherLoadingMore"
-          (loadMore)="loadTeachers()"
           formControlName="teacher"
-          placeholder="Seleccionar docente"></z-select-option>
+          placeholder="Seleccionar docente"></sga-teacher-select>
       </div>
       <div>
         <label class="label-form" for="date">Fecha</label>

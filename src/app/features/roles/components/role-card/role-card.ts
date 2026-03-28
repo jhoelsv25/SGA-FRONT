@@ -6,6 +6,7 @@ import {
   ZardPopoverComponent,
 } from '@/shared/components/popover/popover.component';
 import { ZardAlertDialogService } from '@/shared/components/alert-dialog/alert-dialog.service';
+import { SgaHasPermissionDirective } from '@/shared/core/directives/permission/has-permission.directive';
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Role } from '@features/admin-services/api/role-api';
@@ -20,6 +21,7 @@ import { Role } from '@features/admin-services/api/role-api';
     ZardIconComponent,
     ZardPopoverDirective,
     ZardPopoverComponent,
+    SgaHasPermissionDirective,
   ],
   templateUrl: './role-card.html',
   styleUrls: ['./role-card.css'],

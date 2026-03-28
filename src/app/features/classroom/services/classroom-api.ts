@@ -1,20 +1,38 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ClassroomFeedItem, ChatMessage } from '../types/classroom-types';
-import { DataResponse } from '@core/types/pagination-types';
+import { ChatCursorResponse, ChatInboxCursorResponse, ClassroomFeedItem, ChatMessage, FeedCursorResponse } from '../types/classroom-types';
 
 @Injectable({ providedIn: 'root' })
 export class ClassroomApi {
   private readonly http = inject(HttpClient);
   public baseUrl = 'classroom';
 
-  getFeed(sectionCourseId: string): Observable<DataResponse<ClassroomFeedItem>> {
-    return this.http.get<DataResponse<ClassroomFeedItem>>(`${this.baseUrl}/feed/${sectionCourseId}`);
+  getFeed(
+    sectionCourseId: string,
+    params?: { cursorDate?: string; cursorId?: string; limit?: number; search?: string },
+  ): Observable<FeedCursorResponse> {
+    return this.http.get<FeedCursorResponse>(`${this.baseUrl}/feed/${sectionCourseId}`, { params });
   }
 
-  getChatMessages(sectionCourseId: string): Observable<DataResponse<ChatMessage>> {
-    return this.http.get<DataResponse<ChatMessage>>(`${this.baseUrl}/chat/${sectionCourseId}`);
+  getChatMessages(
+    sectionCourseId: string,
+    params?: { cursorDate?: string; cursorId?: string; limit?: number },
+  ): Observable<ChatCursorResponse> {
+    return this.http.get<ChatCursorResponse>(`${this.baseUrl}/chat/${sectionCourseId}`, { params });
+  }
+
+  markChatAsRead(sectionCourseId: string): Observable<{ success: boolean }> {
+    return this.http.post<{ success: boolean }>(`${this.baseUrl}/chat/${sectionCourseId}/read`, {});
+  }
+
+  getChatInbox(params?: {
+    cursorDate?: string;
+    cursorId?: string;
+    limit?: number;
+    search?: string;
+  }): Observable<ChatInboxCursorResponse> {
+    return this.http.get<ChatInboxCursorResponse>(`${this.baseUrl}/chat-inbox`, { params });
   }
 
   /** Publicar en el muro. Backend: content obligatorio; attachmentUrl opcional (una URL). */
@@ -94,6 +112,16 @@ export class ClassroomApi {
     return this.http.get<ClassroomTask[]>(`${this.baseUrl}/${sectionCourseId}/tasks`);
   }
 
+  getTasksCursor(
+    sectionCourseId: string,
+    params?: { cursorDate?: string; cursorId?: string; limit?: number; search?: string },
+  ): Observable<{ data: ClassroomTask[]; nextCursor: { date: string; id: string } | null; hasNext: boolean }> {
+    return this.http.get<{ data: ClassroomTask[]; nextCursor: { date: string; id: string } | null; hasNext: boolean }>(
+      `${this.baseUrl}/${sectionCourseId}/tasks-cursor`,
+      { params },
+    );
+  }
+
   getTaskEditor(sectionCourseId: string, assignmentId: string): Observable<ClassroomTaskEditorPayload> {
     return this.http.get<ClassroomTaskEditorPayload>(`${this.baseUrl}/${sectionCourseId}/tasks/${assignmentId}/editor`);
   }
@@ -105,6 +133,7 @@ export class ClassroomApi {
       description?: string;
       instructions?: string;
       dueDate: string;
+      publishAt?: string;
       maxScore?: number;
       lateSubmissionAllowed?: boolean;
       maxAttempts?: number;
@@ -130,6 +159,7 @@ export class ClassroomApi {
       description?: string;
       instructions?: string;
       dueDate: string;
+      publishAt?: string;
       maxScore?: number;
       lateSubmissionAllowed?: boolean;
       maxAttempts?: number;
@@ -217,6 +247,8 @@ export interface ClassroomTask {
   date: string;
   type?: string;
   resourceUrl?: string;
+  publishAt?: string;
+  publicationStatus?: 'scheduled' | 'published' | 'closed' | string;
   questionsCount?: number;
   questions?: Array<{
     id: string;
@@ -263,10 +295,12 @@ export interface ClassroomTaskEditorPayload {
   description?: string;
   instructions?: string;
   dueDate: string;
+  publishAt?: string | null;
   maxScore: number;
   maxAttempts: number;
   lateSubmissionAllowed: boolean;
   type: 'homework' | 'project' | 'quiz' | 'exam' | string;
+  publicationStatus?: 'scheduled' | 'published' | 'closed' | string;
   resourceUrl?: string;
   questions: Array<{
     id: string;

@@ -7,6 +7,7 @@ export const USER_ACTIONS: ActionConfig[] = [
     icon: 'fas fa-plus',
     typeAction: 'header',
     color: 'success',
+    permissions: ['user:create'],
   },
   {
     key: 'export',
@@ -14,6 +15,7 @@ export const USER_ACTIONS: ActionConfig[] = [
     icon: 'fas fa-file-excel',
     typeAction: 'header',
     color: 'success',
+    permissions: ['user:export'],
   },
   {
     key: 'import',
@@ -21,6 +23,7 @@ export const USER_ACTIONS: ActionConfig[] = [
     icon: 'fas fa-file-import',
     typeAction: 'header',
     color: 'primary',
+    permissions: ['user:import'],
   },
   {
     key: 'refresh',
@@ -28,6 +31,7 @@ export const USER_ACTIONS: ActionConfig[] = [
     icon: 'fas fa-sync-alt',
     typeAction: 'header',
     color: 'primary',
+    permissions: ['user:view'],
   },
   {
     key: 'sessions-global',
@@ -35,9 +39,10 @@ export const USER_ACTIONS: ActionConfig[] = [
     icon: 'fas fa-history',
     typeAction: 'header',
     color: 'secondary',
+    permissions: ['sessions:view'],
   },
-  { key: 'toggle-active', label: 'Activar / Desactivar', icon: 'fas fa-power-off', typeAction: 'row', color: 'warning' },
-  { key: 'sessions', label: 'Sesiones', icon: 'fas fa-history', typeAction: 'row', color: 'secondary' },
-  { key: 'edit', label: 'Editar', icon: 'fas fa-edit', typeAction: 'row', color: 'primary' },
-  { key: 'delete', label: 'Eliminar', icon: 'fas fa-trash', typeAction: 'row', color: 'danger' },
+  { key: 'toggle-active', label: 'Activar / Desactivar', icon: 'fas fa-power-off', typeAction: 'row', color: 'warning', permissions: ['user:update'] },
+  { key: 'sessions', label: 'Sesiones', icon: 'fas fa-history', typeAction: 'row', color: 'secondary', permissions: ['sessions:view'] },
+  { key: 'edit', label: 'Editar', icon: 'fas fa-edit', typeAction: 'row', color: 'primary', permissions: ['user:update'] },
+  { key: 'delete', label: 'Eliminar', icon: 'fas fa-trash', typeAction: 'row', color: 'danger', permissions: ['user:delete'] },
 ];

@@ -48,7 +48,9 @@ export default class CoursesPage implements OnInit {
   gradeContextName = signal('');
   subjectAreaContextId = signal('');
   subjectAreaContextName = signal('');
-  readonly canManageCourses = computed(() => this.permissionStore.has('manage_course'));
+  readonly canManageCourses = computed(() =>
+    this.permissionStore.hasAny('course:create', 'course:update', 'course:delete'),
+  );
   readonly headerConfig = computed(() => this.store.headerConfig());
 
   headerActions = computed(() =>

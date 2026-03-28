@@ -82,6 +82,9 @@ export class TaskCreateForm {
     type: ['homework', [Validators.required]],
     description: [''],
     dueDate: [null as Date | null, [Validators.required]],
+    scheduleEnabled: [false, [Validators.required]],
+    publishDate: [null as Date | null],
+    publishTime: ['08:00'],
     maxScore: [20, [Validators.required]],
     maxAttempts: [1, [Validators.required]],
     lateSubmissionAllowed: [true, [Validators.required]],
@@ -102,6 +105,11 @@ export class TaskCreateForm {
         type: this.data.task.type ?? 'homework',
         description: this.data.task.description ?? '',
         dueDate: this.data.task.dueDate ? new Date(this.data.task.dueDate) : null,
+        scheduleEnabled: !!this.data.task.publishAt,
+        publishDate: this.data.task.publishAt ? new Date(this.data.task.publishAt) : null,
+        publishTime: this.data.task.publishAt
+          ? new Date(this.data.task.publishAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })
+          : '08:00',
         maxScore: Number(this.data.task.maxScore ?? 20),
         maxAttempts: Number(this.data.task.maxAttempts ?? 1),
         lateSubmissionAllowed: !!this.data.task.lateSubmissionAllowed,
@@ -131,6 +139,12 @@ export class TaskCreateForm {
         this.addQuestion();
       }
     });
+
+    this.form.controls.scheduleEnabled.valueChanges.subscribe((enabled) => {
+      if (!enabled) {
+        this.form.patchValue({ publishDate: null, publishTime: '08:00' }, { emitEvent: false });
+      }
+    });
   }
 
   canGoNext() {
@@ -138,7 +152,11 @@ export class TaskCreateForm {
       return !!this.form.controls.type.value;
     }
     if (this.currentStep() === 2) {
-      return !!this.form.controls.title.value && !!this.form.controls.dueDate.value;
+      if (!this.form.controls.title.value || !this.form.controls.dueDate.value) return false;
+      if (this.form.controls.scheduleEnabled.value) {
+        return !!this.form.controls.publishDate.value && !!this.form.controls.publishTime.value;
+      }
+      return true;
     }
     return false;
   }
@@ -276,6 +294,17 @@ export class TaskCreateForm {
 
     const value = this.form.getRawValue();
     const dueDate = value.dueDate instanceof Date ? value.dueDate : value.dueDate ? new Date(value.dueDate) : null;
+    const publishDate =
+      value.publishDate instanceof Date ? value.publishDate : value.publishDate ? new Date(value.publishDate) : null;
+    let publishAt: string | undefined;
+
+    if (value.scheduleEnabled && publishDate) {
+      const [hours, minutes] = String(value.publishTime || '08:00')
+        .split(':')
+        .map((part) => Number(part));
+      publishDate.setHours(Number.isFinite(hours) ? hours : 8, Number.isFinite(minutes) ? minutes : 0, 0, 0);
+      publishAt = publishDate.toISOString();
+    }
 
     this.ref.close({
       title: value.title ?? '',
@@ -283,6 +312,7 @@ export class TaskCreateForm {
       description: value.description ?? '',
       instructions: value.description ?? '',
       dueDate: dueDate ? dueDate.toISOString() : '',
+      publishAt,
       maxScore: Number(value.maxScore ?? 20),
       maxAttempts: Number(value.maxAttempts ?? 1),
       lateSubmissionAllowed: Boolean(value.lateSubmissionAllowed),

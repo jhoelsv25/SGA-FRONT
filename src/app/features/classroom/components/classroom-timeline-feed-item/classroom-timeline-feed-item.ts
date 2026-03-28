@@ -32,6 +32,8 @@ export class ClassroomTimelineFeedItem {
   public deletingPostId = signal<string | null>(null);
   public savingCommentPostId = signal<string | null>(null);
 
+  readonly attachments = computed(() => this.item().metadata?.attachments ?? []);
+
   readonly profileType = computed(() => this.authFacade.getCurrentUser()?.profile?.type ?? 'user');
   readonly currentUser = computed(() => this.authFacade.getCurrentUser());
 
@@ -83,7 +85,7 @@ export class ClassroomTimelineFeedItem {
     const sectionId = this.store.selectedSectionId();
     const content = this.editingPostContent().trim();
     if (!sectionId) return;
-    if (!content && !(this.item().metadata.attachments?.length ?? 0)) {
+    if (!content && !this.attachments().length) {
       this.toast.error('La publicación no puede quedar vacía');
       return;
     }
@@ -92,7 +94,7 @@ export class ClassroomTimelineFeedItem {
     this.api
       .updatePost(sectionId, this.item().id, {
         content,
-        attachmentUrl: this.item().metadata.attachments?.[0]?.url ?? null,
+        attachmentUrl: this.attachments()[0]?.url ?? null,
       })
       .subscribe({
         next: (updated) => {

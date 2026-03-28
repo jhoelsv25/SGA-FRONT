@@ -129,7 +129,9 @@ export default class TeachersPage {
     { value: 'on_leave', label: 'Licencia' },
   ];
 
-  readonly canManageTeachers = computed(() => this.permissionStore.has('manage_teacher'));
+  readonly canManageTeachers = computed(() =>
+    this.permissionStore.hasAny('teacher:create', 'teacher:update', 'teacher:delete'),
+  );
   readonly loading = computed(() => this.store.loading());
   readonly data = computed(() => this.store.teachers());
   readonly filteredData = computed(() => {

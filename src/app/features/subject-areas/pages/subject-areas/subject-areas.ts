@@ -43,7 +43,9 @@ export default class SubjectAreasPage {
   readonly typeOptions = TYPE_OPTIONS;
   searchTerm = signal('');
   filterType = signal<string>('');
-  readonly canManageSubjectAreas = computed(() => this.permissionStore.has('manage_subject_area'));
+  readonly canManageSubjectAreas = computed(() =>
+    this.permissionStore.hasAny('subject_area:create', 'subject_area:update', 'subject_area:delete'),
+  );
   headerConfig = computed(() => this.store.headerConfig());
 
   headerActions = computed(() =>

@@ -1,6 +1,7 @@
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardIconComponent } from '@/shared/components/icon';
 import { ZardAlertDialogService } from '@/shared/components/alert-dialog/alert-dialog.service';
+import { SgaHasPermissionDirective } from '@/shared/core/directives/permission/has-permission.directive';
 import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Permission } from '@features/admin-services/api/permission-api';
@@ -8,7 +9,7 @@ import { Permission } from '@features/admin-services/api/permission-api';
 @Component({
   selector: 'sga-permission-card',
   standalone: true,
-  imports: [CommonModule, ZardButtonComponent, ZardIconComponent],
+  imports: [CommonModule, ZardButtonComponent, ZardIconComponent, SgaHasPermissionDirective],
   templateUrl: './permission-card.html',
   styleUrls: ['./permission-card.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

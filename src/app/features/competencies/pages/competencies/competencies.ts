@@ -37,7 +37,9 @@ export default class CompetenciesPage implements OnInit {
   searchTerm = signal('');
   courseContextId = signal('');
   courseContextName = signal('');
-  readonly canManageCompetencies = computed(() => this.permissionStore.has('manage_competency'));
+  readonly canManageCompetencies = computed(() =>
+    this.permissionStore.hasAny('competency:create', 'competency:update', 'competency:delete'),
+  );
   headerConfig = computed(() => this.store.headerConfig());
 
   data = computed(() => this.store.data());

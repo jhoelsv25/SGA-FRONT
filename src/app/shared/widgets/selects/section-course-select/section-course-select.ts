@@ -1,10 +1,10 @@
 import { ZardSelectComponent, ZardSelectItemComponent } from '@/shared/components/select';
-import { SelectOption } from '@/shared/widgets/select-option/select-option';
 import { ChangeDetectionStrategy, Component, computed, ElementRef, forwardRef, HostListener, inject, input, output, signal, viewChild, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { SectionCourseApi } from '@features/section-courses/services/section-course-api';
 import type { SectionCourse } from '@features/section-courses/types/section-course-types';
+import { ZardInputDirective } from '@/shared/components/input';
 
 function getSectionCourseLabel(sc: SectionCourse): string {
   if (sc.course?.name && sc.section?.name) {
@@ -36,7 +36,7 @@ function getSectionCourseSubtitle(sc: SectionCourse): string {
 @Component({
   selector: 'sga-section-course-select',
   standalone: true,
-  imports: [CommonModule, ZardSelectComponent, ZardSelectItemComponent],
+  imports: [CommonModule, FormsModule, ZardSelectComponent, ZardSelectItemComponent, ZardInputDirective],
   templateUrl: './section-course-select.html',
   providers: [
     { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => SectionCourseSelect), multi: true },
@@ -52,6 +52,7 @@ export class SectionCourseSelect implements ControlValueAccessor, OnInit {
 
   placeholder = input<string>('Seleccionar curso y sección');
   disabled = input<boolean>(false);
+  allowedValues = input<string[] | null>(null);
   valueChange = output<string | null>();
   /** Emite id y label cuando se selecciona un item (útil para títulos en schedules) */
   selectionChange = output<{ id: string; label: string }>();
@@ -69,7 +70,9 @@ export class SectionCourseSelect implements ControlValueAccessor, OnInit {
 
   filteredItems = computed(() => {
     const term = this.searchTerm().toLowerCase().trim();
-    const list = this.allItems();
+    const allowed = this.allowedValues();
+    const allowedSet = allowed?.length ? new Set(allowed) : null;
+    const list = allowedSet ? this.allItems().filter((sc) => allowedSet.has(sc.id)) : this.allItems();
     if (!term) return list;
     return list.filter(
       (sc) =>
@@ -87,8 +90,8 @@ export class SectionCourseSelect implements ControlValueAccessor, OnInit {
   getInitials = getSectionCourseInitials;
   getSubtitle = getSectionCourseSubtitle;
 
-  onSearchInput(e: Event) {
-    this.searchTerm.set((e.target as HTMLInputElement).value);
+  onSearchInput(value: string) {
+    this.searchTerm.set(value ?? '');
   }
 
   onTriggerKeyDown(e: KeyboardEvent) {

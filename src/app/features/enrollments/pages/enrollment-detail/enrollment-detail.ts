@@ -5,6 +5,8 @@ import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardEmptyComponent } from '@/shared/components/empty';
 import { ZardIconComponent } from '@/shared/components/icon';
 import { ZardSkeletonComponent } from '@/shared/components/skeleton';
+import { SgaDisableIfNoPermissionDirective } from '@/shared/core/directives/permission/disable-if-no-permission.directive';
+import { SgaHasPermissionDirective } from '@/shared/core/directives/permission/has-permission.directive';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { Toast } from '@core/services/toast';
 import { EnrollmentApi } from '../../services/enrollment-api';
@@ -14,7 +16,15 @@ import { EnrollmentForm } from '../../components/enrollment-form/enrollment-form
 @Component({
   selector: 'sga-enrollment-detail',
   standalone: true,
-  imports: [CommonModule, ZardButtonComponent, ZardIconComponent, ZardEmptyComponent, ZardSkeletonComponent],
+  imports: [
+    CommonModule,
+    ZardButtonComponent,
+    ZardIconComponent,
+    ZardEmptyComponent,
+    ZardSkeletonComponent,
+    SgaHasPermissionDirective,
+    SgaDisableIfNoPermissionDirective,
+  ],
   templateUrl: './enrollment-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

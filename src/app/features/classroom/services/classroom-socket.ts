@@ -4,6 +4,7 @@ import { io, Socket } from 'socket.io-client';
 
 import { TokenManager } from '@auth/services/api/token-manager';
 import { environment } from '../../../../environments/environment.development';
+import type { ClassroomTask } from './classroom-api';
 
 export interface SocketMessage {
   id: string;
@@ -27,13 +28,26 @@ export interface FeedPost {
   [key: string]: unknown;
 }
 
+export interface ClassroomFeedSocketEvent {
+  action: 'created' | 'updated' | 'deleted';
+  item?: FeedPost;
+  id?: string;
+}
+
+export interface ClassroomTaskSocketEvent {
+  action: 'updated' | 'deleted';
+  task?: ClassroomTask;
+  id?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ClassroomSocketService implements OnDestroy {
   private readonly tokenManager = inject(TokenManager);
   private socket: Socket | null = null;
 
   public readonly message$ = new Subject<SocketMessage>();
-  public readonly feedUpdate$ = new Subject<FeedPost>();
+  public readonly feedEvent$ = new Subject<ClassroomFeedSocketEvent>();
+  public readonly taskEvent$ = new Subject<ClassroomTaskSocketEvent>();
   public readonly notification$ = new Subject<{ type: string; title: string; body?: string }>();
 
   connect(room: string): void {
@@ -57,13 +71,29 @@ export class ClassroomSocketService implements OnDestroy {
       this.notification$.next({ type: 'message', title: msg.senderName, body: msg.content });
     });
 
-    this.socket.on('feedUpdate', (post: FeedPost) => {
-      this.feedUpdate$.next(post);
+    this.socket.on('feedCreated', (post: FeedPost) => {
+      this.feedEvent$.next({ action: 'created', item: post });
       this.notification$.next({
         type: 'feed',
         title: 'Nueva publicacion',
         body: post.author?.name ? `${post.author.name} publico en el muro` : undefined,
       });
+    });
+
+    this.socket.on('feedUpdated', (post: FeedPost) => {
+      this.feedEvent$.next({ action: 'updated', item: post });
+    });
+
+    this.socket.on('feedDeleted', (payload: { id: string }) => {
+      this.feedEvent$.next({ action: 'deleted', id: payload.id });
+    });
+
+    this.socket.on('taskUpdated', (task: ClassroomTask) => {
+      this.taskEvent$.next({ action: 'updated', task });
+    });
+
+    this.socket.on('taskDeleted', (payload: { id: string }) => {
+      this.taskEvent$.next({ action: 'deleted', id: payload.id });
     });
 
     this.socket.on('connect_error', () => {

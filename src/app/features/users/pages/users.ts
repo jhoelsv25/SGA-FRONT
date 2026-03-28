@@ -3,6 +3,7 @@ import { DialogConfirmService } from '@shared/widgets/dialog-confirm';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
+import { PermissionCheckStore } from '@core/stores/permission-check.store';
 import { HeaderDetail } from '@shared/widgets/header-detail/header-detail';
 import { UserStore } from '@features/admin-services/store/user.store';
 import { User } from '../types/user-types';
@@ -37,6 +38,7 @@ export default class UsersPage implements OnInit {
   private router = inject(Router);
   private urlParams = inject(UrlParamsService);
   private route = inject(ActivatedRoute);
+  private permissionStore = inject(PermissionCheckStore);
 
   public filterSearch = signal('');
   public filterRole = signal('');
@@ -79,8 +81,12 @@ export default class UsersPage implements OnInit {
   data = computed(() => this.store.users());
   loading = computed(() => this.store.loading());
   pagination = computed(() => this.store.pagination());
-  headerActions = computed(() => USER_ACTIONS.filter((a) => a.typeAction === 'header'));
-  rowActions = computed(() => USER_ACTIONS.filter((a) => a.typeAction === 'row'));
+  headerActions = computed(() =>
+    this.permissionStore.filterActions(USER_ACTIONS.filter((a) => a.typeAction === 'header')),
+  );
+  rowActions = computed(() =>
+    this.permissionStore.filterActions(USER_ACTIONS.filter((a) => a.typeAction === 'row')),
+  );
 
   onHeaderAction(e: { action: ActionConfig; context: ActionContext }) {
     if (e.action.key === 'create') this.openForm();

@@ -8,22 +8,15 @@
   <div class="grid grid-cols-1 gap-4">
     <div>
       <label class="label-form" for="student">Estudiante</label>
-      <z-select-option
-        id="student"
-        [options]="studentOptions"
-        [canLoadMore]="studentHasMore"
-        [loadingMore]="studentLoadingMore"
-        (loadMore)="loadStudents()"
-        formControlName="student"
-        placeholder="Seleccionar estudiante"></z-select-option>
+      <sga-student-select id="student" formControlName="student" placeholder="Seleccionar estudiante"></sga-student-select>
     </div>
     <div>
       <label class="label-form" for="section">Sección</label>
-      <z-select-option id="section" formControlName="section" placeholder="Seleccionar sección"></z-select-option>
+      <sga-section-select id="section" formControlName="section" placeholder="Seleccionar sección"></sga-section-select>
     </div>
     <div>
       <label class="label-form" for="academicYear">Año académico</label>
-      <z-select-option id="academicYear" formControlName="academicYear" placeholder="Seleccionar año"></z-select-option>
+      <sga-year-academic-select id="academicYear" formControlName="academicYear" placeholder="Seleccionar año"></sga-year-academic-select>
     </div>
     <div class="grid grid-cols-2 gap-4">
       <div>

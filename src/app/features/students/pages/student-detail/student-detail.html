@@ -86,6 +86,7 @@
 
             <div class="relative z-10 flex w-full shrink-0 items-center gap-3 lg:w-auto">
               <button
+                *sgaHasPermission="'student:update'"
                 z-button
                 zColor="primary"
                 class="h-14 w-full rounded-4xl px-8 text-base font-bold shadow-2xl shadow-primary/30 transition-all hover:scale-105 lg:w-auto"
@@ -143,19 +144,39 @@
           </div>
 
           <div class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
-            <button z-button zType="outline" class="h-14 justify-start rounded-4xl px-5 text-left" (click)="goToEnrollments()">
+            <button
+              z-button
+              zType="outline"
+              class="h-14 justify-start rounded-4xl px-5 text-left"
+              [sgaDisableIfNoPermission]="'enrollment:view'"
+              (click)="goToEnrollments()">
               <z-icon zType="folder" class="mr-3 h-5 w-5" />
               <span class="text-sm font-bold">Matrículas</span>
             </button>
-            <button z-button zType="outline" class="h-14 justify-start rounded-4xl px-5 text-left" (click)="goToAttendance()">
+            <button
+              z-button
+              zType="outline"
+              class="h-14 justify-start rounded-4xl px-5 text-left"
+              [sgaDisableIfNoPermission]="'attendance:register'"
+              (click)="goToAttendance()">
               <z-icon zType="check" class="mr-3 h-5 w-5" />
               <span class="text-sm font-bold">Asistencia</span>
             </button>
-            <button z-button zType="outline" class="h-14 justify-start rounded-4xl px-5 text-left" (click)="goToGuardians()">
+            <button
+              z-button
+              zType="outline"
+              class="h-14 justify-start rounded-4xl px-5 text-left"
+              [sgaDisableIfNoPermission]="'guardian:view'"
+              (click)="goToGuardians()">
               <z-icon zType="users" class="mr-3 h-5 w-5" />
               <span class="text-sm font-bold">Apoderados</span>
             </button>
-            <button z-button zType="outline" class="h-14 justify-start rounded-4xl px-5 text-left" (click)="goToObservations()">
+            <button
+              z-button
+              zType="outline"
+              class="h-14 justify-start rounded-4xl px-5 text-left"
+              [sgaDisableIfNoPermission]="'observation:view'"
+              (click)="goToObservations()">
               <z-icon zType="file-text" class="mr-3 h-5 w-5" />
               <span class="text-sm font-bold">Observaciones</span>
             </button>
@@ -221,6 +242,7 @@
 
               <div class="flex flex-wrap gap-3">
                 <button
+                  *sgaHasPermission="'student:update'"
                   z-button
                   zType="outline"
                   class="h-12 rounded-3xl px-5 text-[10px] font-black uppercase tracking-[0.18em]"
@@ -231,6 +253,7 @@
                   {{ credentialLoading() ? 'Generando' : 'Regenerar carnet' }}
                 </button>
                 <button
+                  [sgaDisableIfNoPermission]="'student:view'"
                   z-button
                   class="h-12 rounded-3xl px-5 text-[10px] font-black uppercase tracking-[0.18em]"
                   (click)="printCredential()"

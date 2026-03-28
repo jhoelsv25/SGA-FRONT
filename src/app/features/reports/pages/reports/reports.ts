@@ -9,6 +9,7 @@ import { ZardEmptyComponent } from '@/shared/components/empty';
 import { ZardSkeletonComponent } from '@/shared/components/skeleton';
 import { Router } from '@angular/router';
 import { AuthStore } from '@auth/services/store/auth.store';
+import { PermissionCheckStore } from '@core/stores/permission-check.store';
 
 
 @Component({
@@ -22,6 +23,7 @@ export default class ReportsPage {
   private store = inject(ReportStore);
   private router = inject(Router);
   private authStore = inject(AuthStore);
+  private permissionStore = inject(PermissionCheckStore);
 
   roleType = computed(() => this.authStore.currentUser()?.profile?.type ?? 'user');
   headerConfig = computed(() => {
@@ -52,7 +54,9 @@ export default class ReportsPage {
   });
   data = computed(() => this.store.data());
   loading = computed(() => this.store.loading());
-  headerActions = computed(() => this.store.actions().filter((a) => a.typeAction === 'header'));
+  headerActions = computed(() =>
+    this.permissionStore.filterActions(this.store.actions().filter((a) => a.typeAction === 'header')),
+  );
   academicCount = computed(() => this.data().filter((item) => item.type === 'academic').length);
   attendanceCount = computed(() => this.data().filter((item) => item.type === 'attendance').length);
   financialCount = computed(() => this.data().filter((item) => item.type === 'payments').length);

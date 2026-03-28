@@ -2,8 +2,9 @@ export type LocalSelectOption = { value: string | number; label: string; [key: s
 import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardInputDirective } from '@/shared/components/input';
+import { CompetencySelect, PeriodSelect, SectionCourseSelect, StudentSelect } from '@/shared/widgets/selects';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
-import { ChangeDetectionStrategy, Component, inject, OnInit, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ReportStore } from '../../services/store/report.store';
 import { Report, ReportCreate } from '../../types/report-types';
@@ -11,7 +12,16 @@ import { Report, ReportCreate } from '../../types/report-types';
 
 @Component({
   selector: 'sga-report-form',
-  imports: [ReactiveFormsModule, ZardButtonComponent, ZardInputDirective, SelectOptionComponent],
+  imports: [
+    ReactiveFormsModule,
+    ZardButtonComponent,
+    ZardInputDirective,
+    SelectOptionComponent,
+    SectionCourseSelect,
+    PeriodSelect,
+    CompetencySelect,
+    StudentSelect,
+  ],
   templateUrl: './report-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -23,6 +33,8 @@ export class ReportForm implements OnInit {
 
   form!: FormGroup;
   current: Report | null = null;
+  selectedSectionCourseId = signal<string | null>(null);
+  isAcademicReport = computed(() => this.form?.get('type')?.value === 'academic');
 
   typeOptions: LocalSelectOption[] = [
     { value: 'academic', label: 'Académico' },
@@ -40,16 +52,53 @@ export class ReportForm implements OnInit {
 
   ngOnInit() {
     this.current = this.data?.current ?? null;
+    const currentParameters = (this.current?.parameters ?? {}) as Record<string, unknown>;
     this.form = this.fb.group({
       name: [this.current?.name ?? '', [Validators.required]],
       type: [this.current?.type ?? 'academic', [Validators.required]],
       format: [this.current?.format ?? 'pdf'],
+      sectionCourse: [typeof currentParameters['sectionCourse'] === 'string' ? currentParameters['sectionCourse'] : null],
+      period: [typeof currentParameters['period'] === 'string' ? currentParameters['period'] : null],
+      competency: [typeof currentParameters['competency'] === 'string' ? currentParameters['competency'] : null],
+      student: [typeof currentParameters['student'] === 'string' ? currentParameters['student'] : null],
+    });
+    this.selectedSectionCourseId.set(this.form.get('sectionCourse')?.value ?? null);
+
+    this.form.get('type')?.valueChanges.subscribe((value) => {
+      if (value !== 'academic') {
+        this.form.patchValue(
+          { sectionCourse: null, period: null, competency: null, student: null },
+          { emitEvent: false },
+        );
+        this.selectedSectionCourseId.set(null);
+      }
+    });
+
+    this.form.get('sectionCourse')?.valueChanges.subscribe((value) => {
+      this.selectedSectionCourseId.set(value ?? null);
+      if (!value) {
+        this.form.patchValue({ competency: null }, { emitEvent: false });
+      }
     });
   }
 
   submit() {
     if (this.form.invalid) return;
-    const v = this.form.value as ReportCreate;
+    const raw = this.form.getRawValue();
+    const v: ReportCreate = {
+      name: raw.name,
+      type: raw.type,
+      format: raw.format,
+      parameters:
+        raw.type === 'academic'
+          ? {
+              sectionCourse: raw.sectionCourse || null,
+              period: raw.period || null,
+              competency: raw.competency || null,
+              student: raw.student || null,
+            }
+          : undefined,
+    };
     if (this.current?.id) {
       this.store.update(this.current.id, v);
       this.ref.close();

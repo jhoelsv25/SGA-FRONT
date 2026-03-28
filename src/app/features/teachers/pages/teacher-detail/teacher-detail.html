@@ -24,8 +24,12 @@
 
           <div class="relative z-10 flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
             <div class="flex min-w-0 items-center gap-6">
-              <div class="flex h-20 w-20 shrink-0 flex-col items-center justify-center rounded-3xl bg-primary text-primary-foreground shadow-2xl shadow-primary/30">
-                <z-icon zType="graduation-cap" class="h-8 w-8" />
+              <div class="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-3xl bg-primary text-primary-foreground shadow-2xl shadow-primary/30">
+                @if (person()?.photoUrl) {
+                  <img [src]="person()!.photoUrl" [alt]="fullName()" class="h-full w-full object-cover" />
+                } @else {
+                  <z-icon zType="graduation-cap" class="h-8 w-8" />
+                }
               </div>
 
               <div class="min-w-0">
@@ -43,6 +47,9 @@
 
                 <p class="mt-1 text-sm font-medium text-base-content/50">
                   {{ current.specialization }} · {{ current.professionalTitle }}
+                </p>
+                <p class="mt-2 text-sm text-base-content/60">
+                  {{ documentLabel() }} · {{ teacherEmail() }}
                 </p>
 
                 <div class="mt-3 flex flex-wrap gap-3">
@@ -69,7 +76,16 @@
             </div>
 
             <div class="relative z-10 flex w-full shrink-0 items-center gap-3 lg:w-auto">
+              @if (isPublicViewer()) {
+                <div class="rounded-3xl border border-primary/15 bg-primary/8 px-5 py-4 text-left lg:max-w-sm">
+                  <p class="text-[10px] font-black uppercase tracking-[0.18em] text-primary/70">Perfil docente</p>
+                  <p class="mt-2 text-sm font-semibold text-base-content/75">
+                    {{ publicProfileSummary() }}
+                  </p>
+                </div>
+              }
               <button
+                *sgaHasPermission="'teacher:update'"
                 z-button
                 zColor="primary"
                 class="h-14 w-full rounded-4xl px-8 text-base font-bold shadow-2xl shadow-primary/30 transition-all hover:scale-105 lg:w-auto"
@@ -83,33 +99,70 @@
         </div>
       </section>
 
-      <section class="grid grid-cols-1 gap-4 lg:grid-cols-4">
+      <section class="grid grid-cols-1 gap-4" [class.lg:grid-cols-4]="canViewOperational()" [class.lg:grid-cols-3]="isPublicViewer()">
         <article class="rounded-4xl border border-base-200 bg-card p-5">
-          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Asignaciones</p>
+          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">
+            {{ isPublicViewer() ? 'Cursos visibles' : 'Asignaciones' }}
+          </p>
           <p class="mt-3 text-3xl font-black tracking-tight">{{ assignments().length }}</p>
           <p class="mt-1 text-sm text-base-content/55">{{ assignments()[0] ? assignmentLabel(assignments()[0]) : 'Sin asignaciones' }}</p>
         </article>
 
         <article class="rounded-4xl border border-base-200 bg-card p-5">
-          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Horarios</p>
+          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">
+            {{ isPublicViewer() ? 'Especialidad' : 'Horarios' }}
+          </p>
+          @if (isPublicViewer()) {
+            <p class="mt-3 text-2xl font-black tracking-tight">{{ current.specialization }}</p>
+            <p class="mt-1 text-sm text-base-content/55">{{ current.professionalTitle }}</p>
+          } @else {
           <p class="mt-3 text-3xl font-black tracking-tight">{{ schedules().length }}</p>
           <p class="mt-1 text-sm text-base-content/55">{{ schedules()[0] ? scheduleLabel(schedules()[0]) : 'Sin horarios' }}</p>
+          }
         </article>
 
         <article class="rounded-4xl border border-base-200 bg-card p-5">
-          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Asistencia</p>
+          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">
+            {{ isPublicViewer() ? 'Institución' : 'Asistencia' }}
+          </p>
+          @if (isPublicViewer()) {
+            <p class="mt-3 text-lg font-black tracking-tight">{{ institutionName() }}</p>
+            <p class="mt-1 text-sm text-base-content/55">{{ current.teachingLevel }}</p>
+          } @else {
           <p class="mt-3 text-3xl font-black tracking-tight">{{ attendances().length }}</p>
           <p class="mt-1 text-sm text-base-content/55">{{ latestAttendanceLabel() }}</p>
+          }
         </article>
 
+        @if (canViewOperational()) {
         <article class="rounded-4xl border border-base-200 bg-card p-5">
           <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Perfil</p>
           <p class="mt-3 text-lg font-black tracking-tight">{{ contractLabel() }}</p>
           <p class="mt-1 text-sm text-base-content/55">{{ teacherEmail() }}</p>
         </article>
+        }
       </section>
 
-      <section class="grid grid-cols-1 gap-6 xl:grid-cols-[1.2fr_0.8fr]">
+      @if (isPublicViewer()) {
+      <section class="grid grid-cols-1 gap-6">
+        <article class="rounded-4xl border border-base-200 bg-card p-6">
+          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Presentación</p>
+          <h2 class="mt-2 text-2xl font-black tracking-tight">Perfil del docente</h2>
+          <p class="mt-4 text-sm leading-7 text-base-content/70">
+            {{ fullName() }} forma parte del equipo docente de {{ institutionName() }}.
+            Se desempeña en {{ current.specialization }} y {{ current.teachingLevel.toLowerCase() }}.
+            {{ current.professionalTitle }} por {{ current.university }}.
+          </p>
+          <div class="mt-5 rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">Cursos visibles</p>
+            <p class="mt-2 text-sm font-semibold text-base-content/75">{{ assignedCoursesPreview() }}</p>
+          </div>
+        </article>
+      </section>
+      }
+
+      <section class="grid grid-cols-1 gap-6" [class.xl:grid-cols-[1.2fr_0.8fr]]="canViewOperational()">
+        @if (canViewOperational()) {
         <div class="rounded-4xl border border-base-200 bg-card p-6">
           <div>
             <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Accesos rápidos</p>
@@ -117,22 +170,114 @@
           </div>
 
           <div class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
-            <button z-button zType="outline" class="h-14 justify-start rounded-4xl px-5 text-left" (click)="goToAssignments()">
+            <button
+              z-button
+              zType="outline"
+              class="h-14 justify-start rounded-4xl px-5 text-left"
+              [sgaDisableIfNoPermission]="'section_course:view'"
+              (click)="goToAssignments()">
               <z-icon zType="folder" class="mr-3 h-5 w-5" />
               <span class="text-sm font-bold">Cursos asignados</span>
             </button>
-            <button z-button zType="outline" class="h-14 justify-start rounded-4xl px-5 text-left" (click)="goToSchedules()">
+            <button
+              z-button
+              zType="outline"
+              class="h-14 justify-start rounded-4xl px-5 text-left"
+              [sgaDisableIfNoPermission]="'schedule:view'"
+              (click)="goToSchedules()">
               <z-icon zType="calendar" class="mr-3 h-5 w-5" />
               <span class="text-sm font-bold">Horarios</span>
             </button>
-            <button z-button zType="outline" class="h-14 justify-start rounded-4xl px-5 text-left" (click)="goToAttendances()">
+            <button
+              z-button
+              zType="outline"
+              class="h-14 justify-start rounded-4xl px-5 text-left"
+              [sgaDisableIfNoPermission]="'teacher_attendance:view'"
+              (click)="goToAttendances()">
               <z-icon zType="check" class="mr-3 h-5 w-5" />
               <span class="text-sm font-bold">Asistencias</span>
             </button>
           </div>
         </div>
+        }
 
         <div class="space-y-6">
+          <article class="rounded-4xl border border-base-200 bg-card p-6">
+            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Identificación</p>
+            <div class="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
+                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">Documento</p>
+                <p class="mt-2 text-sm font-bold text-base-content">{{ documentLabel() }}</p>
+              </div>
+              <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
+                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">Género</p>
+                <p class="mt-2 text-sm font-bold text-base-content">{{ genderLabel() }}</p>
+              </div>
+              <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
+                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">Nacimiento</p>
+                <p class="mt-2 text-sm font-bold text-base-content">{{ birthDateLabel() }}</p>
+              </div>
+              <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
+                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">Nacionalidad</p>
+                <p class="mt-2 text-sm font-bold text-base-content">{{ nationalityLabel() }}</p>
+              </div>
+              <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4 md:col-span-2">
+                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">Dirección</p>
+                <p class="mt-2 text-sm font-bold text-base-content">{{ teacherAddress() }}</p>
+                <p class="mt-1 text-xs text-base-content/55">{{ locationLabel() }}</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="rounded-4xl border border-base-200 bg-card p-6">
+            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Trayectoria profesional</p>
+            <div class="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
+                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">Universidad</p>
+                <p class="mt-2 text-sm font-bold text-base-content">{{ current.university }}</p>
+              </div>
+              <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
+                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">Año de graduación</p>
+                <p class="mt-2 text-sm font-bold text-base-content">{{ current.graduationYear }}</p>
+              </div>
+              <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4 md:col-span-2">
+                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">Licencia profesional</p>
+                <p class="mt-2 text-sm font-bold text-base-content">{{ current.professionalLicense }}</p>
+              </div>
+            </div>
+          </article>
+
+          @if (canViewOperational()) {
+          <article class="rounded-4xl border border-base-200 bg-card p-6">
+            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Condición laboral</p>
+            <div class="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
+                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">Contrato</p>
+                <p class="mt-2 text-sm font-bold text-base-content">{{ contractLabel() }}</p>
+              </div>
+              <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
+                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">Régimen</p>
+                <p class="mt-2 text-sm font-bold text-base-content">{{ laborRegimeLabel() }}</p>
+              </div>
+              <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
+                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">Carga laboral</p>
+                <p class="mt-2 text-sm font-bold text-base-content">{{ workloadLabel() }}</p>
+              </div>
+              <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
+                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">Ingreso</p>
+                <p class="mt-2 text-sm font-bold text-base-content">{{ current.hireDate | date:'dd/MM/yyyy' }}</p>
+              </div>
+              @if (current.terminationDate) {
+                <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4 md:col-span-2">
+                  <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">Término</p>
+                  <p class="mt-2 text-sm font-bold text-base-content">{{ current.terminationDate | date:'dd/MM/yyyy' }}</p>
+                </div>
+              }
+            </div>
+          </article>
+          }
+
+          @if (canViewOperational()) {
           <article class="overflow-hidden rounded-4xl border border-base-200 bg-card">
             <div class="border-b border-base-200 px-6 py-5">
               <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Carnet docente</p>
@@ -152,7 +297,7 @@
                   </span>
                 </div>
 
-                <div class="mt-5 grid grid-cols-[1fr_132px] gap-4">
+                <div class="mt-5 grid grid-cols-1 gap-4 md:grid-cols-[1.1fr_0.9fr]">
                   <div class="space-y-3">
                     <div class="rounded-2xl border border-white/10 bg-white/8 px-4 py-3">
                       <p class="text-[10px] font-black uppercase tracking-[0.18em] text-white/45">Código credencial</p>
@@ -166,23 +311,32 @@
                       <p class="text-[10px] font-black uppercase tracking-[0.18em] text-white/45">Emitido</p>
                       <p class="mt-2 text-sm font-bold text-white/80">{{ credential()?.issuedAt ? (credential()?.issuedAt! | date:'dd/MM/yyyy HH:mm') : 'Pendiente' }}</p>
                     </div>
+                    <div class="rounded-2xl border border-white/10 bg-white/8 px-4 py-3">
+                      <p class="text-[10px] font-black uppercase tracking-[0.18em] text-white/45">Resumen</p>
+                      <p class="mt-2 text-sm font-bold text-white/80">{{ current.professionalTitle }}</p>
+                      <p class="mt-1 text-xs text-white/60">{{ current.specialization }} · {{ current.teachingLevel }}</p>
+                    </div>
                   </div>
 
-                  <div class="rounded-[1.6rem] border border-white/10 bg-white p-3 text-zinc-900 shadow-lg">
-                    <div class="flex h-full flex-col justify-between rounded-[1.2rem] border border-zinc-200 p-3">
-                      <div class="space-y-1">
-                        <p class="text-[9px] font-black uppercase tracking-[0.2em] text-zinc-500">QR payload</p>
-                        <div class="grid grid-cols-2 gap-1">
-                          @for (line of credentialPreviewLines(); track $index) {
-                            <div class="rounded bg-zinc-950 px-1.5 py-1 text-[7px] font-black tracking-[0.16em] text-white">
-                              {{ line }}
-                            </div>
-                          }
-                        </div>
+                  <div class="rounded-[1.6rem] border border-white/10 bg-white p-4 text-zinc-900 shadow-lg">
+                    <div class="flex h-full flex-col rounded-[1.2rem] border border-zinc-200 p-4">
+                      <div class="mx-auto flex h-32 w-32 items-center justify-center overflow-hidden rounded-[1.6rem] border border-zinc-200 bg-zinc-100 shadow-sm">
+                        @if (person()?.photoUrl) {
+                          <img [src]="person()!.photoUrl" [alt]="fullName()" class="h-full w-full object-cover" />
+                        } @else {
+                          <z-icon zType="graduation-cap" class="h-10 w-10 text-zinc-500" />
+                        }
                       </div>
-                      <div class="mt-3 rounded-xl bg-zinc-100 px-2 py-2 text-center">
-                        <p class="text-[8px] font-black uppercase tracking-[0.18em] text-zinc-500">Payload listo</p>
-                        <p class="mt-1 text-[9px] font-black uppercase tracking-[0.16em] text-zinc-800">QR vinculado al docente</p>
+                      <div class="mt-4 text-center">
+                        <p class="text-xs font-black uppercase tracking-[0.18em] text-zinc-500">Identificación</p>
+                        <p class="mt-2 line-clamp-2 text-sm font-black text-zinc-900">{{ fullName() }}</p>
+                        <p class="mt-1 text-xs font-semibold text-zinc-500">{{ current.teacherCode }}</p>
+                      </div>
+                      <div class="mt-4 rounded-2xl bg-zinc-100 px-3 py-3 text-center">
+                        <p class="text-[9px] font-black uppercase tracking-[0.18em] text-zinc-500">Estado QR</p>
+                        <p class="mt-1 text-[10px] font-black uppercase tracking-[0.16em] text-zinc-800">
+                          {{ credential()?.qrValue ? 'Vinculado al docente' : 'Pendiente de generar' }}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -191,6 +345,7 @@
 
               <div class="flex flex-wrap gap-3">
                 <button
+                  *sgaHasPermission="'teacher:update'"
                   z-button
                   zType="outline"
                   class="h-12 rounded-3xl px-5 text-[10px] font-black uppercase tracking-[0.18em]"
@@ -201,6 +356,7 @@
                   {{ credentialLoading() ? 'Generando' : 'Regenerar carnet' }}
                 </button>
                 <button
+                  [sgaDisableIfNoPermission]="'teacher:view'"
                   z-button
                   class="h-12 rounded-3xl px-5 text-[10px] font-black uppercase tracking-[0.18em]"
                   (click)="printCredential()"
@@ -211,6 +367,7 @@
               </div>
             </div>
           </article>
+          }
 
           <article class="rounded-4xl border border-base-200 bg-card p-6">
             <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Contacto</p>
@@ -220,6 +377,7 @@
             </div>
           </article>
 
+          @if (canViewOperational()) {
           <article class="rounded-4xl border border-base-200 bg-card p-6">
             <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Última asistencia</p>
             @if (latestAttendance()) {
@@ -232,6 +390,7 @@
               <p class="mt-4 text-sm text-base-content/60">No hay asistencias registradas todavía.</p>
             }
           </article>
+          }
         </div>
       </section>
     } @else {

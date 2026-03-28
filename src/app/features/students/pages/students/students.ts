@@ -8,7 +8,7 @@ import { ZardSkeletonComponent } from '@/shared/components/skeleton';
 import { ZardInputDirective } from '@/shared/components/input';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardFormImports } from '@/shared/components/form';
-import { SelectOptionComponent } from '@/shared/widgets/select-option/select-option';
+import { SectionSelect, YearAcademicSelect } from '@/shared/widgets/selects';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 import { ExcelService } from '@core/services/excel.service';
@@ -23,10 +23,6 @@ import { StudentApi } from '../../services/api/student-api';
 import { StudentStore } from '../../services/store/student.store';
 import { Student } from '../../types/student-types';
 import { AuthStore } from '@auth/services/store/auth.store';
-import { SectionApi } from '@features/sections/services/api/section-api';
-import { YearAcademicApi } from '@features/year-academic/services/api/year-academic-api';
-import type { Section } from '@features/sections/types/section-types';
-import type { YearAcademic } from '@features/year-academic/types/year-academi-types';
 
 const EXCEL_COLUMNS = STUDENT_COLUMN.map((c) => ({ key: c.key, label: c.label }));
 
@@ -44,7 +40,8 @@ type ImportResult = { created: number; errors: { row: number; message: string }[
     ZardSkeletonComponent,
     ZardInputDirective,
     ZardButtonComponent,
-    SelectOptionComponent,
+    SectionSelect,
+    YearAcademicSelect,
     ...ZardFormImports,
   ],
   templateUrl: './students.html',
@@ -61,16 +58,12 @@ export default class StudentsPage {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly authStore = inject(AuthStore);
-  private readonly sectionApi = inject(SectionApi);
-  private readonly yearAcademicApi = inject(YearAcademicApi);
 
   readonly skeletonItems = [1, 2, 3, 4];
   readonly searchTerm = signal('');
   readonly filterSectionId = signal('');
   readonly filterAcademicYearId = signal('');
   readonly page = signal(1);
-  readonly sectionOptions = signal<Array<{ value: string; label: string }>>([{ value: '', label: 'Todas' }]);
-  readonly academicYearOptions = signal<Array<{ value: string; label: string }>>([{ value: '', label: 'Todos' }]);
   readonly actions = STUDENT_ACTIONS;
   readonly headerConfig = computed(() => {
     const roleType = this.authStore.currentUser()?.profile?.type ?? 'user';
@@ -91,7 +84,9 @@ export default class StudentsPage {
     };
   });
 
-  readonly canManageStudents = computed(() => this.permissionStore.has('manage_student'));
+  readonly canManageStudents = computed(() =>
+    this.permissionStore.hasAny('student:create', 'student:update', 'student:delete'),
+  );
   readonly loading = computed(() => this.store.loading());
   readonly data = computed(() => this.store.students());
   readonly pagination = computed(() => this.store.pagination());
@@ -105,7 +100,6 @@ export default class StudentsPage {
   );
 
   constructor() {
-    this.loadFilterOptions();
     this.route.queryParamMap.subscribe((params) => {
       this.searchTerm.set(params.get('search') ?? '');
       this.filterSectionId.set(params.get('sectionId') ?? '');
@@ -327,28 +321,6 @@ export default class StudentsPage {
         search: this.searchTerm() || undefined,
         sectionId: this.filterSectionId() || undefined,
         academicYearId: this.filterAcademicYearId() || undefined,
-      },
-    });
-  }
-
-  private loadFilterOptions(): void {
-    this.sectionApi.getAll().subscribe({
-      next: (res) => {
-        const options = (res.data ?? []).map((section: Section) => ({
-          value: section.id,
-          label: section.name,
-        }));
-        this.sectionOptions.set([{ value: '', label: 'Todas' }, ...options]);
-      },
-    });
-
-    this.yearAcademicApi.getAll({ size: 100 }).subscribe({
-      next: (res) => {
-        const options = (res.data ?? []).map((year: YearAcademic) => ({
-          value: year.id,
-          label: year.name || String(year.year),
-        }));
-        this.academicYearOptions.set([{ value: '', label: 'Todos' }, ...options]);
       },
     });
   }

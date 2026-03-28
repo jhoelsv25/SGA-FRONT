@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject, signal, input, output } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, effect, ElementRef, inject, input, output, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ClassroomStore } from '../../services/store/classroom.store';
 import { AuthStore } from '@auth/services/store/auth.store';
 import type { ChatMessage } from '../../types/classroom-types';
+import { ClassroomApi } from '../../services/classroom-api';
 
 
 @Component({
@@ -16,11 +17,35 @@ import type { ChatMessage } from '../../types/classroom-types';
 export default class Chat {
   public readonly store = inject(ClassroomStore);
   public readonly authStore = inject(AuthStore);
+  private readonly api = inject(ClassroomApi);
   public readonly floating = input(false);
   public readonly requestClose = output<void>();
   public newMessage = signal('');
   public sending = signal(false);
   public isComposerFocused = signal(false);
+  private preserveScrollOnHistoryLoad = false;
+
+  @ViewChild('chatScrollViewport')
+  private chatScrollViewport?: ElementRef<HTMLDivElement>;
+
+  constructor() {
+    effect(() => {
+      const messagesLength = this.store.chatMessages().length;
+      const isLoadingHistory = this.store.chatLoadingMore();
+      if (!messagesLength || isLoadingHistory || this.preserveScrollOnHistoryLoad) return;
+
+      queueMicrotask(() => this.scrollToBottom());
+    });
+  }
+
+  ngAfterViewInit(): void {
+    queueMicrotask(() => this.scrollToBottom());
+    queueMicrotask(() => {
+      const sectionId = this.store.selectedSectionId();
+      if (!sectionId) return;
+      this.api.markChatAsRead(sectionId).subscribe({ error: () => void 0 });
+    });
+  }
 
   isMe(msg: ChatMessage): boolean {
     const user = this.authStore.currentUser();
@@ -64,8 +89,42 @@ export default class Chat {
       next: () => {
         this.newMessage.set('');
         this.sending.set(false);
+        queueMicrotask(() => this.scrollToBottom());
       },
       error: () => this.sending.set(false),
     });
+  }
+
+  onMessagesScroll(event: Event): void {
+    const target = event.target as HTMLDivElement | null;
+    if (!target || target.scrollTop > 80 || !this.store.chatHasNext()) return;
+
+    const previousHeight = target.scrollHeight;
+    const previousTop = target.scrollTop;
+    const obs = this.store.loadOlderMessages();
+    if (!obs) return;
+
+    this.preserveScrollOnHistoryLoad = true;
+    obs.subscribe({
+      next: (loadedCount) => {
+        if (!loadedCount) {
+          this.preserveScrollOnHistoryLoad = false;
+          return;
+        }
+        queueMicrotask(() => {
+          target.scrollTop = target.scrollHeight - previousHeight + previousTop;
+          this.preserveScrollOnHistoryLoad = false;
+        });
+      },
+      error: () => {
+        this.preserveScrollOnHistoryLoad = false;
+      },
+    });
+  }
+
+  private scrollToBottom(): void {
+    const viewport = this.chatScrollViewport?.nativeElement;
+    if (!viewport) return;
+    viewport.scrollTop = viewport.scrollHeight;
   }
 }

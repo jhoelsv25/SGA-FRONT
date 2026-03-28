@@ -1,10 +1,10 @@
 import { ZardSelectComponent, ZardSelectItemComponent } from '@/shared/components/select';
-import { SelectOption } from '@/shared/widgets/select-option/select-option';
 import { ChangeDetectionStrategy, Component, computed, ElementRef, forwardRef, HostListener, inject, input, output, signal, viewChild, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { GradeLevelApi } from "@features/grade-levels/services/api/grade-level-api";
 import type { GradeLevel } from "@features/grade-levels/types/grade-level-types";
+import { ZardInputDirective } from '@/shared/components/input';
 
 function getLabel(g: GradeLevel): string {
   return g.name ?? g.id;
@@ -25,7 +25,7 @@ function getInitials(g: GradeLevel): string {
 @Component({
   selector: 'sga-grade-level-select',
   standalone: true,
-  imports: [CommonModule, ZardSelectComponent, ZardSelectItemComponent],
+  imports: [CommonModule, FormsModule, ZardSelectComponent, ZardSelectItemComponent, ZardInputDirective],
   templateUrl: './grade-level-select.html',
   providers: [
     { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => GradeLevelSelect), multi: true },
@@ -75,8 +75,8 @@ export class GradeLevelSelect implements ControlValueAccessor, OnInit {
   getSubtitle = getSubtitle;
   getInitials = getInitials;
 
-  onSearchInput(e: Event) {
-    this.searchTerm.set((e.target as HTMLInputElement).value);
+  onSearchInput(value: string) {
+    this.searchTerm.set(value ?? '');
   }
 
   onTriggerKeyDown(e: KeyboardEvent) {

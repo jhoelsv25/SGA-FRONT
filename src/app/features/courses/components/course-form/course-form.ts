@@ -2,6 +2,7 @@ import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
 import { FormsModule, ReactiveFormsModule, Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { Component, OnInit, inject, signal, input, ChangeDetectionStrategy } from '@angular/core';
 import { SelectOptionComponent } from '@/shared/widgets/select-option/select-option';
+import { GradeLevelSelect, SubjectAreaSelect } from '@/shared/widgets/selects';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardInputDirective } from '@/shared/components/input';
 import { ZardCheckboxComponent } from '@/shared/components/checkbox';
@@ -13,7 +14,7 @@ export type LocalSelectOption = { value: string | number | boolean; label: strin
 @Component({
   selector: 'sga-course-form',
   standalone: true,
-  imports: [ReactiveFormsModule, ZardButtonComponent, ZardInputDirective, SelectOptionComponent, ZardCheckboxComponent],
+  imports: [ReactiveFormsModule, ZardButtonComponent, ZardInputDirective, SelectOptionComponent, ZardCheckboxComponent, SubjectAreaSelect, GradeLevelSelect],
   templateUrl: './course-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

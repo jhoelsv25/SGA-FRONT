@@ -13,7 +13,7 @@
         <i class="fas fa-filter-circle-xmark mr-2"></i>
         Limpiar Filtros
       </button>
-      <button z-button zColor="primary" zShape="circle" (click)="onCreate()">
+      <button *sgaHasPermission="'assessment:create'" z-button zColor="primary" zShape="circle" (click)="onCreate()">
         <i class="fas fa-plus mr-2"></i>
         {{ createLabel() }}
       </button>

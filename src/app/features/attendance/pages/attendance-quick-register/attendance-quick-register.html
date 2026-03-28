@@ -17,12 +17,11 @@
       @if (mode() === 'student') {
         <div class="space-y-2">
           <label class="text-[11px] font-black uppercase tracking-[0.18em] text-base-content/55">Curso / Sección</label>
-          <z-select-option
-            [options]="sectionCourseOptions()"
-            [value]="sectionCourseId()"
-            (valueChange)="onSectionCourseChange($event)"
+          <sga-section-course-select
+            [ngModel]="sectionCourseId() || null"
+            (ngModelChange)="onSectionCourseChange($event)"
             placeholder="Seleccione un curso..."
-          ></z-select-option>
+          ></sga-section-course-select>
         </div>
       }
     </div>

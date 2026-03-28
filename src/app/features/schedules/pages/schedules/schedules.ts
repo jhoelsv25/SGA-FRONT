@@ -14,6 +14,7 @@ import { FormsModule } from '@angular/forms';
 import { ZardInputDirective } from '@/shared/components/input';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardFormImports } from '@/shared/components/form';
+import { AuthStore } from '@auth/services/store/auth.store';
 
 
 @Component({
@@ -30,6 +31,7 @@ export default class SchedulesPage {
   private confirmDialog = inject(DialogConfirmService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private authStore = inject(AuthStore);
 
   searchTerm = signal('');
   sectionContextId = signal('');
@@ -38,7 +40,44 @@ export default class SchedulesPage {
   courseContextName = signal('');
   teacherContextId = signal('');
   teacherContextName = signal('');
-  readonly headerConfig = computed(() => this.store.headerConfig());
+  readonly roleType = computed(() => this.authStore.currentUser()?.profile?.type ?? 'user');
+  readonly headerConfig = computed(() => {
+    const base = this.store.headerConfig();
+    const roleType = this.roleType();
+
+    if (roleType === 'teacher') {
+      return {
+        ...base,
+        title: 'Mi horario',
+        subtitle: 'Consulta tus bloques, aulas y secciones asignadas durante la semana.',
+      };
+    }
+
+    if (roleType === 'student') {
+      return {
+        ...base,
+        title: 'Mi horario',
+        subtitle: 'Consulta tus clases, aulas y distribución semanal.',
+      };
+    }
+
+    if (roleType === 'guardian') {
+      return {
+        ...base,
+        title: 'Horario del hogar',
+        subtitle: 'Consulta el horario de clases de tus estudiantes vinculados.',
+      };
+    }
+
+    return base;
+  });
+  readonly searchPlaceholder = computed(() => {
+    const roleType = this.roleType();
+    if (roleType === 'teacher') return 'Buscar por curso, sección o aula...';
+    if (roleType === 'student') return 'Buscar en mi horario...';
+    if (roleType === 'guardian') return 'Buscar por curso, sección o aula del hogar...';
+    return 'Buscar por curso, sección o aula...';
+  });
 
   headerActions = computed(() =>
     this.permissionStore.filterActions(this.store.actions().filter((a) => a.typeAction === 'header')),

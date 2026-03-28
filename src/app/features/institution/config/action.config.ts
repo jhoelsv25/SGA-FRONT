@@ -7,6 +7,7 @@ export const ACTION_CONFIG_INSTITUTION: ActionConfig[] = [
     icon: 'fas fa-plus',
     typeAction: 'header',
     color: 'success',
+    permissions: ['institution:create'],
   },
   {
     key: 'edit',
@@ -14,6 +15,7 @@ export const ACTION_CONFIG_INSTITUTION: ActionConfig[] = [
     icon: 'fas fa-edit',
     typeAction: 'row',
     color: 'primary',
+    permissions: ['institution:update'],
   },
   {
     key: 'delete',
@@ -21,4 +23,5 @@ export const ACTION_CONFIG_INSTITUTION: ActionConfig[] = [
     icon: 'fas fa-trash',
     typeAction: 'row',
     color: 'danger',
+    permissions: ['institution:delete'],
   }];

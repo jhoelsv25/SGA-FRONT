@@ -92,9 +92,9 @@
         item().content }}</p>
       }
 
-      @if (item().metadata.attachments && item().metadata.attachments?.length! > 0) {
+      @if (attachments().length > 0) {
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
-        @for (file of item().metadata.attachments; track $index) {
+        @for (file of attachments(); track $index) {
         <a [href]="file.url" target="_blank"
           class="flex items-center gap-4 bg-base-200/30 dark:bg-zinc-800/50 p-4 rounded-[1.5rem] border border-transparent hover:border-primary/20 hover:bg-white dark:hover:bg-zinc-800 hover:shadow-lg transition-all group/file">
           <div

@@ -29,22 +29,22 @@
       <z-form-field>
         <label z-form-label>Sección</label>
         <z-form-control>
-          <z-select-option
-            [options]="sectionOptions()"
-            [value]="filterSectionId()"
-            (valueChange)="onFilterSection($event)"
-          ></z-select-option>
+          <sga-section-select
+            [ngModel]="filterSectionId() || null"
+            (ngModelChange)="onFilterSection($event)"
+            placeholder="Todas las secciones"
+          ></sga-section-select>
         </z-form-control>
       </z-form-field>
 
       <z-form-field>
         <label z-form-label>Año académico</label>
         <z-form-control>
-          <z-select-option
-            [options]="academicYearOptions()"
-            [value]="filterAcademicYearId()"
-            (valueChange)="onFilterAcademicYear($event)"
-          ></z-select-option>
+          <sga-year-academic-select
+            [ngModel]="filterAcademicYearId() || null"
+            (ngModelChange)="onFilterAcademicYear($event)"
+            placeholder="Todos los años"
+          ></sga-year-academic-select>
         </z-form-control>
       </z-form-field>
     </div>

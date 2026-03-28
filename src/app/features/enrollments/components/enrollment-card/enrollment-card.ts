@@ -4,6 +4,8 @@ import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardCardComponent } from '@/shared/components/card';
 import { ZardIconComponent } from '@/shared/components/icon';
 import { ZardPopoverComponent, ZardPopoverDirective } from '@/shared/components/popover';
+import { SgaDisableIfNoPermissionDirective } from '@/shared/core/directives/permission/disable-if-no-permission.directive';
+import { SgaHasPermissionDirective } from '@/shared/core/directives/permission/has-permission.directive';
 import type { Enrollment } from '../../types/enrollment-types';
 
 @Component({
@@ -16,6 +18,8 @@ import type { Enrollment } from '../../types/enrollment-types';
     ZardIconComponent,
     ZardPopoverComponent,
     ZardPopoverDirective,
+    SgaHasPermissionDirective,
+    SgaDisableIfNoPermissionDirective,
   ],
   templateUrl: './enrollment-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

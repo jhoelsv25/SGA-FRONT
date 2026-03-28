@@ -87,7 +87,7 @@
           <ng-template #actionsMenu>
             <z-popover class="min-w-[180px] p-1.5 flex flex-col gap-1">
               @if (canCreatePeriod()) {
-                <button z-button zType="ghost"
+                <button *sgaHasPermission="'academic_period:create'" z-button zType="ghost"
                   class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
                   (click)="createPeriod.emit(year())">
                   <z-icon zType="layers" class="h-4 w-4" />
@@ -95,7 +95,7 @@
                 </button>
               }
               @if (canManage()) {
-                <button z-button zType="ghost"
+                <button *sgaHasPermission="'academic_year:update'" z-button zType="ghost"
                   class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
                   (click)="edit.emit(year())">
                   <z-icon zType="settings" class="h-4 w-4" />
@@ -104,7 +104,7 @@
               }
               @if (canManage()) {
                 <div class="h-px bg-border/10 my-1 mx-2"></div>
-                <button z-button zType="ghost"
+                <button *sgaHasPermission="'academic_year:delete'" z-button zType="ghost"
                   class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-destructive/10 hover:text-destructive transition-all"
                   (click)="delete.emit(year())">
                   <z-icon zType="trash" class="h-4 w-4" />

@@ -2,13 +2,11 @@ import * as XLSX from 'xlsx';
 import { FormsModule } from '@angular/forms';
 import { CommonModule, NgClass, NgIf, NgFor, NgSwitch } from '@angular/common';
 import { Component, OnInit, inject, signal, input, ChangeDetectionStrategy } from '@angular/core';
-import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
+import { SectionCourseSelect } from '@/shared/widgets/selects';
 import { ZardInputDirective } from '@/shared/components/input';
 import { AttendanceApi } from '../../services/attendance-api';
 import { AttendanceStore } from '../../services/store/attendance.store';
 import { AttendanceStatus } from '../../types/attendance-types';
-import { SectionCourseApi } from '@features/section-courses/services/section-course-api';
-import type { SectionCourse } from '@features/section-courses/types/section-course-types';
 import { EnrollmentApi } from '../../../enrollments/services/enrollment-api';
 
 type StudentRow = { id: string; name: string; studentCode: string; status: AttendanceStatus };
@@ -17,7 +15,7 @@ type StudentRow = { id: string; name: string; studentCode: string; status: Atten
 @Component({
   selector: 'sga-attendances',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgClass, ZardInputDirective, SelectOptionComponent],
+  imports: [CommonModule, FormsModule, NgClass, ZardInputDirective, SectionCourseSelect],
   templateUrl: './attendances.html',
   styleUrl: './attendances.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -25,28 +23,14 @@ type StudentRow = { id: string; name: string; studentCode: string; status: Atten
 export default class Attendances implements OnInit {
   public readonly store = inject(AttendanceStore);
   private readonly attendanceApi = inject(AttendanceApi);
-  private readonly sectionCourseApi = inject(SectionCourseApi);
   private readonly enrollmentApi = inject(EnrollmentApi);
 
   public selectedSectionCourse = signal<string>('');
   public attendanceDate = signal<string>(new Date().toISOString().split('T')[0]);
-  public sectionCourseOptions = signal<SelectOption[]>([]);
   public students = signal<StudentRow[]>([]);
 
   ngOnInit(): void {
-    this.sectionCourseApi.getAll().subscribe({
-      next: (res) => {
-        const list = res?.data ?? [];
-        this.sectionCourseOptions.set([
-          { value: '', label: 'Seleccione...' },
-          ...list.map((sc: SectionCourse) => ({
-            value: sc.id,
-            label: sc.course?.name && sc.section?.name
-              ? `${sc.course.name} - ${sc.section.name}`
-              : String(sc.id).slice(0, 12) + '...',
-          }))]);
-      },
-    });
+    return;
   }
 
   saveAttendances() {

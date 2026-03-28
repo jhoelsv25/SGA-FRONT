@@ -20,11 +20,10 @@
   <div class="grid flex-1 grid-cols-1 gap-4 overflow-y-auto pr-1 md:grid-cols-2">
     <div class="col-span-full flex flex-col gap-1">
       <label class="label-form text-base-content/70 font-medium text-sm" for="institution">Institución Educativa</label>
-      <z-select-option
+      <sga-institution-select
         id="institution"
-        [options]="institutions()"
         formControlName="institution"
-        placeholder="Seleccionar institución"></z-select-option>
+        placeholder="Seleccionar institución"></sga-institution-select>
     </div>
     <div class="flex flex-col gap-1">
       <label class="label-form text-base-content/70 font-medium text-sm" for="year">Año</label>

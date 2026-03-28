@@ -22,13 +22,11 @@
       </div>
       <div class="flex flex-col gap-2 min-w-56">
         <label for="attendance-section-select" class="text-sm font-semibold text-slate-500">Curso / Sección</label>
-        <z-select-option
-          id="attendance-section-select"
-          [options]="sectionCourseOptions()"
-          [value]="selectedSectionCourse()"
-          (valueChange)="onSectionCourseChange($event)"
+        <sga-section-course-select
+          [ngModel]="selectedSectionCourse() || null"
+          (ngModelChange)="onSectionCourseChange($event)"
           placeholder="Seleccione..."
-          [searchable]="false"></z-select-option>
+        ></sga-section-course-select>
       </div>
     </div>
   </header>

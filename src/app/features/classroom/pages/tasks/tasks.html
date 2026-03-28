@@ -16,10 +16,11 @@
 
   <sga-classroom-tasks-filters
     [(search)]="search"
+    (searchChange)="onSearchChange($event)"
     (onClear)="clearSearch()"
   />
 
-  @if (filteredTasks().length === 0) {
+  @if (!loading() && filteredTasks().length === 0) {
     <div
       class="py-24 flex flex-col items-center justify-center text-center bg-base-100/50 rounded-[3rem] border border-dashed border-base-300"
     >
@@ -52,5 +53,11 @@
         />
       }
     </div>
+
+    @if (loading() || loadingMore()) {
+      <div class="py-8 flex items-center justify-center">
+        <div class="h-10 w-10 rounded-full border-2 border-primary/20 border-t-primary animate-spin"></div>
+      </div>
+    }
   }
 </div>

@@ -15,10 +15,10 @@
     <div class="flex items-center gap-4">
       <div
         class="size-10 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center shadow-lg shadow-primary/20 rotate-3 group-hover:rotate-0 transition-transform duration-500">
-        <z-icon zType="layers" class="size-5" />
+        <z-icon [zType]="activeMeta().icon" class="size-5" />
       </div>
       <div>
-        <h2 class="text-sm font-black text-foreground uppercase tracking-[0.2em] inter">Centro de Actividad</h2>
+        <h2 class="text-sm font-black text-foreground uppercase tracking-[0.2em] inter">{{ activeMeta().label }}</h2>
         <p class="text-[8px] font-black uppercase tracking-widest text-primary opacity-60">SGA Institutional Portal</p>
       </div>
     </div>
@@ -45,15 +45,15 @@
 
   <footer class="p-4 bg-muted/20 backdrop-blur-xl border-t border-border/5 flex items-center justify-around">
     <button z-button zType="ghost" zSize="icon" class="size-9 rounded-xl hover:bg-primary/5 group/foot"
-      title="Configuración">
+      title="Configuración" (click)="openSettings()">
       <z-icon zType="settings"
         class="size-4 text-muted-foreground/40 group-hover/foot:text-primary transition-colors" />
     </button>
-    <button z-button zType="ghost" zSize="icon" class="size-9 rounded-xl hover:bg-primary/5 group/foot" title="Ayuda">
+    <button z-button zType="ghost" zSize="icon" class="size-9 rounded-xl hover:bg-primary/5 group/foot" title="Ayuda" (click)="openHelp()">
       <z-icon zType="info" class="size-4 text-muted-foreground/40 group-hover/foot:text-primary transition-colors" />
     </button>
     <button z-button zType="ghost" zSize="icon" class="size-9 rounded-xl hover:bg-primary/5 group/foot"
-      title="Feedback">
+      title="Feedback" (click)="openFeedback()">
       <z-icon zType="chat" class="size-4 text-muted-foreground/40 group-hover/foot:text-primary transition-colors" />
     </button>
   </footer>

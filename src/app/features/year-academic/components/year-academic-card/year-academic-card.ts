@@ -5,6 +5,7 @@ import {
   ZardPopoverDirective,
   ZardPopoverComponent,
 } from '@/shared/components/popover/popover.component';
+import { SgaHasPermissionDirective } from '@/shared/core/directives/permission/has-permission.directive';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { YearAcademic, AcademicYearStatus, Modality } from '../../types/year-academi-types';
@@ -19,6 +20,7 @@ import { YearAcademic, AcademicYearStatus, Modality } from '../../types/year-aca
     ZardIconComponent,
     ZardPopoverDirective,
     ZardPopoverComponent,
+    SgaHasPermissionDirective,
   ],
   templateUrl: './year-academic-card.html',
   styleUrls: ['./year-academic-card.css'],

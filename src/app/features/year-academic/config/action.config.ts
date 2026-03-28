@@ -7,7 +7,7 @@ export const YEAR_ACADEMIC_ACTIONS: ActionConfig[] = [
     icon: 'fas fa-plus',
     typeAction: 'header',
     color: 'success',
-    permissions: ['manage_academic_year'],
+    permissions: ['academic_year:create'],
   },
   {
     key: 'edit',
@@ -15,7 +15,7 @@ export const YEAR_ACADEMIC_ACTIONS: ActionConfig[] = [
     icon: 'fas fa-edit',
     typeAction: 'row',
     color: 'primary',
-    permissions: ['manage_academic_year'],
+    permissions: ['academic_year:update'],
   },
   {
     key: 'delete',
@@ -23,5 +23,5 @@ export const YEAR_ACADEMIC_ACTIONS: ActionConfig[] = [
     icon: 'fas fa-trash',
     typeAction: 'row',
     color: 'danger',
-    permissions: ['manage_academic_year'],
+    permissions: ['academic_year:delete'],
   }];

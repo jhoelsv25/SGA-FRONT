@@ -1,4 +1,4 @@
-import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
+import { SelectOptionComponent } from '@/shared/widgets/select-option/select-option';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardInputDirective } from '@/shared/components/input';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
@@ -6,11 +6,12 @@ import { ChangeDetectionStrategy, Component, inject, OnInit, input } from '@angu
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SectionStore } from '../../services/store/section.store';
 import { Section, SectionCreate } from '../../types/section-types';
+import { GradeLevelSelect, YearAcademicSelect } from '@/shared/widgets/selects';
 
 @Component({
   selector: 'sga-section-form',
   standalone: true,
-  imports: [ReactiveFormsModule, ZardButtonComponent, SelectOptionComponent, ZardInputDirective],
+  imports: [ReactiveFormsModule, ZardButtonComponent, SelectOptionComponent, ZardInputDirective, GradeLevelSelect, YearAcademicSelect],
   templateUrl: './section-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -39,15 +40,6 @@ export class SectionForm implements OnInit {
       grade: [this.resolveGradeId(this.current) ?? null, [Validators.required]],
       yearAcademic: [this.resolveYearId(this.current) ?? null, [Validators.required]],
     });
-  }
-
-  private getLevelLabel(level: string): string {
-    const labels: Record<string, string> = {
-      primary: 'Primaria',
-      secondary: 'Secundaria',
-      higher: 'Superior',
-    };
-    return labels[level] || level;
   }
 
   private resolveGradeId(s?: Section | null): string | null {

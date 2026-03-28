@@ -1,0 +1,46 @@
+<z-select
+  [zPlaceholder]="placeholder()"
+  [zDisabled]="disabled() || formDisabled()"
+  [(zValue)]="zValue"
+  (zSelectionChange)="onSelectionChange($event)"
+  (click)="onOpen()"
+>
+  <div class="sticky top-0 z-10 border-b border-border/50 bg-popover p-2">
+    <input
+      z-input
+      [ngModel]="searchTerm()"
+      (ngModelChange)="onSearch($event)"
+      placeholder="Buscar competencia..."
+      class="w-full"
+    />
+  </div>
+
+  @for (item of filteredItems(); track item.id) {
+    <z-select-item [zValue]="item.id">
+      <div class="flex min-w-0 items-center gap-3 py-0.5">
+        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-[11px] font-semibold uppercase tracking-[0.22em] text-primary">
+          {{ getInitials(item) }}
+        </div>
+        <div class="min-w-0 flex-1">
+          <span data-select-label class="block truncate text-sm font-semibold">{{ getLabel(item) }}</span>
+          <span class="mt-0.5 block truncate text-xs text-muted-foreground">{{ getSubtitle(item) }}</span>
+        </div>
+        <span class="shrink-0 rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
+          {{ item.code }}
+        </span>
+      </div>
+    </z-select-item>
+  }
+
+  @if (!filteredItems().length && !loading()) {
+    <z-select-item zValue="__empty__" [zDisabled]="true">
+      <span data-select-label>Sin competencias</span>
+    </z-select-item>
+  }
+
+  @if (loading()) {
+    <z-select-item zValue="__loading__" [zDisabled]="true">
+      <span data-select-label>Cargando competencias...</span>
+    </z-select-item>
+  }
+</z-select>

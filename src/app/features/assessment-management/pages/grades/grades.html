@@ -13,14 +13,11 @@
 
       <div class="flex flex-col gap-1.5">
         <label for="grades-assessment-select" class="text-[11px] font-black uppercase tracking-[0.18em] text-base-content/55">Evaluación</label>
-        <z-select-option
-          id="grades-assessment-select"
-          [options]="assessmentOptions()"
-          [value]="selectedAssessmentId()"
-          (valueChange)="onAssessmentChange($event)"
+        <sga-assessment-select
+          [ngModel]="selectedAssessmentId() || null"
+          (ngModelChange)="onAssessmentChange($event)"
           placeholder="Seleccione una evaluación..."
-          [searchable]="true"
-        ></z-select-option>
+        ></sga-assessment-select>
       </div>
     </div>
   </ng-template>

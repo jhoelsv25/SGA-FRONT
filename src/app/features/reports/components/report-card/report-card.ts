@@ -4,7 +4,9 @@ import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardCardComponent } from '@/shared/components/card';
 import { ZardIconComponent } from '@/shared/components/icon';
 import { ZardPopoverComponent, ZardPopoverDirective } from '@/shared/components/popover';
-import type { Report } from '../../types/report-types';
+import { SgaDisableIfNoPermissionDirective } from '@/shared/core/directives/permission/disable-if-no-permission.directive';
+import { SgaHasPermissionDirective } from '@/shared/core/directives/permission/has-permission.directive';
+import type { Report, ReportMeta } from '../../types/report-types';
 
 @Component({
   selector: 'sga-report-card',
@@ -16,6 +18,8 @@ import type { Report } from '../../types/report-types';
     ZardIconComponent,
     ZardPopoverDirective,
     ZardPopoverComponent,
+    SgaHasPermissionDirective,
+    SgaDisableIfNoPermissionDirective,
   ],
   templateUrl: './report-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -49,4 +53,6 @@ export class ReportCardComponent {
     };
     return map[this.report().format ?? ''] ?? (this.report().format || 'Sin formato');
   });
+
+  readonly statusMeta = computed(() => ((this.report().parameters ?? {})['__meta'] ?? {}) as ReportMeta);
 }

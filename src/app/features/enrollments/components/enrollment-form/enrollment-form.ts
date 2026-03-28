@@ -2,10 +2,10 @@ import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
 import { FormsModule, ReactiveFormsModule, Validators, FormBuilder } from '@angular/forms';
 import { Component, OnInit, inject, input, ChangeDetectionStrategy } from '@angular/core';
 import { SelectOptionComponent } from '@/shared/widgets/select-option/select-option';
+import { SectionSelect, StudentSelect, YearAcademicSelect } from '@/shared/widgets/selects';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardInputDirective } from '@/shared/components/input';
 import { EnrollmentStore } from '../../services/store/enrollment.store';
-import { StudentApi } from '@features/students/services/api/student-api';
 import { Enrollment } from '../../types/enrollment-types';
 
 export type LocalSelectOption = { value: string | number | boolean; label: string; [key: string]: any };
@@ -13,7 +13,7 @@ export type LocalSelectOption = { value: string | number | boolean; label: strin
 @Component({
   selector: 'sga-enrollment-form',
   standalone: true,
-  imports: [ReactiveFormsModule, ZardButtonComponent, SelectOptionComponent, ZardInputDirective],
+  imports: [ReactiveFormsModule, ZardButtonComponent, SelectOptionComponent, ZardInputDirective, StudentSelect, SectionSelect, YearAcademicSelect],
   templateUrl: './enrollment-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -22,8 +22,6 @@ export class EnrollmentForm implements OnInit {
   private data = inject(Z_MODAL_DATA, { optional: true });
   private ref = inject(ZardDialogRef);
   private fb = inject(FormBuilder);
-  private studentApi = inject(StudentApi);
-
   form = this.fb.group({
     student: [null as string | null, [Validators.required]],
     section: [null as string | null, [Validators.required]],
@@ -35,11 +33,6 @@ export class EnrollmentForm implements OnInit {
   });
 
   current: Enrollment | null = null;
-  studentOptions: LocalSelectOption[] = [];
-  studentPage = 1;
-  readonly studentPageSize = 30;
-  studentHasMore = true;
-  studentLoadingMore = false;
 
   typeOptions: LocalSelectOption[] = [
     { value: 'new', label: 'Nuevo' },
@@ -65,34 +58,6 @@ export class EnrollmentForm implements OnInit {
         observations: this.current.observations ?? '',
       });
     }
-
-    this.loadStudents();
-  }
-
-  loadStudents(): void {
-    if (!this.studentHasMore || this.studentLoadingMore) return;
-    this.studentLoadingMore = true;
-    this.studentApi.getAll({ page: this.studentPage, size: this.studentPageSize }).subscribe({
-      next: (res) => {
-        const newOptions = (res.data ?? []).map((s) => ({
-          value: s.id,
-          label:
-            (s as { name?: string }).name ||
-            `${(s as { firstName?: string }).firstName ?? ''} ${(s as { lastName?: string }).lastName ?? ''}`.trim() ||
-            s.studentCode ||
-            s.id,
-        }));
-        this.studentOptions = [...this.studentOptions, ...newOptions];
-        const loaded = this.studentOptions.length;
-        const total = res.total ?? loaded;
-        this.studentHasMore = loaded < total;
-        this.studentPage += 1;
-        this.studentLoadingMore = false;
-      },
-      error: () => {
-        this.studentLoadingMore = false;
-      },
-    });
   }
 
   submit(): void {

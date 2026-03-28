@@ -1,12 +1,12 @@
 import { ZardSelectComponent, ZardSelectItemComponent } from '@/shared/components/select';
-import { SelectOption } from '@/shared/widgets/select-option/select-option';
 import { ChangeDetectionStrategy, Component, ElementRef, forwardRef, HostListener, inject, input, OnDestroy, OnInit, output, signal, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { TeacherApi } from '@features/teachers/services/api/teacher-api';
 import type { Teacher } from '@features/teachers/types/teacher-types';
+import { ZardInputDirective } from '@/shared/components/input';
 
 function getLabel(t: Teacher): string {
   const person = t.person as { firstName?: string; lastName?: string } | undefined;
@@ -25,11 +25,20 @@ function getInitials(t: Teacher): string {
   return (t.teacherCode ?? t.id).slice(0, 2).toUpperCase();
 }
 
+function getSubtitle(t: Teacher): string {
+  const parts = [t.specialization, t.professionalTitle].filter(Boolean);
+  return parts.join(' · ') || 'Docente';
+}
+
+function getPhoto(t: Teacher): string | null {
+  const person = typeof t.person === 'string' ? null : t.person;
+  return person?.photoUrl ?? null;
+}
 
 @Component({
   selector: 'sga-teacher-select',
   standalone: true,
-  imports: [CommonModule, ZardSelectComponent, ZardSelectItemComponent],
+  imports: [CommonModule, FormsModule, ZardSelectComponent, ZardSelectItemComponent, ZardInputDirective],
   templateUrl: './teacher-select.html',
   providers: [
     { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => TeacherSelect), multi: true },
@@ -47,7 +56,6 @@ export class TeacherSelect implements OnInit, OnDestroy, ControlValueAccessor {
   private _formDisabled = signal(false);
   effectiveDisabled = () => this.disabled() || this._formDisabled();
 
-  listRef = viewChild<ElementRef<HTMLDivElement>>('listRef');
   hostRef = viewChild<ElementRef<HTMLElement>>('hostRef');
 
   isOpen = signal(false);
@@ -66,6 +74,8 @@ export class TeacherSelect implements OnInit, OnDestroy, ControlValueAccessor {
 
   getLabel = getLabel;
   getInitials = getInitials;
+  getSubtitle = getSubtitle;
+  getPhoto = getPhoto;
 
   ngOnInit() {
     this.searchSubject
@@ -83,9 +93,8 @@ export class TeacherSelect implements OnInit, OnDestroy, ControlValueAccessor {
     this.destroy$.complete();
   }
 
-  onSearchInput(e: Event) {
-    const value = (e.target as HTMLInputElement).value;
-    this.searchSubject.next(value);
+  onSearchInput(value: string) {
+    this.searchSubject.next(value ?? '');
   }
 
   onTriggerKeyDown(e: KeyboardEvent) {
@@ -122,15 +131,11 @@ export class TeacherSelect implements OnInit, OnDestroy, ControlValueAccessor {
     });
   }
 
-  onScroll() {
-    const el = this.listRef()?.nativeElement;
-    if (!el || !this.hasMore() || this.loading()) return;
-    const { scrollTop, scrollHeight, clientHeight } = el;
-    if (scrollTop + clientHeight >= scrollHeight - 20) {
-      const next = this.page() + 1;
-      this.page.set(next);
-      this.loadItems(next, this.searchTerm() || undefined);
-    }
+  loadMore() {
+    if (!this.hasMore() || this.loading()) return;
+    const next = this.page() + 1;
+    this.page.set(next);
+    this.loadItems(next, this.searchTerm() || undefined);
   }
 
   openDropdown() {

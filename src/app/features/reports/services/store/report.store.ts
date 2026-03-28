@@ -2,6 +2,7 @@ import { inject } from '@angular/core';
 import { Params } from '@angular/router';
 import { patchState, signalStore, withHooks, withMethods, withState } from '@ngrx/signals';
 import { ReportApi } from '../report-api';
+import { ReportSocketService } from '../report-socket.service';
 import { Toast } from '@core/services/toast';
 import { HeaderConfig } from '@core/types/header-types';
 import { ActionConfig } from '@core/types/action-types';
@@ -104,14 +105,26 @@ export const ReportStore = signalStore(
         },
       });
     },
+    upsertRealtime(report: Report) {
+      const exists = store.data().some((item) => item.id === report.id);
+      patchState(store, {
+        data: exists
+          ? store.data().map((item) => (item.id === report.id ? report : item))
+          : [report, ...store.data()],
+      });
+    },
     setPagination(page: number, size: number) {
       const total = store.data().length;
       patchState(store, { pagination: { page, size, total } });
     },
   })),
   withHooks({
-    onInit(store) {
+    onInit(store, socket = inject(ReportSocketService)) {
       store.loadAll();
+      socket.connect();
+      socket.report$.subscribe((report) => {
+        store.upsertRealtime(report);
+      });
     },
   }),
 );

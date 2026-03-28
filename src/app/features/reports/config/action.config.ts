@@ -7,6 +7,7 @@ export const REPORT_ACTIONS: ActionConfig[] = [
     icon: 'fas fa-file-export',
     typeAction: 'header',
     color: 'success',
+    permissions: ['report:create'],
   },
   {
     key: 'refresh',
@@ -14,6 +15,7 @@ export const REPORT_ACTIONS: ActionConfig[] = [
     icon: 'fas fa-sync-alt',
     typeAction: 'header',
     color: 'primary',
+    permissions: ['report:view'],
   },
   {
     key: 'download',
@@ -21,6 +23,7 @@ export const REPORT_ACTIONS: ActionConfig[] = [
     icon: 'fas fa-download',
     typeAction: 'row',
     color: 'primary',
+    permissions: ['report:view'],
   },
   {
     key: 'delete',
@@ -28,4 +31,14 @@ export const REPORT_ACTIONS: ActionConfig[] = [
     icon: 'fas fa-trash',
     typeAction: 'row',
     color: 'danger',
-  }];
+    permissions: ['report:delete'],
+  },
+  {
+    key: 'edit',
+    label: 'Editar',
+    icon: 'fas fa-pen',
+    typeAction: 'row',
+    color: 'primary',
+    permissions: ['report:update'],
+  },
+];

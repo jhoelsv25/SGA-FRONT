@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardCardComponent } from '@/shared/components/card';
 import { ZardIconComponent } from '@/shared/components/icon';
+import { SgaDisableIfNoPermissionDirective } from '@/shared/core/directives/permission/disable-if-no-permission.directive';
+import { SgaHasPermissionDirective } from '@/shared/core/directives/permission/has-permission.directive';
 import { Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ZardProgressBarComponent } from '@/shared/components/progress-bar';
@@ -154,6 +156,8 @@ type ImportHistoryItem = {
     ZardProgressBarComponent,
     RouterLink,
     UserImportDropzone,
+    SgaHasPermissionDirective,
+    SgaDisableIfNoPermissionDirective,
   ],
   templateUrl: './user-import.html',
   styles: [

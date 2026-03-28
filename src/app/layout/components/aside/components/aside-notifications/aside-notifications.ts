@@ -1,6 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { NotificationStore } from '@core/stores/notification.store';
+import { LayoutStore } from '@core/stores/layout.store';
 import { ZardIconComponent } from '@/shared/components/icon';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardEmptyComponent } from '@/shared/components/empty';
@@ -41,7 +43,7 @@ import { ZardEmptyComponent } from '@/shared/components/empty';
             [class.border-border/5]="notification.isRead"
             [class.border-primary/20]="!notification.isRead"
             [class.shadow-lg]="!notification.isRead"
-            (click)="markRead(notification.id)"
+            (click)="openNotification(notification)"
           >
             <!-- Unread Indicator -->
             @if (!notification.isRead) {
@@ -113,12 +115,10 @@ import { ZardEmptyComponent } from '@/shared/components/empty';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AsideNotifications implements OnInit {
+export class AsideNotifications {
   public store = inject(NotificationStore);
-
-  ngOnInit() {
-    this.store.loadInitial();
-  }
+  private readonly router = inject(Router);
+  private readonly layout = inject(LayoutStore);
 
   onScroll(event: any) {
     const el = event.target;
@@ -129,6 +129,15 @@ export class AsideNotifications implements OnInit {
 
   markRead(id: string) {
     this.store.markAsRead(id);
+  }
+
+  openNotification(notification: any) {
+    this.markRead(notification.id);
+
+    if (notification.linkUrl) {
+      this.router.navigateByUrl(notification.linkUrl);
+      this.layout.closeAside();
+    }
   }
 
   markAllRead() {

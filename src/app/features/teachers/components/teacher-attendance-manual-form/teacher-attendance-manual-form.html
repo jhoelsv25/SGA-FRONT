@@ -9,10 +9,7 @@
   <div class="grid gap-4">
     <div>
       <p class="mb-1 text-xs font-medium text-slate-600">Docente</p>
-      <z-select-option
-        [options]="teacherOptions"
-        formControlName="teacherId"
-        [searchable]="true"></z-select-option>
+      <sga-teacher-select formControlName="teacherId" placeholder="Seleccionar docente"></sga-teacher-select>
     </div>
 
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">

@@ -16,6 +16,13 @@ export interface MenuItem {
   badge?: number;
 }
 
+const crud = (resource: string) => [
+  `${resource}:view`,
+  `${resource}:create`,
+  `${resource}:update`,
+  `${resource}:delete`,
+];
+
 export const MENU_MODULES_MOCK: MenuItem[] = [
   {
     id: 'dashboard',
@@ -23,7 +30,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
     label: 'Dashboard',
     route: '/dashboard',
     order: 1,
-    permissions: ['view_dashboard'],
+    permissions: ['dashboard:view'],
     visibility: Visibility.PUBLIC,
   },
 
@@ -36,17 +43,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
     label: 'Estructura Académica',
     route: '/academic-setup',
     order: 2,
-    permissions: [
-      'manage_academic_setup',
-      'view_academic_year',
-      'view_academic_period',
-      'view_grade_level',
-      'view_subject_area',
-      'view_course',
-      'view_competency',
-      'view_section',
-      'view_schedule',
-    ],
+    permissions: ['academic-setup:view'],
     visibility: Visibility.PUBLIC,
     children: [
       {
@@ -54,7 +51,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-calendar-alt',
         label: 'Años Académicos',
         route: '/academic-setup/years',
-        permissions: ['view_academic_year', 'manage_academic_year'],
+        permissions: crud('academic-year'),
         visibility: Visibility.PUBLIC,
       },
       {
@@ -62,7 +59,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-layer-group',
         label: 'Niveles y Grados',
         route: '/academic-setup/grade-levels',
-        permissions: ['view_grade_level', 'manage_grade_level'],
+        permissions: crud('grade-level'),
         visibility: Visibility.PUBLIC,
       },
       {
@@ -70,7 +67,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-th',
         label: 'Áreas Curriculares',
         route: '/academic-setup/subject-areas',
-        permissions: ['view_subject_area', 'manage_subject_area'],
+        permissions: crud('subject-area'),
         visibility: Visibility.PUBLIC,
       },
       {
@@ -78,7 +75,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-book',
         label: 'Cursos',
         route: '/academic-setup/courses',
-        permissions: ['view_course', 'manage_course'],
+        permissions: crud('course'),
         visibility: Visibility.PUBLIC,
       },
       {
@@ -86,7 +83,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-star',
         label: 'Competencias',
         route: '/academic-setup/competencies',
-        permissions: ['view_competency', 'manage_competency'],
+        permissions: crud('competency'),
         visibility: Visibility.PUBLIC,
       },
       {
@@ -94,7 +91,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-users',
         label: 'Secciones',
         route: '/organization/sections',
-        permissions: ['view_section', 'manage_section'],
+        permissions: crud('section'),
         visibility: Visibility.PUBLIC,
       },
       {
@@ -102,7 +99,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-calendar-days',
         label: 'Horarios',
         route: '/organization/schedules',
-        permissions: ['view_schedule', 'manage_schedule'],
+        permissions: crud('schedule'),
         visibility: Visibility.PUBLIC,
       }],
   },
@@ -116,7 +113,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
     label: 'Estudiantes',
     route: '/students',
     order: 3,
-    permissions: ['view_student'],
+    permissions: ['student:view'],
     visibility: Visibility.PUBLIC,
     children: [
       {
@@ -124,7 +121,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-list',
         label: 'Lista de Estudiantes',
         route: '/students/list',
-        permissions: ['view_student'],
+        permissions: ['student:view', 'student:import', 'student:export'],
         visibility: Visibility.PUBLIC,
       },
       {
@@ -132,7 +129,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-file-signature',
         label: 'Matrículas',
         route: '/students/enrollments',
-        permissions: ['view_enrollment', 'manage_enrollment'],
+        permissions: crud('enrollment'),
         visibility: Visibility.PUBLIC,
       },
       {
@@ -140,7 +137,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-user-shield',
         label: 'Apoderados',
         route: '/students/guardians',
-        permissions: ['view_guardian', 'manage_guardian'],
+        permissions: crud('guardian'),
         visibility: Visibility.PUBLIC,
       },
       {
@@ -148,7 +145,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-comment-medical',
         label: 'Observaciones',
         route: '/students/observations',
-        permissions: ['view_observation', 'manage_observation'],
+        permissions: crud('observation'),
         visibility: Visibility.PUBLIC,
       }],
   },
@@ -162,7 +159,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
     label: 'Docentes',
     route: '/teachers',
     order: 4,
-    permissions: ['view_teacher'],
+    permissions: ['teacher:view'],
     visibility: Visibility.PUBLIC,
     children: [
       {
@@ -170,7 +167,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-list',
         label: 'Lista de Docentes',
         route: '/teachers/list',
-        permissions: ['view_teacher'],
+        permissions: ['teacher:view', 'teacher:import', 'teacher:export'],
         visibility: Visibility.PUBLIC,
       },
       {
@@ -178,7 +175,15 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-user-check',
         label: 'Asistencia Docente',
         route: '/teachers/attendances',
-        permissions: ['view_teacher_attendance', 'manage_teacher_attendance'],
+        permissions: [
+          'teacher-attendance:view',
+          'teacher-attendance:create',
+          'teacher-attendance:update',
+          'teacher-attendance:delete',
+          'teacher-attendance:register',
+          'teacher-attendance:import',
+          'teacher-attendance:export',
+        ],
         visibility: Visibility.PUBLIC,
       }],
   },
@@ -192,7 +197,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
     label: 'Asistencia Estudiantes',
     route: '/attendance',
     order: 5,
-    permissions: ['view_attendance'],
+    permissions: ['attendance:view'],
     visibility: Visibility.PUBLIC,
     children: [
       {
@@ -200,7 +205,15 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-check-circle',
         label: 'Registro de Asistencia',
         route: '/attendance/register',
-        permissions: ['manage_attendance'],
+        permissions: [
+          'attendance:view',
+          'attendance:create',
+          'attendance:update',
+          'attendance:register',
+          'attendance:quick-register',
+          'attendance:import',
+          'attendance:export',
+        ],
         visibility: Visibility.PUBLIC,
       },
       {
@@ -208,7 +221,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-chart-pie',
         label: 'Reportes',
         route: '/attendance/reports',
-        permissions: ['view_attendance'],
+        permissions: ['attendance:view'],
         visibility: Visibility.PUBLIC,
       }],
   },
@@ -222,7 +235,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
     label: 'Evaluaciones',
     route: '/assessments',
     order: 6,
-    permissions: ['view_assessment'],
+    permissions: ['assessment:view'],
     visibility: Visibility.PUBLIC,
     children: [
       {
@@ -230,7 +243,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-clipboard-list',
         label: 'Evaluaciones',
         route: '/assessments/list',
-        permissions: ['view_assessment', 'manage_assessment'],
+        permissions: crud('assessment'),
         visibility: Visibility.PUBLIC,
       },
       {
@@ -238,7 +251,14 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-pen-square',
         label: 'Registro de Calificaciones',
         route: '/assessments/scores',
-        permissions: ['manage_assessment_score'],
+        permissions: [
+          'assessment-score:view',
+          'assessment-score:create',
+          'assessment-score:update',
+          'assessment-score:delete',
+          'assessment-score:import',
+          'assessment-score:export',
+        ],
         visibility: Visibility.PUBLIC,
       },
       {
@@ -246,7 +266,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-chart-line',
         label: 'Notas Finales',
         route: '/assessments/grades',
-        permissions: ['view_grade', 'manage_grade'],
+        permissions: crud('grade'),
         visibility: Visibility.PUBLIC,
       }],
   },
@@ -260,7 +280,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
     label: 'Conducta',
     route: '/behavior',
     order: 7,
-    permissions: ['view_behavior'],
+    permissions: ['behavior:view'],
     visibility: Visibility.PUBLIC,
     children: [
       {
@@ -268,7 +288,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-clipboard',
         label: 'Registro de Conducta',
         route: '/behavior/records',
-        permissions: ['view_behavior', 'manage_behavior'],
+        permissions: crud('behavior'),
         visibility: Visibility.PUBLIC,
       },
       {
@@ -276,7 +296,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-chart-bar',
         label: 'Reportes',
         route: '/behavior/reports',
-        permissions: ['view_behavior'],
+        permissions: ['behavior:view'],
         visibility: Visibility.PUBLIC,
       }],
   },
@@ -288,19 +308,10 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
     id: 'virtual-classroom',
     icon: 'fa-chalkboard',
     label: 'Aula Virtual',
-    route: '/virtual-classroom',
+    route: '/virtual-classroom/list',
     order: 8,
-    permissions: ['view_virtual_classroom'],
+    permissions: ['virtual-classroom:view'],
     visibility: Visibility.PUBLIC,
-    children: [
-      {
-        id: 'virtual-classrooms-list',
-        icon: 'fa-door-open',
-        label: 'Mis Aulas',
-        route: '/virtual-classroom/list',
-        permissions: ['view_virtual_classroom'],
-        visibility: Visibility.PUBLIC,
-      }],
   },
 
   // ============================================
@@ -312,7 +323,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
     label: 'Pagos',
     route: '/payments',
     order: 9,
-    permissions: ['view_payment'],
+    permissions: ['payment:view'],
     visibility: Visibility.PUBLIC,
     children: [
       {
@@ -320,7 +331,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-file-invoice-dollar',
         label: 'Registro de Pagos',
         route: '/payments/register',
-        permissions: ['manage_payment'],
+        permissions: crud('payment'),
         visibility: Visibility.PUBLIC,
       },
       {
@@ -328,7 +339,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-exclamation-triangle',
         label: 'Pendientes',
         route: '/payments/pending',
-        permissions: ['view_payment'],
+        permissions: ['payment:view'],
         badge: 0,
         visibility: Visibility.PUBLIC,
       },
@@ -337,7 +348,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-history',
         label: 'Historial',
         route: '/payments/history',
-        permissions: ['view_payment'],
+        permissions: ['payment:view'],
         visibility: Visibility.PUBLIC,
       }],
   },
@@ -351,7 +362,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
     label: 'Comunicaciones',
     route: '/communications',
     order: 10,
-    permissions: ['view_communication'],
+    permissions: ['communication:view'],
     visibility: Visibility.PUBLIC,
     children: [
       {
@@ -359,7 +370,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-bullhorn',
         label: 'Anuncios',
         route: '/communications/announcements',
-        permissions: ['view_announcement', 'manage_announcement'],
+        permissions: crud('announcement'),
         visibility: Visibility.PUBLIC,
       },
       {
@@ -367,7 +378,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-bell',
         label: 'Notificaciones',
         route: '/communications/notifications',
-        permissions: ['view_notification'],
+        permissions: ['notification:view'],
         badge: 0,
         visibility: Visibility.PUBLIC,
       },
@@ -376,7 +387,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-envelope-open-text',
         label: 'Historial de Emails',
         route: '/communications/email-logs',
-        permissions: ['view_email_log'],
+        permissions: ['email-log:view'],
         visibility: Visibility.PUBLIC,
       }],
   },
@@ -390,7 +401,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
     label: 'Reportes',
     route: '/reports',
     order: 11,
-    permissions: ['view_reports'],
+    permissions: crud('report'),
     visibility: Visibility.PUBLIC,
     children: [
       {
@@ -398,7 +409,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-graduation-cap',
         label: 'Académicos',
         route: '/reports/academic',
-        permissions: ['view_report'],
+        permissions: crud('report'),
         visibility: Visibility.PUBLIC,
       },
       {
@@ -406,7 +417,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-user-check',
         label: 'Asistencia',
         route: '/reports/attendance',
-        permissions: ['view_report'],
+        permissions: crud('report'),
         visibility: Visibility.PUBLIC,
       },
       {
@@ -414,7 +425,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-flag',
         label: 'Conducta',
         route: '/reports/behavior',
-        permissions: ['view_report'],
+        permissions: crud('report'),
         visibility: Visibility.PUBLIC,
       },
       {
@@ -422,7 +433,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-money-bill-wave',
         label: 'Financieros',
         route: '/reports/financial',
-        permissions: ['view_report'],
+        permissions: crud('report'),
         visibility: Visibility.PUBLIC,
       }],
   },
@@ -436,7 +447,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
     label: 'Administración',
     route: '/administration',
     order: 12,
-    permissions: ['view_administration'],
+    permissions: ['administration:view'],
     visibility: Visibility.PUBLIC,
     children: [
       {
@@ -444,7 +455,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-building',
         label: 'Institución',
         route: '/administration/institution',
-        permissions: ['manage_institution'],
+        permissions: crud('institution'),
         visibility: Visibility.PUBLIC,
       },
       {
@@ -452,7 +463,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-users-cog',
         label: 'Usuarios',
         route: '/administration/users',
-        permissions: ['view_user', 'manage_user'],
+        permissions: crud('user'),
         visibility: Visibility.PUBLIC,
       },
       {
@@ -460,7 +471,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-user-tag',
         label: 'Roles',
         route: '/administration/roles',
-        permissions: ['view_role', 'manage_role'],
+        permissions: crud('role'),
         visibility: Visibility.PUBLIC,
       },
       {
@@ -468,7 +479,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-key',
         label: 'Permisos',
         route: '/administration/permissions',
-        permissions: ['view_permission', 'manage_permission'],
+        permissions: crud('permission'),
         visibility: Visibility.PUBLIC,
       },
       {
@@ -476,7 +487,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-desktop',
         label: 'Sesiones Activas',
         route: '/administration/sessions',
-        permissions: ['view_sessions', 'manage_sessions'],
+        permissions: ['session:view', 'session:delete', 'sessions:view', 'sessions:delete'],
         visibility: Visibility.PUBLIC,
       },
       {
@@ -484,7 +495,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         icon: 'fa-file-search',
         label: 'Auditoría',
         route: '/administration/audit-logs',
-        permissions: ['view_audit_log'],
+        permissions: ['audit-log:view', 'audit_log:view'],
         visibility: Visibility.PUBLIC,
       }],
   }];

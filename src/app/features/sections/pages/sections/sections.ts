@@ -47,7 +47,9 @@ export default class SectionsPage implements OnInit {
   filterShift = signal('');
   gradeContextId = signal('');
   gradeContextName = signal('');
-  readonly canManageSections = computed(() => this.permissionStore.has('manage_section'));
+  readonly canManageSections = computed(() =>
+    this.permissionStore.hasAny('section:create', 'section:update', 'section:delete'),
+  );
   readonly headerConfig = computed(() => this.store.headerConfig());
 
   headerActions = computed(() =>

@@ -45,3 +45,36 @@ export interface ChatMessage {
   timestamp: string;
   isMe: boolean;
 }
+
+export interface ChatCursorResponse {
+  data: ChatMessage[];
+  nextCursor: { date: string; id: string } | null;
+  hasNext: boolean;
+}
+
+export interface FeedCursorResponse {
+  data: ClassroomFeedItem[];
+  nextCursor: { date: string; id: string } | null;
+  hasNext: boolean;
+}
+
+export interface ChatInboxItem {
+  id: string;
+  roomId: string;
+  sectionCourseId: string;
+  name: string;
+  avatar?: string | null;
+  lastMessage: string;
+  time: string;
+  unread: boolean;
+  unreadCount: number;
+  online: boolean;
+  route: string;
+  type: string;
+}
+
+export interface ChatInboxCursorResponse {
+  data: ChatInboxItem[];
+  nextCursor: { date: string; id: string } | null;
+  hasNext: boolean;
+}

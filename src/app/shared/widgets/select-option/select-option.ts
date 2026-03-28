@@ -9,6 +9,13 @@ export interface SelectOption {
   label: string;
   value: any;
   disabled?: boolean;
+  description?: string;
+  meta?: string;
+  code?: string;
+  badge?: string;
+  avatarUrl?: string;
+  avatarFallback?: string;
+  searchText?: string;
 }
 
 @Component({
@@ -25,6 +32,7 @@ export interface SelectOption {
       (zScrolledToEnd)="onLoadMore()"
       [class]="customClass()"
     >
+      @if (searchable()) {
       <div class="sticky top-0 z-10 border-b border-border/50 bg-popover p-2">
         <input
           z-input
@@ -34,9 +42,51 @@ export interface SelectOption {
           class="w-full"
         />
       </div>
+      }
       @for (option of filteredOptions(); track option.value) {
         <z-select-item [zValue]="String(option.value)" [zDisabled]="option.disabled">
-          {{ option.label }}
+          <div class="flex min-w-0 items-center gap-3 py-0.5">
+            <div class="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-primary/10 text-[11px] font-semibold uppercase tracking-[0.22em] text-primary">
+              @if (option.avatarUrl) {
+                <img [src]="option.avatarUrl" [alt]="option.label" class="h-full w-full object-cover" />
+              } @else {
+                {{ getAvatarFallback(option) }}
+              }
+            </div>
+
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-2">
+                <span data-select-label class="truncate text-sm font-semibold text-foreground">
+                  {{ option.label }}
+                </span>
+                @if (option.badge) {
+                  <span class="shrink-0 rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                    {{ option.badge }}
+                  </span>
+                }
+              </div>
+
+              @if (option.description || option.meta) {
+                <div class="mt-0.5 flex min-w-0 items-center gap-2 text-xs text-muted-foreground">
+                  @if (option.description) {
+                    <span class="truncate">{{ option.description }}</span>
+                  }
+                  @if (option.description && option.meta) {
+                    <span class="shrink-0 text-[10px]">•</span>
+                  }
+                  @if (option.meta) {
+                    <span class="truncate">{{ option.meta }}</span>
+                  }
+                </div>
+              }
+            </div>
+
+            @if (option.code) {
+              <span class="shrink-0 rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
+                {{ option.code }}
+              </span>
+            }
+          </div>
         </z-select-item>
       }
       @if (!filteredOptions().length && !loadingMore()) {
@@ -79,7 +129,7 @@ export class SelectOptionComponent implements ControlValueAccessor {
   filteredOptions = computed(() => {
     const term = this.searchTerm().trim().toLowerCase();
     if (!term) return this.options();
-    return this.options().filter((option) => option.label.toLowerCase().includes(term));
+    return this.options().filter((option) => this.matchesSearch(option, term));
   });
 
   constructor() {
@@ -127,5 +177,35 @@ export class SelectOptionComponent implements ControlValueAccessor {
 
   onSearch(value: string) {
     this.searchTerm.set(value ?? '');
+  }
+
+  getAvatarFallback(option: SelectOption): string {
+    if (option.avatarFallback?.trim()) {
+      return option.avatarFallback.trim().slice(0, 2).toUpperCase();
+    }
+
+    return option.label
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0])
+      .join('')
+      .toUpperCase() || 'NA';
+  }
+
+  private matchesSearch(option: SelectOption, term: string): boolean {
+    const content = [
+      option.label,
+      option.description,
+      option.meta,
+      option.code,
+      option.badge,
+      option.searchText,
+    ]
+      .filter(Boolean)
+      .join(' ')
+      .toLowerCase();
+
+    return content.includes(term);
   }
 }

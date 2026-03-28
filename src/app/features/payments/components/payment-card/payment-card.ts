@@ -4,6 +4,8 @@ import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardCardComponent } from '@/shared/components/card';
 import { ZardIconComponent } from '@/shared/components/icon';
 import { ZardPopoverComponent, ZardPopoverDirective } from '@/shared/components/popover';
+import { SgaDisableIfNoPermissionDirective } from '@/shared/core/directives/permission/disable-if-no-permission.directive';
+import { SgaHasPermissionDirective } from '@/shared/core/directives/permission/has-permission.directive';
 import type { Payment } from '../../types/payment-types';
 
 @Component({
@@ -16,6 +18,8 @@ import type { Payment } from '../../types/payment-types';
     ZardIconComponent,
     ZardPopoverDirective,
     ZardPopoverComponent,
+    SgaHasPermissionDirective,
+    SgaDisableIfNoPermissionDirective,
   ],
   templateUrl: './payment-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

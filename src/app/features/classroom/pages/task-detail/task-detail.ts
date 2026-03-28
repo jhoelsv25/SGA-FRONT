@@ -1,10 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { AuthFacade } from '@auth/services/store/auth.acede';
 import { Toast } from '@core/services/toast';
 import { ClassroomApi, type ClassroomTask } from '../../services/classroom-api';
+import { ClassroomSocketService } from '../../services/classroom-socket';
 import { ClassroomStore } from '../../services/store/classroom.store';
 
 @Component({
@@ -18,8 +20,10 @@ export default class TaskDetail implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly store = inject(ClassroomStore);
   private readonly api = inject(ClassroomApi);
+  private readonly socket = inject(ClassroomSocketService);
   private readonly authFacade = inject(AuthFacade);
   private readonly toast = inject(Toast);
+  private readonly destroy$ = new Subject<void>();
 
   public task = signal<ClassroomTask | null>(null);
   public sectionCourseId = signal('');
@@ -69,8 +73,25 @@ export default class TaskDetail implements OnInit {
     if (sectionId && taskId) {
       this.sectionCourseId.set(sectionId);
       this.taskId.set(taskId);
+      this.socket.taskEvent$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((event) => {
+          if (event.action === 'deleted' && event.id === this.taskId()) {
+            this.task.set(null);
+            return;
+          }
+
+          if (event.action === 'updated' && event.task?.id === this.taskId()) {
+            this.task.set(event.task);
+          }
+        });
       this.loadTask();
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loadTask() {

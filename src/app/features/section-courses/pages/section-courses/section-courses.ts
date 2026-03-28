@@ -17,6 +17,7 @@ import { ZardInputDirective } from '@/shared/components/input';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardFormImports } from '@/shared/components/form';
 import { ScheduleForm } from '../../../schedules/components/schedule-form/schedule-form';
+import { AuthStore } from '@auth/services/store/auth.store';
 
 
 @Component({
@@ -33,6 +34,7 @@ export default class SectionCoursesPage {
   private confirmDialog = inject(DialogConfirmService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private authStore = inject(AuthStore);
 
   readonly skeletonItems = [1, 2, 3, 4];
   searchTerm = signal('');
@@ -42,7 +44,58 @@ export default class SectionCoursesPage {
   courseName = signal('');
   sectionName = signal('');
   teacherName = signal('');
-  headerConfig = computed(() => this.store.headerConfig());
+  roleType = computed(() => this.authStore.currentUser()?.profile?.type ?? 'user');
+  headerConfig = computed(() => {
+    const base = this.store.headerConfig();
+    const roleType = this.roleType();
+
+    if (roleType === 'teacher') {
+      return {
+        ...base,
+        title: 'Mis cursos',
+        subtitle: 'Revisa tus cursos, secciones asignadas y accesos operativos del aula.',
+      };
+    }
+
+    if (roleType === 'student') {
+      return {
+        ...base,
+        title: 'Mis cursos',
+        subtitle: 'Consulta tus cursos activos y el contexto de cada sección.',
+      };
+    }
+
+    if (roleType === 'guardian') {
+      return {
+        ...base,
+        title: 'Cursos del hogar',
+        subtitle: 'Revisa los cursos y secciones vinculados a tus estudiantes.',
+      };
+    }
+
+    return base;
+  });
+  searchPlaceholder = computed(() => {
+    const roleType = this.roleType();
+    if (roleType === 'teacher') return 'Buscar por curso, sección o grupo...';
+    if (roleType === 'student') return 'Buscar entre mis cursos...';
+    if (roleType === 'guardian') return 'Buscar por curso o sección del hogar...';
+    return 'Buscar por curso o sección...';
+  });
+  emptyTitle = computed(() => {
+    const roleType = this.roleType();
+    if (roleType === 'teacher') return 'Sin cursos asignados';
+    if (roleType === 'student') return 'Sin cursos activos';
+    if (roleType === 'guardian') return 'Sin cursos vinculados';
+    return 'Sin asignaciones';
+  });
+  emptyDescription = computed(() => {
+    const roleType = this.roleType();
+    if (roleType === 'teacher') return 'Aún no tienes cursos o secciones asignadas para trabajar.';
+    if (roleType === 'student') return 'Todavía no tienes cursos visibles en tu panel.';
+    if (roleType === 'guardian') return 'Todavía no hay cursos disponibles para tus estudiantes vinculados.';
+    return 'Aún no hay cursos asignados a secciones. Crea la primera asignación.';
+  });
 
   headerActions = computed(() =>
     this.permissionStore.filterActions(this.store.actions().filter((a) => a.typeAction === 'header')),

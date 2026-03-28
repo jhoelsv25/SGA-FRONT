@@ -6,16 +6,15 @@ import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@ang
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ScheduleStore } from '../../services/store/schedule.store';
 import { Schedule, ScheduleCreate } from '../../types/schedule-types';
-import { SectionCourseApi } from '../../../section-courses/services/section-course-api';
 import { SectionCourse } from '../../../section-courses/types/section-course-types';
-import { DataResponse } from '@core/types/pagination-types';
 import { ZardFormImports } from '@/shared/components/form';
+import { SectionCourseSelect } from '@/shared/widgets/selects';
 
 
 @Component({
   selector: 'sga-schedule-form',
   standalone: true,
-  imports: [ReactiveFormsModule, ZardButtonComponent, SelectOptionComponent, ZardInputDirective, ...ZardFormImports],
+  imports: [ReactiveFormsModule, ZardButtonComponent, SelectOptionComponent, ZardInputDirective, SectionCourseSelect, ...ZardFormImports],
   templateUrl: './schedule-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -24,17 +23,10 @@ export class ScheduleForm implements OnInit {
   private data = inject(Z_MODAL_DATA, { optional: true });
   private ref = inject(ZardDialogRef);
   private fb = inject(FormBuilder);
-  private sectionCourseApi = inject(SectionCourseApi);
-
   form!: FormGroup;
   current: Schedule | null = null;
   preselectedSectionCourse: SectionCourse | null = null;
   selectedSectionCourseLabel = signal<string | null>(null);
-  sectionCourseOptions = signal<SelectOption[]>([]);
-  loadingSectionCourses = signal(false);
-  sectionCoursePage = 1;
-  readonly sectionCoursePageSize = 30;
-  sectionCourseHasMore = signal(true);
   durationPreview = signal('');
 
   dayOptions = [
@@ -79,11 +71,10 @@ export class ScheduleForm implements OnInit {
     });
 
     this.bindTimeCalculation();
-    this.loadSectionCourses(true);
     this.durationPreview.set(this.formatTimeDisplay(end));
 
     if (this.preselectedSectionCourse) {
-      this.selectedSectionCourseLabel.set(this.toSectionCourseOption(this.preselectedSectionCourse).label);
+      this.selectedSectionCourseLabel.set(this.toSectionCourseLabel(this.preselectedSectionCourse));
     }
   }
 
@@ -92,38 +83,7 @@ export class ScheduleForm implements OnInit {
     this.selectedSectionCourseLabel.set(typed?.label ?? null);
   }
 
-  loadSectionCourses(reset = false) {
-    if (reset) {
-      this.sectionCoursePage = 1;
-      this.sectionCourseHasMore.set(true);
-      this.sectionCourseOptions.set([]);
-    }
-    if (!this.sectionCourseHasMore() || this.loadingSectionCourses()) return;
-    this.loadingSectionCourses.set(true);
-    this.sectionCourseApi.getAll({ page: this.sectionCoursePage, size: this.sectionCoursePageSize }).subscribe({
-      next: (response: DataResponse<SectionCourse>) => {
-        const options = (response.data ?? []).map((item: SectionCourse) => this.toSectionCourseOption(item));
-        this.sectionCourseOptions.update((current) => [...current, ...options]);
-        const loaded = this.sectionCourseOptions().length;
-        this.sectionCourseHasMore.set(loaded < (response.total ?? loaded));
-        this.sectionCoursePage += 1;
-        this.loadingSectionCourses.set(false);
-
-        const currentId = this.form.get('sectionCourse')?.value;
-        if (currentId) {
-          const currentOption = this.sectionCourseOptions().find((option: SelectOption) => option.value === currentId);
-          if (currentOption) {
-            this.selectedSectionCourseLabel.set(currentOption.label);
-          }
-        }
-      },
-      error: () => {
-        this.loadingSectionCourses.set(false);
-      },
-    });
-  }
-
-  private toSectionCourseOption(item: SectionCourse): SelectOption {
+  private toSectionCourseLabel(item: SectionCourse): string {
     const course = item.course?.name?.trim() || 'Curso';
     const section = item.section?.name?.trim() || 'Sección';
     const academicYear = item.academicYear?.name?.trim();
@@ -133,10 +93,7 @@ export class ScheduleForm implements OnInit {
 
     const extras = [academicYear, teacherName].filter(Boolean).join(' · ');
 
-    return {
-      value: item.id,
-      label: extras ? `${course} - ${section} · ${extras}` : `${course} - ${section}`,
-    };
+    return extras ? `${course} - ${section} · ${extras}` : `${course} - ${section}`;
   }
 
   private bindTimeCalculation() {

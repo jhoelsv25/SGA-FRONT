@@ -8,6 +8,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Toast } from '@core/services/toast';
 import { TeacherAttendanceApi } from '@features/teachers/services/api/teacher-attendance-api';
 import { TeacherAttendanceStatus } from '@features/teachers/types/teacher-attendance-types';
+import { TeacherSelect } from '@/shared/widgets/selects';
 
 interface ManualAttendanceDialogData {
   date: string;
@@ -18,7 +19,7 @@ interface ManualAttendanceDialogData {
 @Component({
   selector: 'sga-teacher-attendance-manual-form',
   standalone: true,
-  imports: [ReactiveFormsModule, ZardButtonComponent, ZardInputDirective, SelectOptionComponent],
+  imports: [ReactiveFormsModule, ZardButtonComponent, ZardInputDirective, SelectOptionComponent, TeacherSelect],
   templateUrl: './teacher-attendance-manual-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -30,13 +31,6 @@ export class TeacherAttendanceManualForm {
   private readonly toast = inject(Toast);
 
   loading = false;
-
-  teacherOptions: LocalSelectOption[] = [
-    { value: '', label: 'Seleccione docente...' },
-    ...this.data.teachers.map((t) => ({
-      value: t.id,
-      label: `${t.teacherCode} - ${t.specialization}`,
-    }))];
 
   statusOptions: LocalSelectOption[] = [
     { value: 'present' satisfies TeacherAttendanceStatus, label: 'Presente' },

@@ -5,11 +5,12 @@ import { ChangeDetectionStrategy, Component, inject, OnInit, input } from '@angu
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PaymentStore } from '../../services/store/payment.store';
 import { Payment, PaymentCreate } from '../../types/payment-types';
+import { StudentSelect } from '@/shared/widgets/selects';
 
 
 @Component({
   selector: 'sga-payment-form',
-  imports: [ReactiveFormsModule, ZardButtonComponent, ZardInputDirective],
+  imports: [ReactiveFormsModule, ZardButtonComponent, ZardInputDirective, StudentSelect],
   templateUrl: './payment-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

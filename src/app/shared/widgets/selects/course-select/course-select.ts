@@ -1,10 +1,10 @@
 import { ZardSelectComponent, ZardSelectItemComponent } from '@/shared/components/select';
-import { SelectOption } from '@/shared/widgets/select-option/select-option';
 import { ChangeDetectionStrategy, Component, computed, ElementRef, forwardRef, HostListener, inject, input, output, signal, viewChild, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { CourseApi } from '@features/courses/services/course-api';
 import type { Course } from '@features/courses/types/course-types';
+import { ZardInputDirective } from '@/shared/components/input';
 
 function getLabel(c: Course): string {
   return `${c.code} - ${c.name}`;
@@ -14,11 +14,15 @@ function getInitials(c: Course): string {
   return (c.code ?? c.name ?? c.id).slice(0, 2).toUpperCase();
 }
 
+function getSubtitle(c: Course): string {
+  return c.description || 'Curso';
+}
+
 
 @Component({
   selector: 'sga-course-select',
   standalone: true,
-  imports: [CommonModule, ZardSelectComponent, ZardSelectItemComponent],
+  imports: [CommonModule, FormsModule, ZardSelectComponent, ZardSelectItemComponent, ZardInputDirective],
   templateUrl: './course-select.html',
   providers: [
     { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => CourseSelect), multi: true },
@@ -65,9 +69,10 @@ export class CourseSelect implements ControlValueAccessor, OnInit {
 
   getLabel = getLabel;
   getInitials = getInitials;
+  getSubtitle = getSubtitle;
 
-  onSearchInput(e: Event) {
-    this.searchTerm.set((e.target as HTMLInputElement).value);
+  onSearchInput(value: string) {
+    this.searchTerm.set(value ?? '');
   }
 
   onTriggerKeyDown(e: KeyboardEvent) {

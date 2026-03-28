@@ -1,5 +1,6 @@
 export type LocalSelectOption = { value: string | number; label: string; [key: string]: any };
 import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
+import { SectionSelect } from '@/shared/widgets/selects';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardInputDirective } from '@/shared/components/input';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
@@ -13,7 +14,7 @@ import { Section } from '@features/sections/types/section-types';
 
 @Component({
   selector: 'sga-communication-form',
-  imports: [ReactiveFormsModule, ZardButtonComponent, ZardInputDirective, SelectOptionComponent],
+  imports: [ReactiveFormsModule, ZardButtonComponent, ZardInputDirective, SelectOptionComponent, SectionSelect],
   templateUrl: './communication-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

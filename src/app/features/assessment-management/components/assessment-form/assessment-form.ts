@@ -6,6 +6,7 @@ import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardDatePickerComponent } from '@/shared/components/date-picker';
 import { ZardInputDirective } from '@/shared/components/input';
 import { SelectOptionComponent } from '@/shared/widgets/select-option/select-option';
+import { CompetencySelect, PeriodSelect, SectionCourseSelect } from '@/shared/widgets/selects';
 import { AssessmentApi } from '../../services/assessment-api';
 import { Assessment, AssessmentUpsertPayload } from '../../types/assessment-types';
 import { PeriodApi } from '../../../periods/services/period-api';
@@ -28,6 +29,9 @@ type LocalSelectOption = { value: string | number; label: string };
     ZardDatePickerComponent,
     ZardInputDirective,
     SelectOptionComponent,
+    SectionCourseSelect,
+    PeriodSelect,
+    CompetencySelect,
   ],
   templateUrl: './assessment-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

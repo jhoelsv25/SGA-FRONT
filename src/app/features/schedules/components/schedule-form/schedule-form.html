@@ -12,15 +12,11 @@
         <z-form-field>
           <label z-form-label for="sectionCourse">Curso - Sección</label>
           <z-form-control>
-            <z-select-option
+            <sga-section-course-select
               id="sectionCourse"
-              [options]="sectionCourseOptions()"
-              [canLoadMore]="sectionCourseHasMore()"
-              [loadingMore]="loadingSectionCourses()"
-              (loadMore)="loadSectionCourses()"
               formControlName="sectionCourse"
-              [placeholder]="loadingSectionCourses() ? 'Cargando asignaciones...' : 'Seleccionar curso y sección'"
-              (selectionChange)="onSectionCourseSelect($event)"></z-select-option>
+              placeholder="Seleccionar curso y sección"
+              (selectionChange)="onSectionCourseSelect($event)"></sga-section-course-select>
           </z-form-control>
         </z-form-field>
       </div>

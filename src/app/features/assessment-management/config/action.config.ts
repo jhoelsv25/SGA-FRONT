@@ -13,7 +13,7 @@ export const ASSESSMENT_ACTIONS: ActionConfig[] = [
     label: 'Nueva Evaluación',
     icon: 'fas fa-plus',
     typeAction: 'header',
-    permissions: ['manage_assessment'],
+    permissions: ['assessment:create'],
     color: 'primary',
   },
   {
@@ -21,7 +21,7 @@ export const ASSESSMENT_ACTIONS: ActionConfig[] = [
     label: 'Editar',
     icon: 'fas fa-edit',
     typeAction: 'row',
-    permissions: ['manage_assessment'],
+    permissions: ['assessment:update'],
     color: 'secondary',
   },
   {
@@ -29,6 +29,6 @@ export const ASSESSMENT_ACTIONS: ActionConfig[] = [
     label: 'Eliminar',
     icon: 'fas fa-trash',
     typeAction: 'row',
-    permissions: ['manage_assessment'],
+    permissions: ['assessment:delete'],
     color: 'danger',
   }];

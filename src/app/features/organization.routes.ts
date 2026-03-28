@@ -5,19 +5,19 @@ export default [
     path: 'sections',
     loadComponent: () => import('./sections/pages/sections/sections'),
     title: 'Secciones',
-    data: { permissions: ['view_section', 'manage_section'] },
+    data: { permissions: ['section:view'] },
   },
   {
     path: 'section-courses',
     loadComponent: () => import('./section-courses/pages/section-courses/section-courses'),
     title: 'Cursos por Sección',
-    data: { permissions: ['view_section_course', 'manage_section_course'] },
+    data: { permissions: ['section_course:view'] },
   },
   {
     path: 'schedules',
     loadComponent: () => import('./schedules/pages/schedules/schedules'),
     title: 'Horarios',
-    data: { permissions: ['view_schedule', 'manage_schedule'] },
+    data: { permissions: ['schedule:view'] },
   },
   {
     path: '',

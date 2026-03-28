@@ -32,7 +32,12 @@
         </div>
       </div>
 
-      <button z-button zType="outline" class="rounded-2xl px-6" (click)="downloadTemplate()">
+      <button
+        *sgaHasPermission="'user:export'"
+        z-button
+        zType="outline"
+        class="rounded-2xl px-6"
+        (click)="downloadTemplate()">
         <z-icon zType="file-text" class="mr-2 h-4 w-4" />
         Descargar plantilla
       </button>
@@ -140,7 +145,12 @@
 
           <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-between">
             <button z-button zType="ghost" class="rounded-2xl" (click)="resetFlow()">Subir otro archivo</button>
-            <button z-button class="rounded-2xl px-8" [disabled]="!canStartImport()" (click)="startAsyncImport()">
+            <button
+              *sgaHasPermission="'user:import'"
+              z-button
+              class="rounded-2xl px-8"
+              [disabled]="!canStartImport()"
+              (click)="startAsyncImport()">
               <z-icon zType="upload" class="mr-2 h-4 w-4" />
               Iniciar importación
             </button>
@@ -246,13 +256,22 @@
             <div class="flex flex-col gap-3 sm:flex-row">
               <button z-button zType="outline" class="rounded-2xl" (click)="resetFlow()">Importar otro archivo</button>
               @if ((result()?.errors?.length ?? 0) > 0) {
-                <button z-button zType="outline" class="rounded-2xl" (click)="exportErrors()">
+                <button
+                  *sgaHasPermission="'user:export'"
+                  z-button
+                  zType="outline"
+                  class="rounded-2xl"
+                  (click)="exportErrors()">
                   <z-icon zType="file-text" class="mr-2 h-4 w-4" />
                   Descargar errores
                 </button>
               }
             </div>
-            <button z-button class="rounded-2xl px-8" (click)="goBack()">Volver a usuarios</button>
+            <button
+              [sgaDisableIfNoPermission]="'user:view'"
+              z-button
+              class="rounded-2xl px-8"
+              (click)="goBack()">Volver a usuarios</button>
           </div>
         </z-card>
       }

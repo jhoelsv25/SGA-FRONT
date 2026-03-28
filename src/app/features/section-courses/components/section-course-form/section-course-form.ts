@@ -1,30 +1,21 @@
-import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
+import { SelectOptionComponent } from '@/shared/widgets/select-option/select-option';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardInputDirective } from '@/shared/components/input';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, inject, OnInit, signal, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal, input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
 import { SectionCourseStore } from '../../services/store/section-course.store';
 import type { SectionCourse, SectionCourseCreate } from '../../types/section-course-types';
 import { Observable } from 'rxjs';
-import { forkJoin } from 'rxjs';
 import { MODALITY_OPTIONS, STATUS_OPTIONS } from '../../config/form.constants';
-import { SectionApi } from '../../../sections/services/api/section-api';
-import { CourseApi } from '../../../courses/services/course-api';
-import { YearAcademicApi } from '../../../year-academic/services/api/year-academic-api';
-import { TeacherApi } from '../../../teachers/services/api/teacher-api';
-import { Section } from '../../../sections/types/section-types';
-import { Course } from '../../../courses/types/course-types';
-import { YearAcademic } from '../../../year-academic/types/year-academi-types';
-import { Teacher } from '../../../teachers/types/teacher-types';
-import { DataResponse } from '@core/types/pagination-types';
+import { CourseSelect, SectionSelect, TeacherSelect, YearAcademicSelect } from '@/shared/widgets/selects';
 
 
 @Component({
   selector: 'sga-section-course-form',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, ZardInputDirective, SelectOptionComponent, ZardButtonComponent],
+  imports: [ReactiveFormsModule, CommonModule, ZardInputDirective, SelectOptionComponent, ZardButtonComponent, SectionSelect, CourseSelect, YearAcademicSelect, TeacherSelect],
   templateUrl: './section-course-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -33,25 +24,11 @@ export class SectionCourseForm implements OnInit {
   private ref = inject(ZardDialogRef);
   private fb = inject(FormBuilder);
   private store = inject(SectionCourseStore);
-  private cdr = inject(ChangeDetectorRef);
-  private sectionApi = inject(SectionApi);
-  private courseApi = inject(CourseApi);
-  private yearAcademicApi = inject(YearAcademicApi);
-  private teacherApi = inject(TeacherApi);
-
   current: SectionCourse | null = null;
   saving = signal(false);
 
   modalityOptions = MODALITY_OPTIONS;
   statusOptions = STATUS_OPTIONS;
-  sectionOptions = signal<SelectOption[]>([]);
-  courseOptions = signal<SelectOption[]>([]);
-  academicYearOptions = signal<SelectOption[]>([]);
-  teacherOptions = signal<SelectOption[]>([]);
-  teacherPage = 1;
-  readonly teacherPageSize = 30;
-  teacherHasMore = signal(true);
-  teacherLoadingMore = signal(false);
 
   title = computed(() => (this.current ? 'Editar asignación' : 'Asignar curso a sección'));
   subTitle = computed(() => 'Complete el formulario para continuar');
@@ -81,66 +58,6 @@ export class SectionCourseForm implements OnInit {
         teacher: this.current.teacher ? (typeof this.current.teacher === 'string' ? this.current.teacher : this.current.teacher?.id) : null,
       });
     }
-    this.loadOptions();
-    this.loadMoreTeachers();
-    this.cdr.markForCheck();
-  }
-
-  private loadOptions() {
-    forkJoin({
-      sections: this.sectionApi.getAll({}),
-      courses: this.courseApi.getAll({}),
-      years: this.yearAcademicApi.getAll({}),
-    }).subscribe({
-      next: ({ sections, courses, years }) => {
-        this.sectionOptions.set((sections.data ?? []).map((item: Section) => ({
-          value: item.id,
-          label: item.name ? `Sección ${item.name}` : item.id,
-        })));
-        this.courseOptions.set((courses.data ?? []).map((item: Course) => ({
-          value: item.id,
-          label: item.code ? `${item.code} · ${item.name}` : item.name,
-        })));
-        this.academicYearOptions.set((years.data ?? []).map((item: YearAcademic) => ({
-          value: item.id,
-          label: item.name,
-        })));
-        this.cdr.markForCheck();
-      },
-    });
-  }
-
-  loadMoreTeachers() {
-    if (!this.teacherHasMore() || this.teacherLoadingMore()) return;
-    this.teacherLoadingMore.set(true);
-    this.teacherApi.getAll({ page: this.teacherPage, size: this.teacherPageSize }).subscribe({
-      next: (teachers) => {
-        const options = (teachers.data ?? []).map((item: Teacher) => ({
-          value: item.id,
-          label: this.getTeacherOptionLabel(item),
-        }));
-        this.teacherOptions.update((current) => [...current, ...options]);
-        const loaded = this.teacherOptions().length;
-        this.teacherHasMore.set(loaded < (teachers.total ?? loaded));
-        this.teacherPage += 1;
-        this.teacherLoadingMore.set(false);
-        this.cdr.markForCheck();
-      },
-      error: () => {
-        this.teacherLoadingMore.set(false);
-        this.cdr.markForCheck();
-      },
-    });
-  }
-
-  private getTeacherOptionLabel(item: Teacher): string {
-    const person = typeof item.person === 'object' ? item.person : null;
-    const name = [person?.['firstName' as keyof typeof person], person?.['lastName' as keyof typeof person]]
-      .filter(Boolean)
-      .join(' ');
-    return name
-      ? `${item.teacherCode} · ${name}`
-      : `${item.teacherCode} · ${item.specialization}`;
   }
 
   onClose() {
