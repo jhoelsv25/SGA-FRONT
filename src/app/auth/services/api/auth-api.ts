@@ -4,6 +4,7 @@ import {
   AccountAuditResponse,
   AccountEmailLogResponse,
   AccountSessionResponse,
+  AccountSystemSetting,
   AccountUserDetail,
   AccountUserPreferences,
   AuthResponse,
@@ -90,6 +91,14 @@ export class AuthApi {
 
   updateUserPreferences(userId: string, preferences: Record<string, any>): Observable<AccountUserPreferences> {
     return this.http.patch<AccountUserPreferences>(`user-preferences/${userId}`, { preferences });
+  }
+
+  getSystemSetting(key: string): Observable<{ data: AccountSystemSetting }> {
+    return this.http.get<{ data: AccountSystemSetting }>(`system-settings/${key}`);
+  }
+
+  updateSystemSetting(key: string, value: Record<string, any>): Observable<{ data: AccountSystemSetting }> {
+    return this.http.patch<{ data: AccountSystemSetting }>(`system-settings/${key}`, { value });
   }
 
   checkToken(): Observable<AuthResponse> {
