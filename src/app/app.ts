@@ -3,13 +3,22 @@ import { Component, inject, signal } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { AuthInitializer } from '@auth/services/auth-initializer';
 import { AuthFacade } from '@auth/services/store/auth.acede';
+import { NotificationPermissionCardComponent } from '@core/components/notification-permission-card/notification-permission-card';
+import { RealtimeNotificationStackComponent } from '@core/components/realtime-notification-stack/realtime-notification-stack';
 
 
 @Component({
   selector: 'sga-root',
-  imports: [RouterOutlet, ZardToastComponent],
+  imports: [
+    RouterOutlet,
+    ZardToastComponent,
+    NotificationPermissionCardComponent,
+    RealtimeNotificationStackComponent,
+  ],
   template: ` <z-toast />
-    <router-outlet />`,
+    <router-outlet />
+    <sga-realtime-notification-stack />
+    <sga-notification-permission-card />`,
 })
 export class App {
   protected readonly title = signal('SGA-FRONT');
@@ -18,11 +27,8 @@ export class App {
   private router = inject(Router);
 
   constructor() {
-    // 🚀 Inicializar autenticación de forma NO bloqueante
     this.authInitializer.initialize().then((isAuthenticated) => {
       console.log('✅ [App] Auth initialized:', isAuthenticated);
-
-      // Si está autenticado y en ruta pública, redirigir
       if (isAuthenticated) {
         const currentUrl = this.router.url;
         const publicRoutes = ['/auth/login', '/auth/forgot-password', '/auth/reset-password'];

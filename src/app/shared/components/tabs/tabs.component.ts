@@ -61,7 +61,7 @@ export class ZardTabComponent {
       <ng-container [ngTemplateOutlet]="navigationBlock" />
     }
 
-    <div class="flex-1">
+    <div class="flex-1 min-h-0">
       @for (tab of tabs(); track $index; let index = $index) {
         <div
           role="tabpanel"
@@ -69,7 +69,7 @@ export class ZardTabComponent {
           [attr.aria-labelledby]="'tab-' + index"
           [attr.tabindex]="0"
           [hidden]="activeTabIndex() !== index"
-          class="focus-visible:ring-primary/50 outline-none focus-visible:ring-2"
+          class="h-full min-h-0 focus-visible:ring-primary/50 outline-none focus-visible:ring-2"
         >
           <ng-container [ngTemplateOutlet]="tab.contentTemplate()" />
         </div>
