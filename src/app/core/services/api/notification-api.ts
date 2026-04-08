@@ -14,12 +14,38 @@ export interface Notification {
   priority: string;
   recipientId: string;
   createdAt: string;
+  metadata?: {
+    sender?: {
+      id?: string;
+      name?: string;
+      role?: string;
+      avatarUrl?: string | null;
+    };
+    [key: string]: unknown;
+  };
 }
 
 export interface NotificationCursorResponse {
   data: Notification[];
   nextCursor: { date: string; id: string } | null;
   unreadCount: number;
+}
+
+export interface PushPublicKeyResponse {
+  message: string;
+  data: {
+    publicKey: string;
+  };
+}
+
+export interface BrowserPushSubscriptionPayload {
+  endpoint: string;
+  expirationTime?: number | null;
+  keys: {
+    p256dh: string;
+    auth: string;
+  };
+  userAgent?: string;
 }
 
 @Injectable({
@@ -39,5 +65,18 @@ export class NotificationApi {
 
   markAllAsRead(): Observable<any> {
     return this.http.patch(`${this.baseUrl}/mark-all-read`, {});
+  }
+
+  getPushPublicKey(): Observable<PushPublicKeyResponse> {
+    return this.http.get<PushPublicKeyResponse>(`${this.baseUrl}/push/public-key`);
+  }
+
+  registerPushSubscription(payload: BrowserPushSubscriptionPayload): Observable<any> {
+    return this.http.post(`${this.baseUrl}/push/subscriptions`, payload);
+  }
+
+  unregisterPushSubscription(endpoint?: string): Observable<any> {
+    const params: Record<string, string> = endpoint ? { endpoint } : {};
+    return this.http.delete(`${this.baseUrl}/push/subscriptions`, { params });
   }
 }
