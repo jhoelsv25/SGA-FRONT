@@ -94,6 +94,12 @@ export const LayoutStore = signalStore(
         });
       }
     },
+    setAsideType(type: string) {
+      patchState(store, {
+        titleAside: type,
+        isShowAside: true,
+      });
+    },
     closeAside() {
       patchState(store, {
         isShowAside: false,

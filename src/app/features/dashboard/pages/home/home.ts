@@ -3,9 +3,10 @@ import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@a
 import { RouterLink } from '@angular/router';
 import { AuthFacade } from '@auth/services/store/auth.acede';
 import { DashboardStore } from '@features/dashboard/application/dashboard.store';
+import { RealtimeTeachingOverviewComponent } from '@features/dashboard/components/realtime-teaching-overview/realtime-teaching-overview';
 @Component({
   selector: 'sga-home',
-  imports: [ZardCardComponent, RouterLink],
+  imports: [ZardCardComponent, RouterLink, RealtimeTeachingOverviewComponent],
   templateUrl: './home.html',
   styleUrl: './home.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -17,6 +18,10 @@ export default class Home implements OnInit {
   currentUser = computed(() => this.authFacade.getCurrentUser());
   dashboard = computed(() => this.dashboardStore.data());
   dashboardLoading = computed(() => this.dashboardStore.loading());
+  roleType = computed(() => this.currentUser()?.profile?.type ?? 'user');
+  canSeeRealtimeTeaching = computed(() =>
+    ['admin', 'superadmin', 'director', 'subdirector', 'ugel'].includes(this.roleType()),
+  );
 
   greeting = computed(() => {
     const hour = new Date().getHours();

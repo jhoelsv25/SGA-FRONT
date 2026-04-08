@@ -8,12 +8,6 @@ export default [
     data: { permissions: ['payment:view'] },
   },
   {
-    path: ':id',
-    loadComponent: () => import('./pages/payment-detail/payment-detail'),
-    title: 'Detalle de Pago',
-    data: { permissions: ['payment:view'] },
-  },
-  {
     path: 'pending',
     loadComponent: () => import('./pages/payments/payments'), // Placeholder
     title: 'Pendientes',
@@ -23,6 +17,18 @@ export default [
     path: 'history',
     loadComponent: () => import('./pages/payments/payments'), // Placeholder
     title: 'Historial',
+    data: { permissions: ['payment:view'] },
+  },
+  {
+    path: 'group/:groupKey',
+    loadComponent: () => import('./pages/payment-group-detail/payment-group-detail'),
+    title: 'Grupo de Cobro',
+    data: { permissions: ['payment:view'] },
+  },
+  {
+    path: ':id',
+    loadComponent: () => import('./pages/payment-detail/payment-detail'),
+    title: 'Detalle de Pago',
     data: { permissions: ['payment:view'] },
   },
   {

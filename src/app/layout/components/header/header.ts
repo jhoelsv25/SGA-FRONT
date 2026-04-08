@@ -20,11 +20,18 @@ import {
   UserMenuStat,
 } from '@shared/widgets/user-menu/user-menu';
 import { Subject } from 'rxjs';
+import { TeacherLiveClassPopoverComponent } from './components/teacher-live-class-popover/teacher-live-class-popover';
 
 @Component({
   selector: 'sga-header',
   standalone: true,
-  imports: [CommonModule, RouterModule, UserMenu, ZardIconComponent],
+  imports: [
+    CommonModule,
+    RouterModule,
+    UserMenu,
+    ZardIconComponent,
+    TeacherLiveClassPopoverComponent,
+  ],
   templateUrl: './header.html',
   styleUrls: ['./header.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,6 +42,7 @@ export class Header implements OnInit, OnDestroy {
   private authFacade = inject(AuthFacade);
   private router = inject(Router);
   public notificationStore = inject(NotificationStore);
+  private outsideClickHandler = this.handleOutsideClick.bind(this);
 
   public unreadNotifications = computed(() => this.notificationStore.unreadCount());
 
@@ -49,6 +57,8 @@ export class Header implements OnInit, OnDestroy {
 
   public isSidebarCollapsed = computed(() => this.layout.isSidebarCollapsed());
   public modules = computed(() => this.authFacade.getModules());
+  public isTeacher = computed(() => this.resolveProfileType() === 'teacher');
+  public asideType = computed(() => this.layout.titleAside());
 
   public userMenuDetails = computed<UserMenuDetail[]>(() => {
     const user = this.currentUser();
@@ -120,13 +130,13 @@ export class Header implements OnInit, OnDestroy {
 
   ngOnInit() {
     // Cerrar menú al hacer clic fuera
-    document.addEventListener('click', this.handleOutsideClick.bind(this));
+    document.addEventListener('click', this.outsideClickHandler);
   }
 
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
-    document.removeEventListener('click', this.handleOutsideClick.bind(this));
+    document.removeEventListener('click', this.outsideClickHandler);
   }
 
   private handleOutsideClick(event: Event) {
@@ -145,6 +155,10 @@ export class Header implements OnInit, OnDestroy {
 
   public toggleAside(type: string): void {
     this.layout.toggleAside(type);
+  }
+
+  public isAsideActive(type: string): boolean {
+    return this.isShowAside() && this.asideType() === type;
   }
 
   public toggleMenu(): void {
@@ -258,6 +272,7 @@ export class Header implements OnInit, OnDestroy {
   goPaymentsHistory = () => this.router.navigateByUrl('/payments/history');
   goPaymentsPending = () => this.router.navigateByUrl('/payments/pending');
   goStudents = () => this.router.navigateByUrl('/students/list');
+
 
   public userMenuActions = computed<UserMenuAction[]>(() => {
     const roleType = this.resolveProfileType();

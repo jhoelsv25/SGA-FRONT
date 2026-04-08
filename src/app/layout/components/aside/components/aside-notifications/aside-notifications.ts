@@ -12,7 +12,7 @@ import { ZardEmptyComponent } from '@/shared/components/empty';
   standalone: true,
   imports: [CommonModule, ZardIconComponent, ZardButtonComponent, ZardEmptyComponent],
   template: `
-    <div class="flex flex-col h-full bg-card/10 backdrop-blur-xl">
+    <div class="flex h-full min-h-0 flex-col bg-card/10 backdrop-blur-xl">
       <!-- HEADER ACTIONS -->
       <div class="p-4 flex items-center justify-between border-b border-border/5">
         <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
@@ -31,47 +31,82 @@ import { ZardEmptyComponent } from '@/shared/components/empty';
 
       <!-- LIST -->
       <div
-        class="flex-1 overflow-y-auto p-4 space-y-3"
+        class="notification-list flex-1 min-h-0 overflow-y-auto p-4 space-y-3"
         id="noti-scroll"
         (scroll)="onScroll($event)"
       >
         @for (notification of store.data(); track notification.id) {
           <div
-            class="group p-4 rounded-2xl border transition-all duration-300 cursor-pointer relative overflow-hidden"
+            class="group relative cursor-pointer overflow-hidden rounded-[1.6rem] border p-4 transition-all duration-300"
             [class.bg-card]="notification.isRead"
-            [class.bg-primary/5]="!notification.isRead"
+            [class.bg-primary/6]="!notification.isRead"
             [class.border-border/5]="notification.isRead"
             [class.border-primary/20]="!notification.isRead"
             [class.shadow-lg]="!notification.isRead"
+            [class.hover:-translate-y-0.5]="true"
+            [class.hover:shadow-xl]="true"
             (click)="openNotification(notification)"
           >
+            <div
+              class="absolute inset-0 opacity-90"
+              class="bg-[radial-gradient(circle_at_top_right,rgba(79,70,229,0.08),transparent_40%),radial-gradient(circle_at_bottom_left,rgba(79,70,229,0.05),transparent_35%)]"
+            ></div>
+
             <!-- Unread Indicator -->
             @if (!notification.isRead) {
               <div class="absolute top-0 right-0 size-2 bg-primary rounded-bl-lg shadow-sm"></div>
             }
 
-            <div class="flex gap-4 relative z-10">
-              <div
-                class="shrink-0 size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shadow-inner"
-              >
-                <z-icon [zType]="getIcon(notification.type)" class="size-5" />
+            <div class="relative z-10 flex gap-4">
+              <div class="relative shrink-0">
+                @if (notification.metadata?.sender?.avatarUrl) {
+                  <img
+                    [src]="notification.metadata?.sender?.avatarUrl!"
+                    [alt]="notification.metadata?.sender?.name || 'Remitente'"
+                    class="size-11 rounded-2xl object-cover shadow-inner"
+                  />
+                } @else {
+                  <div
+                    class="flex size-11 items-center justify-center rounded-2xl bg-primary/12 text-primary shadow-inner"
+                  >
+                    <span class="text-[11px] font-black">
+                      {{ senderInitials(notification) }}
+                    </span>
+                  </div>
+                }
+
+                <div
+                  class="absolute -bottom-1 -right-1 flex size-5 items-center justify-center rounded-full border-2 border-white bg-primary/12 text-primary shadow-sm dark:border-neutral-950"
+                >
+                  <z-icon [zType]="getIcon(notification.type)" class="size-3" />
+                </div>
               </div>
               <div class="flex-1 space-y-1 min-w-0">
                 <div class="flex items-center justify-between">
-                  <h4
-                    class="text-xs font-black text-foreground truncate uppercase tracking-tight inter"
-                  >
-                    {{ notification.title }}
-                  </h4>
                   <span class="text-[8px] font-bold text-muted-foreground uppercase opacity-40">
                     {{ notification.createdAt | date: 'HH:mm' }}
                   </span>
                 </div>
-                <p class="text-[11px] text-muted-foreground leading-relaxed line-clamp-2">
+                <div class="flex flex-wrap items-center gap-2 text-[10px]">
+                  <span class="font-bold text-foreground/80">{{ senderName(notification) }}</span>
+                  <span class="text-muted-foreground/45">•</span>
+                  <span class="rounded-full border border-primary/15 bg-primary/6 px-2 py-0.5 font-semibold text-primary/80">
+                    {{ senderRole(notification) }}
+                  </span>
+                  <span class="rounded-full border border-primary/15 bg-primary/6 px-2 py-0.5 font-semibold text-primary/80">
+                    {{ priorityLabel(notification.priority) }}
+                  </span>
+                </div>
+                <h4
+                  class="line-clamp-2 pr-3 text-[0.82rem] font-black uppercase tracking-tight text-foreground"
+                >
+                  {{ notification.title }}
+                </h4>
+                <p class="line-clamp-3 text-[12px] leading-relaxed text-muted-foreground">
                   {{ notification.content }}
                 </p>
                 <div
-                  class="flex items-center gap-2 pt-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                  class="flex items-center gap-2 pt-1 transition-opacity opacity-0 group-hover:opacity-100"
                 >
                   <span class="text-[8px] font-black tracking-widest text-primary uppercase"
                     >Ver detalles</span
@@ -107,9 +142,20 @@ import { ZardEmptyComponent } from '@/shared/components/empty';
         display: block;
         height: 100%;
       }
+      .notification-list {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(148, 163, 184, 0.45) transparent;
+      }
       #noti-scroll {
         scrollbar-width: thin;
-        scrollbar-color: var(--border) transparent;
+        scrollbar-color: rgba(148, 163, 184, 0.45) transparent;
+      }
+      #noti-scroll::-webkit-scrollbar {
+        width: 8px;
+      }
+      #noti-scroll::-webkit-scrollbar-thumb {
+        background: rgba(148, 163, 184, 0.45);
+        border-radius: 999px;
       }
     `,
   ],
@@ -157,6 +203,36 @@ export class AsideNotifications {
         return 'graduation-cap';
       default:
         return 'bell';
+    }
+  }
+
+  senderName(notification: any): string {
+    return notification?.metadata?.sender?.name || 'Sistema SISAE';
+  }
+
+  senderRole(notification: any): string {
+    return notification?.metadata?.sender?.role || 'Sistema';
+  }
+
+  senderInitials(notification: any): string {
+    return this.senderName(notification)
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase() ?? '')
+      .join('');
+  }
+
+  priorityLabel(priority?: string): string {
+    switch ((priority || '').toLowerCase()) {
+      case 'urgent':
+        return 'Urgente';
+      case 'high':
+        return 'Alta';
+      case 'low':
+        return 'Baja';
+      default:
+        return 'Media';
     }
   }
 }

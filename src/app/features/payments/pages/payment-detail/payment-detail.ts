@@ -73,8 +73,8 @@ export default class PaymentDetailPage implements OnInit {
     if (!current) return;
     this.dialog.open(PaymentForm, {
       data: { current },
-      width: '480px',
-      maxHeight: '80vh',
+      width: '720px',
+      maxHeight: '88vh',
     }).closed.subscribe(() => this.reload());
   }
 

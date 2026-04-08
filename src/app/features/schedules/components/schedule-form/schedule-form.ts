@@ -2,10 +2,10 @@ import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-opt
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardInputDirective } from '@/shared/components/input';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ScheduleStore } from '../../services/store/schedule.store';
-import { Schedule, ScheduleCreate } from '../../types/schedule-types';
+import { Schedule, ScheduleCreate, ScheduleBlockType } from '../../types/schedule-types';
 import { SectionCourse } from '../../../section-courses/types/section-course-types';
 import { ZardFormImports } from '@/shared/components/form';
 import { SectionCourseSelect } from '@/shared/widgets/selects';
@@ -28,7 +28,13 @@ export class ScheduleForm implements OnInit {
   preselectedSectionCourse: SectionCourse | null = null;
   selectedSectionCourseLabel = signal<string | null>(null);
   durationPreview = signal('');
+  readonly blockType = signal<ScheduleBlockType>('class');
+  readonly isBreakBlock = computed(() => this.blockType() === 'break');
 
+  blockTypeOptions: SelectOption[] = [
+    { value: 'class', label: 'Clase' },
+    { value: 'break', label: 'Receso' },
+  ];
   dayOptions = [
     { value: 'monday', label: 'Lunes' },
     { value: 'tuesday', label: 'Martes' },
@@ -38,6 +44,7 @@ export class ScheduleForm implements OnInit {
     { value: 'saturday', label: 'Sábado' },
     { value: 'sunday', label: 'Domingo' }];
   durationOptions: SelectOption[] = [
+    { value: '15', label: '15 minutos' },
     { value: '30', label: '30 minutos' },
     { value: '45', label: 'Bloque simple · 45 min' },
     { value: '60', label: '1 hora' },
@@ -54,24 +61,29 @@ export class ScheduleForm implements OnInit {
     const start = this.current?.startAt ? this.formatTime(this.current.startAt) : '08:00';
     const end = this.current?.endAt ? this.formatTime(this.current.endAt) : '10:00';
     const durationMinutes = this.calculateDurationMinutes(start, end);
+    const currentBlockType = this.current?.blockType ?? 'class';
     const sectionCourseId = this.current?.sectionCourse
       ? typeof this.current.sectionCourse === 'string'
         ? this.current.sectionCourse
         : this.current.sectionCourse?.id
       : this.preselectedSectionCourse?.id ?? null;
+    this.blockType.set(currentBlockType);
 
     this.form = this.fb.group({
+      blockType: [currentBlockType, [Validators.required]],
       sectionCourse: [sectionCourseId ?? null, [Validators.required]],
       dayOfWeek: [this.current?.dayOfWeek ?? 'monday', [Validators.required]],
       startAt: [start, [Validators.required]],
       durationMinutes: [String(durationMinutes), [Validators.required]],
       endAt: [end, [Validators.required]],
       classroom: [this.current?.classroom ?? '', [Validators.required]],
+      title: [this.current?.title ?? ''],
       description: [this.current?.description ?? ''],
     });
 
     this.bindTimeCalculation();
-    this.durationPreview.set(this.formatTimeDisplay(end));
+    this.bindBlockTypeBehavior();
+    this.durationPreview.set(end);
 
     if (this.preselectedSectionCourse) {
       this.selectedSectionCourseLabel.set(this.toSectionCourseLabel(this.preselectedSectionCourse));
@@ -103,12 +115,37 @@ export class ScheduleForm implements OnInit {
       if (!startAt || !durationMinutes) return;
       const endAt = this.addMinutes(startAt, durationMinutes);
       this.form.get('endAt')?.setValue(endAt, { emitEvent: false });
-      this.durationPreview.set(this.formatTimeDisplay(endAt));
+      this.durationPreview.set(endAt);
     };
 
     this.form.get('startAt')?.valueChanges.subscribe(recalculateEnd);
     this.form.get('durationMinutes')?.valueChanges.subscribe(recalculateEnd);
     recalculateEnd();
+  }
+
+  private bindBlockTypeBehavior() {
+    const control = this.form.get('blockType');
+    const sectionCourseControl = this.form.get('sectionCourse');
+    const titleControl = this.form.get('title');
+    const applyType = (value: ScheduleBlockType) => {
+      this.blockType.set(value);
+      if (value === 'break') {
+        sectionCourseControl?.clearValidators();
+        sectionCourseControl?.setValue(null, { emitEvent: false });
+        if (!titleControl?.value) {
+          titleControl?.setValue('Receso', { emitEvent: false });
+        }
+      } else {
+        sectionCourseControl?.setValidators([Validators.required]);
+        if (this.preselectedSectionCourse && !sectionCourseControl?.value) {
+          sectionCourseControl?.setValue(this.preselectedSectionCourse.id, { emitEvent: false });
+        }
+      }
+      sectionCourseControl?.updateValueAndValidity({ emitEvent: false });
+    };
+
+    applyType((control?.value as ScheduleBlockType) ?? 'class');
+    control?.valueChanges.subscribe((value) => applyType((value as ScheduleBlockType) ?? 'class'));
   }
 
   private calculateDurationMinutes(start: string, end: string): number {
@@ -130,15 +167,6 @@ export class ScheduleForm implements OnInit {
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
   }
 
-  private formatTimeDisplay(value: string): string {
-    const [rawHours, rawMinutes] = value.split(':').map(Number);
-    const hours = rawHours ?? 0;
-    const minutes = rawMinutes ?? 0;
-    const suffix = hours >= 12 ? 'p. m.' : 'a. m.';
-    const normalizedHours = hours % 12 || 12;
-    return `${normalizedHours}:${minutes.toString().padStart(2, '0')} ${suffix}`;
-  }
-
   private formatTime(v: string | Date): string {
     if (typeof v === 'string') {
       if (v.includes('T')) return v.slice(11, 16);
@@ -151,15 +179,19 @@ export class ScheduleForm implements OnInit {
   submit() {
     if (this.form.invalid) return;
     const v = this.form.value;
-    const title = this.selectedSectionCourseLabel() ?? this.current?.title ?? v.sectionCourse ?? '';
+    const isBreak = v.blockType === 'break';
+    const title = isBreak
+      ? (v.title?.trim() || 'Receso')
+      : (this.selectedSectionCourseLabel() ?? this.current?.title ?? v.sectionCourse ?? '');
     const payload: ScheduleCreate = {
       title,
+      blockType: v.blockType,
       dayOfWeek: v.dayOfWeek,
       description: v.description || undefined,
       startAt: v.startAt,
       endAt: v.endAt,
       classroom: v.classroom,
-      sectionCourse: v.sectionCourse,
+      ...(isBreak ? {} : { sectionCourse: v.sectionCourse }),
     };
     if (this.current?.id) {
       this.store.update(this.current.id, payload);

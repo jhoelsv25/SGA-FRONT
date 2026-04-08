@@ -89,7 +89,7 @@ export class ZardDialogOptions<T, U> {
       </header>
     }
 
-    <main class="flex flex-col space-y-4">
+    <main class="dialog-scroll min-h-0 flex-1 overflow-y-auto pr-1">
       <ng-template cdkPortalOutlet />
 
       @if (isStringContent) {
@@ -150,6 +150,17 @@ export class ZardDialogOptions<T, U> {
       transition:
         opacity 150ms ease-in,
         transform 150ms ease-in;
+    }
+
+    .dialog-scroll {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .dialog-scroll::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+      display: none;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

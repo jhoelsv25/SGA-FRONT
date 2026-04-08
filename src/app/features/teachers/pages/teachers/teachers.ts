@@ -22,6 +22,7 @@ import { TeacherStore } from '../../services/store/teacher.store';
 import { Teacher, TeacherCreate, TeacherParams } from '../../types/teacher-types';
 import { TEACHER_ACTIONS } from '../../config/action.config';
 import { TEACHER_HEADER_CONFIG } from '../../config/header.config';
+import { RealtimeTeachingOverviewComponent } from '@features/dashboard/components/realtime-teaching-overview/realtime-teaching-overview';
 
 const EXCEL_COLUMNS = [
   { key: 'teacherCode', label: 'Codigo docente' },
@@ -80,6 +81,7 @@ function normalizeQueryValue(value: string | null): string {
     SelectOptionComponent,
     ZardInputDirective,
     ZardButtonComponent,
+    RealtimeTeachingOverviewComponent,
     ...ZardFormImports,
   ],
   templateUrl: './teachers.html',

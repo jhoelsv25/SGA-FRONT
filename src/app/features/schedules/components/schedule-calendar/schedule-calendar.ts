@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input, output } from '@an
 import { CommonModule } from '@angular/common';
 import { ZardPopoverComponent, ZardPopoverDirective } from '@/shared/components/popover';
 import { Schedule } from '../../types/schedule-types';
-import { DAY_ORDER, DAY_LABELS, HOUR_END, HOUR_START, SLOTS_PER_HOUR } from '../../config/schedule.constants';
+import { DAY_ORDER, DAY_LABELS, HOUR_END, HOUR_START, SLOT_HEIGHT_PX, SLOTS_PER_HOUR } from '../../config/schedule.constants';
 
 
 @Component({
@@ -34,6 +34,7 @@ export class ScheduleCalendarComponent {
   });
 
   readonly totalSlots = computed(() => this.timeSlots().length);
+  readonly gridHeightPx = computed(() => this.totalSlots() * SLOT_HEIGHT_PX);
   readonly hourLabels = computed(() => {
     const hours: number[] = [];
     for (let h = HOUR_START; h < HOUR_END; h++) hours.push(h);
@@ -57,7 +58,7 @@ export class ScheduleCalendarComponent {
     return byDay;
   });
 
-  readonly dayHeightPx = (HOUR_END - HOUR_START) * 60;
+  readonly dayHeightPx = this.gridHeightPx();
 
   private getBlockPosition(schedule: Schedule): { top: number; height: number } {
     const startMins = this.parseTimeToMinutes(schedule.startAt);
@@ -66,7 +67,7 @@ export class ScheduleCalendarComponent {
     const totalMins = (HOUR_END - HOUR_START) * 60;
     const top = Math.max(0, ((startMins - baseMins) / totalMins) * 100);
     const height = Math.min(100 - top, ((endMins - startMins) / totalMins) * 100);
-    return { top, height: Math.max(2, height) };
+    return { top, height: Math.max(4.6, height) };
   }
 
   private parseTimeToMinutes(v: string | Date): number {
@@ -82,14 +83,17 @@ export class ScheduleCalendarComponent {
   }
 
   getBlockColor(schedule: Schedule): string {
+    if (schedule.blockType === 'break') {
+      return 'from-amber-500 to-orange-500';
+    }
     const hash = (schedule.title?.length ?? 0) + (schedule.id?.charCodeAt(0) ?? 0);
     const colors = [
-      'from-primary/90 to-primary/70',
-      'from-info/90 to-info/70',
-      'from-success/90 to-success/70',
-      'from-warning/90 to-warning/70',
-      'from-secondary/90 to-secondary/70'];
-    return colors[hash % colors.length] ?? 'from-primary/90 to-primary/70';
+      'from-rose-600 to-rose-500',
+      'from-sky-600 to-cyan-500',
+      'from-emerald-600 to-green-500',
+      'from-violet-600 to-fuchsia-500',
+      'from-orange-600 to-amber-500'];
+    return colors[hash % colors.length] ?? 'from-rose-600 to-rose-500';
   }
 
   formatTime(v: string | Date): string {
@@ -101,6 +105,10 @@ export class ScheduleCalendarComponent {
     return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
   }
 
+  isHourLabel(slot: string): boolean {
+    return slot.endsWith(':00');
+  }
+
   getTeacherLabel(schedule: Schedule): string | null {
     const sectionCourse = typeof schedule.sectionCourse === 'object' ? schedule.sectionCourse : null;
     const teacher = sectionCourse?.teacher;
@@ -110,12 +118,27 @@ export class ScheduleCalendarComponent {
   }
 
   getCourseLabel(schedule: Schedule): string | null {
+    if (schedule.blockType === 'break') return schedule.title ?? 'Receso';
     const sectionCourse = typeof schedule.sectionCourse === 'object' ? schedule.sectionCourse : null;
-    return sectionCourse?.course?.name ?? null;
+    return sectionCourse?.course?.name ?? schedule.title ?? null;
   }
 
   getSectionLabel(schedule: Schedule): string | null {
     const sectionCourse = typeof schedule.sectionCourse === 'object' ? schedule.sectionCourse : null;
     return sectionCourse?.section?.name ? `Sección ${sectionCourse.section.name}` : null;
+  }
+
+  getGradeLabel(schedule: Schedule): string | null {
+    const sectionCourse = typeof schedule.sectionCourse === 'object' ? schedule.sectionCourse : null;
+    return sectionCourse?.section?.grade?.name ?? null;
+  }
+
+  getBlockTag(schedule: Schedule): string {
+    return schedule.blockType === 'break' ? 'Receso' : 'Clase';
+  }
+
+  openDetail(schedule: Schedule, event?: Event) {
+    event?.stopPropagation();
+    this.edit.emit(schedule);
   }
 }

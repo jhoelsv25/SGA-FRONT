@@ -17,7 +17,9 @@ export class StudentApi {
   private readonly baseUrl = 'students';
 
   getAll(params: Params = {}): Observable<DataResponse<Student>> {
-    return this.http.get<DataResponse<Student>>(`${this.baseUrl}`, { params });
+    return this.http.get<DataResponse<Student>>(`${this.baseUrl}`, {
+      params: this.cleanParams(params),
+    });
   }
 
   getById(id: string): Observable<StudentResponse> {
@@ -68,5 +70,11 @@ export class StudentApi {
       uploadId,
       columnMapping,
     });
+  }
+
+  private cleanParams(params: Params): Params {
+    return Object.fromEntries(
+      Object.entries(params).filter(([, value]) => value !== undefined && value !== null && value !== '' && value !== 'undefined' && value !== 'null'),
+    );
   }
 }

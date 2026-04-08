@@ -155,6 +155,14 @@ export interface AccountUserPreferences {
   updatedAt: string;
 }
 
+export interface AccountSystemSetting {
+  id: string;
+  key: string;
+  value: Record<string, any>;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface RoleResponse {
   role: RoleAuth;
   modules: Module[];

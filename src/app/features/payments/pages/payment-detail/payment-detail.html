@@ -58,7 +58,7 @@
                   <div class="flex items-center gap-2 rounded-full border border-primary/10 bg-primary/5 px-3 py-1">
                     <z-icon zType="file-text" class="h-3 w-3 text-primary/70" />
                     <span class="text-[10px] font-black uppercase tracking-widest text-primary/70">
-                      {{ current.reference || 'Sin referencia' }}
+                      {{ current.externalReference || current.internalReference || current.reference || 'Sin referencia' }}
                     </span>
                   </div>
                 </div>
@@ -137,9 +137,38 @@
           <article class="rounded-4xl border border-base-200 bg-card p-6">
             <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Referencia</p>
             <div class="mt-4 space-y-2">
-              <p class="text-sm text-base-content/75">{{ current.reference || 'Sin referencia registrada.' }}</p>
+              <p class="text-sm text-base-content/75">Interna: {{ current.internalReference || 'Sin referencia interna' }}</p>
+              <p class="text-sm text-base-content/75">Externa: {{ current.externalReference || current.reference || 'Sin referencia externa' }}</p>
+              <p class="text-sm text-base-content/75">Recibo: {{ current.receiptNumber || 'Sin recibo asignado' }}</p>
             </div>
           </article>
+
+          <article class="rounded-4xl border border-base-200 bg-card p-6">
+            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Condiciones</p>
+            <div class="mt-4 space-y-2">
+              <p class="text-sm text-base-content/75">Método: {{ current.paymentMethod || 'No definido' }}</p>
+              <p class="text-sm text-base-content/75">Pagador: {{ current.payerName || 'No definido' }}</p>
+              <p class="text-sm text-base-content/75">Mora: S/ {{ (current.lateFee || 0) | number:'1.2-2' }}</p>
+              <p class="text-sm text-base-content/75">Descuento: S/ {{ (current.discountAmount || 0) | number:'1.2-2' }}</p>
+            </div>
+          </article>
+
+          @if (current.observations || current.evidenceUrl) {
+            <article class="rounded-4xl border border-base-200 bg-card p-6">
+              <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Soporte</p>
+              <div class="mt-4 space-y-3">
+                @if (current.observations) {
+                  <p class="text-sm text-base-content/75">{{ current.observations }}</p>
+                }
+                @if (current.evidenceUrl) {
+                  <a [href]="current.evidenceUrl" target="_blank" rel="noreferrer" class="inline-flex items-center gap-2 text-sm font-bold text-primary">
+                    <z-icon zType="file-text" class="h-4 w-4" />
+                    {{ current.evidenceName || 'Ver comprobante' }}
+                  </a>
+                }
+              </div>
+            </article>
+          }
 
           <article class="rounded-4xl border border-base-200 bg-card p-6">
             <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Acción crítica</p>

@@ -283,8 +283,8 @@ export default class TeacherDetailPage implements OnInit {
   }
 
   scheduleLabel(item: Schedule): string {
-    const course = typeof item.sectionCourse === 'object' ? item.sectionCourse.course?.name : '';
-    const section = typeof item.sectionCourse === 'object' ? item.sectionCourse.section?.name : '';
+    const course = item.sectionCourse && typeof item.sectionCourse === 'object' ? item.sectionCourse.course?.name : '';
+    const section = item.sectionCourse && typeof item.sectionCourse === 'object' ? item.sectionCourse.section?.name : '';
     return [course, section].filter(Boolean).join(' · ') || item.title;
   }
 

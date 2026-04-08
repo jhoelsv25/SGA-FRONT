@@ -14,6 +14,31 @@
           <input z-input [placeholder]="searchPlaceholder()" [ngModel]="searchTerm()" (ngModelChange)="onSearch($event)" />
         </z-form-control>
       </z-form-field>
+
+      @if (showTeacherFilter()) {
+        <z-form-field>
+          <label z-form-label>Docente</label>
+          <z-form-control>
+            <z-select-option [options]="teacherOptions()" [ngModel]="teacherFilterId()" (ngModelChange)="onTeacherFilterChange($event)"></z-select-option>
+          </z-form-control>
+        </z-form-field>
+      }
+
+      @if (showAcademicFilters()) {
+        <z-form-field>
+          <label z-form-label>Grado</label>
+          <z-form-control>
+            <z-select-option [options]="gradeOptions()" [ngModel]="gradeFilterId()" (ngModelChange)="onGradeFilterChange($event)"></z-select-option>
+          </z-form-control>
+        </z-form-field>
+
+        <z-form-field>
+          <label z-form-label>Sección</label>
+          <z-form-control>
+            <z-select-option [options]="sectionFilterOptions()" [ngModel]="activeSectionGroupId()" (ngModelChange)="onSectionFilterChange($event)"></z-select-option>
+          </z-form-control>
+        </z-form-field>
+      }
     </div>
   </ng-template>
 
@@ -25,6 +50,106 @@
     (action)="onHeaderAction($event)"
     (refresh)="onRefresh()"
   />
+
+  <div class="grid gap-3 md:grid-cols-5">
+    @for (item of summaryCards(); track item.label) {
+      <div class="rounded-[1.75rem] border border-base-200/80 bg-base-100 px-5 py-4 shadow-sm">
+        <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">{{ item.label }}</p>
+        <p class="mt-2 text-3xl font-black tracking-tight text-base-content">{{ item.value }}</p>
+      </div>
+    }
+  </div>
+
+  @if (canManagePlanning()) {
+    <div class="rounded-[1.9rem] border border-primary/15 bg-primary/8 px-5 py-5 text-primary dark:bg-primary/10">
+      <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div class="space-y-1">
+          <p class="text-[10px] font-black uppercase tracking-[0.24em] text-primary/70">Administración</p>
+          <p class="text-lg font-semibold text-primary">Asigna, sortea y corrige bloques por docente y especialidad</p>
+          <p class="max-w-3xl text-sm leading-6 text-primary/80">
+            Usa el panel de planificación para generar una propuesta rápida y luego mover manualmente cada bloque antes de guardarlo.
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button
+            z-button
+            type="button"
+            class="h-11 rounded-[1rem] px-5 text-[10px] font-black uppercase tracking-[0.18em]"
+            (click)="openForm()"
+          >
+            Asignar bloque
+          </button>
+          <button
+            z-button
+            zType="outline"
+            type="button"
+            class="h-11 rounded-[1rem] px-5 text-[10px] font-black uppercase tracking-[0.18em]"
+            (click)="openPlanner()"
+          >
+            Administrar horario
+          </button>
+          <button
+            z-button
+            zType="outline"
+            type="button"
+            class="h-11 rounded-[1rem] px-5 text-[10px] font-black uppercase tracking-[0.18em]"
+            (click)="printSchedules()"
+          >
+            Imprimir horario
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (sectionGroups().length) {
+    <div class="rounded-[1.9rem] border border-base-200/80 bg-base-100 px-5 py-5 shadow-sm">
+      <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div class="space-y-1">
+          <p class="text-[10px] font-black uppercase tracking-[0.24em] text-primary/70">Navegación rápida</p>
+          <p class="text-lg font-semibold text-base-content">Ver horarios por grado y sección</p>
+          <p class="max-w-3xl text-sm leading-6 text-base-content/60">
+            Cambia rápido entre grupos académicos sin salir de la vista semanal.
+          </p>
+        </div>
+
+        @if (activeSectionGroupId()) {
+          <button
+            z-button
+            zType="outline"
+            type="button"
+            class="h-10 rounded-[1rem] px-4 text-[10px] font-black uppercase tracking-[0.18em]"
+            (click)="clearSectionQuickFilter()"
+          >
+            Ver todos
+          </button>
+        }
+      </div>
+
+      <div class="mt-4 flex flex-wrap gap-2">
+        @for (group of sectionGroups(); track group.id) {
+          <button
+            type="button"
+            class="rounded-full border px-4 py-2 text-left transition"
+            [class.border-primary]="activeSectionGroupId() === group.id"
+            [class.bg-primary]="activeSectionGroupId() === group.id"
+            [class.text-primary-foreground]="activeSectionGroupId() === group.id"
+            [class.border-base-200]="activeSectionGroupId() !== group.id"
+            [class.bg-base-100]="activeSectionGroupId() !== group.id"
+            [class.text-base-content]="activeSectionGroupId() !== group.id"
+            (click)="selectSectionGroup(group.id, group.gradeName + ' · Sección ' + group.sectionName)"
+          >
+            <span class="text-[10px] font-black uppercase tracking-[0.18em]">
+              {{ group.gradeName }} · Sección {{ group.sectionName }}
+            </span>
+            <span class="ml-2 rounded-full bg-black/10 px-2 py-0.5 text-[10px] font-bold">
+              {{ group.total }}
+            </span>
+          </button>
+        }
+      </div>
+    </div>
+  }
 
   @if (sectionContextId()) {
     <div class="rounded-4xl border border-primary/15 bg-primary/8 px-5 py-4 text-sm text-primary dark:bg-primary/10">
@@ -44,6 +169,29 @@
           (click)="clearSectionContext()"
         >
           Ver todos
+        </button>
+      </div>
+    </div>
+  }
+
+  @if (sectionQuickFilterId()) {
+    <div class="rounded-4xl border border-primary/15 bg-primary/8 px-5 py-4 text-sm text-primary dark:bg-primary/10">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="space-y-1">
+          <p class="text-[10px] font-black uppercase tracking-[0.24em] text-primary/70">Filtro rápido</p>
+          <p class="font-semibold">
+            Mostrando horarios de
+            <span class="font-black">{{ sectionQuickFilterName() || 'la sección elegida' }}</span>
+          </p>
+        </div>
+        <button
+          z-button
+          zType="outline"
+          type="button"
+          class="h-9 rounded-[var(--radius-xl)] px-4 text-[10px] font-black uppercase tracking-[0.18em]"
+          (click)="clearSectionQuickFilter()"
+        >
+          Limpiar
         </button>
       </div>
     </div>
