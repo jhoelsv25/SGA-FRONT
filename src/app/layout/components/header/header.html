@@ -21,6 +21,10 @@
 
   <!-- Action Buttons and User Menu -->
   <div class="flex items-center gap-1.5 sm:gap-2 md:gap-3">
+    @if (isTeacher()) {
+      <sga-teacher-live-class-popover />
+    }
+
     <!-- Theme Toggle -->
     <button
       class="flex h-10 w-10 items-center justify-center rounded-[var(--radius-xl)] border border-transparent text-base-content/60 transition-all duration-200 hover:border-border/60 hover:bg-base-100 hover:text-primary"
@@ -61,7 +65,14 @@
 
     <!-- Notifications -->
     <button
-      class="relative flex h-10 w-10 items-center justify-center rounded-[var(--radius-xl)] border border-transparent text-base-content/60 transition-all duration-200 hover:border-border/60 hover:bg-base-100 hover:text-primary sm:flex"
+      class="relative flex h-10 w-10 items-center justify-center rounded-[var(--radius-xl)] border text-base-content/60 transition-all duration-200 sm:flex"
+      [class.border-primary/25]="isAsideActive('notifications')"
+      [class.bg-base-100]="isAsideActive('notifications')"
+      [class.text-primary]="isAsideActive('notifications')"
+      [class.border-transparent]="!isAsideActive('notifications')"
+      [class.hover:border-border/60]="!isAsideActive('notifications')"
+      [class.hover:bg-base-100]="!isAsideActive('notifications')"
+      [class.hover:text-primary]="!isAsideActive('notifications')"
       (click)="toggleAside('notifications')" aria-label="Ver notificaciones">
       <z-icon zType="bell" class="h-5 w-5" />
       @if (unreadNotifications() > 0) {
@@ -74,7 +85,14 @@
 
     <!-- Chats -->
     <button
-      class="relative flex h-10 w-10 items-center justify-center rounded-[var(--radius-xl)] border border-transparent text-base-content/60 transition-all duration-200 hover:border-border/60 hover:bg-base-100 hover:text-primary sm:flex"
+      class="relative flex h-10 w-10 items-center justify-center rounded-[var(--radius-xl)] border text-base-content/60 transition-all duration-200 sm:flex"
+      [class.border-primary/25]="isAsideActive('chats')"
+      [class.bg-base-100]="isAsideActive('chats')"
+      [class.text-primary]="isAsideActive('chats')"
+      [class.border-transparent]="!isAsideActive('chats')"
+      [class.hover:border-border/60]="!isAsideActive('chats')"
+      [class.hover:bg-base-100]="!isAsideActive('chats')"
+      [class.hover:text-primary]="!isAsideActive('chats')"
       (click)="toggleAside('chats')" aria-label="Ver mensajes">
       <z-icon zType="chat" class="h-5 w-5" />
       <span
@@ -83,7 +101,14 @@
 
     <!-- Calendar -->
     <button
-      class="hidden h-10 w-10 items-center justify-center rounded-[var(--radius-xl)] border border-transparent text-base-content/60 transition-all duration-200 hover:border-border/60 hover:bg-base-100 hover:text-primary md:flex"
+      class="hidden h-10 w-10 items-center justify-center rounded-[var(--radius-xl)] border text-base-content/60 transition-all duration-200 md:flex"
+      [class.border-primary/25]="isAsideActive('calendar')"
+      [class.bg-base-100]="isAsideActive('calendar')"
+      [class.text-primary]="isAsideActive('calendar')"
+      [class.border-transparent]="!isAsideActive('calendar')"
+      [class.hover:border-border/60]="!isAsideActive('calendar')"
+      [class.hover:bg-base-100]="!isAsideActive('calendar')"
+      [class.hover:text-primary]="!isAsideActive('calendar')"
       (click)="toggleAside('calendar')" aria-label="Ver calendario">
       <z-icon zType="calendar" class="h-5 w-5" />
     </button>

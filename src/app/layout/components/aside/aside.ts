@@ -4,6 +4,7 @@ import {
   computed,
   effect,
   inject,
+  signal,
   viewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
@@ -33,6 +34,7 @@ import { AsideChats } from './components/aside-chats/aside-chats';
 export class Aside {
   private layout = inject(LayoutStore);
   private router = inject(Router);
+  private readonly syncingTabFromStore = signal(false);
   public tabGroup = viewChild(ZardTabGroupComponent);
 
   public isShowAside = computed(() => this.layout.isShowAside());
@@ -50,21 +52,38 @@ export class Aside {
   constructor() {
     effect(() => {
       const type = this.asideType();
+      const isOpen = this.isShowAside();
       const group = this.tabGroup();
-      if (type && group) {
+      if (isOpen && type && group) {
         const indexMap: Record<string, number> = {
           notifications: 0,
           calendar: 1,
           chats: 2,
         };
         const index = indexMap[type] ?? 0;
+        this.syncingTabFromStore.set(true);
         group.selectTabByIndex(index);
+        queueMicrotask(() => this.syncingTabFromStore.set(false));
       }
     });
   }
 
   public closeAside(): void {
     this.layout.closeAside();
+  }
+
+  public onTabChange(event: { index: number; label: string }): void {
+    if (this.syncingTabFromStore()) return;
+
+    const tabTypeMap: Record<number, string> = {
+      0: 'notifications',
+      1: 'calendar',
+      2: 'chats',
+    };
+    const type = tabTypeMap[event.index];
+    if (type) {
+      this.layout.setAsideType(type);
+    }
   }
 
   public openSettings(): void {

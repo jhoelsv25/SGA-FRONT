@@ -1,60 +1,57 @@
 <!-- Backdrop with smooth transition -->
 @if (isShowAside()) {
-<div class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] transition-opacity duration-300 animate-in fade-in"
-  (click)="closeAside()" aria-hidden="true">
-</div>
+  <div class="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm transition-opacity duration-200 animate-in fade-in"
+    (click)="closeAside()" aria-hidden="true">
+  </div>
+
+  <section
+    class="fixed top-0 right-0 z-[70] flex h-full w-full max-w-full flex-col border-l border-border bg-background shadow-2xl duration-200 animate-in slide-in-from-right sm:max-w-md">
+
+    <header class="relative z-20 flex items-center justify-between p-6 pb-2">
+      <div class="flex items-center gap-4">
+        <div
+          class="flex size-10 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/20">
+          <z-icon [zType]="activeMeta().icon" class="size-5" />
+        </div>
+        <div>
+          <h2 class="inter text-sm font-black uppercase tracking-[0.2em] text-foreground">{{ activeMeta().label }}</h2>
+          <p class="text-[8px] font-black uppercase tracking-widest text-primary opacity-60">SGA Institutional Portal</p>
+        </div>
+      </div>
+      <button z-button zType="ghost" zShape="circle"
+        class="group size-10 rounded-xl border border-border/5 bg-card/50 shadow-sm transition-all hover:bg-card active:scale-95"
+        (click)="closeAside()">
+        <z-icon zType="x" class="size-4 text-muted-foreground transition-colors group-hover:text-foreground" />
+      </button>
+    </header>
+
+    <main class="relative z-10 flex min-h-0 flex-1 flex-col">
+      <z-tab-group class="flex h-full flex-col" zTabsPosition="top" zAlignTabs="center" (zTabChange)="onTabChange($event)">
+        <z-tab label="Notificaciones">
+          <sga-aside-notifications class="h-full" />
+        </z-tab>
+        <z-tab label="Calendario">
+          <sga-aside-calendar class="h-full" />
+        </z-tab>
+        <z-tab label="Chats">
+          <sga-aside-chats class="h-full" />
+        </z-tab>
+      </z-tab-group>
+    </main>
+
+    <footer class="flex items-center justify-around border-t border-border/5 bg-muted/20 p-4 backdrop-blur-xl">
+      <button z-button zType="ghost" zSize="icon" class="group/foot size-9 rounded-xl hover:bg-primary/5"
+        title="Configuración" (click)="openSettings()">
+        <z-icon zType="settings"
+          class="size-4 text-muted-foreground/40 transition-colors group-hover/foot:text-primary" />
+      </button>
+      <button z-button zType="ghost" zSize="icon" class="group/foot size-9 rounded-xl hover:bg-primary/5" title="Ayuda" (click)="openHelp()">
+        <z-icon zType="info" class="size-4 text-muted-foreground/40 transition-colors group-hover/foot:text-primary" />
+      </button>
+      <button z-button zType="ghost" zSize="icon" class="group/foot size-9 rounded-xl hover:bg-primary/5"
+        title="Feedback" (click)="openFeedback()">
+        <z-icon zType="chat" class="size-4 text-muted-foreground/40 transition-colors group-hover/foot:text-primary" />
+      </button>
+    </footer>
+  </section>
 }
-
-<section
-  class="fixed top-0 right-0 h-full w-full sm:max-w-md bg-background shadow-2xl z-[70] flex flex-col transition-all duration-500 ease-in-out border-l border-border"
-  [class.translate-x-0]="isShowAside()" [class.translate-x-full]="!isShowAside()"
-  [class.pointer-events-none]="!isShowAside()">
-
-  <!-- Content remains similar but with structural improvements -->
-  <header class="p-6 pb-2 flex items-center justify-between relative z-20">
-    <div class="flex items-center gap-4">
-      <div
-        class="size-10 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center shadow-lg shadow-primary/20 rotate-3 group-hover:rotate-0 transition-transform duration-500">
-        <z-icon [zType]="activeMeta().icon" class="size-5" />
-      </div>
-      <div>
-        <h2 class="text-sm font-black text-foreground uppercase tracking-[0.2em] inter">{{ activeMeta().label }}</h2>
-        <p class="text-[8px] font-black uppercase tracking-widest text-primary opacity-60">SGA Institutional Portal</p>
-      </div>
-    </div>
-    <button z-button zType="ghost" zShape="circle"
-      class="size-10 rounded-xl bg-card/50 hover:bg-card border border-border/5 shadow-sm active:scale-95 transition-all group"
-      (click)="closeAside()">
-      <z-icon zType="x" class="size-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-    </button>
-  </header>
-
-  <main class="flex-1 min-h-0 relative z-10 flex flex-col">
-    <z-tab-group class="h-full flex flex-col" zTabsPosition="top" zAlignTabs="center">
-      <z-tab label="Notificaciones">
-        <sga-aside-notifications class="h-full" />
-      </z-tab>
-      <z-tab label="Calendario">
-        <sga-aside-calendar class="h-full" />
-      </z-tab>
-      <z-tab label="Chats">
-        <sga-aside-chats class="h-full" />
-      </z-tab>
-    </z-tab-group>
-  </main>
-
-  <footer class="p-4 bg-muted/20 backdrop-blur-xl border-t border-border/5 flex items-center justify-around">
-    <button z-button zType="ghost" zSize="icon" class="size-9 rounded-xl hover:bg-primary/5 group/foot"
-      title="Configuración" (click)="openSettings()">
-      <z-icon zType="settings"
-        class="size-4 text-muted-foreground/40 group-hover/foot:text-primary transition-colors" />
-    </button>
-    <button z-button zType="ghost" zSize="icon" class="size-9 rounded-xl hover:bg-primary/5 group/foot" title="Ayuda" (click)="openHelp()">
-      <z-icon zType="info" class="size-4 text-muted-foreground/40 group-hover/foot:text-primary transition-colors" />
-    </button>
-    <button z-button zType="ghost" zSize="icon" class="size-9 rounded-xl hover:bg-primary/5 group/foot"
-      title="Feedback" (click)="openFeedback()">
-      <z-icon zType="chat" class="size-4 text-muted-foreground/40 group-hover/foot:text-primary transition-colors" />
-    </button>
-  </footer>
-</section>
