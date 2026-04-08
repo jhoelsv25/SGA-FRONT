@@ -1,0 +1,55 @@
+<form [formGroup]="form" class="flex max-h-[calc(80vh-3rem)] flex-col overflow-hidden" (ngSubmit)="submit()">
+  <header class="mb-4 flex items-start justify-between gap-4">
+    <div class="min-w-0">
+      <h2 class="text-lg font-semibold">Registrar seguimiento</h2>
+      <p class="mt-1 text-sm text-base-content/65">
+        {{ row.courseName }} · {{ row.sectionName || 'Sección' }} · {{ row.plannedStartTime?.slice(0, 5) }} - {{ row.plannedEndTime?.slice(0, 5) }}
+      </p>
+    </div>
+    <button type="button" z-button zColor="secondary" zType="ghost" zShape="circle" (click)="close()">
+      <i class="fas fa-times"></i>
+    </button>
+  </header>
+
+  <div class="flex-1 overflow-y-auto pr-1">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div class="md:col-span-2 rounded-[var(--radius-xl)] border border-base-200 bg-base-100/80 px-4 py-3">
+        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-base-content/50">Bloque</p>
+        <p class="mt-1 text-base font-semibold text-base-content">{{ row.title }}</p>
+        <p class="mt-1 text-sm text-base-content/60">{{ row.teacherName }} · {{ row.classroom }}</p>
+      </div>
+
+      <div>
+        <p class="mb-1 text-xs font-medium text-slate-600">Inicio real</p>
+        <input z-input w-full type="time" formControlName="actualStartTime" />
+      </div>
+
+      <div>
+        <p class="mb-1 text-xs font-medium text-slate-600">Fin real</p>
+        <input z-input w-full type="time" formControlName="actualEndTime" />
+      </div>
+
+      <div>
+        <p class="mb-1 text-xs font-medium text-slate-600">Estado</p>
+        <z-select-option [options]="statusOptions" formControlName="complianceStatus" [searchable]="false"></z-select-option>
+      </div>
+
+      <div class="rounded-[var(--radius-xl)] border border-primary/15 bg-primary/8 px-4 py-3">
+        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Cumplimiento estimado</p>
+        <p class="mt-1 text-2xl font-black text-primary">{{ percentage() }}</p>
+      </div>
+
+      <div class="md:col-span-2">
+        <p class="mb-1 text-xs font-medium text-slate-600">Justificación</p>
+        <input z-input w-full formControlName="justification" placeholder="Observación o motivo" />
+      </div>
+    </div>
+  </div>
+
+  <footer class="mt-4 flex shrink-0 justify-end gap-2 border-t border-base-200 pt-4">
+    <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">Cancelar</button>
+    <button type="submit" z-button zColor="primary" [disabled]="form.invalid || loading()">
+      Guardar registro
+    </button>
+  </footer>
+</form>

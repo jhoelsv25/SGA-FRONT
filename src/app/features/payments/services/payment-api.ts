@@ -4,6 +4,9 @@ import { Params } from '@angular/router';
 import { Observable } from 'rxjs';
 import {
   PaymentCreate,
+  PaymentGroupCreate,
+  PaymentGroupResponse,
+  PaymentGroupsListResponse,
   PaymentResponse,
   PaymentsListResponse,
   PaymentUpdate,
@@ -16,6 +19,30 @@ export class PaymentApi {
 
   getAll(params?: Params): Observable<PaymentsListResponse> {
     return this.http.get<PaymentsListResponse>(this.baseUrl, { params: params ?? {} });
+  }
+
+  getPending(params?: Params): Observable<PaymentsListResponse> {
+    return this.http.get<PaymentsListResponse>(`${this.baseUrl}/pending`, { params: params ?? {} });
+  }
+
+  getHistory(params?: Params): Observable<PaymentsListResponse> {
+    return this.http.get<PaymentsListResponse>(`${this.baseUrl}/history`, { params: params ?? {} });
+  }
+
+  getGroups(params?: Params): Observable<PaymentGroupsListResponse> {
+    return this.http.get<PaymentGroupsListResponse>(`${this.baseUrl}/groups`, { params: params ?? {} });
+  }
+
+  getGroupById(id: string): Observable<PaymentGroupResponse> {
+    return this.http.get<PaymentGroupResponse>(`${this.baseUrl}/groups/${id}`);
+  }
+
+  createGroup(data: PaymentGroupCreate): Observable<PaymentGroupResponse> {
+    return this.http.post<PaymentGroupResponse>(`${this.baseUrl}/groups`, data);
+  }
+
+  updateGroup(id: string, data: Partial<PaymentGroupCreate>): Observable<PaymentGroupResponse> {
+    return this.http.patch<PaymentGroupResponse>(`${this.baseUrl}/groups/${id}`, data);
   }
 
   getById(id: string): Observable<PaymentResponse> {

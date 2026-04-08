@@ -89,6 +89,8 @@
     (refresh)="onRefresh()"
   />
 
+  <sga-realtime-teaching-overview />
+
   <div class="grid grid-cols-1 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
     @if (loading() && !data().length) {
       @for (i of skeletonItems; track i) {

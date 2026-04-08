@@ -24,6 +24,9 @@ type ToggleKey =
   | 'browserAlerts'
   | 'newDeviceAlerts';
 
+const LIVE_CLASS_REMINDER_PRESETS = [0, 5, 10, 15] as const;
+const GLOBAL_TEACHER_REMINDER_KEY = 'teacher-live-class-reminder';
+
 
 @Component({
   selector: 'sga-account-settings',
@@ -219,6 +222,125 @@ type ToggleKey =
                       {{ preferences()[item.key] ? 'Activo' : 'Pausado' }}
                     </span>
                   </button>
+                }
+
+                @if (showTeacherReminderConfig()) {
+                  <div class="rounded-2xl border border-primary/15 bg-primary/5 p-5">
+                    <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                      <div class="max-w-2xl">
+                        <p class="text-[10px] font-black uppercase tracking-[0.18em] text-primary">Clase en vivo</p>
+                        <h3 class="mt-2 text-base font-semibold text-foreground">Recordatorio previo para iniciar clase</h3>
+                        <p class="mt-1 text-sm leading-6 text-muted-foreground">
+                          El sistema revisa cada minuto tus horarios del dia y te avisa antes de que empiece el bloque.
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        class="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] transition"
+                        [class.border-emerald-500/30]="liveClassReminderEnabled()"
+                        [class.bg-emerald-500/10]="liveClassReminderEnabled()"
+                        [class.text-emerald-700]="liveClassReminderEnabled()"
+                        [class.border-border]="!liveClassReminderEnabled()"
+                        [class.bg-background]="!liveClassReminderEnabled()"
+                        [class.text-muted-foreground]="!liveClassReminderEnabled()"
+                        (click)="toggleLiveClassReminder()"
+                      >
+                        {{ liveClassReminderEnabled() ? 'Activo' : 'Pausado' }}
+                      </button>
+                    </div>
+
+                    <div class="mt-4 rounded-xl border border-border bg-background/80 p-4">
+                      <div class="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                          <p class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Anticipacion</p>
+                          <p class="mt-1 text-sm text-foreground">
+                            @if (liveClassReminderLeadMinutes() === 0) {
+                              Al iniciar el bloque
+                            } @else {
+                              {{ liveClassReminderLeadMinutes() }} min antes
+                            }
+                          </p>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                          @for (minutes of liveClassReminderPresets; track minutes) {
+                            <button
+                              type="button"
+                              class="rounded-full border px-3 py-1.5 text-xs font-semibold transition"
+                              [class.border-primary]="liveClassReminderLeadMinutes() === minutes"
+                              [class.bg-primary]="liveClassReminderLeadMinutes() === minutes"
+                              [class.text-primary-foreground]="liveClassReminderLeadMinutes() === minutes"
+                              [class.border-border]="liveClassReminderLeadMinutes() !== minutes"
+                              [class.bg-background]="liveClassReminderLeadMinutes() !== minutes"
+                              [class.text-muted-foreground]="liveClassReminderLeadMinutes() !== minutes"
+                              (click)="setLiveClassReminderLeadMinutes(minutes)"
+                            >
+                              {{ reminderLeadLabel(minutes) }}
+                            </button>
+                          }
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                }
+
+                @if (showGlobalReminderConfig()) {
+                  <div class="rounded-2xl border border-border bg-background/90 p-5">
+                    <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                      <div class="max-w-2xl">
+                        <p class="text-[10px] font-black uppercase tracking-[0.18em] text-primary">Regla global</p>
+                        <h3 class="mt-2 text-base font-semibold text-foreground">Recordatorio institucional para docentes</h3>
+                        <p class="mt-1 text-sm leading-6 text-muted-foreground">
+                          Este valor se usa como predeterminado para todos los docentes. Si un docente no personaliza su ajuste,
+                          el sistema toma esta configuracion global.
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        class="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] transition"
+                        [class.border-emerald-500/30]="globalLiveClassReminderEnabled()"
+                        [class.bg-emerald-500/10]="globalLiveClassReminderEnabled()"
+                        [class.text-emerald-700]="globalLiveClassReminderEnabled()"
+                        [class.border-border]="!globalLiveClassReminderEnabled()"
+                        [class.bg-background]="!globalLiveClassReminderEnabled()"
+                        [class.text-muted-foreground]="!globalLiveClassReminderEnabled()"
+                        (click)="toggleGlobalLiveClassReminder()"
+                      >
+                        {{ globalLiveClassReminderEnabled() ? 'Activo' : 'Pausado' }}
+                      </button>
+                    </div>
+
+                    <div class="mt-4 rounded-xl border border-border bg-card p-4">
+                      <div class="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                          <p class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Anticipacion global</p>
+                          <p class="mt-1 text-sm text-foreground">
+                            @if (globalLiveClassReminderLeadMinutes() === 0) {
+                              Al iniciar el bloque
+                            } @else {
+                              {{ globalLiveClassReminderLeadMinutes() }} min antes
+                            }
+                          </p>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                          @for (minutes of liveClassReminderPresets; track minutes) {
+                            <button
+                              type="button"
+                              class="rounded-full border px-3 py-1.5 text-xs font-semibold transition"
+                              [class.border-primary]="globalLiveClassReminderLeadMinutes() === minutes"
+                              [class.bg-primary]="globalLiveClassReminderLeadMinutes() === minutes"
+                              [class.text-primary-foreground]="globalLiveClassReminderLeadMinutes() === minutes"
+                              [class.border-border]="globalLiveClassReminderLeadMinutes() !== minutes"
+                              [class.bg-background]="globalLiveClassReminderLeadMinutes() !== minutes"
+                              [class.text-muted-foreground]="globalLiveClassReminderLeadMinutes() !== minutes"
+                              (click)="setGlobalLiveClassReminderLeadMinutes(minutes)"
+                            >
+                              {{ reminderLeadLabel(minutes) }}
+                            </button>
+                          }
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 }
 
                 <div class="rounded-xl border border-border bg-background/80 px-4 py-3 text-xs text-muted-foreground">
@@ -454,6 +576,16 @@ export default class AccountSettingsPage {
     browserAlerts: false,
     newDeviceAlerts: true,
   });
+  protected readonly liveClassReminderEnabled = signal(true);
+  protected readonly liveClassReminderLeadMinutes = signal<number>(5);
+  protected readonly globalLiveClassReminderEnabled = signal(true);
+  protected readonly globalLiveClassReminderLeadMinutes = signal<number>(5);
+  protected readonly liveClassReminderPresets = LIVE_CLASS_REMINDER_PRESETS;
+  protected readonly showTeacherReminderConfig = computed(() => this.roleType() === 'teacher');
+  protected readonly showGlobalReminderConfig = computed(() => {
+    const roleType = this.roleType();
+    return roleType === 'admin' || roleType === 'superadmin' || roleType === 'director' || roleType === 'subdirector' || roleType === 'ugel';
+  });
   protected readonly sections = computed(() => {
     const roleType = this.roleType();
     const base = [
@@ -597,12 +729,62 @@ export default class AccountSettingsPage {
       [key]: !state[key],
     }));
 
+    this.persistPreferences(this.preferences());
+  }
+
+  protected toggleLiveClassReminder() {
+    this.liveClassReminderEnabled.update(value => !value);
+    this.persistReminderPreferences();
+  }
+
+  protected setLiveClassReminderLeadMinutes(minutes: number) {
+    this.liveClassReminderLeadMinutes.set(minutes);
+    this.persistReminderPreferences();
+  }
+
+  protected toggleGlobalLiveClassReminder() {
+    this.globalLiveClassReminderEnabled.update(value => !value);
+    this.persistGlobalReminderPreferences();
+  }
+
+  protected setGlobalLiveClassReminderLeadMinutes(minutes: number) {
+    this.globalLiveClassReminderLeadMinutes.set(minutes);
+    this.persistGlobalReminderPreferences();
+  }
+
+  protected reminderLeadLabel(minutes: number) {
+    return minutes === 0 ? 'Al iniciar' : `${minutes} min`;
+  }
+
+  private persistReminderPreferences() {
+    this.persistPreferences({
+      liveClassReminderEnabled: this.liveClassReminderEnabled(),
+      liveClassReminderLeadMinutes: this.liveClassReminderLeadMinutes(),
+    });
+  }
+
+  private persistGlobalReminderPreferences() {
+    this.preferenceStatus.set('Guardando configuracion global...');
+    this.authApi.updateSystemSetting(GLOBAL_TEACHER_REMINDER_KEY, {
+      enabled: this.globalLiveClassReminderEnabled(),
+      leadMinutes: this.globalLiveClassReminderLeadMinutes(),
+    }).subscribe({
+      next: () => {
+        this.preferenceStatus.set('Configuracion global guardada');
+      },
+      error: () => {
+        this.preferenceStatus.set('No se pudo guardar la configuracion global.');
+      },
+    });
+  }
+
+  private persistPreferences(preferences: Record<string, any>) {
     const userId = this.currentUser()?.id;
     if (!userId) return;
 
     this.preferenceStatus.set('Guardando cambios...');
 
-    this.authApi.updateUserPreferences(userId, this.preferences()).subscribe({
+    this.authApi.updateUserPreferences(userId, preferences).subscribe({
       next: () => {
         this.preferenceStatus.set('Cambios guardados');
       },
@@ -626,6 +808,7 @@ export default class AccountSettingsPage {
     this.loadSessions(userId);
     this.loadEmailLogs(userId);
     this.loadPreferences(userId);
+    this.loadGlobalReminderSettings();
   }
 
   private loadUserDetail(userId: string) {
@@ -677,9 +860,29 @@ export default class AccountSettingsPage {
             ...state,
             ...response.preferences,
           }));
+          this.liveClassReminderEnabled.set(response.preferences['liveClassReminderEnabled'] !== false);
+          this.liveClassReminderLeadMinutes.set(this.normalizeReminderLeadMinutes(response.preferences['liveClassReminderLeadMinutes']));
         }
         this.preferenceStatus.set('Sincronizado');
       });
+  }
+
+  private loadGlobalReminderSettings() {
+    if (!this.showGlobalReminderConfig()) return;
+
+    this.authApi.getSystemSetting(GLOBAL_TEACHER_REMINDER_KEY)
+      .pipe(catchError(() => of(null)), takeUntilDestroyed(this.destroyRef))
+      .subscribe((response) => {
+        const value = response?.data?.value ?? {};
+        this.globalLiveClassReminderEnabled.set(value['enabled'] !== false);
+        this.globalLiveClassReminderLeadMinutes.set(this.normalizeReminderLeadMinutes(value['leadMinutes']));
+      });
+  }
+
+  private normalizeReminderLeadMinutes(value: unknown) {
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed)) return 5;
+    return Math.min(15, Math.max(0, Math.round(parsed)));
   }
 
   protected formatDate(value?: string | null, fallback = 'No registrado') {

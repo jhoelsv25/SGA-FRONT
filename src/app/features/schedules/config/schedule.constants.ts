@@ -20,5 +20,6 @@ export const DAY_LABELS: Record<Schedule['dayOfWeek'], string> = {
 };
 
 export const HOUR_START = 7;
-export const HOUR_END = 19;
+export const HOUR_END = 24;
 export const SLOTS_PER_HOUR = 2; // 30-min slots
+export const SLOT_HEIGHT_PX = 40;

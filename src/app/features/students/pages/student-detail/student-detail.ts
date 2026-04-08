@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AuthStore } from '@auth/services/store/auth.store';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardEmptyComponent } from '@/shared/components/empty';
 import { ZardIconComponent } from '@/shared/components/icon';
@@ -38,6 +39,7 @@ import type { StudentCredential } from '../../types/student-types';
 export default class StudentDetailPage implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly authStore = inject(AuthStore);
   private readonly studentApi = inject(StudentApi);
   private readonly enrollmentApi = inject(EnrollmentApi);
   private readonly guardianApi = inject(GuardianApi);
@@ -52,6 +54,9 @@ export default class StudentDetailPage implements OnInit {
   readonly observations = signal<StudentObservation[]>([]);
   readonly credential = signal<StudentCredential | null>(null);
   readonly credentialLoading = signal(false);
+  readonly roleType = computed(() => this.authStore.currentUser()?.profile?.type ?? 'user');
+  readonly isPublicViewer = computed(() => ['student', 'guardian'].includes(this.roleType()));
+  readonly canViewOperational = computed(() => !this.isPublicViewer());
 
   readonly fullName = computed(() => {
     const current = this.student();
@@ -64,6 +69,10 @@ export default class StudentDetailPage implements OnInit {
     () => this.guardians().find((guardian) => guardian.isPrimary) ?? this.guardians()[0] ?? null,
   );
   readonly latestObservation = computed(() => this.observations()[0] ?? null);
+  readonly institutionName = computed(() => {
+    const institution = this.student()?.institution;
+    return typeof institution === 'string' ? institution : institution?.name || 'Sin institución';
+  });
   readonly initials = computed(() =>
     (this.fullName() || this.student()?.studentCode || 'ST')
       .split(/\s+/)
@@ -157,9 +166,67 @@ export default class StudentDetailPage implements OnInit {
     return this.student()?.isActive ? 'Activo' : 'Inactivo';
   }
 
+  birthDateLabel(): string {
+    const value = this.student()?.birthDate;
+    if (!value) return 'Sin fecha';
+    return new Intl.DateTimeFormat('es-PE', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    }).format(new Date(value));
+  }
+
   genderLabel(): string {
     const gender = this.student()?.gender;
     return gender === 'M' ? 'Masculino' : gender === 'F' ? 'Femenino' : 'Otro';
+  }
+
+  publicProfileSummary(): string {
+    const current = this.student();
+    if (!current) return '';
+    return [
+      current.grade ? `Grado ${current.grade}` : '',
+      this.currentSectionName() !== 'Sin sección asignada' ? `Sección ${this.currentSectionName()}` : '',
+      `${current.age} años`,
+    ]
+      .filter(Boolean)
+      .join(' · ');
+  }
+
+  enrollmentTypeLabel(type?: string): string {
+    const map: Record<string, string> = {
+      new: 'Nuevo',
+      returning: 'Reingresante',
+      transfer: 'Traslado',
+    };
+    return map[type ?? ''] ?? (type || 'Sin tipo');
+  }
+
+  enrollmentStatusLabel(status?: string): string {
+    const map: Record<string, string> = {
+      enrolled: 'Matriculado',
+      completed: 'Completado',
+      dropped: 'Retirado',
+      graduated: 'Graduado',
+    };
+    return map[status ?? ''] ?? (status || 'Sin estado');
+  }
+
+  guardianRelationshipLabel(relationship?: string): string {
+    const map: Record<string, string> = {
+      parent: 'Padre / Madre',
+      guardian: 'Apoderado',
+      other: 'Otro',
+    };
+    return map[relationship ?? ''] ?? (relationship || 'Sin relación');
+  }
+
+  primaryGuardianRelationshipLabel(): string {
+    return this.guardianRelationshipLabel(this.primaryGuardian()?.guardian?.relationship);
+  }
+
+  yesNoLabel(value?: boolean): string {
+    return value ? 'Sí' : 'No';
   }
 
   observationTypeLabel(type?: string): string {
@@ -178,6 +245,10 @@ export default class StudentDetailPage implements OnInit {
     return `${guardian.guardian.person.firstName ?? ''} ${guardian.guardian.person.lastName ?? ''}`.trim() || 'Sin apoderado';
   }
 
+  guardianEmail(guardian: StudentGuardian | null): string {
+    return guardian?.guardian?.person?.email || 'Sin correo';
+  }
+
   credentialPreviewLines(): string[] {
     const value = this.credential()?.qrValue ?? '';
     if (!value) return [];
@@ -188,6 +259,17 @@ export default class StudentDetailPage implements OnInit {
       lines.push(compact.slice(index, index + chunkSize));
     }
     return lines.slice(0, 7);
+  }
+
+  credentialBarcodeBars(): number[] {
+    const source = this.credential()?.credentialCode || this.student()?.studentCode || 'SISAE';
+    return source
+      .split('')
+      .flatMap((char, index) => {
+        const code = char.charCodeAt(0) + index;
+        return [2 + (code % 3), 1, 3 + (code % 2), 1];
+      })
+      .slice(0, 44);
   }
 
   private reload(): void {

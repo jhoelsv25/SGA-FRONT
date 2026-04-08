@@ -1,16 +1,16 @@
 import { inject } from '@angular/core';
 import { Params } from '@angular/router';
-import { patchState, signalStore, withHooks, withMethods, withState } from '@ngrx/signals';
-import { PaymentApi } from '../payment-api';
+import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { Toast } from '@core/services/toast';
-import { HeaderConfig } from '@core/types/header-types';
 import { ActionConfig } from '@core/types/action-types';
 import { DataSourceColumn } from '@core/types/data-source-types';
+import { HeaderConfig } from '@core/types/header-types';
 import { PaginationType } from '@core/types/pagination-types';
-import { Payment, PaymentCreate, PaymentUpdate } from '../../types/payment-types';
-import { PAYMENT_HEADER_CONFIG } from '../../config/header.config';
-import { PAYMENT_COLUMN } from '../../config/column.config';
 import { PAYMENT_ACTIONS } from '../../config/action.config';
+import { PAYMENT_COLUMN } from '../../config/column.config';
+import { PAYMENT_HEADER_CONFIG } from '../../config/header.config';
+import { PaymentCreate, Payment, PaymentUpdate } from '../../types/payment-types';
+import { PaymentApi } from '../payment-api';
 
 type PaymentState = {
   data: Payment[];
@@ -51,6 +51,42 @@ export const PaymentStore = signalStore(
         error: (err) => {
           patchState(store, { loading: false, error: err.message });
           toast.error('Error al cargar pagos: ' + err.message);
+        },
+      });
+    },
+    loadPending(params?: Params) {
+      patchState(store, { loading: true, error: null });
+      api.getPending(params ?? {}).subscribe({
+        next: (res) => {
+          const list = res.data ?? [];
+          patchState(store, {
+            data: list,
+            pagination: { ...store.pagination(), total: list.length },
+            loading: false,
+            error: null,
+          });
+        },
+        error: (err) => {
+          patchState(store, { loading: false, error: err.message });
+          toast.error('Error al cargar pagos pendientes: ' + err.message);
+        },
+      });
+    },
+    loadHistory(params?: Params) {
+      patchState(store, { loading: true, error: null });
+      api.getHistory(params ?? {}).subscribe({
+        next: (res) => {
+          const list = res.data ?? [];
+          patchState(store, {
+            data: list,
+            pagination: { ...store.pagination(), total: list.length },
+            loading: false,
+            error: null,
+          });
+        },
+        error: (err) => {
+          patchState(store, { loading: false, error: err.message });
+          toast.error('Error al cargar historial de pagos: ' + err.message);
         },
       });
     },
@@ -109,9 +145,4 @@ export const PaymentStore = signalStore(
       patchState(store, { pagination: { page, size, total } });
     },
   })),
-  withHooks({
-    onInit(store) {
-      store.loadAll();
-    },
-  }),
 );

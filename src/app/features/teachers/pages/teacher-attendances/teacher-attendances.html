@@ -1,12 +1,10 @@
-<sga-header-detail [config]="headerConfig" />
-
 @if (teacherContextId()) {
   <div class="mx-6 rounded-4xl border border-primary/15 bg-primary/8 px-5 py-4 text-sm text-primary dark:bg-primary/10">
     <div class="flex flex-wrap items-center justify-between gap-3">
       <div class="space-y-1">
         <p class="text-[10px] font-black uppercase tracking-[0.24em] text-primary/70">Contexto de docente</p>
         <p class="font-semibold">
-          Mostrando asistencias de
+          Mostrando bloques de
           <span class="font-black">{{ teacherContextName() || 'docente seleccionado' }}</span>
         </p>
       </div>
@@ -23,37 +21,18 @@
   </div>
 }
 
-<div class="mx-6 space-y-5">
-  <div class="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
-    <div class="rounded-3xl border border-base-200 bg-card px-4 py-4 shadow-sm">
-      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Docentes</p>
-      <p class="mt-2 text-2xl font-black">{{ rows().length }}</p>
-    </div>
-    <div class="rounded-3xl border border-success/20 bg-success/8 px-4 py-4 shadow-sm">
-      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-success-700 dark:text-success">Presentes</p>
-      <p class="mt-2 text-2xl font-black text-success-700 dark:text-success">{{ presentCount() }}</p>
-    </div>
-    <div class="rounded-3xl border border-warning/20 bg-warning/8 px-4 py-4 shadow-sm">
-      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-warning-700 dark:text-warning">Tardanzas</p>
-      <p class="mt-2 text-2xl font-black text-warning-700 dark:text-warning">{{ lateCount() }}</p>
-    </div>
-    <div class="rounded-3xl border border-danger/20 bg-danger/8 px-4 py-4 shadow-sm">
-      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-danger-700 dark:text-danger">Faltas</p>
-      <p class="mt-2 text-2xl font-black text-danger-700 dark:text-danger">{{ absentCount() }}</p>
-    </div>
-    <div class="rounded-3xl border border-info/20 bg-info/8 px-4 py-4 shadow-sm">
-      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-info">Justificados</p>
-      <p class="mt-2 text-2xl font-black text-info">{{ excusedCount() }}</p>
-    </div>
-    <div class="rounded-3xl border border-primary/20 bg-primary/8 px-4 py-4 shadow-sm">
-      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Pendientes</p>
-      <p class="mt-2 text-2xl font-black text-primary">{{ dirtyCount() }}</p>
-    </div>
-  </div>
+<section class="mx-6 mt-6 space-y-5">
+  <div class="rounded-[2rem] border border-base-200 bg-base-100 px-6 py-5 shadow-sm">
+    <div class="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+      <div class="space-y-2">
+        <p class="text-[10px] font-black uppercase tracking-[0.24em] text-primary/65">Seguimiento docente</p>
+        <h1 class="text-3xl font-black tracking-tight text-base-content">Control por horario</h1>
+        <p class="max-w-2xl text-sm text-base-content/60">
+          La tabla solo lista los bloques programados. El registro se hace desde un modal para mantener la vista limpia.
+        </p>
+      </div>
 
-  <div class="rounded-4xl border border-base-200 bg-base-100 p-4 shadow-sm md:p-5">
-    <div class="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
-      <div class="grid flex-1 grid-cols-1 gap-4 md:grid-cols-[220px_1fr] xl:max-w-3xl">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-end">
         <div>
           <label for="teacher-attendance-date" class="mb-1.5 block text-sm font-semibold text-base-content/70">Fecha de control</label>
           <input
@@ -66,271 +45,131 @@
           />
         </div>
 
-        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          <button
-            type="button"
-            z-button
-            zColor="primary"
-            zType="outline"
-            class="h-11 justify-start rounded-[var(--radius-xl)] px-4 font-bold uppercase tracking-[0.12em]"
-            (click)="openManualDialog()"
-          >
-            <i class="fas fa-plus mr-2"></i>
-            Manual
-          </button>
-
-          <button
-            type="button"
-            z-button
-            zColor="primary"
-            zType="outline"
-            class="h-11 justify-start rounded-[var(--radius-xl)] px-4 font-bold uppercase tracking-[0.12em]"
-            (click)="openImportDialog()"
-          >
-            <i class="fas fa-file-import mr-2"></i>
-            Importar
-          </button>
-
-          <button
-            type="button"
-            z-button
-            zColor="primary"
-            zType="outline"
-            class="h-11 justify-start rounded-[var(--radius-xl)] px-4 font-bold uppercase tracking-[0.12em]"
-            (click)="openQuickRegister()"
-          >
-            <i class="fas fa-qrcode mr-2"></i>
-            Registro rápido
-          </button>
-
-          <button
-            type="button"
-            z-button
-            zColor="primary"
-            zType="outline"
-            class="h-11 justify-start rounded-[var(--radius-xl)] px-4 font-bold uppercase tracking-[0.12em]"
-            (click)="downloadTemplate()"
-          >
-            <i class="fas fa-download mr-2"></i>
-            Plantilla
-          </button>
-
-          <button
-            type="button"
-            z-button
-            zColor="secondary"
-            zType="outline"
-            class="h-11 justify-start rounded-[var(--radius-xl)] px-4 font-bold uppercase tracking-[0.12em]"
-            (click)="loadTeachers()"
-          >
-            <i class="fas fa-sync-alt mr-2"></i>
-            Recargar
-          </button>
-        </div>
-      </div>
-
-      <div class="flex items-center gap-3 self-stretch xl:self-auto">
         <button
           type="button"
           z-button
-          zColor="success"
-          class="h-11 flex-1 rounded-[var(--radius-xl)] px-5 text-[11px] font-black uppercase tracking-[0.18em] xl:flex-none"
-          [disabled]="saving() || loading() || dirtyCount() === 0"
-          (click)="saveManual()"
-        >
-          @if (saving()) {
-            <i class="fas fa-spinner fa-spin mr-2"></i>
-          } @else {
-            <i class="fas fa-save mr-2"></i>
-          }
-          Guardar cambios
-        </button>
-
-        <button
-          type="button"
-          z-button
-          zColor="danger"
+          zColor="secondary"
           zType="outline"
-          [disabled]="deleting() || loading() || !bulkDeleteMode() || !hasDeleteSelections()"
-          (click)="deleteSelected()"
-          class="h-11 w-11 rounded-[var(--radius-xl)] !px-0"
-          aria-label="Eliminar seleccionados"
+          class="h-11 rounded-[var(--radius-xl)] px-5 text-[11px] font-black uppercase tracking-[0.18em]"
+          (click)="loadMonitoring()"
         >
-          @if (deleting()) {
-            <i class="fas fa-spinner fa-spin"></i>
-          } @else {
-            <i class="fas fa-trash"></i>
-          }
+          <i class="fas fa-sync-alt mr-2"></i>
+          Recargar
         </button>
       </div>
     </div>
   </div>
 
+  <div class="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+    <div class="rounded-3xl border border-base-200 bg-card px-4 py-4 shadow-sm">
+      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Bloques</p>
+      <p class="mt-2 text-2xl font-black">{{ rows().length }}</p>
+    </div>
+    <div class="rounded-3xl border border-success/20 bg-success/8 px-4 py-4 shadow-sm">
+      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-success-700 dark:text-success">Cumplidos</p>
+      <p class="mt-2 text-2xl font-black text-success-700 dark:text-success">{{ fulfilledCount() }}</p>
+    </div>
+    <div class="rounded-3xl border border-warning/20 bg-warning/8 px-4 py-4 shadow-sm">
+      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-warning-700 dark:text-warning">Parciales</p>
+      <p class="mt-2 text-2xl font-black text-warning-700 dark:text-warning">{{ partialCount() }}</p>
+    </div>
+    <div class="rounded-3xl border border-danger/20 bg-danger/8 px-4 py-4 shadow-sm">
+      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-danger-700 dark:text-danger">Incumplidos</p>
+      <p class="mt-2 text-2xl font-black text-danger-700 dark:text-danger">{{ unfulfilledCount() }}</p>
+    </div>
+    <div class="rounded-3xl border border-info/20 bg-info/8 px-4 py-4 shadow-sm">
+      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-info">Reprogramados</p>
+      <p class="mt-2 text-2xl font-black text-info">{{ reprogrammedCount() }}</p>
+    </div>
+    <div class="rounded-3xl border border-primary/20 bg-primary/8 px-4 py-4 shadow-sm">
+      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Pendientes</p>
+      <p class="mt-2 text-2xl font-black text-primary">{{ pendingCount() }}</p>
+    </div>
+  </div>
+
   <div class="overflow-hidden rounded-4xl border border-base-200 bg-base-100 shadow-sm">
     <div class="overflow-x-auto">
-      <table class="w-full min-w-[960px] border-collapse bg-base-100">
+      <table class="w-full min-w-[1180px] border-collapse bg-base-100">
         <thead>
-          <tr class="border-b border-base-200 bg-base-200/55">
-            <th class="w-12 px-3 py-3 text-center text-xs font-semibold uppercase tracking-wide text-base-content/60">
-              <div class="flex items-center justify-center">
-                <label class="inline-flex items-center cursor-pointer group">
-                  <input
-                    type="checkbox"
-                    class="sr-only"
-                    [checked]="allSelected()"
-                    [indeterminate]="partialSelected()"
-                    (change)="toggleAllSelection()"
-                  />
-                  <div
-                    class="flex h-5 w-5 items-center justify-center rounded border-2 transition-all"
-                    [class.bg-primary-500]="allSelected() || partialSelected()"
-                    [class.border-primary-500]="allSelected() || partialSelected()"
-                    [class.border-base-400]="!allSelected() && !partialSelected()"
-                  >
-                    @if (allSelected()) {
-                      <i class="fas fa-check text-xs text-white"></i>
-                    } @else if (partialSelected()) {
-                      <i class="fas fa-minus text-xs text-white"></i>
-                    }
-                  </div>
-                </label>
-              </div>
-            </th>
-            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Código</th>
+          <tr class="border-b border-base-200 bg-base-200/50">
             <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Docente</th>
-            <th class="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Estado</th>
-            <th class="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Hora entrada</th>
-            <th class="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Observaciones</th>
-            <th class="w-12 px-3 py-3 text-center text-xs font-semibold uppercase tracking-wide text-base-content/60">
-              Acciones
-            </th>
+            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Curso / Sección</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Bloque</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Horario</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Registrado</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Cumplimiento</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Estado</th>
+            <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-base-content/60">Acción</th>
           </tr>
         </thead>
         <tbody>
           @if (loading()) {
             <tr>
-              <td colspan="7" class="px-3 py-10 text-center text-sm text-base-content/50">
-                Cargando docentes...
+              <td colspan="8" class="px-3 py-10 text-center text-sm text-base-content/50">
+                Cargando bloques programados...
               </td>
             </tr>
           } @else if (rows().length === 0) {
             <tr>
-              <td colspan="7" class="px-3 py-10 text-center text-sm text-base-content/50">
-                No hay docentes disponibles para registrar asistencia.
+              <td colspan="8" class="px-3 py-10 text-center text-sm text-base-content/50">
+                No hay bloques programados para la fecha seleccionada.
               </td>
             </tr>
           } @else {
-            @for (row of rows(); track row.teacherId) {
-              <tr
-                class="border-b border-base-200/70 align-top transition-colors hover:bg-base-200/25"
-                [class.bg-warning/8]="row.dirty"
-                [class.bg-danger/8]="row.markedForDelete"
-              >
-                <td class="w-12 px-3 py-3 text-center align-middle">
-                  <label
-                    class="inline-flex w-full items-center justify-center group"
-                    [class.opacity-50]="isRowDeleteDisabled(row.teacherId)"
-                  >
-                    <input
-                      type="checkbox"
-                      class="sr-only"
-                      [checked]="row.markedForDelete"
-                      (change)="toggleDelete(row.attendanceId, $event.target.checked)"
-                    />
-                    <div
-                      class="flex h-5 w-5 items-center justify-center rounded border-2 transition-all"
-                      [class.bg-primary-500]="row.markedForDelete"
-                      [class.border-primary-500]="row.markedForDelete"
-                      [class.border-base-400]="!row.markedForDelete"
-                    >
-                      @if (row.markedForDelete) {
-                        <i class="fas fa-check text-xs text-white"></i>
-                      }
-                    </div>
-                  </label>
-                </td>
-                <td class="px-4 py-3 text-sm font-black text-base-content">{{ row.teacherCode }}</td>
-                <td class="px-4 py-3">
+            @for (row of rows(); track row.scheduleId) {
+              <tr class="border-b border-base-200/70 align-top transition-colors hover:bg-base-200/25">
+                <td class="px-4 py-4">
                   <div class="space-y-1">
-                    <p class="text-sm font-semibold text-base-content/85">{{ row.teacherLabel }}</p>
-                    @if (row.dirty) {
-                      <span class="inline-flex rounded-full border border-warning/25 bg-warning/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.18em] text-warning-700 dark:text-warning">
-                        Con cambios
-                      </span>
-                    }
+                    <p class="text-sm font-black text-base-content">{{ row.teacherCode || 'Sin código' }}</p>
+                    <p class="text-sm font-semibold text-base-content/85">{{ row.teacherName || 'Docente sin nombre' }}</p>
                   </div>
                 </td>
-                <td class="px-3 py-3">
-                  <div class="flex gap-2">
-                    <button
-                      type="button"
-                      class="rounded-[var(--radius-xl)] px-3 py-1.5 text-xs font-black uppercase tracking-[0.16em] transition-colors"
-                      [class]="row.status === 'present' ? 'bg-success text-success-content' : 'bg-success/10 text-success hover:bg-success/20'"
-                      [disabled]="isRowSyncing(row.teacherId)"
-                      (click)="setStatus(row.teacherId, 'present')"
-                    >
-                      P
-                    </button>
-                    <button
-                      type="button"
-                      class="rounded-[var(--radius-xl)] px-3 py-1.5 text-xs font-black uppercase tracking-[0.16em] transition-colors"
-                      [class]="row.status === 'late' ? 'bg-warning text-warning-content' : 'bg-warning/10 text-warning hover:bg-warning/20'"
-                      [disabled]="isRowSyncing(row.teacherId)"
-                      (click)="setStatus(row.teacherId, 'late')"
-                    >
-                      T
-                    </button>
-                    <button
-                      type="button"
-                      class="rounded-[var(--radius-xl)] px-3 py-1.5 text-xs font-black uppercase tracking-[0.16em] transition-colors"
-                      [class]="row.status === 'absent' ? 'bg-error text-error-content' : 'bg-error/10 text-error hover:bg-error/20'"
-                      [disabled]="isRowSyncing(row.teacherId)"
-                      (click)="setStatus(row.teacherId, 'absent')"
-                    >
-                      F
-                    </button>
-                    <button
-                      type="button"
-                      class="rounded-[var(--radius-xl)] px-3 py-1.5 text-xs font-black uppercase tracking-[0.16em] transition-colors"
-                      [class]="row.status === 'excused' ? 'bg-info text-info-content' : 'bg-info/10 text-info hover:bg-info/20'"
-                      [disabled]="isRowSyncing(row.teacherId)"
-                      (click)="setStatus(row.teacherId, 'excused')"
-                    >
-                      J
-                    </button>
+                <td class="px-4 py-4">
+                  <div class="space-y-1">
+                    <p class="text-sm font-semibold text-base-content">{{ row.courseName || 'Curso sin nombre' }}</p>
+                    <p class="text-xs uppercase tracking-[0.16em] text-base-content/55">{{ row.sectionName || 'Sección sin nombre' }}</p>
                   </div>
                 </td>
-                <td class="px-3 py-3">
-                  <input
-                    z-input
-                    w-full
-                    type="time"
-                    [ngModel]="row.checkInTime.slice(0, 5)"
-                    (ngModelChange)="updateCheckInTime(row.teacherId, $event)"
-                  />
+                <td class="px-4 py-4">
+                  <div class="space-y-1">
+                    <p class="text-sm font-semibold text-base-content">{{ row.title }}</p>
+                    <p class="text-xs text-base-content/60">{{ row.classroom }}</p>
+                  </div>
                 </td>
-                <td class="px-3 py-3">
-                  <input
-                    z-input
-                    w-full
-                    [ngModel]="row.observations"
-                    (ngModelChange)="updateObservations(row.teacherId, $event)"
-                    placeholder="Observaciones"
-                  />
+                <td class="px-4 py-4">
+                  <p class="text-sm font-semibold text-base-content">{{ formatPlannedRange(row) }}</p>
+                  <p class="mt-1 text-xs text-base-content/55">{{ row.plannedMinutes }} min programados</p>
                 </td>
-                <td class="w-12 px-3 py-3 text-center align-middle">
+                <td class="px-4 py-4">
+                  @if (row.actualStartTime || row.actualEndTime) {
+                    <div class="space-y-1">
+                      <p class="text-sm font-semibold text-base-content">
+                        {{ formatTime(row.actualStartTime) }} - {{ formatTime(row.actualEndTime) }}
+                      </p>
+                      <p class="text-xs text-base-content/55">{{ row.actualMinutes }} min reales</p>
+                    </div>
+                  } @else {
+                    <span class="text-sm text-base-content/45">Sin registro</span>
+                  }
+                </td>
+                <td class="px-4 py-4">
+                  <p class="text-sm font-black text-base-content">{{ percentageLabel(row.compliancePercentage) }}</p>
+                </td>
+                <td class="px-4 py-4">
+                  <span class="inline-flex rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em]" [class]="statusClass(row.complianceStatus)">
+                    {{ statusLabel(row.complianceStatus) }}
+                  </span>
+                </td>
+                <td class="px-4 py-4 text-right">
                   <button
                     type="button"
                     z-button
-                    zColor="danger"
-                    zType="ghost"
-                    zSize="sm"
-                    class="!flex !h-9 !w-9 !items-center !justify-center !px-0"
-                    [disabled]="isRowDeleteDisabled(row.teacherId)"
-                    (click)="deleteRow(row.teacherId)"
-                    aria-label="Eliminar asistencia"
+                    zColor="primary"
+                    zType="outline"
+                    class="h-10 rounded-[var(--radius-xl)] px-4 text-[10px] font-black uppercase tracking-[0.18em]"
+                    (click)="openRegisterModal(row)"
                   >
-                    <i class="fas fa-trash"></i>
+                    Registrar
                   </button>
                 </td>
               </tr>
@@ -340,4 +179,4 @@
       </table>
     </div>
   </div>
-</div>
+</section>

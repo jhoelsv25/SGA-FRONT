@@ -1,0 +1,77 @@
+<section class="mb-8 rounded-3xl border border-base-200 bg-base-100 p-5 shadow-sm">
+  <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+    <div>
+      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Monitoreo docente</p>
+      <h2 class="mt-1 text-xl font-black text-neutral-800 dark:text-neutral-100">Clases en tiempo real</h2>
+      <p class="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+        Supervisa cuántos docentes están dictando ahora mismo y quiénes están en ventana de inicio.
+      </p>
+    </div>
+    <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div class="rounded-2xl border border-success/20 bg-success/8 px-4 py-3">
+        <p class="text-[10px] font-black uppercase tracking-[0.16em] text-success-700 dark:text-success">En curso</p>
+        <p class="mt-1 text-2xl font-black text-success-700 dark:text-success">{{ data()?.counts?.ongoing ?? 0 }}</p>
+      </div>
+      <div class="rounded-2xl border border-primary/20 bg-primary/8 px-4 py-3">
+        <p class="text-[10px] font-black uppercase tracking-[0.16em] text-primary">Listos</p>
+        <p class="mt-1 text-2xl font-black text-primary">{{ data()?.counts?.ready ?? 0 }}</p>
+      </div>
+      <div class="rounded-2xl border border-warning/20 bg-warning/8 px-4 py-3">
+        <p class="text-[10px] font-black uppercase tracking-[0.16em] text-warning-700 dark:text-warning">Próximos</p>
+        <p class="mt-1 text-2xl font-black text-warning-700 dark:text-warning">{{ data()?.counts?.upcoming ?? 0 }}</p>
+      </div>
+      <div class="rounded-2xl border border-danger/20 bg-danger/8 px-4 py-3">
+        <p class="text-[10px] font-black uppercase tracking-[0.16em] text-danger-700 dark:text-danger">No iniciados</p>
+        <p class="mt-1 text-2xl font-black text-danger-700 dark:text-danger">{{ data()?.counts?.missed ?? 0 }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-5 space-y-3">
+    @if (loading()) {
+      <div class="rounded-2xl border border-base-200 bg-base-50 px-4 py-6 text-sm text-neutral-500 dark:bg-base-900/40 dark:text-neutral-400">
+        Cargando monitoreo en tiempo real...
+      </div>
+    } @else if ((data()?.activeTeachers?.length ?? 0) === 0) {
+      <div class="rounded-2xl border border-dashed border-base-200 px-4 py-6 text-sm text-neutral-500 dark:text-neutral-400">
+        No hay docentes dictando clases en este momento.
+      </div>
+    } @else {
+      @for (item of data()?.activeTeachers ?? []; track item.scheduleId) {
+        <div class="rounded-2xl border border-base-200 bg-base-50 px-4 py-4 dark:bg-base-900/30">
+          <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div class="space-y-1">
+              <p class="text-sm font-black text-neutral-800 dark:text-neutral-100">{{ item.teacherName || item.teacherCode }}</p>
+              <p class="text-sm text-neutral-600 dark:text-neutral-300">{{ item.courseName }} · {{ item.sectionName }} · {{ item.classroom }}</p>
+            </div>
+            <div class="min-w-[260px] space-y-2">
+              <div class="flex items-center justify-between text-[11px] font-bold uppercase tracking-[0.16em] text-neutral-500 dark:text-neutral-400">
+                <span>Progreso</span>
+                <span>{{ item.progressPercentage.toFixed(1) }}%</span>
+              </div>
+              <div class="h-2.5 overflow-hidden rounded-full bg-base-200">
+                <div class="h-full rounded-full bg-linear-to-r from-success to-info" [style.width.%]="item.progressPercentage"></div>
+              </div>
+              <div class="flex items-center justify-between gap-3">
+                <p class="text-xs text-neutral-500 dark:text-neutral-400">
+                  @if (item.endsInMinutes > 0) {
+                    Termina en {{ item.endsInMinutes }} min
+                  } @else {
+                    Cierre pendiente
+                  }
+                </p>
+                <button
+                  type="button"
+                  class="rounded-[var(--radius-xl)] border border-primary/20 bg-primary/8 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-primary transition-colors hover:bg-primary/14"
+                  (click)="openTeacherMonitoring(item)"
+                >
+                  Ver detalle
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    }
+  </div>
+</section>

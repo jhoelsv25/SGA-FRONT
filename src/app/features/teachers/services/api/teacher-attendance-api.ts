@@ -5,6 +5,9 @@ import {
   TeacherAttendance,
   TeacherAttendanceBulkRequest,
   TeacherAttendanceBulkResponse,
+  TeacherLiveSessionResponse,
+  TeacherRealtimeOverviewResponse,
+  TeacherScheduleMonitoringRow,
   TeacherAttendanceResponse,
 } from '@features/teachers/types/teacher-attendance-types';
 import { Observable } from 'rxjs';
@@ -23,6 +26,40 @@ export class TeacherAttendanceApi {
   getTeachers(): Observable<{ message: string; data: { id: string; teacherCode: string; specialization: string; firstName?: string; lastName?: string }[] }> {
     return this.http.get<{ message: string; data: { id: string; teacherCode: string; specialization: string; firstName?: string; lastName?: string }[] }>(
       `${this.baseUrl}/teachers`,
+    );
+  }
+
+  getScheduleMonitoring(
+    params: Record<string, string | number | boolean> = {},
+  ): Observable<{ message: string; data: TeacherScheduleMonitoringRow[] }> {
+    return this.http.get<{ message: string; data: TeacherScheduleMonitoringRow[] }>(
+      `${this.baseUrl}/schedule-monitoring`,
+      { params },
+    );
+  }
+
+  getTeacherLiveSession(): Observable<TeacherLiveSessionResponse> {
+    return this.http.get<TeacherLiveSessionResponse>(`${this.baseUrl}/teacher/live-session`);
+  }
+
+  getRealtimeOverview(): Observable<TeacherRealtimeOverviewResponse> {
+    return this.http.get<TeacherRealtimeOverviewResponse>(`${this.baseUrl}/realtime-overview`);
+  }
+
+  startTeacherLiveSession(scheduleId: string): Observable<{ message: string; data: unknown }> {
+    return this.http.post<{ message: string; data: unknown }>(
+      `${this.baseUrl}/teacher/live-session/start`,
+      { scheduleId },
+    );
+  }
+
+  finishTeacherLiveSession(
+    scheduleId: string,
+    justification?: string,
+  ): Observable<{ message: string; data: unknown }> {
+    return this.http.post<{ message: string; data: unknown }>(
+      `${this.baseUrl}/teacher/live-session/finish`,
+      { scheduleId, justification },
     );
   }
 
