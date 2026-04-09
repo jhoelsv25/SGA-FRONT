@@ -7,8 +7,11 @@ import { NotificationPermissionCardComponent } from '@core/components/notificati
 import { RealtimeNotificationStackComponent } from '@core/components/realtime-notification-stack/realtime-notification-stack';
 
 
+import { PushNotificationService } from '@core/services/push-notification.service';
+
 @Component({
   selector: 'sga-root',
+  standalone: true,
   imports: [
     RouterOutlet,
     ZardToastComponent,
@@ -25,11 +28,13 @@ export class App {
   private authInitializer = inject(AuthInitializer);
   private authFacade = inject(AuthFacade);
   private router = inject(Router);
+  private pushService = inject(PushNotificationService);
 
   constructor() {
     this.authInitializer.initialize().then((isAuthenticated) => {
       console.log('✅ [App] Auth initialized:', isAuthenticated);
       if (isAuthenticated) {
+        this.pushService.requestPermissionAndSubscribe();
         const currentUrl = this.router.url;
         const publicRoutes = ['/auth/login', '/auth/forgot-password', '/auth/reset-password'];
 
