@@ -8,6 +8,12 @@ export default [
     data: { permissions: ['institution:update'] },
   },
   {
+    path: 'institution/config',
+    loadComponent: () => import('./institution/pages/institution-config/institution-config'),
+    title: 'Configuración Supervisión',
+    data: { permissions: ['institution:update'] },
+  },
+  {
     path: 'users',
     loadComponent: () => import('./users/pages/users'),
     title: 'Usuarios',

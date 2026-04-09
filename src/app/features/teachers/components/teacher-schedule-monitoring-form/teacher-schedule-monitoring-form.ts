@@ -3,11 +3,12 @@ import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardInputDirective } from '@/shared/components/input';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
 import { Toast } from '@core/services/toast';
 import { TeacherAttendanceApi } from '@features/teachers/services/api/teacher-attendance-api';
 import {
+  TeacherAttendanceInterval,
   TeacherScheduleComplianceStatus,
   TeacherScheduleMonitoringRow,
 } from '@features/teachers/types/teacher-attendance-types';
@@ -44,32 +45,55 @@ export class TeacherScheduleMonitoringForm {
   ];
 
   readonly form = this.fb.group({
-    actualStartTime: [this.toInputTime(this.row.actualStartTime), Validators.required],
-    actualEndTime: [this.toInputTime(this.row.actualEndTime), Validators.required],
     complianceStatus: [this.row.complianceStatus, Validators.required],
     justification: [this.row.justification ?? ''],
+    learningPurpose: [this.row.learningPurpose ?? ''],
+    downTimeReason: [this.row.downTimeReason ?? ''],
+    intervals: this.fb.array(this.createInitialIntervals()),
   });
 
+  get intervals(): FormArray {
+    return this.form.controls.intervals as FormArray;
+  }
+
   readonly percentage = computed(() => {
-    const start = this.normalizeTime(this.form.controls.actualStartTime.value);
-    const end = this.normalizeTime(this.form.controls.actualEndTime.value);
     const plannedMinutes = this.row.plannedMinutes;
-    if (!start || !end || plannedMinutes <= 0) return '0.0%';
-    const actualMinutes = Math.max(0, this.toMinutes(end) - this.toMinutes(start));
+    if (plannedMinutes <= 0) return '0.0%';
+    const actualMinutes = this.actualMinutes();
     const value = Math.min(100, Math.round((actualMinutes / plannedMinutes) * 10000) / 100);
     return `${value.toFixed(1)}%`;
+  });
+
+  readonly actualMinutes = computed(() => {
+    return this.readIntervals().reduce((total, interval) => {
+      if (!interval.startTime || !interval.endTime) return total;
+      return total + Math.max(0, this.toMinutes(interval.endTime) - this.toMinutes(interval.startTime));
+    }, 0);
+  });
+
+  readonly downTimeMinutes = computed(() => {
+    const intervals = this.readIntervals();
+    let total = 0;
+    for (let index = 0; index < intervals.length - 1; index++) {
+      const current = intervals[index];
+      const next = intervals[index + 1];
+      if (!current.endTime || !next.startTime) continue;
+      total += Math.max(0, this.toMinutes(next.startTime) - this.toMinutes(current.endTime));
+    }
+    return total;
   });
 
   submit(): void {
     if (this.form.invalid || this.form.disabled) return;
 
-    const actualStartTime = this.normalizeTime(this.form.controls.actualStartTime.value);
-    const actualEndTime = this.normalizeTime(this.form.controls.actualEndTime.value);
+    const intervals = this.readIntervals();
+    const actualStartTime = intervals[0]?.startTime ?? null;
+    const actualEndTime = this.getLastEndedInterval(intervals)?.endTime ?? null;
     const complianceStatus = this.form.controls.complianceStatus.value;
     const justification = (this.form.controls.justification.value ?? '').trim();
 
-    if (!actualStartTime || !actualEndTime || !complianceStatus) {
-      this.toast.error('Completa los campos requeridos para registrar el bloque.');
+    if (!actualStartTime || !actualEndTime || !complianceStatus || intervals.some(interval => !interval.startTime || !interval.endTime)) {
+      this.toast.error('Completa todos los tramos con hora de inicio y fin para registrar el bloque.');
       return;
     }
 
@@ -89,6 +113,10 @@ export class TeacherScheduleMonitoringForm {
             plannedStartTime: this.row.plannedStartTime ?? undefined,
             plannedEndTime: this.row.plannedEndTime ?? undefined,
             justification: justification || undefined,
+            learningPurpose: (this.form.controls.learningPurpose.value ?? '').trim() || undefined,
+            downTimeMinutes: this.downTimeMinutes(),
+            downTimeReason: (this.form.controls.downTimeReason.value ?? '').trim() || undefined,
+            intervals,
           },
         ],
       })
@@ -113,6 +141,23 @@ export class TeacherScheduleMonitoringForm {
     this.ref.close(false);
   }
 
+  addInterval(): void {
+    const last = this.readIntervals().at(-1);
+    this.intervals.push(
+      this.createIntervalGroup({
+        startTime: last?.endTime ?? this.toInputTime(this.row.plannedStartTime),
+        endTime: this.toInputTime(this.row.plannedEndTime),
+        intervalType: 'class',
+        reason: '',
+      }),
+    );
+  }
+
+  removeInterval(index: number): void {
+    if (this.intervals.length <= 1) return;
+    this.intervals.removeAt(index);
+  }
+
   private toInputTime(value: string | null | undefined): string {
     return value ? value.slice(0, 5) : '';
   }
@@ -128,6 +173,59 @@ export class TeacherScheduleMonitoringForm {
   private toMinutes(value: string): number {
     const [hours, minutes] = value.slice(0, 5).split(':').map(Number);
     return (hours ?? 0) * 60 + (minutes ?? 0);
+  }
+
+  private createInitialIntervals() {
+    const intervals = this.row.intervals?.length
+      ? this.row.intervals
+      : [
+          {
+            startTime: this.toInputTime(this.row.actualStartTime ?? this.row.plannedStartTime),
+            endTime: this.toInputTime(this.row.actualEndTime ?? this.row.plannedEndTime),
+            intervalType: 'class',
+            reason: '',
+          },
+        ];
+
+    return intervals.map(interval => this.createIntervalGroup(interval));
+  }
+
+  private createIntervalGroup(interval?: Partial<TeacherAttendanceInterval>) {
+    return this.fb.group({
+      startTime: [this.toInputTime(interval?.startTime ?? ''), Validators.required],
+      endTime: [this.toInputTime(interval?.endTime ?? ''), Validators.required],
+      intervalType: [interval?.intervalType ?? 'class'],
+      reason: [interval?.reason ?? ''],
+      latitude: [interval?.latitude ?? null],
+      longitude: [interval?.longitude ?? null],
+      isWithinGeofence: [interval?.isWithinGeofence ?? true],
+    });
+  }
+
+  private readIntervals(): TeacherAttendanceInterval[] {
+    return this.intervals.controls
+      .map(control => {
+        const raw = control.getRawValue();
+        return {
+          startTime: this.normalizeTime(raw.startTime) ?? '',
+          endTime: this.normalizeTime(raw.endTime),
+          intervalType: String(raw.intervalType ?? 'class').trim() || 'class',
+          reason: String(raw.reason ?? '').trim() || undefined,
+          latitude: raw.latitude ?? undefined,
+          longitude: raw.longitude ?? undefined,
+          isWithinGeofence: raw.isWithinGeofence ?? undefined,
+        } satisfies TeacherAttendanceInterval;
+      })
+      .sort((a, b) => this.toMinutes(a.startTime) - this.toMinutes(b.startTime));
+  }
+
+  private getLastEndedInterval(intervals: TeacherAttendanceInterval[]) {
+    for (let index = intervals.length - 1; index >= 0; index--) {
+      if (intervals[index]?.endTime) {
+        return intervals[index];
+      }
+    }
+    return null;
   }
 
   private mapAttendanceStatus(status: TeacherScheduleComplianceStatus) {

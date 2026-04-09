@@ -33,16 +33,32 @@
       </div>
 
       <div class="flex flex-col gap-3 sm:flex-row sm:items-end">
-        <div>
-          <label for="teacher-attendance-date" class="mb-1.5 block text-sm font-semibold text-base-content/70">Fecha de control</label>
+        <div class="min-w-[280px]">
+          <label for="teacher-attendance-search" class="mb-1.5 block text-sm font-semibold text-base-content/70">Buscar</label>
           <input
             z-input
             w-full
-            id="teacher-attendance-date"
-            type="date"
-            [ngModel]="attendanceDate()"
-            (ngModelChange)="onDateChange($event)"
+            id="teacher-attendance-search"
+            type="search"
+            placeholder="Docente, curso, sección o aula..."
+            [value]="search()"
+            (input)="onSearchChange(($any($event.target).value ?? '').toString())"
+            class="h-11"
           />
+        </div>
+
+        <div>
+          <label for="teacher-attendance-date" class="mb-1.5 block text-sm font-semibold text-base-content/70">Fecha de control</label>
+          <z-date-picker
+            id="teacher-attendance-date"
+            class="block w-full"
+            zSize="lg"
+            zType="outline"
+            zFormat="dd/MM/yyyy"
+            placeholder="Seleccionar fecha"
+            [ngModel]="attendanceDateValue()"
+            (ngModelChange)="onDateChange($event)"
+          ></z-date-picker>
         </div>
 
         <button
@@ -63,7 +79,7 @@
   <div class="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
     <div class="rounded-3xl border border-base-200 bg-card px-4 py-4 shadow-sm">
       <p class="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Bloques</p>
-      <p class="mt-2 text-2xl font-black">{{ rows().length }}</p>
+      <p class="mt-2 text-2xl font-black">{{ filteredRows().length }}</p>
     </div>
     <div class="rounded-3xl border border-success/20 bg-success/8 px-4 py-4 shadow-sm">
       <p class="text-[10px] font-black uppercase tracking-[0.2em] text-success-700 dark:text-success">Cumplidos</p>
@@ -87,96 +103,148 @@
     </div>
   </div>
 
-  <div class="overflow-hidden rounded-4xl border border-base-200 bg-base-100 shadow-sm">
-    <div class="overflow-x-auto">
-      <table class="w-full min-w-[1180px] border-collapse bg-base-100">
-        <thead>
-          <tr class="border-b border-base-200 bg-base-200/50">
-            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Docente</th>
-            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Curso / Sección</th>
-            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Bloque</th>
-            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Horario</th>
-            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Registrado</th>
-            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Cumplimiento</th>
-            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Estado</th>
-            <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-base-content/60">Acción</th>
-          </tr>
-        </thead>
-        <tbody>
-          @if (loading()) {
-            <tr>
-              <td colspan="8" class="px-3 py-10 text-center text-sm text-base-content/50">
-                Cargando bloques programados...
-              </td>
-            </tr>
-          } @else if (rows().length === 0) {
-            <tr>
-              <td colspan="8" class="px-3 py-10 text-center text-sm text-base-content/50">
-                No hay bloques programados para la fecha seleccionada.
-              </td>
-            </tr>
-          } @else {
-            @for (row of rows(); track row.scheduleId) {
-              <tr class="border-b border-base-200/70 align-top transition-colors hover:bg-base-200/25">
-                <td class="px-4 py-4">
-                  <div class="space-y-1">
-                    <p class="text-sm font-black text-base-content">{{ row.teacherCode || 'Sin código' }}</p>
-                    <p class="text-sm font-semibold text-base-content/85">{{ row.teacherName || 'Docente sin nombre' }}</p>
+  <div class="space-y-4">
+    @if (loading()) {
+      <div class="rounded-4xl border border-base-200 bg-base-100 px-6 py-12 text-center text-sm text-base-content/50 shadow-sm">
+        Cargando bloques programados...
+      </div>
+    } @else if (rows().length === 0) {
+      <div class="rounded-4xl border border-base-200 bg-base-100 px-6 py-12 text-center text-sm text-base-content/50 shadow-sm">
+        No hay bloques programados para la fecha seleccionada.
+      </div>
+    } @else if (filteredRows().length === 0) {
+      <div class="rounded-4xl border border-base-200 bg-base-100 px-6 py-12 text-center text-sm text-base-content/50 shadow-sm">
+        No encontramos coincidencias para la búsqueda actual.
+      </div>
+    } @else {
+      @for (row of filteredRows(); track row.scheduleId) {
+        <article class="group rounded-[2rem] border border-base-200 bg-card/40 p-4 shadow-sm transition-all duration-200 hover:border-primary/20 hover:bg-card/60 hover:shadow-xl hover:shadow-primary/5">
+          <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div class="flex min-w-0 items-start gap-4 flex-1">
+              <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-border/10 bg-primary/10 text-[10px] font-black uppercase tracking-[0.14em] text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                {{ (row.teacherCode || 'DOC').slice(0, 3) }}
+              </div>
+
+              <div class="min-w-0 flex-1 space-y-3">
+                <div class="flex flex-wrap items-center gap-3">
+                  <div class="min-w-0">
+                    <p class="text-base font-black tracking-tight text-base-content truncate">{{ row.teacherName || 'Docente sin nombre' }}</p>
+                    <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">{{ row.teacherCode || 'Sin código' }}</p>
                   </div>
-                </td>
-                <td class="px-4 py-4">
-                  <div class="space-y-1">
-                    <p class="text-sm font-semibold text-base-content">{{ row.courseName || 'Curso sin nombre' }}</p>
-                    <p class="text-xs uppercase tracking-[0.16em] text-base-content/55">{{ row.sectionName || 'Sección sin nombre' }}</p>
-                  </div>
-                </td>
-                <td class="px-4 py-4">
-                  <div class="space-y-1">
-                    <p class="text-sm font-semibold text-base-content">{{ row.title }}</p>
-                    <p class="text-xs text-base-content/60">{{ row.classroom }}</p>
-                  </div>
-                </td>
-                <td class="px-4 py-4">
-                  <p class="text-sm font-semibold text-base-content">{{ formatPlannedRange(row) }}</p>
-                  <p class="mt-1 text-xs text-base-content/55">{{ row.plannedMinutes }} min programados</p>
-                </td>
-                <td class="px-4 py-4">
-                  @if (row.actualStartTime || row.actualEndTime) {
-                    <div class="space-y-1">
-                      <p class="text-sm font-semibold text-base-content">
-                        {{ formatTime(row.actualStartTime) }} - {{ formatTime(row.actualEndTime) }}
-                      </p>
-                      <p class="text-xs text-base-content/55">{{ row.actualMinutes }} min reales</p>
-                    </div>
-                  } @else {
-                    <span class="text-sm text-base-content/45">Sin registro</span>
-                  }
-                </td>
-                <td class="px-4 py-4">
-                  <p class="text-sm font-black text-base-content">{{ percentageLabel(row.compliancePercentage) }}</p>
-                </td>
-                <td class="px-4 py-4">
                   <span class="inline-flex rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em]" [class]="statusClass(row.complianceStatus)">
                     {{ statusLabel(row.complianceStatus) }}
                   </span>
-                </td>
-                <td class="px-4 py-4 text-right">
+                </div>
+
+                <div class="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-5">
+                  <div class="rounded-2xl bg-base-200/35 px-4 py-3">
+                    <p class="text-[9px] font-black uppercase tracking-[0.16em] text-base-content/40">Curso / Sección</p>
+                    <p class="mt-1 text-sm font-black text-base-content line-clamp-1">{{ row.courseName || 'Curso sin nombre' }}</p>
+                    <p class="text-[11px] uppercase tracking-[0.14em] text-base-content/55">{{ row.sectionName || 'Sección sin nombre' }}</p>
+                  </div>
+
+                  <div class="rounded-2xl bg-base-200/35 px-4 py-3">
+                    <p class="text-[9px] font-black uppercase tracking-[0.16em] text-base-content/40">Bloque</p>
+                    <p class="mt-1 text-sm font-black text-base-content line-clamp-1">{{ row.title }}</p>
+                    <p class="text-[11px] text-base-content/55 line-clamp-1">{{ row.classroom || 'Sin aula asignada' }}</p>
+                  </div>
+
+                  <div class="rounded-2xl bg-base-200/35 px-4 py-3">
+                    <p class="text-[9px] font-black uppercase tracking-[0.16em] text-base-content/40">Horario</p>
+                    <p class="mt-1 text-sm font-black text-base-content">{{ formatPlannedRange(row) }}</p>
+                    <p class="text-[11px] text-base-content/55">{{ row.plannedMinutes }} min programados</p>
+                  </div>
+
+                  <div class="rounded-2xl bg-base-200/35 px-4 py-3">
+                    <p class="text-[9px] font-black uppercase tracking-[0.16em] text-base-content/40">Registrado</p>
+                    @if (row.actualStartTime || row.actualEndTime) {
+                      <div class="mt-1 space-y-1">
+                        <div class="flex items-center gap-2">
+                          <p class="text-sm font-black text-base-content">
+                            {{ formatTime(row.actualStartTime) }} - {{ formatTime(row.actualEndTime) }}
+                          </p>
+                          @if (row.attendanceStatus === 'present' || row.attendanceStatus === 'late') {
+                            @if (row.isWithinGeofence === false) {
+                              <span class="flex size-5 items-center justify-center rounded-full bg-danger/10 text-[10px] text-danger" title="Registrado fuera de la institución">
+                                <i class="fas fa-location-dot"></i>
+                              </span>
+                            } @else if (row.isWithinGeofence === true) {
+                              <span class="flex size-5 items-center justify-center rounded-full bg-success/10 text-[10px] text-success" title="Registrado dentro de la institución">
+                                <i class="fas fa-location-dot"></i>
+                              </span>
+                            }
+                          }
+                        </div>
+                        <p class="text-[11px] text-base-content/55">{{ row.actualMinutes }} min reales</p>
+                      </div>
+                    } @else {
+                      <p class="mt-1 text-sm font-semibold text-base-content/45">Sin registro</p>
+                    }
+                  </div>
+
+                  <div class="rounded-2xl bg-base-200/35 px-4 py-3">
+                    <p class="text-[9px] font-black uppercase tracking-[0.16em] text-base-content/40">Cumplimiento</p>
+                    <p class="mt-1 text-lg font-black text-base-content">{{ percentageLabel(row.compliancePercentage) }}</p>
+                    <p class="text-[11px] text-base-content/55">
+                      {{ row.actualMinutes }} / {{ row.plannedMinutes }} min
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex shrink-0 items-center justify-end lg:pl-4">
+              <button
+                type="button"
+                z-button
+                zType="ghost"
+                zSize="icon-sm"
+                class="rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
+                title="Más acciones"
+                zPopover
+                [zContent]="monitoringActionsMenu"
+                [zPlacement]="'bottom'"
+              >
+                <z-icon zType="ellipsis" class="h-5 w-5" />
+              </button>
+
+              <ng-template #monitoringActionsMenu>
+                <z-popover class="min-w-[220px] p-1.5 flex flex-col gap-1">
                   <button
-                    type="button"
                     z-button
-                    zColor="primary"
-                    zType="outline"
-                    class="h-10 rounded-[var(--radius-xl)] px-4 text-[10px] font-black uppercase tracking-[0.18em]"
-                    (click)="openRegisterModal(row)"
+                    zType="ghost"
+                    class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
+                    (click)="editMonitoring(row)"
                   >
-                    Registrar
+                    <i class="fas fa-pen-to-square text-[12px]"></i>
+                    Editar seguimiento
                   </button>
-                </td>
-              </tr>
-            }
-          }
-        </tbody>
-      </table>
-    </div>
+
+                  <button
+                    z-button
+                    zType="ghost"
+                    class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
+                    (click)="updateMonitoringStatus(row)"
+                  >
+                    <i class="fas fa-signal text-[12px]"></i>
+                    Actualizar estado
+                  </button>
+
+                  <button
+                    z-button
+                    zType="ghost"
+                    class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
+                    (click)="addMonitoringObservation(row)"
+                  >
+                    <i class="fas fa-comment-dots text-[12px]"></i>
+                    Agregar observación
+                  </button>
+                </z-popover>
+              </ng-template>
+            </div>
+          </div>
+        </article>
+      }
+    }
   </div>
 </section>

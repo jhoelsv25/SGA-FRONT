@@ -36,8 +36,13 @@ export class UserForm implements OnInit {
       username: [this.current?.username ?? '', [Validators.required]],
       firstName: [this.current?.firstName ?? '', [Validators.required]],
       lastName: [this.current?.lastName ?? '', [Validators.required]],
-      email: [this.current?.email ?? '', [Validators.required, Validators.email]],
-      password: ['', this.current ? [] : [Validators.required, Validators.minLength(6)]],
+      email: [this.current?.email ?? '', [Validators.email]],
+      password: ['', []],
+      birthDate: [this.current?.birthDate?.slice(0, 10) ?? ''],
+      gender: [this.current?.gender ?? 'M'],
+      address: [this.current?.address ?? ''],
+      phone: [this.current?.phone ?? ''],
+      mobile: [this.current?.mobile ?? ''],
     });
   }
 

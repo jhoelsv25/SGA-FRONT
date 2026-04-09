@@ -9,6 +9,11 @@ export type User = {
   lastLogin?: string | null;
   createdAt: string; // ISO date string
   updatedAt?: string; // ISO date string
+  birthDate?: string;
+  gender?: string;
+  address?: string;
+  phone?: string;
+  mobile?: string;
 };
 
 export type UserCreate = {
@@ -16,7 +21,12 @@ export type UserCreate = {
   email: string;
   firstName: string;
   lastName: string;
-  password: string;
+  password?: string;
+  birthDate?: string;
+  gender?: string;
+  address?: string;
+  phone?: string;
+  mobile?: string;
 };
 
 export type UserUpdate = {

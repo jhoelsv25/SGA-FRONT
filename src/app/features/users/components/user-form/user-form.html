@@ -28,24 +28,43 @@
           <input z-input w-full id="lastName" formControlName="lastName" placeholder="Apellido" />
         </z-form-control>
       </z-form-field>
+      <div class="col-span-1">
+        <label class="label-form" for="gender">Género</label>
+        <select z-input w-full id="gender" formControlName="gender">
+          <option value="M">Masculino</option>
+          <option value="F">Femenino</option>
+          <option value="O">Otro</option>
+        </select>
+      </div>
+      <div class="col-span-1">
+        <label class="label-form" for="birthDate">Fec. Nacimiento</label>
+        <input z-input w-full id="birthDate" type="date" formControlName="birthDate" />
+      </div>
+      <div class="col-span-1">
+        <label class="label-form" for="phone">Teléfono</label>
+        <input z-input w-full id="phone" formControlName="phone" placeholder="987..." />
+      </div>
+      <div class="col-span-1">
+        <label class="label-form" for="mobile">Celular</label>
+        <input z-input w-full id="mobile" formControlName="mobile" placeholder="987..." />
+      </div>
+      <div class="col-span-full">
+        <label class="label-form" for="address">Dirección</label>
+        <input z-input w-full id="address" formControlName="address" placeholder="Av. Siempre Viva 123" />
+      </div>
+
+      <div class="col-span-full">
+        <label class="label-form" for="email">Correo electrónico (Opcional)</label>
+        <input z-input w-full id="email" type="email" formControlName="email" placeholder="ejemplo@correo.com" />
+      </div>
+      @if (!current) {
+        <div class="col-span-full">
+          <label class="label-form" for="password">Contraseña (Opcional)</label>
+          <input z-input w-full id="password" type="password" formControlName="password" placeholder="******" />
+          <p class="mt-1 text-[10px] text-base-content/40 italic">Por defecto: Si el usuario se vincula a una persona, se usará el DNI de esta.</p>
+        </div>
+      }
     </div>
-
-    <z-form-field>
-      <label z-form-label for="email" [zRequired]="true">Email</label>
-      <z-form-control>
-        <input z-input w-full id="email" type="email" formControlName="email" placeholder="correo@ejemplo.com" />
-      </z-form-control>
-    </z-form-field>
-
-    @if (!current) {
-    <z-form-field>
-      <label z-form-label for="password" [zRequired]="true">Contraseña</label>
-      <z-form-control>
-        <input z-input w-full id="password" type="password" formControlName="password"
-          placeholder="Contraseña segura" />
-      </z-form-control>
-    </z-form-field>
-    }
   </div>
   <footer class="flex justify-end gap-2 mt-4">
     <button type="button" z-button zColor="secondary" zType="outline" (click)="close()" class="gap-2">

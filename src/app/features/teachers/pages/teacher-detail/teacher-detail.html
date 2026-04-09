@@ -163,40 +163,112 @@
 
       <section class="grid grid-cols-1 gap-6" [class.xl:grid-cols-[1.2fr_0.8fr]]="canViewOperational()">
         @if (canViewOperational()) {
-        <div class="rounded-4xl border border-base-200 bg-card p-6">
-          <div>
-            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Accesos rápidos</p>
-            <h2 class="mt-2 text-2xl font-black tracking-tight">Operación del docente</h2>
+        <div class="space-y-6">
+          <div class="rounded-4xl border border-base-200 bg-card p-6">
+            <div>
+              <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Asistencia diaria</p>
+              <h2 class="mt-2 text-2xl font-black tracking-tight">Registro de asistencia al plantel</h2>
+            </div>
+  
+            <div class="mt-6 overflow-x-auto">
+              <table class="w-full text-left">
+                <thead>
+                  <tr class="border-b border-base-200">
+                    <th class="pb-3 text-[10px] font-black uppercase tracking-widest text-base-content/40">Fecha</th>
+                    <th class="pb-3 text-[10px] font-black uppercase tracking-widest text-base-content/40">Entrada</th>
+                    <th class="pb-3 text-[10px] font-black uppercase tracking-widest text-base-content/40">Salida</th>
+                    <th class="pb-3 text-[10px] font-black uppercase tracking-widest text-base-content/40">Ubicación</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-base-100">
+                  @for (daily of dailyAttendances(); track daily.id) {
+                    <tr>
+                      <td class="py-4">
+                        <p class="text-sm font-bold text-base-content">{{ daily.date | date:'dd/MM/yyyy' }}</p>
+                      </td>
+                      <td class="py-4">
+                        <div class="flex items-center gap-2">
+                          <span class="text-sm text-base-content/70">{{ daily.clockInTime?.slice(0, 5) || '-' }}</span>
+                          @if (daily.clockInTime) {
+                            <i class="fa-solid fa-location-dot text-[10px]" 
+                               [class.text-emerald-500]="daily.clockInIsWithinGeofence"
+                               [class.text-rose-500]="!daily.clockInIsWithinGeofence"
+                               [title]="daily.clockInIsWithinGeofence ? 'Dentro del plantel' : 'Fuera del plantel'"></i>
+                          }
+                        </div>
+                      </td>
+                      <td class="py-4">
+                        <div class="flex items-center gap-2">
+                          <span class="text-sm text-base-content/70">{{ daily.clockOutTime?.slice(0, 5) || '-' }}</span>
+                          @if (daily.clockOutTime) {
+                            <i class="fa-solid fa-location-dot text-[10px]" 
+                               [class.text-emerald-500]="daily.clockOutIsWithinGeofence"
+                               [class.text-rose-500]="!daily.clockOutIsWithinGeofence"
+                               [title]="daily.clockOutIsWithinGeofence ? 'Dentro del plantel' : 'Fuera del plantel'"></i>
+                          }
+                        </div>
+                      </td>
+                      <td class="py-4">
+                        <span class="rounded-lg px-2 py-0.5 text-[10px] font-bold uppercase transition-colors"
+                              [class]="daily.clockInIsWithinGeofence && (daily.clockOutTime ? daily.clockOutIsWithinGeofence : true) ? 'bg-emerald-500/10 text-emerald-600' : 'bg-rose-500/10 text-rose-600'">
+                          {{ daily.clockInIsWithinGeofence && (daily.clockOutTime ? daily.clockOutIsWithinGeofence : true) ? 'Correcto' : 'Incidencia' }}
+                        </span>
+                      </td>
+                    </tr>
+                  } @empty {
+                    <tr>
+                      <td colspan="4" class="py-8 text-center text-sm text-base-content/45 italic">No hay registros de asistencia diaria.</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
           </div>
 
-          <div class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
-            <button
-              z-button
-              zType="outline"
-              class="h-14 justify-start rounded-4xl px-5 text-left"
-              [sgaDisableIfNoPermission]="'section_course:view'"
-              (click)="goToAssignments()">
-              <z-icon zType="folder" class="mr-3 h-5 w-5" />
-              <span class="text-sm font-bold">Cursos asignados</span>
-            </button>
-            <button
-              z-button
-              zType="outline"
-              class="h-14 justify-start rounded-4xl px-5 text-left"
-              [sgaDisableIfNoPermission]="'schedule:view'"
-              (click)="goToSchedules()">
-              <z-icon zType="calendar" class="mr-3 h-5 w-5" />
-              <span class="text-sm font-bold">Horarios</span>
-            </button>
-            <button
-              z-button
-              zType="outline"
-              class="h-14 justify-start rounded-4xl px-5 text-left"
-              [sgaDisableIfNoPermission]="'teacher_attendance:view'"
-              (click)="goToAttendances()">
-              <z-icon zType="check" class="mr-3 h-5 w-5" />
-              <span class="text-sm font-bold">Asistencias</span>
-            </button>
+          <div class="rounded-4xl border border-base-200 bg-card p-6">
+            <div>
+              <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Accesos rápidos</p>
+              <h2 class="mt-2 text-2xl font-black tracking-tight">Operación del docente</h2>
+            </div>
+  
+            <div class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-4 whitespace-nowrap overflow-hidden">
+              <button
+                z-button
+                zType="outline"
+                class="h-14 justify-start rounded-4xl px-5 text-left"
+                [sgaDisableIfNoPermission]="'section_course:view'"
+                (click)="goToAssignments()">
+                <z-icon zType="folder" class="mr-2.5 h-4 w-4" />
+                <span class="text-xs font-bold">Cursos</span>
+              </button>
+              <button
+                z-button
+                zType="outline"
+                class="h-14 justify-start rounded-4xl px-5 text-left"
+                [sgaDisableIfNoPermission]="'schedule:view'"
+                (click)="goToSchedules()">
+                <z-icon zType="calendar" class="mr-2.5 h-4 w-4" />
+                <span class="text-xs font-bold">Horarios</span>
+              </button>
+              <button
+                z-button
+                zType="outline"
+                class="h-14 justify-start rounded-4xl px-5 text-left"
+                [sgaDisableIfNoPermission]="'teacher_attendance:view'"
+                (click)="goToDailyAttendance()">
+                <z-icon zType="clipboard" class="mr-2.5 h-4 w-4" />
+                <span class="text-xs font-bold">Asistencia</span>
+              </button>
+              <button
+                z-button
+                zType="outline"
+                class="h-14 justify-start rounded-4xl px-5 text-left"
+                [sgaDisableIfNoPermission]="'teacher_attendance:view'"
+                (click)="goToAttendances()">
+                <z-icon zType="activity" class="mr-2.5 h-4 w-4" />
+                <span class="text-xs font-bold">Seguimiento</span>
+              </button>
+            </div>
           </div>
         </div>
         }
