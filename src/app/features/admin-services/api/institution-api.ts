@@ -13,6 +13,10 @@ export class InstitutionApi {
     return this.http.get<Institution[]>(`${InstitutionApi.basePath}`, { params });
   }
 
+  public getMain(): Observable<Institution> {
+    return this.http.get<Institution>(`${InstitutionApi.basePath}/main`);
+  }
+
   public getById(id: string): Observable<Institution> {
     return this.http.get<Institution>(`${InstitutionApi.basePath}/${id}`);
   }
