@@ -4,7 +4,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, s
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
-import { ImportDialog } from '@shared/widgets/import-dialog/import-dialog';
+import { ScoresImportDialog } from '../../components/scores-import-dialog/scores-import-dialog';
 import { DataSource, SgaTemplate } from '@shared/widgets/data-source/data-source';
 import { AssessmentStore } from '../../services/store/assessment.store';
 import { EnrollmentApi } from '../../../enrollments/services/enrollment-api';
@@ -15,6 +15,7 @@ import { HeaderDetail } from '@shared/widgets/header-detail/header-detail';
 import { HeaderConfig } from '@core/types/header-types';
 import { ActionConfig } from '@core/types/action-types';
 import { AssessmentApi } from '../../services/assessment-api';
+import { Toast } from '@core/services/toast';
 import { map, of } from 'rxjs';
 import { SectionCourseSelect } from '@/shared/widgets/selects';
 
@@ -40,6 +41,7 @@ export default class AssessmentScoresPage implements OnInit {
   private readonly enrollmentApi = inject(EnrollmentApi);
   private readonly sectionCourseApi = inject(SectionCourseApi);
   private readonly filters = inject(AssessmentFiltersService);
+  private readonly toast = inject(Toast);
   private readonly dialog = inject(DialogModalService);
   private readonly assessmentApi = inject(AssessmentApi);
 
@@ -291,75 +293,36 @@ export default class AssessmentScoresPage implements OnInit {
       return;
     }
 
-    const rowsByCode = new Map(this.studentScores().map((row) => [String(row.studentCode ?? '').trim().toLowerCase(), row]));
+    const studentsInCourse = this.studentScores().map(s => String(s.studentCode || '').trim());
     const maxScore = Number(currentAssessment.maxScore || 20);
 
-    this.dialog.open(ImportDialog, {
-      width: '920px',
-      maxHeight: '85vh',
+    this.dialog.open(ScoresImportDialog, {
+      width: '850px',
+      maxHeight: '90vh',
       data: {
-        title: 'Importar calificaciones desde Excel',
-        templateSheetName: 'Notas',
-        columns: [
-          { key: 'studentCode', label: 'Código estudiante', required: true },
-          { key: 'studentName', label: 'Estudiante' },
-          { key: 'score', label: 'Calificación', required: true },
-          { key: 'observation', label: 'Observación' },
-        ],
-        exampleRow: {
-          studentCode: this.studentScores()[0]?.studentCode ?? '20230001',
-          studentName: this.studentScores()[0]?.studentName ?? 'Juan Pérez',
-          score: Math.min(18, maxScore),
-          observation: 'Buen desempeño',
-        },
-        validateRow: (row: Record<string, unknown>, _index: number) => {
-          const code = String(row['studentCode'] ?? '').trim().toLowerCase();
-          if (!code) return 'El código del estudiante es obligatorio.';
-          if (!rowsByCode.has(code)) return 'El estudiante no pertenece al curso seleccionado.';
-          const score = Number(row['score']);
-          if (Number.isNaN(score)) return 'La calificación debe ser numérica.';
-          if (score < 0 || score > maxScore) return `La calificación debe estar entre 0 y ${maxScore}.`;
-          return null;
-        },
-        importRows: (rows: Record<string, unknown>[]) => {
+        maxScore,
+        studentsInCourse,
+        onImport: (mappedData: { studentCode: string; score: number; observation?: string }[]) => {
           const request = {
             assessmentId,
-            scores: rows
-              .map((row: Record<string, unknown>) => {
-                const code = String(row['studentCode'] ?? '').trim().toLowerCase();
-                const match = rowsByCode.get(code);
-                if (!match) return null;
-                return {
-                  enrollmentId: match.enrollmentId,
-                  score: Number(row['score']),
-                  observation: String(row['observation'] ?? '').trim(),
-                };
-              })
-              .filter(
-                (item: { enrollmentId: string; score: number; observation: string } | null): item is {
-                  enrollmentId: string;
-                  score: number;
-                  observation: string;
-                } => item !== null,
-              ),
+            scores: mappedData.map(d => {
+              const match = this.studentScores().find(s => s.studentCode === d.studentCode);
+              return {
+                enrollmentId: match?.enrollmentId!,
+                score: d.score,
+                observation: d.observation || ''
+              };
+            })
           };
 
-          if (!request.scores.length) {
-            return of({ created: 0, errors: [{ row: 0, message: 'No se encontraron filas válidas para importar.' }] });
-          }
-
-          return this.assessmentApi.saveScoresBulk(request).pipe(
-            map((response) => ({
-              created: Number(response?.processed ?? request.scores.length),
-              errors: [],
-            })),
-          );
-        },
-      },
-    }).closed.subscribe((rawResult) => {
-      const result = rawResult as { created?: number } | null | undefined;
-      if (result?.created) {
-        this.loadData(assessmentId);
+          this.assessmentApi.saveScoresBulk(request).subscribe({
+            next: () => {
+              this.toast.success('Notas importadas y guardadas correctamente');
+              this.loadData(assessmentId);
+            },
+            error: (err: Error) => this.toast.error('Error al guardar notas importadas: ' + err.message)
+          });
+        }
       }
     });
   }
