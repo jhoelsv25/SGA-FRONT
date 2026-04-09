@@ -29,10 +29,8 @@ export class BehaviorCardComponent {
 
   readonly typeLabel = computed(() => {
     const map: Record<string, string> = {
-      incident: 'Incidencia',
-      achievement: 'Logro',
-      observation: 'Observación',
-      other: 'Otro',
+      negative: 'Incidencia',
+      positive: 'Logro',
     };
     return map[this.behavior().type] ?? this.behavior().type;
   });
