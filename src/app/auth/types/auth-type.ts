@@ -63,6 +63,7 @@ export type RefreshTokenResponse = {
 export type CurrentUser = {
   id: string;
   username: string;
+  teacherId?: string;
   firstName?: string;
   lastName?: string;
   email?: string;

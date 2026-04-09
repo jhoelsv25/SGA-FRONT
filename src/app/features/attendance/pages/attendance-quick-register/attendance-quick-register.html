@@ -30,32 +30,25 @@
   <section class="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
     <div class="rounded-4xl border border-base-200 bg-card p-6">
       <div class="flex flex-wrap items-center gap-3">
-        <button
-          type="button"
-          class="rounded-3xl px-5 py-3 text-[10px] font-black uppercase tracking-[0.18em] transition"
-          [class]="mode() === 'student' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'border border-base-300 bg-base-100 text-base-content/60'"
-          (click)="onModeChange('student')"
-        >
-          Estudiantes
-        </button>
-        <button
-          type="button"
-          class="rounded-3xl px-5 py-3 text-[10px] font-black uppercase tracking-[0.18em] transition"
-          [class]="mode() === 'teacher' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'border border-base-300 bg-base-100 text-base-content/60'"
-          (click)="onModeChange('teacher')"
-        >
-          Docentes
-        </button>
+        <span class="rounded-3xl bg-primary px-5 py-3 text-[10px] font-black uppercase tracking-[0.18em] text-white shadow-lg shadow-primary/20">
+          Panel general
+        </span>
+        <span class="rounded-3xl border border-base-300 bg-base-100 px-5 py-3 text-[10px] font-black uppercase tracking-[0.18em] text-base-content/60">
+          Código
+        </span>
+        <span class="rounded-3xl border border-base-300 bg-base-100 px-5 py-3 text-[10px] font-black uppercase tracking-[0.18em] text-base-content/60">
+          Barcode
+        </span>
       </div>
 
       <div class="mt-6 grid gap-4 xl:grid-cols-[minmax(0,1fr)_220px]">
         <div class="rounded-[2rem] border border-base-200 bg-base-100/70 p-5">
           <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Entrada de escaneo</p>
           <h2 class="mt-2 text-2xl font-black tracking-tight">
-            {{ mode() === 'student' ? 'Escanear alumno o ingresar código' : 'Escanear docente o ingresar código' }}
+            {{ mode() === 'student' ? 'Escanear alumno o ingresar código' : mode() === 'teacher' ? 'Escanear docente o ingresar código' : 'Escanear código o barcode general' }}
           </h2>
           <p class="mt-2 text-sm font-medium text-base-content/50">
-            Deja el cursor en este campo. Los lectores USB suelen escribir el código y disparar Enter automáticamente.
+            Deja el cursor en este campo. Los lectores USB suelen escribir el código o barcode y disparar Enter automáticamente.
           </p>
 
           <div class="mt-5 flex flex-col gap-3 sm:flex-row">
@@ -65,7 +58,7 @@
               [ngModel]="scanCode()"
               (ngModelChange)="scanCode.set($event)"
               (keyup.enter)="submitCode()"
-              placeholder="Ej: 20230001 o T-DOCENTE"
+              placeholder="Ej: 20230001, T-DOCENTE o barcode"
               autofocus
             />
             <button
@@ -85,7 +78,7 @@
               <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/35">Modo</p>
               <p class="mt-1 text-sm font-black text-base-content">{{ mode() === 'student' ? 'Estudiantes' : 'Docentes' }}</p>
             </div>
-            @if (mode() === 'student') {
+            @if (mode() !== 'teacher') {
               <div>
                 <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/35">Curso</p>
                 <p class="mt-1 text-sm font-black text-base-content">{{ selectedSectionLabel() }}</p>
@@ -100,102 +93,77 @@
       </div>
     </div>
 
-    <div class="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-2">
+    <div class="grid grid-cols-1 gap-4">
       <article class="rounded-4xl border border-base-200 bg-card p-5">
-        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Presentes</p>
-        <p class="mt-3 text-3xl font-black tracking-tight">{{ presentCount() }}</p>
+        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Registro inmediato</p>
+        <p class="mt-3 text-3xl font-black tracking-tight">1 escaneo = 1 registro</p>
+        <p class="mt-2 text-sm text-base-content/55">
+          Esta pantalla no arma lote. Escanea y el sistema registra al instante.
+        </p>
       </article>
       <article class="rounded-4xl border border-base-200 bg-card p-5">
-        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Tardanzas</p>
-        <p class="mt-3 text-3xl font-black tracking-tight">{{ lateCount() }}</p>
-      </article>
-      <article class="rounded-4xl border border-base-200 bg-card p-5">
-        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Faltas</p>
-        <p class="mt-3 text-3xl font-black tracking-tight">{{ absentCount() }}</p>
-      </article>
-      <article class="rounded-4xl border border-base-200 bg-card p-5">
-        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Justificados</p>
-        <p class="mt-3 text-3xl font-black tracking-tight">{{ excusedCount() }}</p>
+        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Resolución automática</p>
+        <p class="mt-3 text-lg font-black tracking-tight">Docente o alumno</p>
+        <p class="mt-2 text-sm text-base-content/55">
+          Si el código pertenece a un docente se registra directo. Si es alumno, se valida contra el curso seleccionado.
+        </p>
       </article>
     </div>
   </section>
 
-  <section class="mb-6 rounded-4xl border border-base-200 bg-card p-5">
-    <div class="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
-      <div class="space-y-2">
-        <label class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Buscar en el lote</label>
-        <input
-          z-input
-          type="text"
-          [ngModel]="search()"
-          (ngModelChange)="search.set($event)"
-          placeholder="Buscar por nombre o código..."
-        />
-      </div>
-      <div class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/40">
-        {{ entries().length }} registro{{ entries().length === 1 ? '' : 's' }} listos
-      </div>
-    </div>
-  </section>
+  @if (lastRegistered(); as last) {
+    <section class="mb-6 rounded-4xl border border-success/20 bg-success/5 p-5 shadow-sm">
+      <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div class="flex min-w-0 items-start gap-4">
+          <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-success/15 font-black text-success">
+            {{ last.scope === 'student' ? 'AL' : 'DC' }}
+          </div>
 
-  @if (filteredEntries().length) {
-    <section class="grid grid-cols-1 gap-4">
-      @for (entry of filteredEntries(); track entry.id) {
-        <article class="rounded-4xl border border-base-200 bg-card p-5 shadow-sm transition hover:border-primary/15 hover:shadow-lg">
-          <div class="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
-            <div class="flex min-w-0 items-start gap-4">
-              <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/10 font-black text-primary">
-                {{ entry.code.slice(0, 2).toUpperCase() }}
-              </div>
-              <div class="min-w-0 space-y-2">
-                <div class="flex flex-wrap items-center gap-3">
-                  <h3 class="truncate text-lg font-black tracking-tight text-base-content">{{ entry.name }}</h3>
-                  <span class="rounded-full border border-base-300 bg-base-100 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-base-content/60">
-                    {{ entry.code }}
-                  </span>
-                  <span class="rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em]" [class]="statusBadgeClass(entry.status)">
-                    {{ statusLabel(entry.status) }}
-                  </span>
-                </div>
-                <p class="text-sm font-medium text-base-content/50">
-                  {{ entry.meta || (entry.scope === 'student' ? 'Alumno validado en el curso seleccionado' : 'Docente validado en padrón activo') }}
-                </p>
-              </div>
+          <div class="min-w-0">
+            <div class="flex flex-wrap items-center gap-2">
+              <p class="text-[10px] font-black uppercase tracking-[0.2em] text-success/80">Último registrado</p>
+              <span class="rounded-full border border-success/20 bg-success/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-success">
+                {{ last.scope === 'student' ? 'Alumno' : 'Docente' }}
+              </span>
             </div>
 
-            <div class="flex flex-col gap-4 xl:items-end">
-              <div class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/35">
-                Hora registrada: <span class="text-base-content/70">{{ entry.checkInTime }}</span>
-              </div>
-              <div class="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                <button type="button" class="h-10 rounded-2xl border px-3 text-[10px] font-black uppercase tracking-[0.16em]" [class]="statusButtonClass(entry.status, 'present')" (click)="updateEntryStatus(entry.id, 'present')">P</button>
-                <button type="button" class="h-10 rounded-2xl border px-3 text-[10px] font-black uppercase tracking-[0.16em]" [class]="statusButtonClass(entry.status, 'late')" (click)="updateEntryStatus(entry.id, 'late')">T</button>
-                <button type="button" class="h-10 rounded-2xl border px-3 text-[10px] font-black uppercase tracking-[0.16em]" [class]="statusButtonClass(entry.status, 'absent')" (click)="updateEntryStatus(entry.id, 'absent')">F</button>
-                <button type="button" class="h-10 rounded-2xl border px-3 text-[10px] font-black uppercase tracking-[0.16em]" [class]="statusButtonClass(entry.status, 'excused')" (click)="updateEntryStatus(entry.id, 'excused')">J</button>
-              </div>
-              <button
-                type="button"
-                class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-rose-600 transition hover:bg-rose-100"
-                (click)="removeEntry(entry.id)"
-              >
-                Quitar
-              </button>
+            <h3 class="mt-2 text-2xl font-black tracking-tight text-base-content">{{ last.name }}</h3>
+            <div class="mt-2 flex flex-wrap items-center gap-2 text-sm text-base-content/60">
+              <span class="rounded-full border border-base-300 bg-base-100 px-3 py-1 font-black uppercase tracking-[0.16em]">
+                {{ last.code }}
+              </span>
+              @if (last.meta) {
+                <span class="rounded-full border border-base-300 bg-base-100 px-3 py-1">
+                  {{ last.meta }}
+                </span>
+              }
             </div>
           </div>
-        </article>
-      }
-    </section>
-  } @else {
-    <div class="rounded-[var(--radius-xl)] border border-dashed border-base-300 bg-background/60 p-10">
-      <div class="mx-auto max-w-xl text-center">
-        <div class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-3xl bg-base-200/70 text-base-content/25">
-          <i class="fa-solid fa-barcode text-2xl"></i>
         </div>
-        <h3 class="text-xl font-black text-base-content/65">Todavía no hay registros en el lote</h3>
-        <p class="mt-2 text-sm font-medium text-base-content/45">
-          Escanea o escribe el código y presiona Enter. Cada lectura se agrega al lote antes de guardarse en bloque.
-        </p>
+
+        <div class="grid grid-cols-2 gap-3 lg:min-w-[260px]">
+          <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-3">
+            <p class="text-[10px] font-black uppercase tracking-[0.16em] text-base-content/45">Estado</p>
+            <p class="mt-1 text-sm font-black text-base-content">{{ statusLabel(last.status) }}</p>
+          </div>
+          <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-3">
+            <p class="text-[10px] font-black uppercase tracking-[0.16em] text-base-content/45">Hora</p>
+            <p class="mt-1 text-sm font-black text-base-content">{{ last.registeredAt }}</p>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
   }
+
+  <div class="rounded-[var(--radius-xl)] border border-dashed border-base-300 bg-background/60 p-10">
+    <div class="mx-auto max-w-xl text-center">
+      <div class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-3xl bg-base-200/70 text-base-content/25">
+        <i class="fa-solid fa-barcode text-2xl"></i>
+      </div>
+      <h3 class="text-xl font-black text-base-content/65">Panel de registro general</h3>
+      <p class="mt-2 text-sm font-medium text-base-content/45">
+        Escanea o escribe el código y presiona Enter. Esta vista no lista registros: valida y guarda directamente.
+      </p>
+    </div>
+  </div>
 </div>

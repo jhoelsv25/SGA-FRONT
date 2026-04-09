@@ -11,6 +11,13 @@ export default [
     path: 'attendances',
     loadComponent: () =>
       import('./pages/teacher-attendances/teacher-attendances').then((m) => m.default),
+    title: 'Seguimiento Docente',
+    data: { permissions: ['teacher_attendance:view'] },
+  },
+  {
+    path: 'daily-monitoring',
+    loadComponent: () =>
+      import('./pages/teacher-daily-monitoring/teacher-daily-monitoring').then((m) => m.default),
     title: 'Asistencia Docente',
     data: { permissions: ['teacher_attendance:view'] },
   },

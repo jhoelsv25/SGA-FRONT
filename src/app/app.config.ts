@@ -1,7 +1,8 @@
-import { ApplicationConfig, LOCALE_ID, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { ApplicationConfig, LOCALE_ID, provideBrowserGlobalErrorListeners, isDevMode } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { registerLocaleData } from '@angular/common';
 import localeEsPe from '@angular/common/locales/es-PE';
+import { provideServiceWorker } from '@angular/service-worker';
 
 import { routes } from './app.routes';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
@@ -21,6 +22,10 @@ export const appConfig: ApplicationConfig = {
       withFetch(),
     ),
     provideZard(),
+    provideServiceWorker('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000',
+    }),
     { provide: LOCALE_ID, useValue: 'es-PE' },
   ],
 };

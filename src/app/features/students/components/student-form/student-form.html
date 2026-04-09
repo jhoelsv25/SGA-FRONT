@@ -110,9 +110,13 @@
             <p class="mt-1 text-xs text-red-600">{{ getError('birthDate') }}</p>
           }
         </div>
-        <div class="col-span-full">
+        <div class="col-span-full sm:col-span-1">
           <label class="label-form" for="phone">Teléfono (opcional)</label>
-          <input z-input w-full id="phone" formControlName="phone" placeholder="987654321"  />
+          <input z-input w-full id="phone" formControlName="phone" placeholder="Fijo"  />
+        </div>
+        <div class="col-span-full sm:col-span-1">
+          <label class="label-form" for="mobile">Celular (opcional)</label>
+          <input z-input w-full id="mobile" formControlName="mobile" placeholder="987..."  />
         </div>
         <div class="col-span-full">
           <label class="label-form" for="address">Dirección (opcional)</label>
@@ -125,7 +129,7 @@
     @if (activeTab() === 'user') {
       <div class="flex flex-col gap-4">
         <div>
-          <label class="label-form" for="email">Email de la cuenta</label>
+          <label class="label-form" for="email">Email de la cuenta (Opcional)</label>
           <input z-input w-full id="email" type="email" formControlName="email" placeholder="estudiante@colegio.edu.pe"  />
           @if (getError('email')) {
             <p class="mt-1 text-xs text-red-600">{{ getError('email') }}</p>
@@ -133,7 +137,8 @@
         </div>
         <div>
           <label class="label-form" for="username">Nombre de usuario</label>
-          <input z-input w-full id="username" formControlName="username" placeholder="jperez123"  />
+          <input z-input w-full id="username" formControlName="username" placeholder="Si se deja vacío, se usará el Código"  />
+          <p class="mt-1 text-[10px] text-base-content/40 italic">Opcional. Por defecto: Código del estudiante.</p>
           @if (getError('username')) {
             <p class="mt-1 text-xs text-red-600">{{ getError('username') }}</p>
           }
@@ -142,6 +147,7 @@
           <div>
             <label class="label-form" for="password">Contraseña inicial</label>
             <input z-input w-full id="password" type="password" formControlName="password" placeholder="******"  />
+            <p class="mt-1 text-[10px] text-base-content/40 italic">Opcional. Por defecto: Número de documento (DNI).</p>
             @if (getError('password')) {
               <p class="mt-1 text-xs text-red-600">{{ getError('password') }}</p>
             }

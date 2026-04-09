@@ -1,34 +1,81 @@
-<form [formGroup]="form" class="grid gap-4" (ngSubmit)="submit()">
-  <header class="flex items-center justify-between mb-4">
-    <h2 class="text-lg font-semibold">{{ current ? 'Editar registro' : 'Nuevo registro de conducta' }}</h2>
+<form [formGroup]="form" class="flex flex-col max-h-[90vh]" (ngSubmit)="submit()">
+  <header class="flex items-center justify-between p-6 border-b border-base-200">
+    <div>
+      <h2 class="text-xl font-bold text-base-content">{{ current ? 'Editar conducta' : 'Nuevo registro de conducta' }}</h2>
+      <p class="text-sm text-base-content/60">Complete los detalles de la incidencia o logro.</p>
+    </div>
     <button type="button" z-button zColor="secondary" zType="ghost" zShape="circle" (click)="close()">
       <i class="fas fa-times"></i>
     </button>
   </header>
-  <div class="grid gap-4">
-    <div>
-      <label class="label-form" for="studentId">Estudiante</label>
-      <sga-student-select id="studentId" formControlName="studentId" placeholder="Seleccionar estudiante"></sga-student-select>
-    </div>
-    <div>
-      <label class="label-form" for="type">Tipo</label>
-      <z-select-option id="type" formControlName="type" [options]="typeOptions" placeholder="Seleccionar tipo"></z-select-option>
-    </div>
-    <div>
-      <label class="label-form" for="severity">Severidad</label>
-      <z-select-option id="severity" formControlName="severity" [options]="severityOptions" placeholder="Seleccionar severidad"></z-select-option>
-    </div>
-    <div>
-      <label class="label-form" for="date">Fecha</label>
-      <input z-input w-full id="date" type="date" formControlName="date" placeholder="Fecha"  />
-    </div>
-    <div>
-      <label class="label-form" for="description">Descripción</label>
-      <input z-input w-full id="description" formControlName="description" placeholder="Descripción del registro"  />
+
+  <div class="flex-1 overflow-y-auto p-6 space-y-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="md:col-span-2">
+        <label class="label-form font-bold mb-2 block" for="student">Estudiante</label>
+        <sga-student-select id="student" formControlName="student" placeholder="Seleccionar estudiante"></sga-student-select>
+      </div>
+
+      <div class="md:col-span-2">
+        <label class="label-form font-bold mb-2 block" for="sectionCourse">Sesión / Clase (Opcional)</label>
+        <sga-section-course-select id="sectionCourse" formControlName="sectionCourse" placeholder="Vincular con una sesión de clase"></sga-section-course-select>
+      </div>
+
+      <div>
+        <label class="label-form font-bold mb-2 block" for="type">Clasificación</label>
+        <z-select-option id="type" formControlName="type" [options]="typeOptions" placeholder="Seleccionar tipo"></z-select-option>
+      </div>
+
+      <div>
+        <label class="label-form font-bold mb-2 block" for="category">Categoría / Motivo</label>
+        <z-select-option id="category" formControlName="category" [options]="categoryOptions" placeholder="Seleccionar categoría"></z-select-option>
+      </div>
+
+      <div>
+        <label class="label-form font-bold mb-2 block" for="severity">Nivel de Impacto</label>
+        <z-select-option id="severity" formControlName="severity" [options]="severityOptions" placeholder="Seleccionar severidad"></z-select-option>
+      </div>
+
+      <div>
+        <label class="label-form font-bold mb-2 block" for="recordDate">Fecha del hecho</label>
+        <input z-input w-full id="recordDate" type="date" formControlName="recordDate"  />
+      </div>
+
+      <div class="md:col-span-2">
+        <label class="label-form font-bold mb-2 block" for="place">Lugar exacto</label>
+        <input z-input w-full id="place" formControlName="place" placeholder="Ej: Aula 402, Patio Central, Biblioteca..." />
+      </div>
+
+      <div class="md:col-span-2">
+        <label class="label-form font-bold mb-2 block" for="description">Relato de los hechos</label>
+        <textarea z-input w-full id="description" formControlName="description" placeholder="Escriba detalladamente lo sucedido..." rows="3" class="min-h-[100px]"></textarea>
+      </div>
+
+      <div class="md:col-span-2">
+        <label class="label-form font-bold mb-2 block" for="witnesses">Testigos (Opcional)</label>
+        <input z-input w-full id="witnesses" formControlName="witnesses" placeholder="Nombres de personas que presenciaron el hecho" />
+      </div>
+
+      <div class="md:col-span-2">
+        <label class="label-form font-bold mb-2 block" for="measuresTaken">Medidas adoptadas inmediatamente</label>
+        <input z-input w-full id="measuresTaken" formControlName="measuresTaken" placeholder="Ej: Diálogo reflexivo, Compromiso escrito, etc." />
+      </div>
+
+      <div class="md:col-span-2 flex items-center gap-3 p-4 bg-base-200/50 rounded-2xl">
+         <input type="checkbox" id="guardianNotified" formControlName="guardianNotified" class="toggle toggle-primary" />
+         <label for="guardianNotified" class="cursor-pointer">
+           <span class="font-bold text-sm block">Notificar a tutor/apoderado</span>
+           <span class="text-xs text-base-content/60">Se enviará una alerta automática si esta opción está activa.</span>
+         </label>
+      </div>
     </div>
   </div>
-  <footer class="flex justify-end gap-2 mt-4">
-    <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">Cancelar</button>
-    <button type="submit" z-button zColor="primary" [disabled]="form.invalid">Guardar</button>
+
+  <footer class="flex justify-end gap-3 p-6 border-t border-base-200">
+    <button type="button" z-button zColor="secondary" zType="ghost" (click)="close()">Descartar</button>
+    <button type="submit" z-button zColor="primary" [disabled]="form.invalid">
+      <i class="fas fa-save mr-2"></i>
+      {{ current ? 'Actualizar Registro' : 'Confirmar Registro' }}
+    </button>
   </footer>
 </form>

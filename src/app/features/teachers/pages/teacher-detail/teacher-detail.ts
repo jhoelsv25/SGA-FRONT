@@ -51,6 +51,7 @@ export default class TeacherDetailPage implements OnInit {
   readonly assignments = signal<SectionCourse[]>([]);
   readonly schedules = signal<Schedule[]>([]);
   readonly attendances = signal<TeacherAttendance[]>([]);
+  readonly dailyAttendances = signal<any[]>([]);
   readonly credential = signal<TeacherCredential | null>(null);
   readonly credentialLoading = signal(false);
   readonly roleType = computed(() => this.authStore.currentUser()?.profile?.type ?? 'user');
@@ -123,6 +124,14 @@ export default class TeacherDetailPage implements OnInit {
     const teacher = this.teacher();
     if (!teacher) return;
     this.router.navigate(['/organization/schedules'], {
+      queryParams: { teacherId: teacher.id, teacherName: this.fullName() || teacher.teacherCode },
+    });
+  }
+
+  goToDailyAttendance(): void {
+    const teacher = this.teacher();
+    if (!teacher) return;
+    this.router.navigate(['/teachers/daily-monitoring'], {
       queryParams: { teacherId: teacher.id, teacherName: this.fullName() || teacher.teacherCode },
     });
   }
@@ -327,10 +336,19 @@ export default class TeacherDetailPage implements OnInit {
       next: (res) => {
         const list = (res.data ?? []).slice().sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
         this.attendances.set(list);
-        this.loading.set(false);
       },
       error: () => {
         this.attendances.set([]);
+      },
+    });
+
+    this.teacherAttendanceApi.getAllDaily({ teacherId }).subscribe({
+      next: (res) => {
+        this.dailyAttendances.set(res.data ?? []);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.dailyAttendances.set([]);
         this.loading.set(false);
       },
     });

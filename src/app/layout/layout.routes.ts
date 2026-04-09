@@ -36,6 +36,16 @@ export default [
         title: 'Asistencia',
       },
       {
+        path: 'access-control',
+        loadComponent: () => import('@features/attendance/pages/general-attendance/general-attendance'),
+        title: 'Control de Accesos',
+      },
+      {
+        path: 'general-attendance',
+        redirectTo: 'access-control',
+        pathMatch: 'full',
+      },
+      {
         path: 'assessments',
         loadChildren: () => import('@features/assessments/assessments.routes'),
         title: 'Evaluaciones',

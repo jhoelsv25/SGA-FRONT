@@ -13,7 +13,7 @@ import { InstitutionSkeleton } from '../../components/institution-skeleton/insti
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 
 import { UrlParamsService } from '@core/services/url-params.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { ZardInputDirective } from '@/shared/components/input';
@@ -34,6 +34,7 @@ export default class Institution {
   public store = inject(InstitutionStore);
   private urlParams = inject(UrlParamsService);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   public filterStatus = signal('');
   public filterSearch = signal('');
@@ -69,6 +70,9 @@ export default class Institution {
     switch (e.action.key) {
       case 'create':
         this.openForm();
+        break;
+      case 'config':
+        this.router.navigate(['/administration/institution/config']);
         break;
       case 'refresh':
         this.onRefresh();

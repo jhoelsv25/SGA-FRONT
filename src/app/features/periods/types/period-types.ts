@@ -16,6 +16,7 @@ export interface Period {
   periodNumber?: number; // viene del backend en GET all
   status?: PeriodStatus;
   type?: string;
+  vigencia?: number;
   yearAcademic?: { id: string; name: string };
 }
 

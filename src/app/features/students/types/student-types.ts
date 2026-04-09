@@ -7,6 +7,7 @@ export type Student = {
   gender: 'M' | 'F' | 'O';
   birthDate: string;
   phone?: string;
+  mobile?: string;
   address?: string;
   email: string;
   username: string;
@@ -37,6 +38,7 @@ export type StudentCreate = {
   gender: 'M' | 'F' | 'O';
   birthDate: string;
   phone?: string;
+  mobile?: string;
   address?: string;
   email: string;
   username: string;

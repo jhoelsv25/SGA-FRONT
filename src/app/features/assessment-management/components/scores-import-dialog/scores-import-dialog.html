@@ -1,0 +1,127 @@
+<div class="flex flex-col bg-card overflow-hidden">
+  <!-- Header -->
+  <header class="p-6 border-b border-border/10 bg-gradient-to-r from-primary/5 to-transparent">
+    <div class="flex items-center justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <div class="size-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-lg shadow-primary/5">
+          <i class="fas fa-file-import text-xl"></i>
+        </div>
+        <div>
+          <h2 class="inter text-xl font-black uppercase tracking-tight text-foreground">Importar Calificaciones</h2>
+          <p class="text-xs font-medium text-muted-foreground">Sube tu Excel y vincula las columnas de notas.</p>
+        </div>
+      </div>
+      <button (click)="close()" class="p-2 hover:bg-base-200 rounded-xl transition-colors">
+        <i class="fas fa-times text-muted-foreground"></i>
+      </button>
+    </div>
+
+    <!-- Stepper -->
+    <div class="mt-8 flex items-center justify-center gap-4 px-4">
+      @for (s of steps; track s.id; let i = $index) {
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2 group">
+            <div class="size-8 rounded-full flex items-center justify-center text-[11px] font-black border-2 transition-all duration-500"
+                 [class]="step() === s.id ? 'bg-primary border-primary text-white shadow-lg shadow-primary/20 scale-110' : 'border-border/20 text-muted-foreground'">
+              @if (step() === 'done' || (i === 0 && step() !== 'upload') || (i === 1 && step() === 'done')) {
+                <i class="fas fa-check"></i>
+              } @else {
+                {{ i + 1 }}
+              }
+            </div>
+            <span class="text-[10px] font-black uppercase tracking-[0.2em] transition-colors"
+                  [class]="step() === s.id ? 'text-foreground' : 'text-muted-foreground'">{{ s.label }}</span>
+          </div>
+          @if (i < steps.length - 1) {
+            <div class="w-12 h-[2px] bg-border/10 rounded-full">
+              <div class="h-full bg-primary transition-all duration-700"
+                   [style.width]="(step() === 'upload' && i === 0) ? '0%' : (step() === 'mapping' && i === 0) ? '100%' : (step() === 'done' ? '100%' : '0%')"></div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </header>
+
+  <!-- Content -->
+  <main class="p-8 min-h-[400px]">
+    
+    <!-- Step 1: Upload -->
+    @if (step() === 'upload') {
+      <div class="h-full flex flex-col items-center justify-center text-center max-w-lg mx-auto py-10 animate-in fade-in slide-in-from-bottom-4">
+        <div class="size-24 rounded-3xl bg-base-100 border-2 border-dashed border-border/20 flex items-center justify-center text-muted-foreground/30 mb-6 group-hover:border-primary/30 transition-colors">
+          <i class="fas fa-cloud-upload-alt text-4xl"></i>
+        </div>
+        <h3 class="inter text-xl font-black text-foreground">Selecciona tu archivo Excel</h3>
+        <p class="mt-2 text-sm text-muted-foreground">Tu archivo debe contener los códigos de los estudiantes y sus respectivas notas.</p>
+        
+        <div class="mt-8 flex flex-col sm:flex-row gap-3 w-full">
+          <button z-button (click)="fileInput.click()" class="grow rounded-2xl h-12">
+            <i class="fas fa-file-excel mr-2"></i>Seleccionar Archivo
+          </button>
+          <button z-button zType="outline" (click)="downloadTemplate()" class="grow rounded-2xl h-12">
+            <i class="fas fa-download mr-2"></i>Descargar Plantilla
+          </button>
+          <input #fileInput type="file" class="hidden" accept=".xlsx, .xls, .csv" (change)="onFileSelected($event)" />
+        </div>
+      </div>
+    }
+
+    <!-- Step 2: Mapping -->
+    @if (step() === 'mapping') {
+      <div class="animate-in fade-in slide-in-from-bottom-4">
+        <div class="mb-6">
+          <h3 class="inter text-lg font-black uppercase tracking-tight text-foreground">Configurar Mapeo</h3>
+          <p class="text-sm text-muted-foreground">Indica qué columna de tu Excel corresponde a cada dato.</p>
+        </div>
+
+        <div class="space-y-4 max-h-[450px] overflow-y-auto pr-2">
+          @for (field of fieldOptions; track field.key) {
+            <div class="p-4 rounded-[2rem] border border-border/10 bg-base-100/50 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div class="max-w-md">
+                <div class="flex items-center gap-2">
+                  <span class="text-[11px] font-black uppercase tracking-[0.15em] text-foreground">{{ field.label }}</span>
+                  @if (field.required) {
+                    <span class="px-2 py-0.5 rounded-full bg-red-500/10 text-[9px] font-bold text-red-500 uppercase tracking-widest">Requerido</span>
+                  }
+                </div>
+                <p class="text-xs text-muted-foreground mt-0.5">{{ field.description }}</p>
+              </div>
+
+              <div class="w-full md:w-64">
+                <select z-input w-full class="rounded-xl h-11"
+                        [(ngModel)]="mapping()[field.key]"
+                        (ngModelChange)="mapping.set({...mapping()})">
+                  <option value="">-- No mapear --</option>
+                  @for (h of headers(); track h) {
+                    <option [value]="h">{{ h }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+          }
+        </div>
+
+        <div class="mt-10 flex gap-3 justify-end border-t border-border/5 pt-6">
+          <button z-button zType="ghost" (click)="step.set('upload')" class="rounded-xl">Volver</button>
+          <button z-button class="rounded-2xl px-8" [disabled]="!canStartImport()" (click)="startImport()">
+            Procesar Importación
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- Step 3: Done -->
+    @if (step() === 'done') {
+      <div class="h-full flex flex-col items-center justify-center text-center py-10 animate-in fade-in zoom-in-95">
+        <div class="size-20 rounded-full bg-success/10 text-success flex items-center justify-center text-4xl mb-6 shadow-lg shadow-success/10 animate-bounce">
+          <i class="fas fa-check"></i>
+        </div>
+        <h3 class="inter text-2xl font-black text-foreground">¡Todo listo!</h3>
+        <p class="mt-2 text-sm text-muted-foreground">Las notas han sido procesadas correctamente y el consolidado se está actualizando.</p>
+        <p class="mt-4 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground animate-pulse">Cerrando ventana...</p>
+      </div>
+    }
+
+  </main>
+</div>

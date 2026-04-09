@@ -64,6 +64,24 @@ export const InstitutionStore = signalStore(
         }),
       ),
     ),
+    loadMain: rxMethod<void>(
+      pipe(
+        switchMap(() => {
+          patchState(store, { loading: true });
+          return api.getMain().pipe(
+            tap({
+              next: (institution) => {
+                patchState(store, { institution, loading: false, error: null });
+              },
+              error: (error) => {
+                patchState(store, { loading: false, error: error.message });
+              },
+              complete: () => patchState(store, { loading: false }),
+            }),
+          );
+        }),
+      ),
+    ),
     create: (data: InstitutionCreate) => {
       patchState(store, { loading: true });
       return api.create(data).pipe(

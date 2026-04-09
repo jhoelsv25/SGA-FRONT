@@ -171,11 +171,20 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         visibility: Visibility.PUBLIC,
       },
       {
-        id: 'teacher-attendances',
-        icon: 'fa-user-check',
+        id: 'teacher-daily-attendance',
+        icon: 'fa-user-clock',
         label: 'Asistencia Docente',
+        route: '/teachers/daily-monitoring',
+        permissions: ['teacher_attendance:view', 'teacher-attendance:view'],
+        visibility: Visibility.PUBLIC,
+      },
+      {
+        id: 'teacher-attendances',
+        icon: 'fa-chalkboard-teacher',
+        label: 'Seguimiento Docente',
         route: '/teachers/attendances',
         permissions: [
+          'teacher_attendance:view',
           'teacher-attendance:view',
           'teacher-attendance:create',
           'teacher-attendance:update',
@@ -192,11 +201,21 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
   // ASISTENCIA (attendances)
   // ============================================
   {
+    id: 'access-control',
+    icon: 'fa-qrcode',
+    label: 'Control de Accesos',
+    route: '/access-control',
+    order: 5,
+    permissions: ['attendance:quick-register'],
+    visibility: Visibility.PUBLIC,
+  },
+
+  {
     id: 'attendance',
     icon: 'fa-clipboard-check',
     label: 'Asistencia Estudiantes',
     route: '/attendance',
-    order: 5,
+    order: 6,
     permissions: ['attendance:view'],
     visibility: Visibility.PUBLIC,
     children: [

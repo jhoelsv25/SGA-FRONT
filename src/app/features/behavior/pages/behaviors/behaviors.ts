@@ -86,17 +86,15 @@ export default class BehaviorsPage {
     [this.filters.behaviorSearch(), this.filters.behaviorType(), this.filters.behaviorSeverity()].filter(Boolean)
       .length
   );
-  incidentCount = computed(() => this.data().filter((item) => item.type === 'incident').length);
-  achievementCount = computed(() => this.data().filter((item) => item.type === 'achievement').length);
-  criticalCount = computed(() => this.data().filter((item) => item.severity === 'critical').length);
-  observedCount = computed(() => this.data().filter((item) => item.type === 'observation').length);
+  incidentCount = computed(() => this.data().filter((item) => item.type === 'negative').length);
+  achievementCount = computed(() => this.data().filter((item) => item.type === 'positive').length);
+  criticalCount = computed(() => this.data().filter((item) => item.severity === 'critical' || item.severity === 'high').length);
+  observedCount = computed(() => this.data().filter((item) => item.type === 'negative' && item.severity === 'low').length);
 
   typeOptions = computed<SelectOption[]>(() => [
     { value: '', label: 'Todos' },
-    { value: 'incident', label: 'Incidente' },
-    { value: 'achievement', label: 'Logro' },
-    { value: 'observation', label: 'Observación' },
-    { value: 'other', label: 'Otro' }]);
+    { value: 'negative', label: 'Incidencia' },
+    { value: 'positive', label: 'Logro' }]);
 
   severityOptions = computed<SelectOption[]>(() => [
     { value: '', label: 'Todas' },

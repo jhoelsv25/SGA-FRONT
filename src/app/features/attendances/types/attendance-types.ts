@@ -11,6 +11,9 @@ export interface Attendance {
   enrollmentId: string;
   sectionCourseId: string;
   studentName?: string; // Para mostrar en el UI
+  latitude?: number;
+  longitude?: number;
+  isWithinGeofence?: boolean;
 }
 
 export interface BulkAttendanceRequest {
@@ -18,6 +21,9 @@ export interface BulkAttendanceRequest {
   date: string;
   sessionType: string;
   attendances: Partial<Attendance>[];
+  latitude?: number;
+  longitude?: number;
+  isWithinGeofence?: boolean;
 }
 
 export interface AttendanceResponse {

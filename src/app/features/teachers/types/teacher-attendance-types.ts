@@ -6,6 +6,17 @@ export type TeacherScheduleComplianceStatus =
   | 'unfulfilled'
   | 'reprogrammed';
 
+export type TeacherAttendanceInterval = {
+  id?: string;
+  startTime: string;
+  endTime?: string | null;
+  intervalType?: string;
+  reason?: string;
+  latitude?: number;
+  longitude?: number;
+  isWithinGeofence?: boolean;
+};
+
 export type TeacherAttendance = {
   id?: string;
   date: string;
@@ -19,15 +30,40 @@ export type TeacherAttendance = {
   reason?: string;
   justification?: string;
   observations?: string;
+  learningPurpose?: string;
+  downTimeMinutes?: number;
+  downTimeReason?: string;
   supportingDocuments?: string;
+  latitude?: number;
+  longitude?: number;
+  isWithinGeofence?: boolean;
+  intervals?: TeacherAttendanceInterval[];
   teacher?: { id?: string; teacherCode?: string } | string;
   teacherCode?: string;
   schedule?: { id?: string } | string;
   sectionCourse?: { id?: string } | string;
 };
 
+export type TeacherDailyAttendance = {
+  id: string;
+  date: string;
+  clockInTime: string;
+  clockOutTime?: string;
+  status: TeacherAttendanceStatus;
+  observations?: string;
+  clockInLatitude?: number;
+  clockInLongitude?: number;
+  clockInIsWithinGeofence?: boolean;
+  clockOutLatitude?: number;
+  clockOutLongitude?: number;
+  clockOutIsWithinGeofence?: boolean;
+};
+
 export type TeacherAttendanceBulkRequest = {
   date: string;
+  latitude?: number;
+  longitude?: number;
+  isWithinGeofence?: boolean;
   attendances: {
     teacherCode?: string;
     teacherId?: string;
@@ -41,6 +77,10 @@ export type TeacherAttendanceBulkRequest = {
     plannedEndTime?: string;
     justification?: string;
     complianceStatus?: TeacherScheduleComplianceStatus;
+    learningPurpose?: string;
+    downTimeMinutes?: number;
+    downTimeReason?: string;
+    intervals?: TeacherAttendanceInterval[];
   }[];
 };
 
@@ -81,6 +121,13 @@ export type TeacherScheduleMonitoringRow = {
   attendanceStatus: TeacherAttendanceStatus;
   justification?: string;
   observations?: string;
+  learningPurpose?: string;
+  downTimeMinutes?: number;
+  downTimeReason?: string;
+  latitude?: number;
+  longitude?: number;
+  isWithinGeofence?: boolean;
+  intervals?: TeacherAttendanceInterval[];
 };
 
 export type TeacherLiveSessionItem = {
@@ -104,6 +151,9 @@ export type TeacherLiveSessionItem = {
   startsInMinutes: number;
   endsInMinutes: number;
   actionEnabled: boolean;
+  latitude?: number;
+  longitude?: number;
+  isWithinGeofence?: boolean;
 };
 
 export type TeacherLiveSessionResponse = {

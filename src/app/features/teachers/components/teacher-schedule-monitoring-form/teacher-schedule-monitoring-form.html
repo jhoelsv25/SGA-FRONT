@@ -1,8 +1,9 @@
-<form [formGroup]="form" class="flex max-h-[calc(80vh-3rem)] flex-col overflow-hidden" (ngSubmit)="submit()">
-  <header class="mb-4 flex items-start justify-between gap-4">
+<form [formGroup]="form" class="flex max-h-[calc(86vh-2rem)] flex-col overflow-hidden" (ngSubmit)="submit()">
+  <header class="mb-5 flex items-start justify-between gap-4 border-b border-base-200 pb-4">
     <div class="min-w-0">
-      <h2 class="text-lg font-semibold">Registrar seguimiento</h2>
-      <p class="mt-1 text-sm text-base-content/65">
+      <p class="text-[10px] font-black uppercase tracking-[0.28em] text-primary/70">Seguimiento docente</p>
+      <h2 class="mt-2 text-2xl font-black tracking-tight">Registrar seguimiento</h2>
+      <p class="mt-2 text-sm text-base-content/65">
         {{ row.courseName }} · {{ row.sectionName || 'Sección' }} · {{ row.plannedStartTime?.slice(0, 5) }} - {{ row.plannedEndTime?.slice(0, 5) }}
       </p>
     </div>
@@ -11,42 +12,123 @@
     </button>
   </header>
 
-  <div class="flex-1 overflow-y-auto pr-1">
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-      <div class="md:col-span-2 rounded-[var(--radius-xl)] border border-base-200 bg-base-100/80 px-4 py-3">
-        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-base-content/50">Bloque</p>
-        <p class="mt-1 text-base font-semibold text-base-content">{{ row.title }}</p>
-        <p class="mt-1 text-sm text-base-content/60">{{ row.teacherName }} · {{ row.classroom }}</p>
+  <div class="flex-1 overflow-y-auto pr-2">
+    <div class="grid grid-cols-1 gap-5">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="rounded-[var(--radius-2xl)] border border-base-200 bg-base-100/80 px-5 py-4 xl:col-span-2">
+          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-base-content/50">Bloque</p>
+          <p class="mt-2 text-2xl font-black leading-tight text-base-content">{{ row.title }}</p>
+          <div class="mt-3 flex flex-wrap items-center gap-2 text-sm text-base-content/60">
+            <span class="rounded-full border border-base-200 px-3 py-1">{{ row.teacherName }}</span>
+            <span class="rounded-full border border-base-200 px-3 py-1">{{ row.classroom || 'Sin aula' }}</span>
+          </div>
+        </div>
+
+        <div class="rounded-[var(--radius-2xl)] border border-base-200 bg-base-100/80 px-5 py-4">
+          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-base-content/50">Estado general</p>
+          <div class="mt-3">
+            <z-select-option [options]="statusOptions" formControlName="complianceStatus" [searchable]="false"></z-select-option>
+          </div>
+          <p class="mt-2 text-xs text-base-content/50">Actualiza solo si el bloque terminó parcial, incumplido o reprogramado.</p>
+        </div>
+
+        <div class="rounded-[var(--radius-2xl)] border border-primary/15 bg-primary/8 px-5 py-4">
+          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Cumplimiento</p>
+          <p class="mt-2 text-4xl font-black text-primary">{{ percentage() }}</p>
+        </div>
+
+        <div class="rounded-[var(--radius-2xl)] border border-base-200 bg-base-100/80 px-5 py-4">
+          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-base-content/50">Tiempo real</p>
+          <p class="mt-2 text-3xl font-black text-base-content">{{ actualMinutes() }} min</p>
+          <p class="mt-1 text-xs text-base-content/50">Tiempo acumulado registrado</p>
+        </div>
+
+        <div class="rounded-[var(--radius-2xl)] border border-base-200 bg-base-100/80 px-5 py-4">
+          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-base-content/50">Tiempo muerto</p>
+          <p class="mt-2 text-3xl font-black text-base-content">{{ downTimeMinutes() }} min</p>
+          <p class="mt-1 text-xs text-base-content/50">Espacios entre tramos</p>
+        </div>
       </div>
 
-      <div>
-        <p class="mb-1 text-xs font-medium text-slate-600">Inicio real</p>
-        <input z-input w-full type="time" formControlName="actualStartTime" />
+      <div class="rounded-[var(--radius-2xl)] border border-base-200 bg-base-100/80 p-5">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-base-content/50">Tramos reales</p>
+            <p class="mt-1 text-sm text-base-content/65">Registra cada entrada y salida del docente dentro del bloque.</p>
+          </div>
+          <button type="button" z-button zColor="secondary" zType="outline" (click)="addInterval()">
+            <i class="fas fa-plus text-xs"></i>
+            Agregar tramo
+          </button>
+        </div>
+
+        <div formArrayName="intervals" class="mt-4 space-y-3">
+          @for (interval of intervals.controls; track $index) {
+            <div [formGroupName]="$index" class="rounded-[var(--radius-xl)] border border-base-200 bg-base-100 px-4 py-4">
+              <div class="mb-4 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                  <div class="flex h-9 w-9 items-center justify-center rounded-2xl bg-primary/10 text-sm font-black text-primary">
+                    {{ $index + 1 }}
+                  </div>
+                  <div>
+                    <p class="text-xs font-black uppercase tracking-[0.18em] text-base-content/45">Tramo {{ $index + 1 }}</p>
+                    <p class="text-sm text-base-content/55">Entrada y salida registrada</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  z-button
+                  zColor="secondary"
+                  zType="ghost"
+                  [disabled]="intervals.length <= 1"
+                  (click)="removeInterval($index)"
+                >
+                  <i class="fas fa-trash text-xs"></i>
+                  Quitar
+                </button>
+              </div>
+
+              <div class="grid grid-cols-1 gap-3 lg:grid-cols-[180px_180px_1fr]">
+                <div>
+                  <p class="mb-1 text-xs font-medium text-slate-600">Inicio</p>
+                  <input z-input w-full type="time" formControlName="startTime" />
+                </div>
+
+                <div>
+                  <p class="mb-1 text-xs font-medium text-slate-600">Fin</p>
+                  <input z-input w-full type="time" formControlName="endTime" />
+                </div>
+
+                <div>
+                  <p class="mb-1 text-xs font-medium text-slate-600">Observación del tramo</p>
+                  <input z-input w-full formControlName="reason" placeholder="Ej: Salió por coordinación" />
+                </div>
+              </div>
+            </div>
+          }
+        </div>
       </div>
 
-      <div>
-        <p class="mb-1 text-xs font-medium text-slate-600">Fin real</p>
-        <input z-input w-full type="time" formControlName="actualEndTime" />
-      </div>
+      <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <div class="lg:col-span-2">
+          <p class="mb-1 text-xs font-medium text-slate-600">Observación general</p>
+          <input z-input w-full formControlName="justification" placeholder="Ej: Salió por coordinación o hubo cambio de aula" />
+        </div>
 
-      <div>
-        <p class="mb-1 text-xs font-medium text-slate-600">Estado</p>
-        <z-select-option [options]="statusOptions" formControlName="complianceStatus" [searchable]="false"></z-select-option>
-      </div>
+        <div>
+          <p class="mb-1 text-xs font-medium text-slate-600">Propósito de aprendizaje</p>
+          <input z-input w-full formControlName="learningPurpose" placeholder="Logro de la sesión" />
+        </div>
 
-      <div class="rounded-[var(--radius-xl)] border border-primary/15 bg-primary/8 px-4 py-3">
-        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Cumplimiento estimado</p>
-        <p class="mt-1 text-2xl font-black text-primary">{{ percentage() }}</p>
-      </div>
-
-      <div class="md:col-span-2">
-        <p class="mb-1 text-xs font-medium text-slate-600">Justificación</p>
-        <input z-input w-full formControlName="justification" placeholder="Observación o motivo" />
+        <div>
+          <p class="mb-1 text-xs font-medium text-slate-600">Motivo tiempo muerto</p>
+          <input z-input w-full formControlName="downTimeReason" placeholder="Ej: Se retiró a almorzar" />
+        </div>
       </div>
     </div>
   </div>
 
-  <footer class="mt-4 flex shrink-0 justify-end gap-2 border-t border-base-200 pt-4">
+  <footer class="mt-5 flex shrink-0 justify-end gap-2 border-t border-base-200 pt-4">
     <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">Cancelar</button>
     <button type="submit" z-button zColor="primary" [disabled]="form.invalid || loading()">
       Guardar registro

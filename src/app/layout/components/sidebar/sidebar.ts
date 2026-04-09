@@ -172,6 +172,7 @@ export class Sidebar implements OnInit, OnDestroy {
     const labelMapByRole: Record<string, Record<string, string>> = {
       teacher: {
         dashboard: 'Inicio',
+        'access-control': 'Control de accesos',
         students: 'Mis cursos',
         attendance: 'Mi asistencia',
         assessments: 'Mis evaluaciones',
@@ -361,7 +362,9 @@ export class Sidebar implements OnInit, OnDestroy {
         this.toggleSubmenu(item.id);
       }
     } else if (item.route) {
-      this.router.navigate([item.route]);
+      const [path, queryString] = item.route.split('?');
+      const queryParams = queryString ? Object.fromEntries(new URLSearchParams(queryString).entries()) : undefined;
+      this.router.navigate([path], { queryParams });
       this.closeMobileSidebar();
     }
   }
@@ -399,8 +402,10 @@ export class Sidebar implements OnInit, OnDestroy {
 
   private isRouteActive(itemRoute: string, currentRoute: string): boolean {
     if (!itemRoute) return false;
-    if (itemRoute === '/' || itemRoute === '') return currentRoute === '/';
-    return currentRoute === itemRoute || currentRoute.startsWith(`${itemRoute}/`);
+    const normalizedItemRoute = itemRoute.split('?')[0];
+    const normalizedCurrentRoute = currentRoute.split('?')[0];
+    if (normalizedItemRoute === '/' || normalizedItemRoute === '') return normalizedCurrentRoute === '/';
+    return normalizedCurrentRoute === normalizedItemRoute || normalizedCurrentRoute.startsWith(`${normalizedItemRoute}/`);
   }
 
   private checkMobileDevice(): void {

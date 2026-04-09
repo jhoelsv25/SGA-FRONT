@@ -38,7 +38,9 @@ export class AttendanceImportDialog {
   
   fieldOptions = [
     { key: 'code', label: 'Código / DNI', required: true, example: '20230001' },
-    { key: 'status', label: 'Estado (P, T, F, J)', required: true, example: 'P' }];
+    { key: 'status', label: 'Estado (P, T, F, J)', required: true, example: 'P' },
+    { key: 'time', label: 'Hora de Ingreso', required: false, example: '08:15' },
+    { key: 'remarks', label: 'Observaciones', required: false, example: 'Justificado médico' }];
 
   downloadTemplate(): void {
     const data = [
@@ -95,6 +97,8 @@ export class AttendanceImportDialog {
       const hNorm = norm(h);
       if (['codigo', 'dni', 'code', 'identificacion', 'cod'].includes(hNorm)) map['code'] = h;
       if (['estado', 'status', 'asistencia', 'asist', 'marcar'].includes(hNorm)) map['status'] = h;
+      if (['hora', 'ingreso', 'entrada', 'time', 'checkin'].includes(hNorm)) map['time'] = h;
+      if (['observaciones', 'notas', 'comentarios', 'remarks', 'obs'].includes(hNorm)) map['remarks'] = h;
     });
     this.mapping.set(map);
   }
@@ -107,13 +111,20 @@ export class AttendanceImportDialog {
     const mappedData = this.jsonRows().map(row => {
       const rawCode = String(row[this.mapping()['code']] || '').trim();
       const rawStatus = String(row[this.mapping()['status']] || '').toLowerCase().trim();
+      const rawTime = this.mapping()['time'] ? String(row[this.mapping()['time']] || '').trim() : null;
+      const rawRemarks = this.mapping()['remarks'] ? String(row[this.mapping()['remarks']] || '').trim() : null;
       
       let status: AttendanceStatus = 'present';
       if (['f', 'falta', 'absent', 'f'].includes(rawStatus)) status = 'absent';
       else if (['t', 'tardanza', 'late', 't'].includes(rawStatus)) status = 'late';
       else if (['j', 'justificado', 'excused', 'j'].includes(rawStatus)) status = 'excused';
       
-      return { studentCode: rawCode, status };
+      return { 
+        studentCode: rawCode, 
+        status, 
+        checkInTime: rawTime || undefined,
+        observations: rawRemarks || undefined 
+      };
     }).filter(d => d.studentCode);
 
     this.data.onImport(mappedData);

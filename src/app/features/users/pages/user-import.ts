@@ -18,12 +18,18 @@ import { UserImportDropzone } from '../components/user-import-dropzone/user-impo
 
 const FIELD_OPTIONS = [
   { key: 'username', label: 'Usuario', required: true, description: 'Identificador único del usuario' },
-  { key: 'email', label: 'Correo', required: true, description: 'Correo único para usuario y persona' },
+  { key: 'email', label: 'Correo', required: false, description: 'Opcional. Correo único para usuario y persona' },
   { key: 'firstName', label: 'Nombres', required: true, description: 'Nombres de la persona asociada' },
   { key: 'lastName', label: 'Apellidos', required: true, description: 'Apellidos de la persona asociada' },
+  { key: 'docNumber', label: 'DNI / Nro. Documento', required: false, description: 'Se usará como contraseña por defecto' },
+  { key: 'birthDate', label: 'Fecha Nacimiento', required: false, description: 'Formato YYYY-MM-DD' },
+  { key: 'gender', label: 'Género', required: false, description: 'M, F u O' },
+  { key: 'address', label: 'Dirección', required: false, description: 'Dirección de domicilio' },
+  { key: 'phone', label: 'Teléfono', required: false, description: 'Teléfono fijo' },
+  { key: 'mobile', label: 'Celular', required: false, description: 'Número de celular' },
   { key: 'role', label: 'Rol', required: true, description: 'Nombre o UUID del rol existente' },
   { key: 'institution', label: 'Institucion', required: false, description: 'Nombre o UUID de la institución' },
-  { key: 'password', label: 'Contraseña', required: false, description: 'Opcional. Si falta, se usa una temporal' },
+  { key: 'password', label: 'Contraseña', required: false, description: 'Opcional. Si falta, se usa el DNI' },
   { key: 'status', label: 'Estado', required: false, description: 'ACTIVE, INACTIVE o SUSPENDED' },
   { key: 'isActive', label: 'Activo', required: false, description: 'true/false, si/no, 1/0' },
   {
@@ -442,7 +448,7 @@ export default class UserImportPage implements OnDestroy, OnInit {
   private collectValidationIssues(): string[] {
     const issues: string[] = [];
     const mapping = this.columnMapping();
-    const baseRequired = ['username', 'email', 'firstName', 'lastName', 'role'];
+    const baseRequired = ['username', 'firstName', 'lastName', 'role'];
 
     for (const field of baseRequired) {
       if (!mapping[field]) {
@@ -526,6 +532,12 @@ export default class UserImportPage implements OnDestroy, OnInit {
       weeklyHours: ['horas_semanales', 'weekly_hours'],
       teachingLevel: ['nivel_ensenanza', 'nivel_enseñanza', 'teaching_level'],
       employmentStatus: ['estado_laboral', 'employment_status'],
+      docNumber: ['dni', 'nro_documento', 'documento', 'document_number', 'doc_number'],
+      birthDate: ['fecha_nacimiento', 'nacimiento', 'birth_date', 'birthdate'],
+      gender: ['genero', 'género', 'sexo', 'gender'],
+      address: ['direccion', 'dirección', 'address'],
+      phone: ['telefono', 'teléfono', 'phone'],
+      mobile: ['celular', 'mobile', 'movil', 'móvil'],
     };
 
     const normalize = (value: string) =>
