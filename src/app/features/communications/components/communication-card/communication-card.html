@@ -62,71 +62,75 @@
           </div>
         </div>
 
-        <button
-          z-button
-          zType="ghost"
-          zSize="icon-sm"
-          class="rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
-          title="Más acciones"
-          zPopover
-          [zContent]="actionsMenu"
-          [zPlacement]="'bottom'"
-        >
-          <z-icon zType="ellipsis" class="h-5 w-5" />
-        </button>
+        @if (!readonlyMode()) {
+          <button
+            z-button
+            zType="ghost"
+            zSize="icon-sm"
+            class="rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
+            title="Más acciones"
+            zPopover
+            [zContent]="actionsMenu"
+            [zPlacement]="'bottom'"
+          >
+            <z-icon zType="ellipsis" class="h-5 w-5" />
+          </button>
 
-        <ng-template #actionsMenu>
-          <z-popover class="min-w-[170px] p-1.5 flex flex-col gap-1">
-            <button
-              z-button
-              zType="ghost"
-              class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
-              (click)="edit.emit(communication())"
-            >
-              <z-icon zType="settings" class="h-4 w-4" />
-              Editar
-            </button>
-            <div class="mx-2 my-1 h-px bg-border/10"></div>
-            <button
-              z-button
-              zType="ghost"
-              class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-destructive/10 hover:text-destructive transition-all"
-              (click)="delete.emit(communication())"
-            >
-              <z-icon zType="trash" class="h-4 w-4" />
-              Eliminar
-            </button>
-          </z-popover>
-        </ng-template>
+          <ng-template #actionsMenu>
+            <z-popover class="min-w-[170px] p-1.5 flex flex-col gap-1">
+              <button
+                z-button
+                zType="ghost"
+                class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
+                (click)="edit.emit(communication())"
+              >
+                <z-icon zType="settings" class="h-4 w-4" />
+                Editar
+              </button>
+              <div class="mx-2 my-1 h-px bg-border/10"></div>
+              <button
+                z-button
+                zType="ghost"
+                class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-destructive/10 hover:text-destructive transition-all"
+                (click)="delete.emit(communication())"
+              >
+                <z-icon zType="trash" class="h-4 w-4" />
+                Eliminar
+              </button>
+            </z-popover>
+          </ng-template>
+        }
       </div>
     </div>
 
-    <div class="flex flex-wrap items-center justify-between gap-4 border-t border-base-300/60 pt-5 dark:border-base-200/60">
-      <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
-        <z-icon zType="sparkles" class="h-3.5 w-3.5 text-primary" />
-        Comunicación operativa
-      </div>
+    @if (!readonlyMode()) {
+      <div class="flex flex-wrap items-center justify-between gap-4 border-t border-base-300/60 pt-5 dark:border-base-200/60">
+        <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+          <z-icon zType="sparkles" class="h-3.5 w-3.5 text-primary" />
+          Comunicación operativa
+        </div>
 
-      <div class="flex flex-wrap items-center gap-3">
-        <button
-          z-button
-          zType="default"
-          type="button"
-          class="h-9 rounded-[var(--radius-xl)] px-4 text-[10px] font-black uppercase tracking-[0.18em]"
-          (click)="viewDetail.emit(communication())"
-        >
-          Detalle
-        </button>
-        <button
-          z-button
-          zType="outline"
-          type="button"
-          class="h-9 rounded-[var(--radius-xl)] px-4 text-[10px] font-black uppercase tracking-[0.18em]"
-          (click)="edit.emit(communication())"
-        >
-          Editar
-        </button>
+        <div class="flex flex-wrap items-center gap-3">
+          <button
+            z-button
+            zType="default"
+            type="button"
+            class="h-9 rounded-[var(--radius-xl)] px-4 text-[10px] font-black uppercase tracking-[0.18em]"
+            (click)="viewDetail.emit(communication())"
+          >
+            Detalle
+          </button>
+          <button
+            z-button
+            zType="outline"
+            type="button"
+            class="h-9 rounded-[var(--radius-xl)] px-4 text-[10px] font-black uppercase tracking-[0.18em]"
+            (click)="edit.emit(communication())"
+          >
+            Editar
+          </button>
+        </div>
       </div>
-    </div>
+    }
   </div>
 </z-card>

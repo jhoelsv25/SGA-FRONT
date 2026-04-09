@@ -44,6 +44,12 @@ export class CommunicationForm implements OnInit {
     { value: 'all', label: 'Todos' },
   ];
 
+  priorityOptions: LocalSelectOption[] = [
+    { value: 'high', label: '🔴 Alta — urgente' },
+    { value: 'medium', label: '🟡 Media — general' },
+    { value: 'low', label: '🟢 Baja — informativo' },
+  ];
+
   statusOptions: LocalSelectOption[] = [
     { value: 'published', label: 'Publicar ahora' },
     { value: 'draft', label: 'Guardar como borrador' },
@@ -62,6 +68,8 @@ export class CommunicationForm implements OnInit {
       sendMode: [initialSendMode, [Validators.required]],
       sectionId: [this.current?.sectionId ?? ''],
       scheduledAt: [initialScheduledAt],
+      priority: ['medium'],
+      attachmentUrl: [''],
     });
 
     this.form.get('sendMode')?.valueChanges.subscribe(mode => {
@@ -101,6 +109,8 @@ export class CommunicationForm implements OnInit {
       sectionId: raw.sectionId || null,
       scheduledAt: raw.sendMode === 'scheduled' ? raw.scheduledAt : undefined,
       status: raw.status,
+      priority: raw.priority || 'medium',
+      ...(raw.attachmentUrl?.trim() ? { attachmentUrl: raw.attachmentUrl.trim() } : {}),
     };
     if (this.current?.id) {
       this.store.update(this.current.id, v);

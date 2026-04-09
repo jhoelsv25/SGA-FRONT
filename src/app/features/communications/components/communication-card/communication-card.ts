@@ -22,6 +22,7 @@ import type { Communication } from '../../types/communication-types';
 })
 export class CommunicationCardComponent {
   communication = input.required<Communication>();
+  readonlyMode = input(false);
 
   viewDetail = output<Communication>();
   edit = output<Communication>();
@@ -33,6 +34,8 @@ export class CommunicationCardComponent {
       scheduled: 'Programada',
       sent: 'Enviada',
       failed: 'Fallida',
+      unread: 'No leída',
+      read: 'Leída',
     };
     return map[this.communication().status] ?? this.communication().status;
   });
@@ -64,6 +67,8 @@ export class CommunicationCardComponent {
       scheduled: 'border-warning/30 bg-warning/10 text-warning-700 dark:text-warning',
       sent: 'border-success/30 bg-success/10 text-success-700 dark:text-success',
       failed: 'border-danger/30 bg-danger/10 text-danger-700 dark:text-danger',
+      unread: 'border-primary/25 bg-primary/10 text-primary',
+      read: 'border-base-300 bg-base-200 text-base-content/70',
     };
     return map[this.communication().status] ?? 'border-base-300 bg-base-200 text-base-content/70';
   });

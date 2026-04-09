@@ -1,8 +1,7 @@
-<div class="min-h-full bg-[radial-gradient(circle_at_top_left,_rgba(190,24,93,0.08),_transparent_28%),linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(252,250,249,1))] p-6">
   <section class="mx-auto max-w-[1520px]">
     <div class="rounded-[2rem] border border-base-200/80 bg-white/90 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur">
-      <div class="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
-        <div class="max-w-3xl">
+      <div class="grid gap-6 xl:grid-cols-[minmax(0,1.45fr)_minmax(540px,0.85fr)] xl:items-start">
+        <div class="min-w-0 max-w-[52rem] pr-2">
           <p class="text-[11px] font-black uppercase tracking-[0.32em] text-primary/70">Control de Accesos</p>
           <h1 class="mt-3 text-4xl font-black tracking-tight text-base-content">Ingreso y salida por DNI o código</h1>
           <p class="mt-3 max-w-2xl text-base font-medium leading-7 text-base-content/60">
@@ -10,24 +9,24 @@
           </p>
         </div>
 
-        <div class="grid min-w-[360px] grid-cols-3 gap-3">
-          <article class="rounded-[1.75rem] border border-base-200 bg-base-100/80 px-5 py-4">
+        <div class="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-[minmax(0,220px)_minmax(0,1fr)_minmax(0,1fr)] xl:pl-2">
+          <article class="rounded-[1.5rem] border border-base-200 bg-base-100/80 px-4 py-4">
             <p class="text-[10px] font-black uppercase tracking-[0.22em] text-base-content/45">Fecha</p>
-            <div class="mt-3">
+            <div class="mt-3 max-w-[210px]">
               <z-date-picker
                 [ngModel]="date()"
                 valueFormat="yyyy-MM-dd"
                 displayFormat="dd/MM/yyyy"
                 placeholder="Seleccione fecha"
-                (ngModelChange)="date.set($event); loadRecent()"
+                (ngModelChange)="onDateChange($event)"
               />
             </div>
           </article>
-          <article class="rounded-[1.75rem] border border-success/20 bg-success/5 px-5 py-4">
+          <article class="rounded-[1.5rem] border border-success/20 bg-success/5 px-5 py-4">
             <p class="text-[10px] font-black uppercase tracking-[0.22em] text-success/80">Ingresos</p>
             <p class="mt-3 text-4xl font-black tracking-tight text-success">{{ entryCount() }}</p>
           </article>
-          <article class="rounded-[1.75rem] border border-amber-200 bg-amber-50 px-5 py-4">
+          <article class="rounded-[1.5rem] border border-amber-200 bg-amber-50 px-5 py-4">
             <p class="text-[10px] font-black uppercase tracking-[0.22em] text-amber-700">Salidas</p>
             <p class="mt-3 text-4xl font-black tracking-tight text-amber-700">{{ exitCount() }}</p>
           </article>
@@ -43,7 +42,19 @@
             <span class="rounded-full border border-base-300 bg-base-100 px-4 py-2 text-[10px] font-black uppercase tracking-[0.22em] text-base-content/55">Barcode</span>
           </div>
 
-          <div class="mt-6 rounded-[1.75rem] border border-base-200 bg-base-100/50 p-6">
+          <div
+            class="mt-6 rounded-[1.75rem] border border-base-200 bg-base-100/50 p-6 transition"
+            [class.opacity-60]="accessBlocked()"
+          >
+            @if (accessBlocked()) {
+              <div class="mb-4 rounded-[1.25rem] border border-red-200 bg-red-50 px-4 py-4">
+                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-red-700">Control bloqueado</p>
+                <p class="mt-2 text-sm font-medium leading-6 text-base-content/70">
+                  No puedes registrar ingresos o salidas mientras la ubicación esté fuera de la geocerca o no se pueda validar.
+                </p>
+              </div>
+            }
+
             <div class="grid gap-4 xl:grid-cols-[180px_minmax(0,1fr)]">
               <div>
                 <label class="mb-2 block text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">Movimiento</label>
@@ -51,11 +62,13 @@
                   <button
                     type="button"
                     class="h-14 rounded-[1.25rem] border text-[11px] font-black uppercase tracking-[0.18em] transition"
+                    [disabled]="accessBlocked()"
                     [class.border-success]="eventType() === 'entry'"
                     [class.bg-success]="eventType() === 'entry'"
                     [class.text-white]="eventType() === 'entry'"
                     [class.border-base-300]="eventType() !== 'entry'"
                     [class.text-base-content/65]="eventType() !== 'entry'"
+                    [class.cursor-not-allowed]="accessBlocked()"
                     (click)="eventType.set('entry')"
                   >
                     Ingreso
@@ -63,11 +76,13 @@
                   <button
                     type="button"
                     class="h-14 rounded-[1.25rem] border text-[11px] font-black uppercase tracking-[0.18em] transition"
+                    [disabled]="accessBlocked()"
                     [class.border-amber-600]="eventType() === 'exit'"
                     [class.bg-amber-600]="eventType() === 'exit'"
                     [class.text-white]="eventType() === 'exit'"
                     [class.border-base-300]="eventType() !== 'exit'"
                     [class.text-base-content/65]="eventType() !== 'exit'"
+                    [class.cursor-not-allowed]="accessBlocked()"
                     (click)="eventType.set('exit')"
                   >
                     Salida
@@ -81,6 +96,7 @@
                   <input
                     z-input
                     class="h-16 flex-1 rounded-[1.5rem] text-lg font-black tracking-[0.08em]"
+                    [disabled]="accessBlocked()"
                     [ngModel]="scanCode()"
                     (ngModelChange)="onCodeChange($event)"
                     (blur)="resolveCode()"
@@ -91,7 +107,7 @@
                   <button
                     type="button"
                     class="h-16 rounded-[1.5rem] bg-primary px-8 text-[11px] font-black uppercase tracking-[0.22em] text-white shadow-[0_18px_35px_rgba(190,24,93,0.22)] transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
-                    [disabled]="saving()"
+                    [disabled]="saving() || accessBlocked()"
                     (click)="submitCode()"
                   >
                     {{ saving() ? 'Registrando...' : eventTypeLabel(eventType()) }}
@@ -105,6 +121,7 @@
               <input
                 z-input
                 class="h-14 rounded-[1.25rem]"
+                [disabled]="accessBlocked()"
                 [ngModel]="notes()"
                 (ngModelChange)="notes.set($event)"
                 placeholder="Ej: ingreso tardío, salida autorizada, visita a coordinación"
@@ -299,4 +316,3 @@
       </section>
     </div>
   </section>
-</div>

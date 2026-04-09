@@ -46,6 +46,12 @@ export default class GeneralAttendancePage implements OnInit, OnDestroy {
     return Boolean(institution?.latitude !== undefined && institution?.longitude !== undefined && institution?.geofenceRadius);
   });
   readonly locationReady = computed(() => !this.needsLocationValidation() || this.hasPosition());
+  readonly accessBlocked = computed(() => {
+    if (!this.needsLocationValidation()) return false;
+    if (!this.locationReady()) return true;
+    const status = this.geofenceStatus();
+    return Boolean(status && !status.within);
+  });
   readonly geofenceStatus = computed(() => {
     const institution = this.institutionStore.institution();
     const pos = this.geoService.currentPosition();
@@ -74,6 +80,13 @@ export default class GeneralAttendancePage implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.geoService.stopWatching();
     if (this.resolveTimer) clearTimeout(this.resolveTimer);
+  }
+
+  onDateChange(value: string | Date | null | undefined) {
+    const normalized = this.normalizeDateInput(value);
+    if (!normalized) return;
+    this.date.set(normalized);
+    this.loadRecent();
   }
 
   loadRecent() {
@@ -215,5 +228,24 @@ export default class GeneralAttendancePage implements OnInit, OnDestroy {
     const month = `${date.getMonth() + 1}`.padStart(2, '0');
     const day = `${date.getDate()}`.padStart(2, '0');
     return `${year}-${month}-${day}`;
+  }
+
+  private normalizeDateInput(value: string | Date | null | undefined) {
+    if (!value) return null;
+
+    if (value instanceof Date) {
+      return this.toLocalDate(value);
+    }
+
+    if (typeof value === 'string') {
+      if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+
+      const parsed = new Date(value);
+      if (!Number.isNaN(parsed.getTime())) {
+        return this.toLocalDate(parsed);
+      }
+    }
+
+    return null;
   }
 }

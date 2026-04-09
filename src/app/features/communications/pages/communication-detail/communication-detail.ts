@@ -81,8 +81,8 @@ export default class CommunicationDetailPage implements OnInit {
     if (!current) return;
     this.dialog.open(CommunicationForm, {
       data: { current },
-      width: '520px',
-      maxHeight: '80vh',
+      width: '780px',
+      maxHeight: '92vh',
     }).closed.subscribe(() => this.reload());
   }
 

@@ -56,10 +56,8 @@ export default class TeacherAttendancesPage implements OnInit {
   readonly saving = signal(false);
   readonly filteredRows = computed(() => {
     const term = this.search().trim().toLowerCase();
-    const items = this.rows();
-    if (!term) return items;
-
-    return items.filter((row) =>
+    const items = this.rows().filter((row) =>
+      !term ||
       [
         row.teacherName,
         row.teacherCode,
@@ -71,6 +69,8 @@ export default class TeacherAttendancesPage implements OnInit {
         .filter(Boolean)
         .some((value) => value.toLowerCase().includes(term)),
     );
+
+    return [...items].sort((a, b) => this.compareRowsBySchedulePriority(a, b));
   });
 
   readonly fulfilledCount = computed(
@@ -225,5 +225,55 @@ export default class TeacherAttendancesPage implements OnInit {
       queryParamsHandling: 'merge',
       replaceUrl,
     });
+  }
+
+  private compareRowsBySchedulePriority(a: MonitoringRow, b: MonitoringRow): number {
+    if (!this.isTodaySelected()) {
+      return this.timeToMinutes(a.plannedStartTime) - this.timeToMinutes(b.plannedStartTime);
+    }
+
+    const nowMinutes = this.getCurrentMinutes();
+    const aPriority = this.getSchedulePriority(a, nowMinutes);
+    const bPriority = this.getSchedulePriority(b, nowMinutes);
+
+    if (aPriority.group !== bPriority.group) {
+      return aPriority.group - bPriority.group;
+    }
+
+    if (aPriority.distance !== bPriority.distance) {
+      return aPriority.distance - bPriority.distance;
+    }
+
+    return this.timeToMinutes(a.plannedStartTime) - this.timeToMinutes(b.plannedStartTime);
+  }
+
+  private getSchedulePriority(row: MonitoringRow, nowMinutes: number) {
+    const start = this.timeToMinutes(row.plannedStartTime);
+    const end = this.timeToMinutes(row.plannedEndTime);
+
+    if (start <= nowMinutes && nowMinutes <= end) {
+      return { group: 0, distance: nowMinutes - start };
+    }
+
+    if (start > nowMinutes) {
+      return { group: 1, distance: start - nowMinutes };
+    }
+
+    return { group: 2, distance: nowMinutes - end };
+  }
+
+  private isTodaySelected(): boolean {
+    return this.attendanceDate() === this.getTodayLocalDate();
+  }
+
+  private getCurrentMinutes(): number {
+    const now = new Date();
+    return now.getHours() * 60 + now.getMinutes();
+  }
+
+  private timeToMinutes(value: string | null | undefined): number {
+    if (!value) return Number.MAX_SAFE_INTEGER;
+    const [hours, minutes] = value.split(':').map((part) => Number.parseInt(part, 10));
+    return (Number.isFinite(hours) ? hours : 0) * 60 + (Number.isFinite(minutes) ? minutes : 0);
   }
 }

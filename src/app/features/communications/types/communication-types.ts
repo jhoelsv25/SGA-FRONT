@@ -1,5 +1,5 @@
 export type CommunicationType = 'email' | 'sms' | 'notification' | 'announcement' | 'other';
-export type CommunicationStatus = 'draft' | 'scheduled' | 'sent' | 'failed';
+export type CommunicationStatus = 'draft' | 'scheduled' | 'sent' | 'failed' | 'read' | 'unread';
 export type CommunicationAudience = 'students' | 'teachers' | 'guardians' | 'all';
 
 export type Communication = {
@@ -26,6 +26,8 @@ export type CommunicationCreate = {
   sectionId?: string | null;
   recipientIds?: string[];
   scheduledAt?: string;
+  attachmentUrl?: string;
+  priority?: 'low' | 'medium' | 'high';
 };
 
 export type CommunicationUpdate = Partial<CommunicationCreate>;

@@ -1,11 +1,11 @@
-<div class="space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-1000 pb-20">
+<div class="space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-1000 pb-24">
   
   <sga-classroom-timeline-stats />
 
   <sga-classroom-timeline-publisher />
 
-  <section class="rounded-4xl border border-base-200 bg-card p-5">
-    <div class="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
+  <section class="rounded-[2.5rem] border border-base-200 bg-card px-6 py-6 shadow-[0_18px_48px_-36px_rgba(15,23,42,0.28)]">
+    <div class="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
       <div class="space-y-2">
         <label class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Buscar en el muro</label>
         <input
@@ -13,13 +13,13 @@
           [value]="search()"
           (input)="onSearchChange($any($event.target).value)"
           placeholder="Buscar por publicación, autor o recurso..."
-          class="h-12 w-full rounded-xl border border-base-300 bg-background px-4 text-sm font-medium outline-none transition-all focus:border-primary/20 focus:ring-4 focus:ring-primary/5 dark:bg-base-100"
+          class="h-14 w-full rounded-[1.75rem] border border-base-300 bg-background px-5 text-sm font-medium outline-none transition-all focus:border-primary/20 focus:ring-4 focus:ring-primary/5 dark:bg-base-100"
         />
       </div>
       <div class="flex items-center gap-3 lg:justify-end">
         <button
           type="button"
-          class="rounded-4xl border border-base-300 px-5 py-3 text-xs font-black uppercase tracking-[0.18em] text-base-content/70 transition hover:border-primary/20 hover:text-primary disabled:opacity-50"
+          class="h-14 rounded-[1.75rem] border border-base-300 px-6 text-xs font-black uppercase tracking-[0.18em] text-base-content/70 transition hover:border-primary/20 hover:text-primary disabled:opacity-50"
           [disabled]="!search().trim()"
           (click)="clearSearch()"
         >
@@ -30,7 +30,7 @@
   </section>
 
   <!-- Feed Area -->
-  <div class="space-y-8">
+  <div class="space-y-10">
     @if (store.loading()) {
       <sga-classroom-timeline-skeleton />
     } @else {

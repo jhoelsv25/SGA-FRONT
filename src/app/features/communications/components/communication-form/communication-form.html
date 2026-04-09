@@ -1,75 +1,208 @@
-<form [formGroup]="form" class="flex max-h-[calc(80vh-2rem)] flex-col overflow-hidden" (ngSubmit)="submit()">
-  <header class="mb-4 flex items-center justify-between">
+<form [formGroup]="form" class="flex max-h-[calc(92vh-2rem)] flex-col overflow-hidden" (ngSubmit)="submit()">
+
+  <!-- Header -->
+  <header class="flex shrink-0 items-start justify-between gap-4 border-b border-border/60 px-6 py-5">
     <div>
-      <h2 class="text-xl font-black tracking-tight">{{ current ? 'Editar comunicación' : 'Nueva comunicación' }}</h2>
-      <p class="mt-1 text-sm text-muted-foreground">Configura audiencia, alcance y modo de envío.</p>
+      <p class="text-[10px] font-black uppercase tracking-[0.28em] text-primary/70">Comunicaciones</p>
+      <h2 class="mt-1 text-2xl font-black tracking-tight text-base-content">
+        {{ current ? 'Editar comunicación' : 'Nueva comunicación' }}
+      </h2>
+      <p class="mt-1 text-sm font-medium text-base-content/55">
+        Configura el mensaje, audiencia y modo de entrega.
+      </p>
     </div>
     <button type="button" z-button zColor="secondary" zType="ghost" zShape="circle" (click)="close()">
       <i class="fas fa-times"></i>
     </button>
   </header>
-  <div class="flex-1 space-y-5 overflow-y-auto pr-1">
-    <section class="grid gap-4 rounded-4xl border border-border/60 bg-card p-5 shadow-sm">
-      <div class="grid gap-2">
-        <p class="text-xs font-black uppercase tracking-[0.24em] text-primary">Mensaje</p>
-        <p class="text-sm text-muted-foreground">Define qué se enviará y a quién.</p>
+
+  <div class="flex-1 overflow-y-auto">
+    <!-- ── SEND MODE toggle ── prominently at top -->
+    <div class="px-6 pt-6 pb-4">
+      <p class="mb-3 text-[10px] font-black uppercase tracking-[0.24em] text-base-content/45">Modo de envío</p>
+      <div class="grid grid-cols-2 gap-3">
+        <button
+          type="button"
+          class="flex cursor-pointer items-center gap-3 rounded-[1.5rem] border-2 p-4 text-left transition-all duration-200"
+          [class.border-primary]="form.get('sendMode')?.value === 'now'"
+          [class.bg-primary/5]="form.get('sendMode')?.value === 'now'"
+          [class.border-base-200]="form.get('sendMode')?.value !== 'now'"
+          (click)="form.get('sendMode')?.setValue('now')"
+        >
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl"
+               [class.bg-primary]="form.get('sendMode')?.value === 'now'"
+               [class.text-white]="form.get('sendMode')?.value === 'now'"
+               [class.bg-base-200]="form.get('sendMode')?.value !== 'now'"
+               [class.text-base-content/40]="form.get('sendMode')?.value !== 'now'">
+            <i class="fas fa-bolt text-sm"></i>
+          </div>
+          <div>
+            <p class="text-sm font-black text-base-content">Inmediato</p>
+            <p class="text-[11px] font-medium text-base-content/55">Publicar ahora mismo</p>
+          </div>
+        </button>
+
+        <button
+          type="button"
+          class="flex cursor-pointer items-center gap-3 rounded-[1.5rem] border-2 p-4 text-left transition-all duration-200"
+          [class.border-primary]="form.get('sendMode')?.value === 'scheduled'"
+          [class.bg-primary/5]="form.get('sendMode')?.value === 'scheduled'"
+          [class.border-base-200]="form.get('sendMode')?.value !== 'scheduled'"
+          (click)="form.get('sendMode')?.setValue('scheduled')"
+        >
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl"
+               [class.bg-primary]="form.get('sendMode')?.value === 'scheduled'"
+               [class.text-white]="form.get('sendMode')?.value === 'scheduled'"
+               [class.bg-base-200]="form.get('sendMode')?.value !== 'scheduled'"
+               [class.text-base-content/40]="form.get('sendMode')?.value !== 'scheduled'">
+            <i class="fas fa-calendar-alt text-sm"></i>
+          </div>
+          <div>
+            <p class="text-sm font-black text-base-content">Programado</p>
+            <p class="text-[11px] font-medium text-base-content/55">Elegir fecha y hora</p>
+          </div>
+        </button>
       </div>
+
+      @if (form.get('sendMode')?.value === 'scheduled') {
+        <div class="mt-3 rounded-[1.25rem] border border-primary/20 bg-primary/5 p-4">
+          <label class="mb-2 block text-[10px] font-black uppercase tracking-[0.18em] text-primary/70" for="scheduledAt">
+            Fecha y hora de publicación
+          </label>
+          <input
+            z-input w-full
+            id="scheduledAt"
+            type="datetime-local"
+            formControlName="scheduledAt"
+            class="h-12 rounded-[1.25rem] text-sm"
+          />
+          <p class="mt-2 text-[10px] font-medium text-base-content/50">
+            El sistema publicará automáticamente cuando llegue esta fecha.
+          </p>
+        </div>
+      } @else if (form.get('sendMode')?.value === 'now') {
+        <div class="mt-3">
+          <label class="mb-2 block text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45" for="status">
+            ¿Publicar o guardar como borrador?
+          </label>
+          <z-select-option
+            id="status"
+            formControlName="status"
+            [options]="statusOptions"
+            placeholder="Acción del anuncio"
+          ></z-select-option>
+        </div>
+      }
+    </div>
+
+    <div class="border-t border-base-200/50 px-6 py-4">
+      <p class="mb-4 text-[10px] font-black uppercase tracking-[0.24em] text-base-content/45">Mensaje</p>
+
       <div class="grid gap-4 md:grid-cols-2">
         <div class="md:col-span-2">
-      <label class="label-form" for="subject">Asunto</label>
-      <input z-input w-full id="subject" formControlName="subject" placeholder="Asunto de la comunicación"  />
+          <label class="mb-2 block text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45" for="subject">
+            Asunto
+          </label>
+          <input
+            z-input w-full
+            id="subject"
+            formControlName="subject"
+            placeholder="Título del anuncio o comunicación"
+            class="h-12 rounded-[1.25rem] text-sm font-semibold"
+          />
         </div>
-        <div>
-      <label class="label-form" for="type">Tipo</label>
-      <z-select-option id="type" formControlName="type" [options]="typeOptions" placeholder="Tipo de comunicación"></z-select-option>
-        </div>
-        <div>
-      <label class="label-form" for="audience">Audiencia</label>
-      <z-select-option id="audience" formControlName="audience" [options]="audienceOptions" placeholder="Selecciona la audiencia"></z-select-option>
-        </div>
+
         <div class="md:col-span-2">
-      <label class="label-form" for="body">Mensaje</label>
-      <textarea id="body" formControlName="body" rows="5" class="w-full rounded-[var(--radius-xl)] border border-input bg-base-100 px-4 py-3 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20" placeholder="Contenido del mensaje"></textarea>
+          <label class="mb-2 block text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45" for="body">
+            Contenido del mensaje
+          </label>
+          <textarea
+            id="body"
+            formControlName="body"
+            rows="5"
+            class="w-full resize-y rounded-[1.25rem] border border-input bg-base-100 px-4 py-3 text-sm leading-relaxed outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 min-h-[120px]"
+            placeholder="Escribe el contenido detallado del anuncio..."
+          ></textarea>
         </div>
-        <div class="md:col-span-2">
-      <label class="label-form" for="sectionId">Sección (opcional)</label>
-      <sga-section-select id="sectionId" formControlName="sectionId" placeholder="Todas las secciones"></sga-section-select>
-      <p class="mt-1 text-xs text-muted-foreground">Si eliges sección, la notificación se limita a esa sección y su grado implícito.</p>
-        </div>
-      </div>
-    </section>
-    <section class="grid gap-4 rounded-4xl border border-border/60 bg-card p-5 shadow-sm">
-      <div class="grid gap-2">
-        <p class="text-xs font-black uppercase tracking-[0.24em] text-primary">Entrega</p>
-        <p class="text-sm text-muted-foreground">Elige si sale ahora o queda programado para más tarde.</p>
-      </div>
-      <div class="grid gap-4 md:grid-cols-2">
+
         <div>
-          <label class="label-form" for="sendMode">Modo de envío</label>
-          <z-select-option id="sendMode" formControlName="sendMode" [options]="sendModeOptions" placeholder="Modo de envío"></z-select-option>
+          <label class="mb-2 block text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45" for="audience">
+            Audiencia
+          </label>
+          <z-select-option
+            id="audience"
+            formControlName="audience"
+            [options]="audienceOptions"
+            placeholder="Selecciona quién recibirá el anuncio"
+          ></z-select-option>
         </div>
-        @if (form.get('sendMode')?.value === 'scheduled') {
-          <div>
-            <label class="label-form" for="scheduledAt">Fecha y hora programada</label>
-            <input z-input w-full id="scheduledAt" type="datetime-local" formControlName="scheduledAt" />
-            <p class="mt-1 text-xs text-muted-foreground">Se publicará automáticamente por cron cuando llegue la hora.</p>
-          </div>
-        }
-        @if (form.get('sendMode')?.value === 'scheduled') {
-          <div class="rounded-[var(--radius-xl)] border border-dashed border-primary/30 bg-primary/5 px-4 py-3 text-sm text-muted-foreground">
-            Se guardará como anuncio programado y el backend lo publicará automáticamente cuando llegue la fecha.
-          </div>
-        } @else {
-          <div>
-            <label class="label-form" for="status">Acción</label>
-            <z-select-option id="status" formControlName="status" [options]="statusOptions" placeholder="Acción del anuncio"></z-select-option>
-          </div>
-        }
+
+        <div>
+          <label class="mb-2 block text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45" for="priority">
+            Prioridad
+          </label>
+          <z-select-option
+            id="priority"
+            formControlName="priority"
+            [options]="priorityOptions"
+            placeholder="Relevancia del mensaje"
+          ></z-select-option>
+        </div>
+
+        @if (form.get('audience')?.value === 'students') {
+          <div class="md:col-span-2">
+            <label class="mb-2 block text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45" for="sectionId">
+              Sección (opcional)
+            </label>
+            <sga-section-select
+            id="sectionId"
+            formControlName="sectionId"
+            placeholder="Aplicar a todas las secciones"
+          ></sga-section-select>
+          <p class="mt-1.5 text-[10px] font-medium text-base-content/45">
+            Si eliges sección, la notificación se limitará solo a los alumnos/docentes de ese grupo.
+          </p>
+        </div>
+      }
+
+        <div class="md:col-span-2">
+          <label class="mb-2 block text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45" for="attachmentUrl">
+            URL adjunta (opcional)
+          </label>
+          <input
+            z-input w-full
+            id="attachmentUrl"
+            formControlName="attachmentUrl"
+            placeholder="https://drive.google.com/... o cualquier enlace de recurso"
+            class="h-12 rounded-[1.25rem] text-sm"
+          />
+          <p class="mt-1.5 text-[10px] font-medium text-base-content/45">
+            Pega un enlace a un archivo de Drive, Dropbox, o cualquier recurso web.
+          </p>
+        </div>
       </div>
-    </section>
+    </div>
   </div>
-  <footer class="mt-4 flex shrink-0 justify-end gap-2 border-t border-border/60 pt-4">
-    <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">Cancelar</button>
-    <button type="submit" z-button zColor="primary" [disabled]="form.invalid">Guardar</button>
+
+  <!-- Footer -->
+  <footer class="flex shrink-0 items-center justify-between gap-3 border-t border-border/60 px-6 py-4">
+    <div class="text-xs font-medium text-base-content/40">
+      @if (form.get('sendMode')?.value === 'scheduled') {
+        <span class="rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-primary">
+          <i class="fas fa-calendar-alt mr-1 text-xs"></i> Envío programado
+        </span>
+      } @else {
+        <span class="rounded-full border border-success/20 bg-success/5 px-3 py-1 text-success">
+          <i class="fas fa-bolt mr-1 text-xs"></i> Envío inmediato
+        </span>
+      }
+    </div>
+    <div class="flex gap-2">
+      <button type="button" z-button zColor="secondary" zType="ghost" (click)="close()">Cancelar</button>
+      <button type="submit" z-button zColor="primary" [disabled]="form.invalid">
+        <i class="fas fa-paper-plane mr-2 text-xs"></i>
+        {{ form.get('sendMode')?.value === 'scheduled' ? 'Programar envío' : 'Publicar ahora' }}
+      </button>
+    </div>
   </footer>
 </form>

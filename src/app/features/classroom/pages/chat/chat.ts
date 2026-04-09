@@ -23,6 +23,7 @@ export default class Chat {
   public newMessage = signal('');
   public sending = signal(false);
   public isComposerFocused = signal(false);
+  private pendingMessageContent = signal('');
   private preserveScrollOnHistoryLoad = false;
 
   @ViewChild('chatScrollViewport')
@@ -35,6 +36,20 @@ export default class Chat {
       if (!messagesLength || isLoadingHistory || this.preserveScrollOnHistoryLoad) return;
 
       queueMicrotask(() => this.scrollToBottom());
+    });
+
+    effect(() => {
+      if (!this.sending()) return;
+
+      const pending = this.pendingMessageContent().trim();
+      const messages = this.store.chatMessages();
+      const latest = messages[messages.length - 1];
+      if (!pending || !latest) return;
+
+      if (this.isMe(latest) && latest.content?.trim() === pending) {
+        this.pendingMessageContent.set('');
+        this.sending.set(false);
+      }
     });
   }
 
@@ -84,14 +99,18 @@ export default class Chat {
     if (!content || this.sending()) return;
     const obs = this.store.sendMessage(content);
     if (!obs) return;
+    this.pendingMessageContent.set(content);
+    this.newMessage.set('');
     this.sending.set(true);
     obs.subscribe({
       next: () => {
-        this.newMessage.set('');
-        this.sending.set(false);
         queueMicrotask(() => this.scrollToBottom());
       },
-      error: () => this.sending.set(false),
+      error: () => {
+        this.newMessage.set(this.pendingMessageContent());
+        this.pendingMessageContent.set('');
+        this.sending.set(false);
+      },
     });
   }
 

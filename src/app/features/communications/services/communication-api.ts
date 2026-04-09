@@ -49,11 +49,11 @@ export class CommunicationApi {
       recipient: data.audience,
       publishedAt: publishedAt.toISOString(),
       expireAt: expireAt.toISOString(),
-      priority: 'medium',
+      priority: data.priority ?? 'medium',
       status,
       user: this.authStore.currentUser()?.id,
       section: data.sectionId || undefined,
-      attachmentUrl: '',
+      ...(data.attachmentUrl ? { attachmentUrl: data.attachmentUrl } : {}),
       view: 0,
     };
   }
