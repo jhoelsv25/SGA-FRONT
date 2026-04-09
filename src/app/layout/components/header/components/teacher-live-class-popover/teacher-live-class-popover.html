@@ -19,13 +19,72 @@
         <span class="absolute inline-flex h-4 w-4 animate-pulse rounded-full bg-danger/10"></span>
       }
     }
-    <z-icon zType="activity" class="relative h-4 w-4 text-primary" />
-    <span class="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border border-base-100" [class]="indicatorClasses()"></span>
+    <z-icon zType="activity" class="relative h-4 w-4 text-primary" [class.text-danger]="isLive() && isOutOfRange()" />
+    <span class="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border border-base-100 shadow-sm" [class]="indicatorClasses()"></span>
   </div>
 </button>
 
 <ng-template #teacherLivePopover>
   <z-popover class="w-[360px] rounded-[1.5rem] border border-base-200/80 bg-popover p-4 text-popover-foreground shadow-2xl shadow-black/10">
+    <!-- Asistencia General -->
+    <div class="mb-5 pb-5 border-b border-base-200/60">
+      <p class="mb-3 text-[10px] font-black uppercase tracking-[0.18em] text-primary/70">Asistencia General</p>
+      
+      <div class="flex items-center justify-between gap-3">
+        <div class="flex-1 space-y-1">
+          @if (!dailyAttendance()) {
+            <p class="text-sm font-bold text-base-content">Sin registro hoy</p>
+            <p class="text-[11px] text-base-content/60">Marca tu ingreso para iniciar tu jornada.</p>
+          } @else {
+            <div class="flex flex-col gap-1.5">
+              <div class="flex items-center gap-2">
+                <div class="h-2 w-2 rounded-full bg-success"></div>
+                <p class="text-sm font-bold text-base-content">Jornada iniciada</p>
+              </div>
+              <div class="flex gap-4 text-[11px] text-base-content/65">
+                <span class="flex items-center gap-1">
+                  <z-icon zType="log-in" class="h-3 w-3" />
+                  {{ dailyAttendance()?.clockInTime?.slice(0, 5) }}
+                </span>
+                @if (dailyAttendance()?.clockOutTime) {
+                  <span class="flex items-center gap-1">
+                    <z-icon zType="log-out" class="h-3 w-3" />
+                    {{ dailyAttendance()?.clockOutTime?.slice(0, 5) }}
+                  </span>
+                }
+              </div>
+            </div>
+          }
+        </div>
+
+        <div class="flex gap-2">
+          @if (!dailyAttendance() || !dailyAttendance()?.clockInTime) {
+            <button
+              z-button
+              type="button"
+              class="h-9 rounded-[var(--radius-lg)] px-3 text-[10px] font-black uppercase tracking-[0.12em]"
+              [disabled]="actionLoading()"
+              (click)="clockInDaily()"
+            >
+              Ingreso
+            </button>
+          } @else if (!dailyAttendance()?.clockOutTime) {
+            <button
+              z-button
+              zColor="danger"
+              zType="outline"
+              type="button"
+              class="h-9 rounded-[var(--radius-lg)] px-3 text-[10px] font-black uppercase tracking-[0.12em]"
+              [disabled]="actionLoading()"
+              (click)="clockOutDaily()"
+            >
+              Salida
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+
     @if (session(); as currentSession) {
       <div class="space-y-4">
         <div class="space-y-1">
@@ -44,6 +103,41 @@
             <p class="mt-1 font-semibold">{{ label() }}</p>
           </div>
         </div>
+
+        @if (isLive()) {
+          <div class="rounded-[1rem] border p-3 flex items-center justify-between transition-all duration-300" 
+               [ngClass]="isOutOfRange() ? 'border-danger/30 bg-danger/5' : 'border-emerald-200/50 bg-emerald-50/30'">
+            <div class="flex items-center gap-2">
+              <div class="flex h-6 w-6 items-center justify-center rounded-lg" 
+                   [class]="isOutOfRange() ? 'bg-danger/10 text-danger' : 'bg-emerald-500/10 text-emerald-600'">
+                <z-icon [zType]="isOutOfRange() ? 'map-pin-off' : 'map-pin'" class="h-3.5 w-3.5" />
+              </div>
+              <div>
+                <p class="text-[10px] font-black uppercase tracking-wider" 
+                   [class]="isOutOfRange() ? 'text-danger' : 'text-emerald-700'">Ubicación</p>
+                <p class="text-[11px] font-semibold text-base-content/70">
+                  {{ isOutOfRange() ? 'Fuera de zona' : 'En el centro' }}
+                </p>
+              </div>
+            </div>
+            @if (distanceToSchool() !== null) {
+              <div class="text-right">
+                <p class="text-[10px] font-black text-base-content/40 uppercase tracking-tight">Distancia</p>
+                <p class="text-[11px] font-bold text-base-content/80">{{ distanceToSchool()?.toFixed(0) }}m</p>
+              </div>
+            }
+          </div>
+
+          @if (accumulatedDowntime() > 0) {
+            <div class="rounded-[1rem] border border-amber-200/50 bg-amber-50/30 p-3 flex items-center gap-3">
+              <z-icon zType="clock" class="h-4 w-4 text-amber-600" />
+              <div class="flex-1 min-w-0">
+                 <p class="text-[10px] font-black uppercase text-amber-700 tracking-wider">Tiempo muerto automático</p>
+                 <p class="text-[11px] font-semibold text-base-content/70">Detectado: {{ accumulatedDowntime() }} min fuera de zona.</p>
+              </div>
+            </div>
+          }
+        }
 
         <div class="space-y-2">
           <div class="flex items-center justify-between text-[11px] font-bold uppercase tracking-[0.16em] text-base-content/55">
