@@ -12,7 +12,7 @@ export class AuthFacade {
   private authApi = inject(AuthApi);
 
   /** LOGIN → retorna boolean en vez de strings */
-  login(credentials: LoginCredentials): Observable<boolean> {
+  login(credentials: LoginCredentials, redirectTo?: string): Observable<boolean> {
     return this.store.signIn(credentials).pipe(
       map((status) => {
         const success = status === 'success';
@@ -24,6 +24,8 @@ export class AuthFacade {
           const modules = this.getModules();
           if (!modules || modules.length === 0) {
             this.router.navigate(['/no-permissions']);
+          } else if (redirectTo) {
+            this.router.navigateByUrl(redirectTo);
           } else {
             this.router.navigate(['/dashboard']);
           }

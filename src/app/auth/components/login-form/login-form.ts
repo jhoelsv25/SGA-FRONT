@@ -2,7 +2,7 @@ import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardInputDirective } from '@/shared/components/input';
 import { Component, inject, signal, input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLinkWithHref } from '@angular/router';
+import { ActivatedRoute, RouterLinkWithHref } from '@angular/router';
 import { AuthFacade } from '@auth/services/store/auth.acede';
 import { ZardCheckboxComponent } from '@/shared/components/checkbox';
 import { ZardIconComponent } from '@shared/components/icon';
@@ -15,6 +15,7 @@ import { ZardIconComponent } from '@shared/components/icon';
 })
 export class LoginForm {
   private authFacade = inject(AuthFacade);
+  private route = inject(ActivatedRoute);
   private fb = inject(FormBuilder);
   public showPassword = signal<boolean>(false);
   public loginForm: FormGroup;
@@ -58,7 +59,9 @@ export class LoginForm {
     this.isLoading.set(true);
     this.loginError.set(null);
 
-    this.authFacade.login(credentials).subscribe({
+    const redirectTo = this.route.snapshot.queryParamMap.get('redirect');
+
+    this.authFacade.login(credentials, redirectTo || undefined).subscribe({
       next: (response) => {
         if (!response) {
           this.loginError.set('No se pudo iniciar sesion con las credenciales ingresadas.');

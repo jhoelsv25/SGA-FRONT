@@ -33,8 +33,10 @@ export const publicGuard: CanActivateFn = async (route, state) => {
   }
 
   // Si tiene permisos, redirigir según corresponda
-  if (returnUrl && returnUrl !== '/auth/login') {
-    return router.createUrlTree([returnUrl]);
+  const redirectTo = route.queryParams?.['redirect'] || route.queryParams?.['returnUrl'];
+
+  if (redirectTo && redirectTo !== '/auth/login') {
+    return router.parseUrl(redirectTo);
   }
 
   return router.createUrlTree(['/dashboard']);
