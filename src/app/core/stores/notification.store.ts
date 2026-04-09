@@ -18,6 +18,7 @@ type NotificationState = {
 };
 
 const LIVE_CARD_TIMEOUT_MS = 7000;
+const LIVE_CARD_RECENT_WINDOW_MS = 2 * 60 * 1000;
 
 const initialState: NotificationState = {
   data: [],
@@ -41,7 +42,41 @@ export const NotificationStore = signalStore(
       toast = inject(Toast),
       socket = inject(NotificationSocketService),
       sound = inject(NotificationSoundService),
-    ) => ({
+    ) => {
+      let realtimeBound = false;
+
+      return ({
+      promoteRecentNotifications(notifications: Notification[], playSound = false) {
+        const now = Date.now();
+        const freshNotifications = notifications.filter((notification) => {
+          if (notification.isRead) return false;
+          const createdAt = new Date(notification.createdAt).getTime();
+          if (!Number.isFinite(createdAt)) return false;
+          return now - createdAt <= LIVE_CARD_RECENT_WINDOW_MS;
+        });
+
+        if (!freshNotifications.length) return;
+
+        const existingIds = new Set(store.liveCards().map((item) => item.id));
+        const incoming = freshNotifications.filter((item) => !existingIds.has(item.id));
+        if (!incoming.length) return;
+
+        const nextLiveCards = [...incoming, ...store.liveCards()].slice(0, 3);
+        patchState(store, {
+          liveCards: nextLiveCards,
+          liveOverflowCount: Math.max(
+            store.liveOverflowCount(),
+            Math.max(0, incoming.length + store.liveCards().length - 3),
+          ),
+        });
+
+        if (playSound) {
+          sound.play();
+        }
+
+        incoming.forEach(notification => this.scheduleLiveCardDismiss(notification.id));
+      },
+
       scheduleLiveCardDismiss(id: string) {
         if (typeof window === 'undefined') return;
 
@@ -65,6 +100,7 @@ export const NotificationStore = signalStore(
               loading: false,
               initializedForUserId: user.id,
             });
+            this.promoteRecentNotifications(res.data ?? []);
           },
           error: (err) => {
             patchState(store, { loading: false, error: err.message });
@@ -184,6 +220,9 @@ export const NotificationStore = signalStore(
 
       connectRealtime() {
         socket.connect();
+        if (realtimeBound) return;
+        realtimeBound = true;
+
         socket.notification$.subscribe(notification => {
           const exists = store.data().some(item => item.id === notification.id);
           if (exists) return;
@@ -198,8 +237,13 @@ export const NotificationStore = signalStore(
           });
           this.scheduleLiveCardDismiss(notification.id);
         });
+
+        socket.connectionRestored$.subscribe(() => {
+          if (!auth.currentUser()) return;
+          this.loadInitial();
+        });
       },
-    }),
+    })},
   ),
   withHooks({
     onInit(store, auth = inject(AuthStore)) {

@@ -25,6 +25,7 @@ export class NotificationSocketService implements OnDestroy {
   readonly notification$ = new Subject<Notification>();
   readonly teacherLiveSession$ = new Subject<TeacherLiveSessionResponse['data']>();
   readonly teacherRealtimeOverview$ = new Subject<TeacherRealtimeOverviewResponse['data']>();
+  readonly connectionRestored$ = new Subject<void>();
 
   connect(): void {
     if (!this.isBrowser) return;
@@ -76,6 +77,7 @@ export class NotificationSocketService implements OnDestroy {
 
     this.socket.on('connect', () => {
       console.info('[NotificationSocketService] Socket connected');
+      this.connectionRestored$.next();
     });
 
     this.socket.on('disconnect', (reason) => {
@@ -88,6 +90,7 @@ export class NotificationSocketService implements OnDestroy {
 
     this.socket.io.on('reconnect', () => {
       console.info('[NotificationSocketService] Socket reconnected');
+      this.connectionRestored$.next();
     });
 
     window.addEventListener('focus', this.boundReconnectHandler);
