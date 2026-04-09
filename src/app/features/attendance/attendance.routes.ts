@@ -10,7 +10,7 @@ export default [
   {
     path: 'quick-register',
     loadComponent: () => import('./pages/attendance-quick-register/attendance-quick-register'),
-    title: 'Registro rápido de asistencia',
+    title: 'Registro rápido',
     data: { permissions: ['attendance:quick-register'] },
   },
   {

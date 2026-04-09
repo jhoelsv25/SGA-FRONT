@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, OnDestroy, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -19,12 +19,16 @@ import { UiFiltersService } from '@core/services/ui-filters.service';
 import { ActionConfig } from '@core/types/action-types';
 import { HeaderConfig } from '@core/types/header-types';
 import { SectionCourseSelect } from '@/shared/widgets/selects';
+import { GeolocationService } from '@core/services/geolocation.service';
+import { InstitutionStore } from '@features/admin-services/store/institution.store';
 
 type StudentRow = {
   id: string;
   name: string;
   studentCode: string;
   status: AttendanceStatus;
+  checkInTime?: string;
+  observations?: string;
 };
 
 @Component({
@@ -34,7 +38,7 @@ type StudentRow = {
   templateUrl: './attendance-register.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class AttendanceRegisterPage implements OnInit {
+export default class AttendanceRegisterPage implements OnInit, OnDestroy {
   private readonly dialog = inject(DialogModalService);
   public readonly store = inject(AttendanceStore);
   private readonly attendanceApi = inject(AttendanceApi);
@@ -44,6 +48,8 @@ export default class AttendanceRegisterPage implements OnInit {
   private readonly filters = inject(UiFiltersService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly geoService = inject(GeolocationService);
+  private readonly institutionStore = inject(InstitutionStore);
 
   public selectedSectionCourse = signal('');
   public attendanceDate = signal('');
@@ -117,7 +123,7 @@ export default class AttendanceRegisterPage implements OnInit {
     },
     {
       key: 'quick',
-      label: 'Registro rápido',
+      label: 'Control de accesos',
       icon: 'fa-solid fa-qrcode',
       color: 'secondary',
       typeAction: 'header',
@@ -136,6 +142,13 @@ export default class AttendanceRegisterPage implements OnInit {
       this.studentContextName.set(params.get('studentName') ?? '');
       this.loadSectionCourses();
     });
+
+    this.institutionStore.loadMain();
+    this.geoService.startWatching();
+  }
+
+  ngOnDestroy(): void {
+    this.geoService.stopWatching();
   }
 
   onHeaderAction(event: { action: ActionConfig }) {
@@ -150,7 +163,7 @@ export default class AttendanceRegisterPage implements OnInit {
     }
 
     if (event.action.key === 'quick') {
-      this.router.navigate(['/attendance/quick-register']);
+      this.router.navigate(['/access-control']);
     }
   }
 
@@ -286,14 +299,32 @@ export default class AttendanceRegisterPage implements OnInit {
   saveAttendances() {
     if (!this.selectedSectionCourse()) return;
 
+    const inst = this.institutionStore.institution();
+    const pos = this.geoService.currentPosition();
+    let isWithinGeofence = true;
+    
+    if (inst && pos && inst.latitude !== undefined && inst.longitude !== undefined && inst.geofenceRadius !== undefined) {
+      const distance = this.geoService.calculateDistance(
+        pos.coords.latitude,
+        pos.coords.longitude,
+        Number(inst.latitude),
+        Number(inst.longitude)
+      );
+      isWithinGeofence = distance <= inst.geofenceRadius;
+    }
+
     const request = {
       sectionCourseId: this.selectedSectionCourse(),
       date: this.attendanceDate(),
       sessionType: 'lecture',
+      latitude: pos?.coords.latitude,
+      longitude: pos?.coords.longitude,
+      isWithinGeofence,
       attendances: this.students().map((student) => ({
         enrollmentId: student.id,
         status: student.status,
-        checkInTime: '08:00:00',
+        checkInTime: student.checkInTime || new Date().toTimeString().slice(0, 8),
+        observations: student.observations,
       })),
     };
 
@@ -308,12 +339,19 @@ export default class AttendanceRegisterPage implements OnInit {
 
     this.dialog.open(AttendanceImportDialog, {
       data: {
-        onImport: (mappedData: { studentCode: string; status: AttendanceStatus }[]) => {
+        onImport: (mappedData: { studentCode: string; status: AttendanceStatus; checkInTime?: string; observations?: string }[]) => {
           this.students.update((prev) => {
             const nextState = [...prev];
             mappedData.forEach((item) => {
               const index = nextState.findIndex((student) => student.studentCode === item.studentCode);
-              if (index !== -1) nextState[index] = { ...nextState[index], status: item.status };
+              if (index !== -1) {
+                nextState[index] = { 
+                  ...nextState[index], 
+                  status: item.status,
+                  checkInTime: item.checkInTime,
+                  observations: item.observations
+                };
+              }
             });
             return nextState;
           });

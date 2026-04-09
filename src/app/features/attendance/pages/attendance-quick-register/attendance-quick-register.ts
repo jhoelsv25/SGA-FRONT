@@ -16,8 +16,12 @@ import { SectionCourseApi } from '@features/section-courses/services/section-cou
 import { SectionCourse } from '@features/section-courses/types/section-course-types';
 import { EnrollmentApi } from '@features/enrollments/services/enrollment-api';
 import { ActivatedRoute } from '@angular/router';
+import { forkJoin } from 'rxjs';
 
-type QuickMode = 'student' | 'teacher';
+type QuickMode = 'general' | 'student' | 'teacher';
+import { GeolocationService } from '@core/services/geolocation.service';
+import { InstitutionStore } from '@features/admin-services/store/institution.store';
+import { OnDestroy } from '@angular/core';
 
 type QuickStudentCatalog = {
   enrollmentId: string;
@@ -44,6 +48,10 @@ type QuickEntry = {
   meta?: string;
 };
 
+type LastRegisteredEntry = QuickEntry & {
+  registeredAt: string;
+};
+
 @Component({
   selector: 'sga-attendance-quick-register',
   standalone: true,
@@ -51,18 +59,20 @@ type QuickEntry = {
   templateUrl: './attendance-quick-register.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class AttendanceQuickRegisterPage implements OnInit {
+export default class AttendanceQuickRegisterPage implements OnInit, OnDestroy {
   private readonly attendanceApi = inject(AttendanceApi);
   private readonly teacherAttendanceApi = inject(TeacherAttendanceApi);
   private readonly sectionCourseApi = inject(SectionCourseApi);
   private readonly enrollmentApi = inject(EnrollmentApi);
   private readonly toast = inject(Toast);
   private readonly route = inject(ActivatedRoute);
+  private readonly geoService = inject(GeolocationService);
+  private readonly institutionStore = inject(InstitutionStore);
 
   private pendingAutoCode: string | null = null;
 
   readonly mode = signal<QuickMode>('student');
-  readonly date = signal(new Date().toISOString().split('T')[0]);
+  readonly date = signal(this.toLocalDate(new Date()));
   readonly sectionCourseId = signal('');
   readonly scanCode = signal('');
   readonly studentCatalog = signal<QuickStudentCatalog[]>([]);
@@ -70,13 +80,16 @@ export default class AttendanceQuickRegisterPage implements OnInit {
   readonly entries = signal<QuickEntry[]>([]);
   readonly search = signal('');
   readonly saving = signal(false);
+  readonly lastRegistered = signal<LastRegisteredEntry | null>(null);
 
   readonly headerConfig = computed<HeaderConfig>(() => ({
-    title: 'Registro rápido de asistencia',
+    title: 'Registro rápido',
     subtitle:
       this.mode() === 'student'
         ? 'Escanea o escribe el código del alumno y arma el lote del curso.'
-        : 'Escanea o escribe el código del docente y arma el lote del personal.',
+        : this.mode() === 'teacher'
+          ? 'Escanea o escribe el código del docente y arma el lote del personal.'
+          : 'Escanea código o código de barras y el sistema intentará resolver si pertenece a un alumno o docente.',
     icon: 'fa-qrcode',
     showFilters: true,
     showActions: true,
@@ -85,11 +98,20 @@ export default class AttendanceQuickRegisterPage implements OnInit {
   readonly headerActions = computed<ActionConfig[]>(() => [
     {
       key: 'save',
-      label: this.mode() === 'student' ? 'Guardar estudiantes' : 'Guardar docentes',
+      label:
+        this.mode() === 'student'
+          ? 'Guardar estudiantes'
+          : this.mode() === 'teacher'
+            ? 'Guardar docentes'
+            : 'Guardar lote general',
       icon: 'fa-solid fa-save',
       color: 'primary',
       typeAction: 'header',
-      disabled: !this.entries().length || this.saving() || (this.mode() === 'student' && !this.sectionCourseId()),
+      disabled:
+        !this.entries().length ||
+        this.saving() ||
+        ((this.mode() === 'student' || this.hasStudentEntries()) && !this.sectionCourseId()),
+      visible: this.mode() !== 'general',
     },
     {
       key: 'clear',
@@ -98,6 +120,7 @@ export default class AttendanceQuickRegisterPage implements OnInit {
       color: 'secondary',
       typeAction: 'header',
       disabled: !this.entries().length,
+      visible: this.mode() !== 'general',
     },
   ]);
 
@@ -160,6 +183,13 @@ export default class AttendanceQuickRegisterPage implements OnInit {
         this.tryAutoSubmit();
       }
     });
+
+    this.institutionStore.loadMain();
+    this.geoService.startWatching();
+  }
+
+  ngOnDestroy(): void {
+    this.geoService.stopWatching();
   }
 
   onHeaderAction(event: { action: ActionConfig }) {
@@ -280,6 +310,48 @@ export default class AttendanceQuickRegisterPage implements OnInit {
       return;
     }
 
+    if (resolvedMode === 'general') {
+      const teacherMatch = this.teacherCatalog().find((teacher) => teacher.code.toLowerCase() === resolvedCode.toLowerCase());
+      if (teacherMatch) {
+        this.registerGeneralEntry({
+          id: `teacher-${teacherMatch.teacherId}`,
+          code: teacherMatch.code,
+          name: teacherMatch.name,
+          status: 'present',
+          checkInTime: this.currentTime(),
+          scope: 'teacher',
+          teacherId: teacherMatch.teacherId,
+          meta: teacherMatch.specialization || 'Docente detectado por código o barcode',
+        });
+        this.scanCode.set('');
+        return;
+      }
+
+      if (!nextSectionCourseId) {
+        this.toast.warning('Para asistencia general de alumnos, selecciona un curso antes de escanear.');
+        return;
+      }
+
+      const studentMatch = this.studentCatalog().find((student) => student.code.toLowerCase() === resolvedCode.toLowerCase());
+      if (!studentMatch) {
+        this.toast.error('No se encontró coincidencia con docente o alumno para ese código o barcode.');
+        return;
+      }
+
+      this.registerGeneralEntry({
+        id: `student-${studentMatch.enrollmentId}`,
+        code: studentMatch.code,
+        name: studentMatch.name,
+        status: 'present',
+        checkInTime: this.currentTime(),
+        scope: 'student',
+        enrollmentId: studentMatch.enrollmentId,
+        meta: `Alumno detectado en ${this.selectedSectionLabel()}`,
+      });
+      this.scanCode.set('');
+      return;
+    }
+
     const match = this.teacherCatalog().find((teacher) => teacher.code.toLowerCase() === resolvedCode.toLowerCase());
     if (!match) {
       this.toast.error('No se encontró un docente con ese código');
@@ -367,7 +439,14 @@ export default class AttendanceQuickRegisterPage implements OnInit {
   }
 
   private normalizeMode(value: string | null): QuickMode | undefined {
-    return value === 'teacher' || value === 'student' ? value : undefined;
+    return value === 'teacher' || value === 'student' || value === 'general' ? value : undefined;
+  }
+
+  private toLocalDate(date: Date) {
+    const year = date.getFullYear();
+    const month = `${date.getMonth() + 1}`.padStart(2, '0');
+    const day = `${date.getDate()}`.padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
   private pushEntry(entry: QuickEntry) {
@@ -384,6 +463,90 @@ export default class AttendanceQuickRegisterPage implements OnInit {
     this.toast.success(`${entry.name} agregado al lote`);
   }
 
+  private registerGeneralEntry(entry: QuickEntry) {
+    if (this.saving()) return;
+
+    this.saving.set(true);
+    const inst = this.institutionStore.institution();
+    const pos = this.geoService.currentPosition();
+    let isWithinGeofence = true;
+
+    if (inst && pos && inst.latitude !== undefined && inst.longitude !== undefined && inst.geofenceRadius !== undefined) {
+      const distance = this.geoService.calculateDistance(
+        pos.coords.latitude,
+        pos.coords.longitude,
+        Number(inst.latitude),
+        Number(inst.longitude),
+      );
+      isWithinGeofence = distance <= inst.geofenceRadius;
+    }
+
+    if (entry.scope === 'student') {
+      this.attendanceApi
+        .saveBulk({
+          sectionCourseId: this.sectionCourseId(),
+          date: this.date(),
+          sessionType: 'lecture',
+          latitude: pos?.coords.latitude,
+          longitude: pos?.coords.longitude,
+          isWithinGeofence,
+          attendances: [
+            {
+              enrollmentId: entry.enrollmentId!,
+              status: entry.status as AttendanceStatus,
+              checkInTime: entry.checkInTime,
+            },
+          ],
+        })
+        .subscribe({
+          next: (res) => {
+            this.saving.set(false);
+            this.scanCode.set('');
+            this.lastRegistered.set({
+              ...entry,
+              registeredAt: this.currentTime(),
+            });
+            this.toast.success(res.message || `${entry.name} registrado correctamente`);
+          },
+          error: () => {
+            this.saving.set(false);
+            this.toast.error('No se pudo registrar la asistencia del alumno');
+          },
+        });
+      return;
+    }
+
+    this.teacherAttendanceApi
+      .registerBulk({
+        date: this.date(),
+        latitude: pos?.coords.latitude,
+        longitude: pos?.coords.longitude,
+        isWithinGeofence,
+        attendances: [
+          {
+            teacherCode: entry.code,
+            status: entry.status as TeacherAttendanceStatus,
+            checkInTime: entry.checkInTime,
+          },
+        ],
+      })
+      .subscribe({
+        next: (res) => {
+          this.saving.set(false);
+          this.scanCode.set('');
+          this.lastRegistered.set({
+            ...entry,
+            registeredAt: this.currentTime(),
+          });
+          this.toast.success(res.message || `${entry.name} registrado correctamente`);
+        },
+        error: () => {
+          this.saving.set(false);
+          this.toast.error('No se pudo registrar la asistencia del docente');
+        },
+      });
+  }
+
   updateEntryStatus(entryId: string, status: AttendanceStatus | TeacherAttendanceStatus) {
     this.entries.update((current) =>
       current.map((entry) => (entry.id === entryId ? { ...entry, status } : entry)),
@@ -398,12 +561,29 @@ export default class AttendanceQuickRegisterPage implements OnInit {
     if (!this.entries().length) return;
 
     this.saving.set(true);
+    const inst = this.institutionStore.institution();
+    const pos = this.geoService.currentPosition();
+    let isWithinGeofence = true;
+    
+    if (inst && pos && inst.latitude !== undefined && inst.longitude !== undefined && inst.geofenceRadius !== undefined) {
+      const distance = this.geoService.calculateDistance(
+        pos.coords.latitude,
+        pos.coords.longitude,
+        Number(inst.latitude),
+        Number(inst.longitude)
+      );
+      isWithinGeofence = distance <= inst.geofenceRadius;
+    }
+
     if (this.mode() === 'student') {
       this.attendanceApi
         .saveBulk({
           sectionCourseId: this.sectionCourseId(),
           date: this.date(),
           sessionType: 'lecture',
+          latitude: pos?.coords.latitude,
+          longitude: pos?.coords.longitude,
+          isWithinGeofence,
           attendances: this.entries().map((entry) => ({
             enrollmentId: entry.enrollmentId!,
             status: entry.status as AttendanceStatus,
@@ -424,26 +604,86 @@ export default class AttendanceQuickRegisterPage implements OnInit {
       return;
     }
 
-    this.teacherAttendanceApi
-      .registerBulk({
-        date: this.date(),
-        attendances: this.entries().map((entry) => ({
-          teacherCode: entry.code,
-          status: entry.status as TeacherAttendanceStatus,
-          checkInTime: entry.checkInTime,
-        })),
-      })
-      .subscribe({
-        next: (res) => {
-          this.saving.set(false);
-          this.entries.set([]);
-          this.toast.success(res.message || 'Asistencias guardadas');
-        },
-        error: () => {
-          this.saving.set(false);
-          this.toast.error('No se pudo guardar el lote de docentes');
-        },
-      });
+    if (this.mode() === 'teacher') {
+      this.teacherAttendanceApi
+        .registerBulk({
+          date: this.date(),
+          latitude: pos?.coords.latitude,
+          longitude: pos?.coords.longitude,
+          isWithinGeofence,
+          attendances: this.entries().map((entry) => ({
+            teacherCode: entry.code,
+            status: entry.status as TeacherAttendanceStatus,
+            checkInTime: entry.checkInTime,
+          })),
+        })
+        .subscribe({
+          next: (res) => {
+            this.saving.set(false);
+            this.entries.set([]);
+            this.toast.success(res.message || 'Asistencias guardadas');
+          },
+          error: () => {
+            this.saving.set(false);
+            this.toast.error('No se pudo guardar el lote de docentes');
+          },
+        });
+      return;
+    }
+
+    const studentEntries = this.entries().filter((entry) => entry.scope === 'student');
+    const teacherEntries = this.entries().filter((entry) => entry.scope === 'teacher');
+    const requests = [];
+
+    if (studentEntries.length) {
+      requests.push(
+        this.attendanceApi.saveBulk({
+          sectionCourseId: this.sectionCourseId(),
+          date: this.date(),
+          sessionType: 'lecture',
+          latitude: pos?.coords.latitude,
+          longitude: pos?.coords.longitude,
+          isWithinGeofence,
+          attendances: studentEntries.map((entry) => ({
+            enrollmentId: entry.enrollmentId!,
+            status: entry.status as AttendanceStatus,
+            checkInTime: entry.checkInTime,
+          })),
+        }),
+      );
+    }
+
+    if (teacherEntries.length) {
+      requests.push(
+        this.teacherAttendanceApi.registerBulk({
+          date: this.date(),
+          latitude: pos?.coords.latitude,
+          longitude: pos?.coords.longitude,
+          isWithinGeofence,
+          attendances: teacherEntries.map((entry) => ({
+            teacherCode: entry.code,
+            status: entry.status as TeacherAttendanceStatus,
+            checkInTime: entry.checkInTime,
+          })),
+        }),
+      );
+    }
+
+    forkJoin(requests).subscribe({
+      next: () => {
+        this.saving.set(false);
+        this.entries.set([]);
+        this.toast.success('Asistencia general guardada correctamente');
+      },
+      error: () => {
+        this.saving.set(false);
+        this.toast.error('No se pudo guardar el lote general');
+      },
+    });
+  }
+
+  hasStudentEntries() {
+    return this.entries().some((entry) => entry.scope === 'student');
   }
 
   currentTime() {

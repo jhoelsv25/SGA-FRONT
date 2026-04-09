@@ -17,7 +17,20 @@
         <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
           <span>Fecha: {{ attendance().date | date:'dd/MM/yyyy' }}</span>
           <span>Sesión: {{ attendance().sessionType }}</span>
-          <span>Ingreso: {{ attendance().checkInTime || '--:--' }}</span>
+          <div class="flex items-center gap-1.5">
+            <span>Ingreso: {{ attendance().checkInTime || '--:--' }}</span>
+            @if (attendance().status === 'present' || attendance().status === 'late') {
+              @if (attendance().isWithinGeofence === false) {
+                <span class="flex size-4 items-center justify-center rounded-full bg-danger/10 text-[9px] text-danger" title="Registrado fuera de la institución">
+                  <i class="fas fa-location-dot"></i>
+                </span>
+              } @else if (attendance().isWithinGeofence === true) {
+                <span class="flex size-4 items-center justify-center rounded-full bg-success/10 text-[9px] text-success" title="Registrado dentro de la institución">
+                  <i class="fas fa-location-dot"></i>
+                </span>
+              }
+            }
+          </div>
         </div>
 
         @if (attendance().observations) {
