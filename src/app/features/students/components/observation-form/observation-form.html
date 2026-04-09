@@ -42,10 +42,14 @@
       <label class="label-form" for="referral">Derivación</label>
       <input z-input w-full id="referral" formControlName="referral" placeholder="Opcional"  />
     </div>
-    <label class="flex items-center gap-2 cursor-pointer">
-      <input type="checkbox" formControlName="isConfidential" class="checkbox checkbox-sm"  />
-      <span>Confidencial</span>
-    </label>
+    <div class="rounded-2xl border border-base-200 bg-base-100/40 p-4">
+      <z-checkbox formControlName="isConfidential" class="items-start gap-3">
+        <span class="block">
+          <span class="block text-sm font-bold text-base-content">Confidencial</span>
+          <span class="mt-1 block text-xs text-base-content/60">Oculta esta observación para que se trate como seguimiento reservado.</span>
+        </span>
+      </z-checkbox>
+    </div>
   </div>
   <footer class="flex justify-end gap-2 mt-4">
     <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">Cancelar</button>

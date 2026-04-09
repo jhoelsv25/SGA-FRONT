@@ -10,6 +10,9 @@ import { Toast } from '@core/services/toast';
 @Component({
   selector: 'sga-classroom-timeline-feed-item',
   standalone: true,
+  host: {
+    class: 'block pb-5 last:pb-0',
+  },
   imports: [CommonModule, FormsModule],
   templateUrl: './classroom-timeline-feed-item.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

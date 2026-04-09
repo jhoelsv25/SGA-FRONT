@@ -17,19 +17,10 @@
       <label class="label-form" for="guardian">Apoderado</label>
       <sga-guardian-select id="guardian" formControlName="guardian" placeholder="Seleccionar apoderado"></sga-guardian-select>
     </div>
-    <div class="flex flex-wrap gap-4">
-      <label class="flex items-center gap-2 cursor-pointer">
-        <input type="checkbox" formControlName="isPrimary" class="checkbox checkbox-sm"  />
-        <span>Principal</span>
-      </label>
-      <label class="flex items-center gap-2 cursor-pointer">
-        <input type="checkbox" formControlName="pickupAuthorization" class="checkbox checkbox-sm"  />
-        <span>Autorizado a recoger</span>
-      </label>
-      <label class="flex items-center gap-2 cursor-pointer">
-        <input type="checkbox" formControlName="emergencyContact" class="checkbox checkbox-sm"  />
-        <span>Contacto de emergencia</span>
-      </label>
+    <div class="grid gap-3 rounded-2xl border border-base-200 bg-base-100/40 p-4">
+      <z-checkbox formControlName="isPrimary">Principal</z-checkbox>
+      <z-checkbox formControlName="pickupAuthorization">Autorizado a recoger</z-checkbox>
+      <z-checkbox formControlName="emergencyContact">Contacto de emergencia</z-checkbox>
     </div>
     <div>
       <label class="label-form" for="receivesNotifications">Recibe notificaciones por</label>

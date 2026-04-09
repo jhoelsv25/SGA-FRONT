@@ -112,17 +112,38 @@
       <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <div class="lg:col-span-2">
           <p class="mb-1 text-xs font-medium text-slate-600">Observación general</p>
-          <input z-input w-full formControlName="justification" placeholder="Ej: Salió por coordinación o hubo cambio de aula" />
+          <textarea
+            z-input
+            w-full
+            rows="3"
+            class="min-h-[96px]"
+            formControlName="justification"
+            placeholder="Ej: Salió por coordinación o hubo cambio de aula"
+          ></textarea>
         </div>
 
         <div>
           <p class="mb-1 text-xs font-medium text-slate-600">Propósito de aprendizaje</p>
-          <input z-input w-full formControlName="learningPurpose" placeholder="Logro de la sesión" />
+          <textarea
+            z-input
+            w-full
+            rows="3"
+            class="min-h-[96px]"
+            formControlName="learningPurpose"
+            placeholder="Logro de la sesión"
+          ></textarea>
         </div>
 
         <div>
           <p class="mb-1 text-xs font-medium text-slate-600">Motivo tiempo muerto</p>
-          <input z-input w-full formControlName="downTimeReason" placeholder="Ej: Se retiró a almorzar" />
+          <textarea
+            z-input
+            w-full
+            rows="3"
+            class="min-h-[96px]"
+            formControlName="downTimeReason"
+            placeholder="Ej: Se retiró a almorzar"
+          ></textarea>
         </div>
       </div>
     </div>

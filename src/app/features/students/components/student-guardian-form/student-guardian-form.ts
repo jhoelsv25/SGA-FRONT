@@ -6,12 +6,13 @@ import { FormsModule, ReactiveFormsModule, Validators, FormBuilder } from '@angu
 import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { GuardianSelect, StudentSelect } from '@/shared/widgets/selects';
 import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardCheckboxComponent } from '@/shared/components/checkbox';
 
 
 @Component({
   selector: 'sga-student-guardian-form',
   standalone: true,
-  imports: [ReactiveFormsModule, ZardButtonComponent, StudentSelect, GuardianSelect],
+  imports: [ReactiveFormsModule, ZardButtonComponent, ZardCheckboxComponent, StudentSelect, GuardianSelect],
   templateUrl: './student-guardian-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

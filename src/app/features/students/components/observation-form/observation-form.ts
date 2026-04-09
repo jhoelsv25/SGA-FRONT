@@ -7,13 +7,14 @@ import { Component, OnInit, inject, input, ChangeDetectionStrategy } from '@angu
 import { SelectOptionComponent } from '@/shared/widgets/select-option/select-option';
 import { StudentSelect, TeacherSelect } from '@/shared/widgets/selects';
 import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardCheckboxComponent } from '@/shared/components/checkbox';
 import { ZardInputDirective } from '@/shared/components/input';
 
 
 @Component({
   selector: 'sga-observation-form',
   standalone: true,
-  imports: [ReactiveFormsModule, ZardButtonComponent, SelectOptionComponent, ZardInputDirective, StudentSelect, TeacherSelect],
+  imports: [ReactiveFormsModule, ZardButtonComponent, ZardCheckboxComponent, SelectOptionComponent, ZardInputDirective, StudentSelect, TeacherSelect],
   templateUrl: './observation-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

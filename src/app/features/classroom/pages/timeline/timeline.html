@@ -1,10 +1,10 @@
-<div class="space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-1000 pb-24">
+<div class="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-1000 pb-24">
   
   <sga-classroom-timeline-stats />
 
   <sga-classroom-timeline-publisher />
 
-  <section class="rounded-[2.5rem] border border-base-200 bg-card px-6 py-6 shadow-[0_18px_48px_-36px_rgba(15,23,42,0.28)]">
+  <section class="rounded-[2rem] border border-base-200 bg-card px-6 py-6 shadow-[0_18px_48px_-36px_rgba(15,23,42,0.28)]">
     <div class="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
       <div class="space-y-2">
         <label class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Buscar en el muro</label>
@@ -30,7 +30,7 @@
   </section>
 
   <!-- Feed Area -->
-  <div class="space-y-10">
+  <div class="space-y-6">
     @if (store.loading()) {
       <sga-classroom-timeline-skeleton />
     } @else {
