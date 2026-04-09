@@ -149,8 +149,8 @@ export default class BehaviorsPage {
   private openForm(current?: Behavior | null) {
     this.dialog.open(BehaviorForm, {
       data: { current: current ?? null },
-      width: '520px',
-      maxHeight: '80vh',
+      width: 'min(920px, calc(100vw - 32px))',
+      maxHeight: '88vh',
     });
   }
 }

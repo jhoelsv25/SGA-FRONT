@@ -1,9 +1,10 @@
 export type LocalSelectOption = { value: string | number; label: string; [key: string]: any };
 import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
 import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardCheckboxComponent } from '@/shared/components/checkbox';
 import { ZardInputDirective } from '@/shared/components/input';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
-import { ChangeDetectionStrategy, Component, inject, OnInit, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BehaviorStore } from '../../services/store/behavior.store';
 import { Behavior, BehaviorCreate } from '../../types/behavior-types';
@@ -14,7 +15,7 @@ import type { CurrentUser } from '@auth/types/auth-type';
 
 @Component({
   selector: 'sga-behavior-form',
-  imports: [ReactiveFormsModule, ZardButtonComponent, ZardInputDirective, SelectOptionComponent, StudentSelect, SectionCourseSelect],
+  imports: [ReactiveFormsModule, ZardButtonComponent, ZardCheckboxComponent, ZardInputDirective, SelectOptionComponent, StudentSelect, SectionCourseSelect],
   templateUrl: './behavior-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -47,6 +48,19 @@ export class BehaviorForm implements OnInit {
     { value: 'Puntualidad', label: 'Puntualidad' },
     { value: 'Otros', label: 'Otros' }];
 
+  readonly selectedType = computed(() => this.form?.get('type')?.value ?? 'negative');
+  readonly isNegative = computed(() => this.selectedType() === 'negative');
+  readonly isPositive = computed(() => this.selectedType() === 'positive');
+  readonly isAcademicCategory = computed(() => this.form?.get('category')?.value === 'Académico');
+  readonly formTitle = computed(() =>
+    this.current ? 'Editar registro de conducta' : 'Nuevo registro de conducta'
+  );
+  readonly formSubtitle = computed(() =>
+    this.isPositive()
+      ? 'Documenta reconocimientos, avances y acciones positivas del estudiante.'
+      : 'Registra incidencias, observaciones y acciones de seguimiento del caso.'
+  );
+
   ngOnInit() {
     this.current = this.data?.current ?? null;
     this.form = this.fb.group({
@@ -62,6 +76,11 @@ export class BehaviorForm implements OnInit {
       guardianNotified: [this.current?.guardianNotified ?? false],
       actionToken: [this.current?.actionToken ?? 'REG-' + Math.random().toString(36).substring(7).toUpperCase()],
       sectionCourse: [this.current?.sectionCourse?.id ?? this.current?.sectionCourse ?? ''],
+    });
+
+    this.syncConditionalFields(this.form.get('type')?.value ?? 'negative');
+    this.form.get('type')?.valueChanges.subscribe((type) => {
+      this.syncConditionalFields(type ?? 'negative');
     });
   }
 
@@ -93,5 +112,21 @@ export class BehaviorForm implements OnInit {
 
   close() {
     this.ref.close();
+  }
+
+  private syncConditionalFields(type: string) {
+    const severityControl = this.form.get('severity');
+    const witnessesControl = this.form.get('witnesses');
+    const measuresControl = this.form.get('measuresTaken');
+    const guardianControl = this.form.get('guardianNotified');
+
+    if (!severityControl || !witnessesControl || !measuresControl || !guardianControl) return;
+
+    if (type === 'positive') {
+      severityControl.setValue('low', { emitEvent: false });
+      witnessesControl.setValue('', { emitEvent: false });
+      measuresControl.setValue('', { emitEvent: false });
+      guardianControl.setValue(false, { emitEvent: false });
+    }
   }
 }

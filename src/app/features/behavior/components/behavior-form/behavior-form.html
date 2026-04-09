@@ -1,77 +1,94 @@
-<form [formGroup]="form" class="flex flex-col max-h-[90vh]" (ngSubmit)="submit()">
-  <header class="flex items-center justify-between p-6 border-b border-base-200">
+<form [formGroup]="form" class="flex max-h-[88vh] flex-col" (ngSubmit)="submit()">
+  <header class="flex items-start justify-between gap-4 border-b border-base-200 px-7 py-6">
     <div>
-      <h2 class="text-xl font-bold text-base-content">{{ current ? 'Editar conducta' : 'Nuevo registro de conducta' }}</h2>
-      <p class="text-sm text-base-content/60">Complete los detalles de la incidencia o logro.</p>
+      <h2 class="text-2xl font-black tracking-tight text-base-content">{{ formTitle() }}</h2>
+      <p class="mt-1 max-w-2xl text-sm text-base-content/60">{{ formSubtitle() }}</p>
     </div>
     <button type="button" z-button zColor="secondary" zType="ghost" zShape="circle" (click)="close()">
       <i class="fas fa-times"></i>
     </button>
   </header>
 
-  <div class="flex-1 overflow-y-auto p-6 space-y-6">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div class="md:col-span-2">
-        <label class="label-form font-bold mb-2 block" for="student">Estudiante</label>
+  <div class="flex-1 space-y-6 overflow-y-auto px-7 py-6">
+    <section class="grid grid-cols-1 gap-4 rounded-[2rem] border border-base-200 bg-base-100/40 p-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(260px,0.8fr)_minmax(220px,0.8fr)]">
+      <div class="space-y-2 lg:pr-3">
+        <p class="text-[10px] font-black uppercase tracking-[0.22em] text-primary/70">Estudiante</p>
         <sga-student-select id="student" formControlName="student" placeholder="Seleccionar estudiante"></sga-student-select>
       </div>
-
-      <div class="md:col-span-2">
-        <label class="label-form font-bold mb-2 block" for="sectionCourse">Sesión / Clase (Opcional)</label>
-        <sga-section-course-select id="sectionCourse" formControlName="sectionCourse" placeholder="Vincular con una sesión de clase"></sga-section-course-select>
-      </div>
-
-      <div>
-        <label class="label-form font-bold mb-2 block" for="type">Clasificación</label>
+      <div class="space-y-2">
+        <p class="text-[10px] font-black uppercase tracking-[0.22em] text-primary/70">Clasificación</p>
         <z-select-option id="type" formControlName="type" [options]="typeOptions" placeholder="Seleccionar tipo"></z-select-option>
       </div>
+      <div class="space-y-2">
+        <p class="text-[10px] font-black uppercase tracking-[0.22em] text-primary/70">Fecha del hecho</p>
+        <input z-input w-full id="recordDate" type="date" formControlName="recordDate" />
+      </div>
+    </section>
 
-      <div>
-        <label class="label-form font-bold mb-2 block" for="category">Categoría / Motivo</label>
+    <section class="grid grid-cols-1 gap-5 rounded-[2rem] border border-base-200 bg-card p-6 md:grid-cols-2">
+      <div class="space-y-2">
+        <label class="label-form mb-2 block font-bold" for="category">Categoría / Motivo</label>
         <z-select-option id="category" formControlName="category" [options]="categoryOptions" placeholder="Seleccionar categoría"></z-select-option>
       </div>
 
-      <div>
-        <label class="label-form font-bold mb-2 block" for="severity">Nivel de Impacto</label>
+      @if (isNegative()) {
+      <div class="space-y-2">
+        <label class="label-form mb-2 block font-bold" for="severity">Nivel de impacto</label>
         <z-select-option id="severity" formControlName="severity" [options]="severityOptions" placeholder="Seleccionar severidad"></z-select-option>
       </div>
+      } @else {
+      <div class="rounded-[1.35rem] border border-emerald-200 bg-emerald-50/70 p-4 text-sm text-emerald-800">
+        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-700">Registro positivo</p>
+        <p class="mt-2 font-medium">Este registro se guardará como logro o reconocimiento, sin activar el bloque de seguimiento disciplinario.</p>
+      </div>
+      }
 
-      <div>
-        <label class="label-form font-bold mb-2 block" for="recordDate">Fecha del hecho</label>
-        <input z-input w-full id="recordDate" type="date" formControlName="recordDate"  />
+      <div class="md:col-span-2 space-y-2">
+        <label class="label-form mb-2 block font-bold" for="description">
+          {{ isPositive() ? 'Descripción del logro' : 'Relato de los hechos' }}
+        </label>
+        <textarea z-input w-full id="description" formControlName="description" [placeholder]="isPositive() ? 'Describa el reconocimiento, mejora o acción positiva...' : 'Escriba detalladamente lo sucedido...'" rows="4" class="min-h-[120px]"></textarea>
       </div>
 
-      <div class="md:col-span-2">
-        <label class="label-form font-bold mb-2 block" for="place">Lugar exacto</label>
+      <div class="space-y-2">
+        <label class="label-form mb-2 block font-bold" for="place">Lugar exacto</label>
         <input z-input w-full id="place" formControlName="place" placeholder="Ej: Aula 402, Patio Central, Biblioteca..." />
       </div>
 
-      <div class="md:col-span-2">
-        <label class="label-form font-bold mb-2 block" for="description">Relato de los hechos</label>
-        <textarea z-input w-full id="description" formControlName="description" placeholder="Escriba detalladamente lo sucedido..." rows="3" class="min-h-[100px]"></textarea>
+      <div class="space-y-2">
+        <label class="label-form mb-2 block font-bold" for="sectionCourse">
+          {{ isAcademicCategory() ? 'Sesión / clase relacionada' : 'Sesión / clase (opcional)' }}
+        </label>
+        <sga-section-course-select id="sectionCourse" formControlName="sectionCourse" placeholder="Vincular con una sesión de clase"></sga-section-course-select>
+      </div>
+    </section>
+
+    @if (isNegative()) {
+    <section class="grid grid-cols-1 gap-5 rounded-[2rem] border border-amber-200/70 bg-amber-50/40 p-6 md:grid-cols-2">
+      <div class="md:col-span-2 rounded-[1.35rem] border border-amber-200/70 bg-white/70 p-4">
+        <z-checkbox formControlName="guardianNotified" class="items-start gap-3">
+          <span class="block">
+            <span class="block text-sm font-bold text-base-content">Notificar a tutor/apoderado</span>
+            <span class="mt-1 block text-xs text-base-content/60">Activa esta opción cuando el caso requiera comunicación y trazabilidad con el hogar.</span>
+          </span>
+        </z-checkbox>
       </div>
 
-      <div class="md:col-span-2">
-        <label class="label-form font-bold mb-2 block" for="witnesses">Testigos (Opcional)</label>
+      <div class="md:col-span-2 space-y-2">
+        <label class="label-form mb-2 block font-bold" for="witnesses">Testigos (opcional)</label>
         <input z-input w-full id="witnesses" formControlName="witnesses" placeholder="Nombres de personas que presenciaron el hecho" />
       </div>
 
-      <div class="md:col-span-2">
-        <label class="label-form font-bold mb-2 block" for="measuresTaken">Medidas adoptadas inmediatamente</label>
+      <div class="md:col-span-2 space-y-2">
+        <label class="label-form mb-2 block font-bold" for="measuresTaken">Medidas adoptadas inmediatamente</label>
         <input z-input w-full id="measuresTaken" formControlName="measuresTaken" placeholder="Ej: Diálogo reflexivo, Compromiso escrito, etc." />
       </div>
+    </section>
+    }
 
-      <div class="md:col-span-2 flex items-center gap-3 p-4 bg-base-200/50 rounded-2xl">
-         <input type="checkbox" id="guardianNotified" formControlName="guardianNotified" class="toggle toggle-primary" />
-         <label for="guardianNotified" class="cursor-pointer">
-           <span class="font-bold text-sm block">Notificar a tutor/apoderado</span>
-           <span class="text-xs text-base-content/60">Se enviará una alerta automática si esta opción está activa.</span>
-         </label>
-      </div>
-    </div>
   </div>
 
-  <footer class="flex justify-end gap-3 p-6 border-t border-base-200">
+  <footer class="flex justify-end gap-3 border-t border-base-200 px-7 py-5">
     <button type="button" z-button zColor="secondary" zType="ghost" (click)="close()">Descartar</button>
     <button type="submit" z-button zColor="primary" [disabled]="form.invalid">
       <i class="fas fa-save mr-2"></i>
