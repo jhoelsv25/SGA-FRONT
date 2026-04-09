@@ -5,9 +5,7 @@ import { AuthInitializer } from '@auth/services/auth-initializer';
 import { AuthFacade } from '@auth/services/store/auth.acede';
 import { NotificationPermissionCardComponent } from '@core/components/notification-permission-card/notification-permission-card';
 import { RealtimeNotificationStackComponent } from '@core/components/realtime-notification-stack/realtime-notification-stack';
-
-
-import { PushNotificationService } from '@core/services/push-notification.service';
+import { PushNotificationsService } from '@core/services/push-notifications.service';
 
 @Component({
   selector: 'sga-root',
@@ -28,13 +26,13 @@ export class App {
   private authInitializer = inject(AuthInitializer);
   private authFacade = inject(AuthFacade);
   private router = inject(Router);
-  private pushService = inject(PushNotificationService);
+  private pushService = inject(PushNotificationsService);
 
   constructor() {
     this.authInitializer.initialize().then((isAuthenticated) => {
       console.log('✅ [App] Auth initialized:', isAuthenticated);
       if (isAuthenticated) {
-        this.pushService.requestPermissionAndSubscribe();
+        this.pushService.refreshPermissionState();
         const currentUrl = this.router.url;
         const publicRoutes = ['/auth/login', '/auth/forgot-password', '/auth/reset-password'];
 

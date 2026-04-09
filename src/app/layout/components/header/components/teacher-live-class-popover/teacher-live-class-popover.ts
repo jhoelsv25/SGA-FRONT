@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy, OnInit, signal, effect } from '@angular/core';
 import { Router } from '@angular/router';
 import { NotificationSocketService } from '@core/services/notification-socket.service';
@@ -39,8 +40,13 @@ export class TeacherLiveClassPopoverComponent implements OnInit, OnDestroy {
   readonly institution = signal<Institution | null>(null);
   readonly loading = signal(false);
   readonly actionLoading = signal(false);
+  readonly accessMessage = signal<string | null>(null);
   readonly session = computed(() => this.currentSession() ?? this.upcomingSession());
   readonly isLive = computed(() => this.session()?.state === 'ongoing');
+  readonly canStartClass = computed(() => {
+    const session = this.session();
+    return Boolean(session && !session.actualStartTime && session.actionEnabled);
+  });
   private readonly outOfRangeStartTime = signal<number | null>(null);
   readonly accumulatedDowntime = signal<number>(0);
 
@@ -138,6 +144,7 @@ export class TeacherLiveClassPopoverComponent implements OnInit, OnDestroy {
 
   load(): void {
     this.loading.set(true);
+    this.accessMessage.set(null);
     this.api.getTeacherLiveSession().subscribe({
       next: (response) => {
         this.currentSession.set(response.data.current);
@@ -145,7 +152,20 @@ export class TeacherLiveClassPopoverComponent implements OnInit, OnDestroy {
         this.loading.set(false);
         this.checkGeoTracking();
       },
-      error: () => this.loading.set(false),
+      error: (error: HttpErrorResponse) => {
+        this.loading.set(false);
+        this.currentSession.set(null);
+        this.upcomingSession.set(null);
+        if (error.status === 403) {
+          this.accessMessage.set('Este acceso rápido solo está disponible para cuentas docentes.');
+          return;
+        }
+        if (error.status === 404) {
+          this.accessMessage.set('No se encontró un perfil docente asociado a esta cuenta.');
+          return;
+        }
+        this.accessMessage.set('No se pudo cargar la clase en vivo en este momento.');
+      },
     });
     this.loadDailyStatus();
   }
@@ -153,6 +173,12 @@ export class TeacherLiveClassPopoverComponent implements OnInit, OnDestroy {
   loadDailyStatus(): void {
     this.api.getDailyAttendanceStatus().subscribe({
       next: (response) => this.dailyAttendance.set(response.data),
+      error: (error: HttpErrorResponse) => {
+        this.dailyAttendance.set(null);
+        if (!this.accessMessage() && (error.status === 403 || error.status === 404)) {
+          this.accessMessage.set('Este acceso rápido solo está disponible para cuentas docentes.');
+        }
+      },
     });
   }
 
@@ -161,7 +187,12 @@ export class TeacherLiveClassPopoverComponent implements OnInit, OnDestroy {
     if (!session) return 'Sin clase próxima';
     if (session.state === 'ongoing') return session.endsInMinutes > 0 ? `Quedan ${session.endsInMinutes} min` : 'Cierre pendiente';
     if (session.state === 'ready') return 'Disponible para iniciar';
-    if (session.state === 'upcoming') return session.startsInMinutes <= 0 ? 'Empieza ahora' : `Empieza en ${session.startsInMinutes} min`;
+    if (session.state === 'upcoming') {
+      if (session.actionEnabled) {
+        return session.startsInMinutes <= 0 ? 'Puedes iniciar ahora' : `Puedes iniciar, faltan ${session.startsInMinutes} min`;
+      }
+      return session.startsInMinutes <= 0 ? 'Empieza ahora' : `Empieza en ${session.startsInMinutes} min`;
+    }
     if (session.state === 'missed') return 'Clase no iniciada';
     return 'Clase finalizada';
   }

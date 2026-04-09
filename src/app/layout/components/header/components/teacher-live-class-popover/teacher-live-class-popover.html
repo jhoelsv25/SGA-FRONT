@@ -153,7 +153,7 @@
         </div>
 
         <div class="flex flex-wrap gap-3">
-          @if (currentSession.state === 'ready') {
+          @if (canStartClass()) {
             <button
               z-button
               zColor="success"
@@ -162,7 +162,7 @@
               [disabled]="actionLoading()"
               (click)="startClass()"
             >
-              Iniciar clase
+              {{ currentSession.state === 'upcoming' ? 'Iniciar antes' : 'Iniciar clase' }}
             </button>
           }
           @if (currentSession.state === 'ongoing') {
@@ -186,6 +186,24 @@
           >
             Ver horarios
           </button>
+        </div>
+      </div>
+    } @else if (accessMessage(); as accessMessage) {
+      <div class="space-y-4">
+        <p class="text-[10px] font-black uppercase tracking-[0.18em] text-primary/70">Clase del docente</p>
+
+        <div class="rounded-[1.25rem] border border-base-200 bg-base-100/70 p-4">
+          <div class="flex items-start gap-3">
+            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+              <z-icon zType="shield-alt" class="h-5 w-5" />
+            </div>
+            <div class="space-y-1">
+              <p class="text-sm font-black text-base-content">Acceso docente no disponible</p>
+              <p class="text-sm text-base-content/65">
+                {{ accessMessage }}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     } @else {
