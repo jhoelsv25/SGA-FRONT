@@ -10,6 +10,15 @@ export const ACTION_CONFIG_INSTITUTION: ActionConfig[] = [
     permissions: ['institution:create'],
   },
   {
+    key: 'config',
+    label: 'Configurar Supervisión',
+    icon: 'fa-solid fa-gears',
+    typeAction: 'header',
+    color: 'secondary',
+    variant: 'outline',
+    permissions: ['institution:update'],
+  },
+  {
     key: 'edit',
     label: 'Editar',
     icon: 'fas fa-edit',

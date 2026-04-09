@@ -52,6 +52,9 @@ export class InstitutionForm implements OnInit {
       email: ['', [Validators.email, Validators.required]],
       logoUrl: [''],
       description: [''],
+      latitude: [null],
+      longitude: [null],
+      geofenceRadius: [50],
     });
   }
 
@@ -73,6 +76,9 @@ export class InstitutionForm implements OnInit {
         email: this.current.email ?? '',
         logoUrl: this.current.logoUrl ?? '',
         description: this.current.description ?? '',
+        latitude: this.current.latitude ?? null,
+        longitude: this.current.longitude ?? null,
+        geofenceRadius: this.current.geofenceRadius ?? 50,
       });
     }
   }

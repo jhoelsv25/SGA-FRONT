@@ -1,0 +1,202 @@
+<sga-header-detail 
+  [config]="{ title: 'Configuración Supervisión', subtitle: 'Gestione los parámetros de geolocalización', icon: 'fa-gears' }"
+  [actions]="headerActions()"
+  (action)="onSubmit()"
+>
+</sga-header-detail>
+
+<div class="mx-6 mt-6">
+  @if (loading()) {
+    <div class="flex h-64 items-center justify-center rounded-4xl border border-dashed border-base-300 bg-base-100/50">
+      <div class="flex flex-col items-center gap-3">
+        <div class="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+        <p class="text-sm font-medium text-base-content/40">Cargando parámetros...</p>
+      </div>
+    </div>
+  } @else {
+    <form [formGroup]="configForm" id="configForm" (ngSubmit)="onSubmit()" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <!-- Info Card -->
+      <div class="lg:col-span-1 space-y-6">
+        <div class="rounded-4xl border border-base-200 bg-base-100 p-6 shadow-sm">
+          <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary mb-4">
+            <z-icon zType="map-pin" class="h-6 w-6" />
+          </div>
+          <h3 class="text-lg font-black text-base-content tracking-tight">Geocerca Escolar</h3>
+          <p class="mt-2 text-sm text-base-content/60 leading-relaxed">
+            Defina el punto central y el radio permitido para la asistencia de los docentes. 
+            El sistema registrará como "tiempo muerto" los minutos que el docente pase fuera de este perímetro durante sus horas de clase.
+          </p>
+          
+          <div class="mt-6 space-y-3">
+            <div class="flex items-start gap-3 p-3 rounded-2xl bg-info/5 border border-info/10">
+              <z-icon zType="info" class="h-4 w-4 text-info shrink-0 mt-0.5" />
+              <p class="text-[11px] text-info-700 font-medium leading-normal">
+                Se recomienda un radio de al menos 50 metros para compensar el margen de error del GPS en interiores.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls Card -->
+      <div class="lg:col-span-2 space-y-6">
+        <div class="rounded-4xl border border-base-200 bg-base-100 p-8 shadow-sm">
+          <div class="flex items-center justify-between gap-4 mb-8">
+            <h4 class="text-xs font-black uppercase tracking-[0.2em] text-base-content/40">Coordenadas del Centro</h4>
+            
+            <button
+              type="button"
+              z-button
+              zType="outline"
+              zColor="secondary"
+              class="h-10 rounded-full px-5 text-[10px] font-black uppercase tracking-wider transition-all duration-300 hover:bg-primary/5 hover:text-primary hover:border-primary/20"
+              [disabled]="isCapturingLocation()"
+              (click)="captureLocation()"
+            >
+              <z-icon zType="target" class="h-3.5 w-3.5 mr-2" />
+              {{ isCapturingLocation() ? 'Capturando ubicación...' : 'Capturar mi ubicación actual' }}
+            </button>
+          </div>
+
+          @if (geolocationError()) {
+            <div class="mb-6 flex items-start gap-3 rounded-2xl border border-amber-300/40 bg-amber-500/10 px-4 py-3">
+              <div class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-amber-500/15 text-amber-500">
+                <z-icon zType="triangle-alert" class="h-4 w-4" />
+              </div>
+              <div class="space-y-1">
+                <p class="text-xs font-black uppercase tracking-[0.16em] text-amber-500">Permiso de ubicación</p>
+                <p class="text-sm font-semibold text-amber-100">{{ geolocationError() }}</p>
+                <p class="text-[11px] leading-relaxed text-amber-200/80">
+                  Habilite el acceso a la ubicación en el navegador o ingrese la latitud y longitud manualmente para continuar.
+                </p>
+              </div>
+            </div>
+          }
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <z-form-field>
+              <label z-form-label for="latitude" class="text-xs font-bold text-base-content/70">Latitud</label>
+              <z-form-control>
+                <input 
+                  z-input 
+                  w-full 
+                  id="latitude" 
+                  type="number" 
+                  step="0.00000001" 
+                  formControlName="latitude" 
+                  placeholder="-12.046374"
+                  class="h-12 text-sm font-semibold tracking-wide"
+                  [readonly]="!isSuperAdmin()" />
+              </z-form-control>
+            </z-form-field>
+
+            <z-form-field>
+              <label z-form-label for="longitude" class="text-xs font-bold text-base-content/70">Longitud</label>
+              <z-form-control>
+                <input 
+                  z-input 
+                  w-full 
+                  id="longitude" 
+                  type="number" 
+                  step="0.00000001" 
+                  formControlName="longitude" 
+                  placeholder="-77.042793"
+                  class="h-12 text-sm font-semibold tracking-wide"
+                  [readonly]="!isSuperAdmin()" />
+              </z-form-control>
+            </z-form-field>
+          </div>
+
+          <div class="mt-8 pt-8 border-t border-base-200">
+            <div class="max-w-xs">
+              <z-form-field>
+                <label z-form-label for="geofenceRadius" class="text-xs font-bold text-base-content/70">Radio de Tolerancia (metros)</label>
+                <z-form-control>
+                  <div class="flex items-center gap-4">
+                    <input z-input w-full id="geofenceRadius" type="number" formControlName="geofenceRadius" placeholder="50" class="h-12 text-sm font-black" />
+                    <div class="shrink-0 flex items-center justify-center w-12 h-12 rounded-2xl bg-base-200/50 text-base-content/40 font-bold text-xs uppercase">
+                      M
+                    </div>
+                  </div>
+                </z-form-control>
+              </z-form-field>
+            </div>
+            <p class="mt-4 text-[11px] text-base-content/40 italic">
+              * El docente será alertado si sale de este radio mientras su clase esté marcada como iniciada.
+            </p>
+          </div>
+        </div>
+
+        <div class="overflow-hidden rounded-4xl border border-base-200 bg-base-100 shadow-sm">
+          <div class="flex items-center justify-between gap-4 border-b border-base-200 px-6 py-5">
+            <div>
+              <p class="text-xs font-black uppercase tracking-[0.2em] text-base-content/40">Vista previa</p>
+              <h4 class="mt-1 text-base font-black tracking-tight text-base-content">Ubicación y radio configurado</h4>
+            </div>
+
+            @if (hasPreviewCoordinates()) {
+              <button
+                type="button"
+                z-button
+                zType="outline"
+                zColor="secondary"
+                class="h-10 rounded-full px-5 text-[10px] font-black uppercase tracking-wider"
+                (click)="openExternalMap()"
+              >
+                <z-icon zType="arrow-up-right" class="mr-2 h-3.5 w-3.5" />
+                Abrir mapa
+              </button>
+            }
+          </div>
+
+          @if (hasPreviewCoordinates()) {
+            <div id="institution-config-preview-map" class="h-[320px] w-full"></div>
+
+            <div class="grid grid-cols-1 gap-3 border-t border-base-200 px-6 py-5 md:grid-cols-3">
+              <div class="rounded-2xl bg-base-200/40 px-4 py-3">
+                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/40">Latitud</p>
+                <p class="mt-1 text-sm font-semibold text-base-content">{{ preview().latitude }}</p>
+              </div>
+              <div class="rounded-2xl bg-base-200/40 px-4 py-3">
+                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/40">Longitud</p>
+                <p class="mt-1 text-sm font-semibold text-base-content">{{ preview().longitude }}</p>
+              </div>
+              <div class="rounded-2xl bg-base-200/40 px-4 py-3">
+                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/40">Radio</p>
+                <p class="mt-1 text-sm font-semibold text-base-content">{{ preview().geofenceRadius }} m</p>
+              </div>
+            </div>
+          } @else {
+            <div class="flex min-h-[320px] flex-col items-center justify-center gap-4 px-6 py-10 text-center">
+              <div class="flex h-16 w-16 items-center justify-center rounded-3xl bg-base-200/60 text-base-content/35">
+                <z-icon zType="map-pin" class="h-7 w-7" />
+              </div>
+              <div class="space-y-1">
+                <p class="text-sm font-bold text-base-content">Sin coordenadas para mostrar</p>
+                <p class="text-xs leading-relaxed text-base-content/55">
+                  Ingrese una latitud y longitud o use "Capturar mi ubicación actual" para generar la vista previa del punto central y la geocerca.
+                </p>
+              </div>
+            </div>
+          }
+        </div>
+
+        @if (!isSuperAdmin()) {
+          <div class="p-4 rounded-3xl bg-amber-50 border border-amber-200/50 flex items-start gap-4">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-600">
+              <z-icon zType="shield" class="h-5 w-5" />
+            </div>
+            <div class="space-y-1">
+              <p class="text-xs font-bold text-amber-900">Acceso Restringido</p>
+              <p class="text-[11px] text-amber-800/70 leading-normal">
+                Solo el Superadministrador puede editar las coordenadas manualmente. 
+                Utilice el botón de captura si se encuentra físicamente en el lugar para actualizar la posición.
+              </p>
+            </div>
+          </div>
+        }
+      </div>
+    </form>
+  }
+</div>

@@ -15,6 +15,9 @@ export type Institution = {
   status: string;
   logoUrl?: string;
   description?: string;
+  latitude?: number;
+  longitude?: number;
+  geofenceRadius?: number;
 };
 export type InstitutionUpdate = Partial<Institution>;
 
