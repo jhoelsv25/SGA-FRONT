@@ -1,6 +1,5 @@
 <div
-  class="card-premium group overflow-hidden rounded-[1.65rem] border border-base-200/80 bg-white shadow-[0_20px_56px_-42px_rgba(15,23,42,0.28)] dark:bg-zinc-900"
->
+  class="card-premium group overflow-hidden rounded-[1.65rem] border border-base-200/80 bg-white shadow-[0_20px_56px_-42px_rgba(15,23,42,0.28)] dark:bg-zinc-900">
   <div class="p-8 pb-5">
     <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
       <div class="flex items-start gap-5">
@@ -13,67 +12,53 @@
               item().type === 'material',
             'bg-zinc-100 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-500 shadow-none border border-zinc-200/50 dark:border-zinc-700/50':
               item().type === 'post',
-          }"
-        >
+          }">
           @if (item().type === 'assignment') {
-            <i class="fa-solid fa-clipboard-list"></i>
+          <i class="fa-solid fa-clipboard-list"></i>
           } @else if (item().type === 'material') {
-            <i class="fa-solid fa-book-bookmark"></i>
+          <i class="fa-solid fa-book-bookmark"></i>
           } @else if (item().author.avatar) {
-            <img
-              [src]="item().author.avatar"
-              [alt]="item().author.name"
-              class="h-full w-full object-cover"
-            />
+          <img [src]="item().author.avatar" [alt]="item().author.name" class="h-full w-full object-cover" />
           } @else {
-            <span class="text-lg lowercase">{{ item().author.name[0] }}</span>
+          <span class="text-lg lowercase">{{ item().author.name[0] }}</span>
           }
         </div>
         <div class="space-y-1.5">
-          <h4
-            class="font-black text-xl tracking-tight flex flex-wrap items-center gap-x-2 gap-y-1"
-            [ngClass]="item().type !== 'post' ? 'text-primary' : 'text-base-content'"
-          >
+          <h4 class="font-black text-xl tracking-tight flex flex-wrap items-center gap-x-2 gap-y-1"
+            [ngClass]="item().type !== 'post' ? 'text-primary' : 'text-base-content'">
             @if (item().type !== 'post') {
-              <span>{{ item().author.name }}</span>
-              <span class="text-base-content/40 font-bold text-sm"
-                >publicó {{ item().type === 'assignment' ? 'una tarea' : 'un material' }}</span
-              >
+            <span>{{ item().author.name }}</span>
+            <span class="text-base-content/40 font-bold text-sm">publicó {{ item().type === 'assignment' ? 'una tarea' :
+              'un material' }}</span>
             } @else {
-              {{ item().author.name }}
+            {{ item().author.name }}
             }
           </h4>
           <div class="mt-1 flex flex-wrap items-center gap-2.5">
             <span
-              class="rounded-[0.9rem] bg-primary/5 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-primary"
-              >{{ item().author.role }}</span
-            >
+              class="rounded-[0.9rem] bg-primary/5 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-primary">{{
+              item().author.role }}</span>
             <span class="w-1 h-1 rounded-full bg-base-300"></span>
             <span class="text-[10px] font-bold text-base-content/40 uppercase tracking-widest">{{
               item().date | date: 'medium'
-            }}</span>
+              }}</span>
           </div>
         </div>
       </div>
 
       @if (item().type === 'post' && canManagePost()) {
-        <div class="flex items-center gap-2 pl-20 lg:pl-0">
-          <button
-            type="button"
-            class="h-10 rounded-[0.9rem] px-4 text-[10px] font-black uppercase tracking-[0.18em] text-base-content/50 transition hover:bg-primary/5 hover:text-primary"
-            (click)="editingPostId() === item().id ? cancelEditPost() : startEditPost()"
-          >
-            {{ editingPostId() === item().id ? 'Cancelar' : 'Editar' }}
-          </button>
-          <button
-            type="button"
-            class="h-10 rounded-[0.9rem] px-4 text-[10px] font-black uppercase tracking-[0.18em] text-red-500 transition hover:bg-red-500/5 disabled:opacity-50"
-            [disabled]="deletingPostId() === item().id"
-            (click)="deletePost()"
-          >
-            {{ deletingPostId() === item().id ? 'Eliminando' : 'Eliminar' }}
-          </button>
-        </div>
+      <div class="flex items-center gap-2 pl-20 lg:pl-0">
+        <button type="button"
+          class="h-10 rounded-[0.9rem] px-4 text-[10px] font-black uppercase tracking-[0.18em] text-base-content/50 transition hover:bg-primary/5 hover:text-primary"
+          (click)="editingPostId() === item().id ? cancelEditPost() : startEditPost()">
+          {{ editingPostId() === item().id ? 'Cancelar' : 'Editar' }}
+        </button>
+        <button type="button"
+          class="h-10 rounded-[0.9rem] px-4 text-[10px] font-black uppercase tracking-[0.18em] text-red-500 transition hover:bg-red-500/5 disabled:opacity-50"
+          [disabled]="deletingPostId() === item().id" (click)="deletePost()">
+          {{ deletingPostId() === item().id ? 'Eliminando' : 'Eliminar' }}
+        </button>
+      </div>
       }
     </div>
   </div>
@@ -81,230 +66,176 @@
   <div class="px-8 pb-8 pt-1">
     <div class="space-y-4 md:pl-[5rem]">
       @if (item().title) {
-        <h2
-          class="text-3xl font-black text-base-content leading-tight tracking-tight sm:text-[2.2rem]"
-        >
-          {{ item().title }}
-        </h2>
+      <h2 class="text-3xl font-black text-base-content leading-tight tracking-tight sm:text-[2.2rem]">
+        {{ item().title }}
+      </h2>
       }
       @if (editingPostId() === item().id) {
-        <div class="space-y-3">
-          <textarea
-            [ngModel]="editingPostContent()"
-            (ngModelChange)="editingPostContent.set($event)"
-            class="min-h-[120px] w-full rounded-[1rem] border border-primary/10 bg-base-200/30 px-5 py-4 text-sm font-medium outline-none transition focus:border-primary/20 focus:ring-4 focus:ring-primary/5 dark:bg-zinc-800/50"
-          ></textarea>
-          <div class="flex justify-end">
-            <button
-              type="button"
-              class="rounded-[0.95rem] bg-primary px-6 py-3 text-[10px] font-black uppercase tracking-[0.18em] text-white transition hover:bg-primary/90 disabled:opacity-50"
-              [disabled]="savingPostId() === item().id"
-              (click)="savePost()"
-            >
-              {{ savingPostId() === item().id ? 'Guardando' : 'Guardar cambios' }}
-            </button>
-          </div>
+      <div class="space-y-3">
+        <textarea [ngModel]="editingPostContent()" (ngModelChange)="editingPostContent.set($event)"
+          class="min-h-[120px] w-full rounded-2xl border border-primary/10 bg-base-200/30 px-5 py-4 text-sm font-medium outline-none transition focus:border-primary/20 focus:ring-4 focus:ring-primary/5 dark:bg-zinc-800/50"></textarea>
+        <div class="flex justify-end">
+          <button type="button"
+            class="rounded-[0.95rem] bg-primary px-6 py-3 text-[10px] font-black uppercase tracking-[0.18em] text-white transition hover:bg-primary/90 disabled:opacity-50"
+            [disabled]="savingPostId() === item().id" (click)="savePost()">
+            {{ savingPostId() === item().id ? 'Guardando' : 'Guardar cambios' }}
+          </button>
         </div>
+      </div>
       } @else {
-        <p class="whitespace-pre-wrap text-lg font-medium leading-8 text-base-content/70">
-          {{ item().content }}
-        </p>
+      <p class="whitespace-pre-wrap text-lg font-medium leading-8 text-base-content/70">
+        {{ item().content }}
+      </p>
       }
 
       @if (attachments().length > 0) {
-        <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
-          @for (file of attachments(); track $index) {
-            <a
-              [href]="file.url"
-              target="_blank"
-              class="group/file flex items-center gap-4 rounded-[1rem] border border-transparent bg-base-200/30 p-5 transition-all hover:border-primary/20 hover:bg-white hover:shadow-lg dark:bg-zinc-800/50 dark:hover:bg-zinc-800"
-            >
-              <div
-                class="flex h-12 w-12 items-center justify-center rounded-[1rem] bg-primary/10 text-primary transition-colors duration-500 group-hover/file:bg-primary group-hover/file:text-white"
-              >
-                <i class="fa-solid fa-link text-lg"></i>
-              </div>
-              <div class="flex flex-col min-w-0">
-                <span class="text-sm font-black text-base-content truncate pr-4">{{
-                  file.name
-                }}</span>
-                <span
-                  class="text-[10px] font-bold uppercase tracking-[0.1em] text-primary group-hover/file:translate-x-1 transition-transform"
-                  >Abrir recurso</span
-                >
-              </div>
-            </a>
-          }
-        </div>
+      <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        @for (file of attachments(); track $index) {
+        <a [href]="file.url" target="_blank"
+          class="group/file flex items-center gap-4 rounded-2xl border border-transparent bg-base-200/30 p-5 transition-all hover:border-primary/20 hover:bg-white hover:shadow-lg dark:bg-zinc-800/50 dark:hover:bg-zinc-800">
+          <div
+            class="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary transition-colors duration-500 group-hover/file:bg-primary group-hover/file:text-white">
+            <i class="fa-solid fa-link text-lg"></i>
+          </div>
+          <div class="flex flex-col min-w-0">
+            <span class="text-sm font-black text-base-content truncate pr-4">{{
+              file.name
+              }}</span>
+            <span
+              class="text-[10px] font-bold uppercase tracking-[0.1em] text-primary group-hover/file:translate-x-1 transition-transform">Abrir
+              recurso</span>
+          </div>
+        </a>
+        }
+      </div>
       }
     </div>
   </div>
 
   @if (item().type === 'post') {
-    <div class="mt-1 border-t border-base-100 bg-base-200/10 px-8 py-6 md:px-8">
-      <div class="flex items-center justify-between gap-4">
-        <button
-          type="button"
-          (click)="toggleComments()"
-          class="flex items-center gap-3 text-base-content/40 hover:text-primary transition-colors"
-        >
-          <div class="w-10 h-10 rounded-[1rem] bg-base-200/50 flex items-center justify-center">
-            <i class="fa-regular fa-comment text-sm"></i>
-          </div>
-          <span class="text-xs font-black uppercase tracking-widest"
-            >{{ item().commentsCount || 0 }} Comentarios</span
-          >
-        </button>
-        <div class="text-[10px] font-bold text-base-content/30 uppercase italic">
-          {{ isExpanded() ? 'Ocultar hilo' : 'Abrir hilo' }}
+  <div class="mt-1 border-t border-base-100 bg-base-200/10 px-8 py-6 md:px-8">
+    <div class="flex items-center justify-between gap-4">
+      <button type="button" (click)="toggleComments()"
+        class="flex items-center gap-3 text-base-content/40 hover:text-primary transition-colors">
+        <div class="w-10 h-10 rounded-2xl bg-base-200/50 flex items-center justify-center">
+          <i class="fa-regular fa-comment text-sm"></i>
         </div>
+        <span class="text-xs font-black uppercase tracking-widest">{{ item().commentsCount || 0 }} Comentarios</span>
+      </button>
+      <div class="text-[10px] font-bold text-base-content/30 uppercase italic">
+        {{ isExpanded() ? 'Ocultar hilo' : 'Abrir hilo' }}
       </div>
+    </div>
 
-      @if (isExpanded()) {
-        <div class="mt-6 space-y-4">
-          @if (item().comments?.length) {
-            <div class="space-y-3">
-              @for (comment of item().comments; track comment.id) {
-                <div
-                  class="rounded-[1rem] border border-base-200 bg-white/70 p-5 dark:bg-zinc-900/70"
-                >
-                  <div class="flex items-start justify-between gap-4">
-                    <div class="flex min-w-0 items-start gap-3">
-                      <div
-                        class="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-[0.95rem] bg-primary/10 font-black text-primary"
-                      >
-                        @if (comment.author.avatar) {
-                          <img
-                            [src]="comment.author.avatar"
-                            [alt]="comment.author.name"
-                            class="h-full w-full object-cover"
-                          />
-                        } @else {
-                          {{ initials(comment.author.name) }}
-                        }
-                      </div>
-                      <div class="min-w-0">
-                        <div class="flex flex-wrap items-center gap-2">
-                          <span class="text-sm font-black text-base-content">{{
-                            comment.author.name
-                          }}</span>
-                          <span
-                            class="text-[10px] font-black uppercase tracking-[0.16em] text-base-content/35"
-                            >{{ comment.date | date: 'short' }}</span
-                          >
-                        </div>
-                        @if (editingCommentId() === comment.id) {
-                          <div class="mt-3 space-y-3">
-                            <textarea
-                              [ngModel]="editingCommentContent()"
-                              (ngModelChange)="editingCommentContent.set($event)"
-                              class="min-h-[90px] w-full rounded-[0.95rem] border border-primary/10 bg-base-200/40 px-4 py-3 text-sm outline-none transition focus:border-primary/20 focus:ring-4 focus:ring-primary/5 dark:bg-zinc-800/60"
-                            ></textarea>
-                            <div class="flex gap-2">
-                              <button
-                                type="button"
-                                class="rounded-[0.8rem] bg-primary px-4 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-white"
-                                (click)="saveComment(comment.id)"
-                              >
-                                Guardar
-                              </button>
-                              <button
-                                type="button"
-                                class="rounded-[0.8rem] border border-base-300 px-4 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-base-content/60"
-                                (click)="cancelEditComment()"
-                              >
-                                Cancelar
-                              </button>
-                            </div>
-                          </div>
-                        } @else {
-                          <p
-                            class="mt-2 whitespace-pre-wrap text-sm font-medium leading-7 text-base-content/70"
-                          >
-                            {{ comment.content }}
-                          </p>
-                        }
-                      </div>
-                    </div>
-                    @if (canManageComment(comment)) {
-                      <div class="flex shrink-0 items-center gap-2">
-                        <button
-                          type="button"
-                          class="rounded-[0.8rem] px-3 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-base-content/50 transition hover:bg-primary/5 hover:text-primary"
-                          (click)="
-                            editingCommentId() === comment.id
-                              ? cancelEditComment()
-                              : startEditComment(comment)
-                          "
-                        >
-                          {{ editingCommentId() === comment.id ? 'Cancelar' : 'Editar' }}
-                        </button>
-                        <button
-                          type="button"
-                          class="rounded-[0.8rem] px-3 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-red-500 transition hover:bg-red-500/5"
-                          (click)="deleteComment(comment.id)"
-                        >
-                          Eliminar
-                        </button>
-                      </div>
-                    }
-                  </div>
+    @if (isExpanded()) {
+    <div class="mt-6 space-y-4">
+      @if (item().comments?.length) {
+      <div class="space-y-3">
+        @for (comment of item().comments; track comment.id) {
+        <div class="rounded-2xl border border-base-200 bg-white/70 p-5 dark:bg-zinc-900/70">
+          <div class="flex items-start justify-between gap-4">
+            <div class="flex min-w-0 items-start gap-3">
+              <div
+                class="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-[0.95rem] bg-primary/10 font-black text-primary">
+                @if (comment.author.avatar) {
+                <img [src]="comment.author.avatar" [alt]="comment.author.name" class="h-full w-full object-cover" />
+                } @else {
+                {{ initials(comment.author.name) }}
+                }
+              </div>
+              <div class="min-w-0">
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="text-sm font-black text-base-content">{{
+                    comment.author.name
+                    }}</span>
+                  <span class="text-[10px] font-black uppercase tracking-[0.16em] text-base-content/35">{{ comment.date
+                    | date: 'short' }}</span>
                 </div>
-              }
-            </div>
-          } @else {
-            <div
-              class="rounded-[1rem] border border-dashed border-base-300 px-6 py-6 text-sm font-medium text-base-content/45"
-            >
-              Aún no hay comentarios en esta publicación.
-            </div>
-          }
-
-          @if (canComment()) {
-            <div
-              class="rounded-[1.15rem] border border-base-200 bg-white/80 p-5 dark:bg-zinc-900/80"
-            >
-              <div class="flex gap-3">
-                <div
-                  class="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-[0.95rem] bg-primary/10 font-black text-primary"
-                >
-                  @if (currentUser()?.person?.photoUrl) {
-                    <img
-                      [src]="currentUser()?.person?.photoUrl"
-                      [alt]="currentUser()?.firstName || 'Usuario'"
-                      class="h-full w-full object-cover"
-                    />
-                  } @else {
-                    {{
-                      initials(
-                        (currentUser()?.firstName || '') + ' ' + (currentUser()?.lastName || '')
-                      )
-                    }}
-                  }
-                </div>
-                <div class="flex-1 space-y-3">
-                  <textarea
-                    [ngModel]="commentDraft()"
-                    (ngModelChange)="commentDraft.set($event)"
-                    placeholder="Escribe una respuesta para este hilo..."
-                    class="min-h-[96px] w-full rounded-[0.95rem] border border-primary/10 bg-base-200/30 px-4 py-3 text-sm font-medium outline-none transition focus:border-primary/20 focus:ring-4 focus:ring-primary/5 dark:bg-zinc-800/60"
-                  ></textarea>
-                  <div class="flex justify-end">
-                    <button
-                      type="button"
-                      class="rounded-[0.95rem] bg-primary px-6 py-3 text-[10px] font-black uppercase tracking-[0.18em] text-white transition hover:bg-primary/90 disabled:opacity-50"
-                      [disabled]="savingCommentPostId() === item().id || !commentDraft().trim()"
-                      (click)="submitComment()"
-                    >
-                      {{ savingCommentPostId() === item().id ? 'Enviando' : 'Comentar' }}
+                @if (editingCommentId() === comment.id) {
+                <div class="mt-3 space-y-3">
+                  <textarea [ngModel]="editingCommentContent()" (ngModelChange)="editingCommentContent.set($event)"
+                    class="min-h-[90px] w-full rounded-[0.95rem] border border-primary/10 bg-base-200/40 px-4 py-3 text-sm outline-none transition focus:border-primary/20 focus:ring-4 focus:ring-primary/5 dark:bg-zinc-800/60"></textarea>
+                  <div class="flex gap-2">
+                    <button type="button"
+                      class="rounded-[0.8rem] bg-primary px-4 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-white"
+                      (click)="saveComment(comment.id)">
+                      Guardar
+                    </button>
+                    <button type="button"
+                      class="rounded-[0.8rem] border border-base-300 px-4 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-base-content/60"
+                      (click)="cancelEditComment()">
+                      Cancelar
                     </button>
                   </div>
                 </div>
+                } @else {
+                <p class="mt-2 whitespace-pre-wrap text-sm font-medium leading-7 text-base-content/70">
+                  {{ comment.content }}
+                </p>
+                }
               </div>
             </div>
-          }
+            @if (canManageComment(comment)) {
+            <div class="flex shrink-0 items-center gap-2">
+              <button type="button"
+                class="rounded-[0.8rem] px-3 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-base-content/50 transition hover:bg-primary/5 hover:text-primary"
+                (click)="
+                            editingCommentId() === comment.id
+                              ? cancelEditComment()
+                              : startEditComment(comment)
+                          ">
+                {{ editingCommentId() === comment.id ? 'Cancelar' : 'Editar' }}
+              </button>
+              <button type="button"
+                class="rounded-[0.8rem] px-3 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-red-500 transition hover:bg-red-500/5"
+                (click)="deleteComment(comment.id)">
+                Eliminar
+              </button>
+            </div>
+            }
+          </div>
         </div>
+        }
+      </div>
+      } @else {
+      <div class="rounded-2xl border border-dashed border-base-300 px-6 py-6 text-sm font-medium text-base-content/45">
+        Aún no hay comentarios en esta publicación.
+      </div>
+      }
+
+      @if (canComment()) {
+      <div class="rounded-[1.15rem] border border-base-200 bg-white/80 p-5 dark:bg-zinc-900/80">
+        <div class="flex gap-3">
+          <div
+            class="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-[0.95rem] bg-primary/10 font-black text-primary">
+            @if (currentUser()?.person?.photoUrl) {
+            <img [src]="currentUser()?.person?.photoUrl" [alt]="currentUser()?.firstName || 'Usuario'"
+              class="h-full w-full object-cover" />
+            } @else {
+            {{
+            initials(
+            (currentUser()?.firstName || '') + ' ' + (currentUser()?.lastName || '')
+            )
+            }}
+            }
+          </div>
+          <div class="flex-1 space-y-3">
+            <textarea [ngModel]="commentDraft()" (ngModelChange)="commentDraft.set($event)"
+              placeholder="Escribe una respuesta para este hilo..."
+              class="min-h-[96px] w-full rounded-[0.95rem] border border-primary/10 bg-base-200/30 px-4 py-3 text-sm font-medium outline-none transition focus:border-primary/20 focus:ring-4 focus:ring-primary/5 dark:bg-zinc-800/60"></textarea>
+            <div class="flex justify-end">
+              <button type="button"
+                class="rounded-[0.95rem] bg-primary px-6 py-3 text-[10px] font-black uppercase tracking-[0.18em] text-white transition hover:bg-primary/90 disabled:opacity-50"
+                [disabled]="savingCommentPostId() === item().id || !commentDraft().trim()" (click)="submitComment()">
+                {{ savingCommentPostId() === item().id ? 'Enviando' : 'Comentar' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
       }
     </div>
+    }
+  </div>
   }
 </div>

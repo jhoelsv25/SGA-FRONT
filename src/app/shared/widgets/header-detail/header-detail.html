@@ -1,39 +1,33 @@
 <div class="w-full animate-in fade-in duration-700">
   <div
-    class="group relative mb-6 flex flex-col justify-between gap-5 overflow-hidden rounded-4xl border border-base-300/60 bg-base-100/70 px-6 py-6 shadow-lg backdrop-blur-xl md:flex-row md:items-center dark:border-base-200/60 dark:bg-base-200/40"
-  >
+    class="group relative mb-6 flex flex-col justify-between gap-5 overflow-hidden rounded-4xl border border-base-300/60 bg-base-100/70 px-6 py-6 shadow-lg backdrop-blur-xl md:flex-row md:items-center dark:border-base-200/60 dark:bg-base-200/40">
     <!-- Decoración de fondo -->
     <div
-      class="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-primary/6 blur-[52px] transition-all duration-700 group-hover:bg-primary/10"
-    ></div>
+      class="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-primary/6 blur-[52px] transition-all duration-700 group-hover:bg-primary/10">
+    </div>
     <div
-      class="pointer-events-none absolute -left-12 -bottom-12 h-32 w-32 rounded-full bg-secondary/6 blur-[44px] transition-all duration-700 group-hover:bg-secondary/10"
-    ></div>
+      class="pointer-events-none absolute -left-12 -bottom-12 h-32 w-32 rounded-full bg-secondary/6 blur-[44px] transition-all duration-700 group-hover:bg-secondary/10">
+    </div>
 
     <!-- LEFT: Ícono + Título + Subtítulo -->
     <div class="relative z-10 flex min-w-0 items-center gap-4">
       @if (headerConfig().icon) {
-        <div
-          class="flex size-14 shrink-0 items-center justify-center rounded-[var(--radius-xl)] border border-primary/15 bg-primary text-primary-foreground shadow-lg shadow-primary/20 transition-transform duration-300 group-hover:scale-[1.02]"
-        >
-          <i class="fa text-xl" [class]="headerConfig().icon"></i>
-        </div>
+      <div
+        class="flex size-14 shrink-0 items-center justify-center rounded-xl border border-primary/15 bg-primary text-primary-foreground shadow-lg shadow-primary/20 transition-transform duration-300 group-hover:scale-[1.02]">
+        <i class="fa text-xl" [class]="headerConfig().icon"></i>
+      </div>
       }
       <div class="min-w-0">
-        <h1
-          class="truncate text-2xl leading-none font-black tracking-tight text-base-content md:text-[2rem]"
-        >
+        <h1 class="truncate text-2xl leading-none font-black tracking-tight text-base-content md:text-[2rem]">
           {{ headerConfig().title }}
         </h1>
         @if (headerConfig().subtitle) {
-          <div class="mt-2 flex items-center gap-2">
-            <span class="size-2 shrink-0 rounded-full bg-success"></span>
-            <p
-              class="truncate text-[11px] font-semibold uppercase tracking-[0.2em] text-base-content/45"
-            >
-              {{ headerConfig().subtitle }}
-            </p>
-          </div>
+        <div class="mt-2 flex items-center gap-2">
+          <span class="size-2 shrink-0 rounded-full bg-success"></span>
+          <p class="truncate text-[11px] font-semibold uppercase tracking-[0.2em] text-base-content/45">
+            {{ headerConfig().subtitle }}
+          </p>
+        </div>
         }
       </div>
     </div>
@@ -42,67 +36,46 @@
     <div class="relative z-10 flex shrink-0 items-center gap-2.5 self-start md:self-center">
       <!-- Botón Filtros -->
       @if (headerConfig().showFilters && filterTemplate()) {
-        <button
-          type="button"
-          zPopover
-          zTrigger="click"
-          [zContent]="filterPopoverTpl"
-          title="Filtros"
-          class="relative flex h-11 w-11 items-center justify-center rounded-[var(--radius-xl)] border border-base-300/60 bg-base-200/70 text-base-content/55 transition-all duration-200 hover:border-primary/25 hover:bg-primary/8 hover:text-primary active:scale-95 dark:border-base-200/60 dark:bg-base-300/50"
-        >
-          @if (hasActiveFilters()) {
-            <span
-              class="absolute top-1 right-1 z-10 size-2.5 rounded-full border border-background bg-primary"
-            ></span>
-          }
-          <i class="fa fa-filter text-base"></i>
-        </button>
+      <button type="button" zPopover zTrigger="click" [zContent]="filterPopoverTpl" title="Filtros"
+        class="relative flex h-11 w-11 items-center justify-center rounded-xl border border-base-300/60 bg-base-200/70 text-base-content/55 transition-all duration-200 hover:border-primary/25 hover:bg-primary/8 hover:text-primary active:scale-95 dark:border-base-200/60 dark:bg-base-300/50">
+        @if (hasActiveFilters()) {
+        <span class="absolute top-1 right-1 z-10 size-2.5 rounded-full border border-background bg-primary"></span>
+        }
+        <i class="fa fa-filter text-base"></i>
+      </button>
 
-        <ng-template #filterPopoverTpl>
-          <z-popover
-            class="z-[100] w-80 rounded-[var(--radius-xl)] border border-base-200 bg-popover p-0 text-popover-foreground shadow-[0_10px_40px_-10px_rgba(0,0,0,0.3)]"
-          >
-            <ng-container [ngTemplateOutlet]="filterTemplate() ?? null"></ng-container>
-          </z-popover>
-        </ng-template>
+      <ng-template #filterPopoverTpl>
+        <z-popover
+          class="z-[100] w-80 rounded-xl border border-base-200 bg-popover p-0 text-popover-foreground shadow-[0_10px_40px_-10px_rgba(0,0,0,0.3)]">
+          <ng-container [ngTemplateOutlet]="filterTemplate() ?? null"></ng-container>
+        </z-popover>
+      </ng-template>
       }
 
       <!-- Botón Refresh -->
-      <button
-        type="button"
-        (click)="onRefresh()"
-        title="Actualizar"
-        class="flex h-11 w-11 items-center justify-center rounded-[var(--radius-xl)] border border-base-300/60 bg-base-200/70 text-base-content/55 transition-all duration-200 hover:border-primary/25 hover:bg-primary/8 hover:text-primary active:scale-95 dark:border-base-200/60 dark:bg-base-300/50"
-      >
+      <button type="button" (click)="onRefresh()" title="Actualizar"
+        class="flex h-11 w-11 items-center justify-center rounded-xl border border-base-300/60 bg-base-200/70 text-base-content/55 transition-all duration-200 hover:border-primary/25 hover:bg-primary/8 hover:text-primary active:scale-95 dark:border-base-200/60 dark:bg-base-300/50">
         <z-icon zType="loader-circle" class="h-4 w-4" />
       </button>
 
       <!-- Acciones secundarias en dropdown -->
       @if (headerConfig().showActions && actionDropdownItems().length > 1) {
-        <z-dropdown [items]="actionDropdownItems().slice(1)">
-          <button
-            dropdown-trigger
-            type="button"
-            title="Más acciones"
-            class="flex h-11 w-11 items-center justify-center rounded-[var(--radius-xl)] border border-base-300/60 bg-base-200/70 text-base-content/55 transition-all duration-200 hover:border-primary/25 hover:bg-primary/8 hover:text-primary active:scale-95 dark:border-base-200/60 dark:bg-base-300/50"
-          >
-            <z-icon zType="ellipsis" class="h-4 w-4" />
-          </button>
-        </z-dropdown>
+      <z-dropdown [items]="actionDropdownItems().slice(1)">
+        <button dropdown-trigger type="button" title="Más acciones"
+          class="flex h-11 w-11 items-center justify-center rounded-xl border border-base-300/60 bg-base-200/70 text-base-content/55 transition-all duration-200 hover:border-primary/25 hover:bg-primary/8 hover:text-primary active:scale-95 dark:border-base-200/60 dark:bg-base-300/50">
+          <z-icon zType="ellipsis" class="h-4 w-4" />
+        </button>
+      </z-dropdown>
       }
 
       <!-- Acción primaria: botón grande visible -->
       @if (headerConfig().showActions && actionDropdownItems().length > 0) {
-        @let primary = actionDropdownItems()[0];
-        <button
-          type="button"
-          (click)="primary.action()"
-          [disabled]="primary.disabled"
-          class="flex h-11 items-center gap-2 rounded-[var(--radius-xl)] bg-primary px-5 text-sm font-black uppercase tracking-[0.18em] text-primary-foreground shadow-lg shadow-primary/20 transition-all duration-200 hover:bg-primary/90 active:scale-95 disabled:scale-100 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          <i class="fa fa-plus-circle text-sm"></i>
-          <span>{{ primary.label }}</span>
-        </button>
+      @let primary = actionDropdownItems()[0];
+      <button type="button" (click)="primary.action()" [disabled]="primary.disabled"
+        class="flex h-11 items-center gap-2 rounded-xl bg-primary px-5 text-sm font-black uppercase tracking-[0.18em] text-primary-foreground shadow-lg shadow-primary/20 transition-all duration-200 hover:bg-primary/90 active:scale-95 disabled:scale-100 disabled:cursor-not-allowed disabled:opacity-50">
+        <i class="fa fa-plus-circle text-sm"></i>
+        <span>{{ primary.label }}</span>
+      </button>
       }
     </div>
   </div>

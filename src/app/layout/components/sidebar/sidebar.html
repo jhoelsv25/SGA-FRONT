@@ -1,222 +1,151 @@
 <!-- Mobile Backdrop -->
 @if (isMobileOpen()) {
-  <div
-    class="fixed inset-0 bg-black/40 z-40 md:hidden backdrop-blur-sm transition-opacity animate-in fade-in duration-300"
-    (click)="closeMobileSidebar()"
-    (keydown.enter)="closeMobileSidebar()"
-    tabindex="0"
-    role="button"
-    aria-label="Close sidebar"
-  ></div>
+<div
+  class="fixed inset-0 bg-black/40 z-40 md:hidden backdrop-blur-sm transition-opacity animate-in fade-in duration-300"
+  (click)="closeMobileSidebar()" (keydown.enter)="closeMobileSidebar()" tabindex="0" role="button"
+  aria-label="Close sidebar"></div>
 }
 
-<div
-  class="sidebar flex h-full flex-col relative border-r border-border/70 bg-card/95 text-foreground backdrop-blur-md"
-  [class.collapsed]="isSidebarCollapsed()"
-  [class.mobile-open]="isMobileOpen()"
->
+<div class="sidebar flex h-full flex-col relative border-r border-border/70 bg-card/95 text-foreground backdrop-blur-md"
+  [class.collapsed]="isSidebarCollapsed()" [class.mobile-open]="isMobileOpen()">
   <div class="flex h-16 items-center border-b border-border/70 px-4 shrink-0">
     <div class="flex items-center gap-3 overflow-hidden w-full">
       <div
-        class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm shrink-0"
-      >
+        class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm shrink-0">
         <z-icon zType="book-open" class="h-5 w-5" />
       </div>
-      <div
-        class="flex flex-col leading-tight min-w-0 transition-opacity duration-200"
-        [class.opacity-0]="isSidebarCollapsed()"
-      >
+      <div class="flex flex-col leading-tight min-w-0 transition-opacity duration-200"
+        [class.opacity-0]="isSidebarCollapsed()">
         <span class="truncate text-base font-bold tracking-tight text-foreground">SISAE</span>
-        <span
-          class="truncate text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground"
-          >Gestión Educativa</span
-        >
+        <span class="truncate text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground">Gestión
+          Educativa</span>
       </div>
     </div>
 
-    <button
-      z-button
-      zType="ghost"
-      zSize="icon-sm"
-      type="button"
-      class="ml-auto hidden md:inline-flex"
-      (click)="toggleCollapse()"
-    >
-      <z-icon
-        zType="chevron-left"
-        class="h-3 w-3 transition-transform duration-300"
-        [class.rotate-180]="isSidebarCollapsed()"
-      />
+    <button z-button zType="ghost" zSize="icon-sm" type="button" class="ml-auto hidden md:inline-flex"
+      (click)="toggleCollapse()">
+      <z-icon zType="chevron-left" class="h-3 w-3 transition-transform duration-300"
+        [class.rotate-180]="isSidebarCollapsed()" />
     </button>
   </div>
 
   <nav class="flex-1 px-3 py-4 overflow-y-auto overflow-x-hidden custom-scrollbar">
     <div class="space-y-6">
       @if (!isSidebarCollapsed()) {
-        <div class="px-2">
-          <label
-            class="group flex h-11 items-center gap-2 rounded-xl border border-border bg-background px-3 shadow-sm transition-colors focus-within:border-primary/40 focus-within:ring-2 focus-within:ring-primary/10"
-          >
-            <z-icon
-              zType="search"
-              class="h-3 w-3 text-muted-foreground transition-colors group-focus-within:text-primary"
-            />
-            <input
-              z-input
-              type="text"
-              class="h-full border-0 bg-transparent px-0 text-sm shadow-none focus-visible:ring-0"
-              placeholder="Buscar en menú..."
-              [value]="sidebarSearch()"
-              (input)="onSearchInput($event)"
-            />
-            @if (sidebarSearch()) {
-              <button
-                z-button
-                zType="ghost"
-                zSize="icon-xs"
-                type="button"
-                class="shrink-0"
-                (click)="clearSearch()"
-                aria-label="Limpiar búsqueda"
-              >
-                <z-icon zType="x" class="h-3 w-3" />
-              </button>
-            }
-          </label>
-        </div>
+      <div class="px-2">
+        <label
+          class="group flex h-11 items-center gap-2 rounded-xl border border-border bg-background px-3 shadow-sm transition-colors focus-within:border-primary/40 focus-within:ring-2 focus-within:ring-primary/10">
+          <z-icon zType="search"
+            class="h-3 w-3 text-muted-foreground transition-colors group-focus-within:text-primary" />
+          <input z-input type="text"
+            class="h-full border-0 bg-transparent px-0 text-sm shadow-none focus-visible:ring-0"
+            placeholder="Buscar en menú..." [value]="sidebarSearch()" (input)="onSearchInput($event)" />
+          @if (sidebarSearch()) {
+          <button z-button zType="ghost" zSize="icon-xs" type="button" class="shrink-0" (click)="clearSearch()"
+            aria-label="Limpiar búsqueda">
+            <z-icon zType="x" class="h-3 w-3" />
+          </button>
+          }
+        </label>
+      </div>
       }
 
       <div>
-        <h3
-          class="mb-3 truncate px-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground"
-          [class.hidden]="isSidebarCollapsed()"
-        >
+        <h3 class="mb-3 truncate px-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground"
+          [class.hidden]="isSidebarCollapsed()">
           Plataforma
         </h3>
 
         <ul class="space-y-1.5">
           @for (item of getVisibleMenuItems(); track item.id) {
-            <li class="relative">
-              <button
-                type="button"
-                zPopover
-                [zTrigger]="isSidebarCollapsed() && item.hasChildren ? 'click' : null"
-                [zPlacement]="'right'"
-                [zContent]="collapsedSubmenu"
-                class="group relative flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-muted-foreground transition-all duration-200 hover:bg-muted/70 hover:text-foreground"
-                (click)="navigateToItem(item)"
-                (keydown.enter)="navigateToItem(item)"
-                [class.bg-primary/10]="item.active"
-                [class.text-primary]="item.active"
-                [class.shadow-sm]="item.active"
-                [class.justify-center]="isSidebarCollapsed()"
-                [class.px-2]="isSidebarCollapsed()"
-                [title]="isSidebarCollapsed() ? item.label : ''"
-              >
-                <z-icon
-                  class="flex shrink-0 justify-center text-base transition-colors duration-200"
-                  [zType]="item.icon"
-                  [class.text-primary]="item.active"
-                />
+          <li class="relative">
+            <button type="button" zPopover [zTrigger]="isSidebarCollapsed() && item.hasChildren ? 'click' : null"
+              [zPlacement]="'right'" [zContent]="collapsedSubmenu"
+              class="group relative flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-muted-foreground transition-all duration-200 hover:bg-muted/70 hover:text-foreground"
+              (click)="navigateToItem(item)" (keydown.enter)="navigateToItem(item)" [class.bg-primary/10]="item.active"
+              [class.text-primary]="item.active" [class.shadow-sm]="item.active"
+              [class.justify-center]="isSidebarCollapsed()" [class.px-2]="isSidebarCollapsed()"
+              [title]="isSidebarCollapsed() ? item.label : ''">
+              <z-icon class="flex shrink-0 justify-center text-base transition-colors duration-200" [zType]="item.icon"
+                [class.text-primary]="item.active" />
 
-                <span
-                  class="overflow-hidden text-ellipsis whitespace-nowrap tracking-tight transition-all duration-200"
-                  [class.opacity-0]="isSidebarCollapsed()"
-                  [class.w-0]="isSidebarCollapsed()"
-                >
-                  {{ item.label }}
-                </span>
+              <span class="overflow-hidden text-ellipsis whitespace-nowrap tracking-tight transition-all duration-200"
+                [class.opacity-0]="isSidebarCollapsed()" [class.w-0]="isSidebarCollapsed()">
+                {{ item.label }}
+              </span>
 
-                @if (item.hasChildren && !isSidebarCollapsed()) {
-                  <z-icon
-                    zType="chevron-down"
-                    class="ml-auto shrink-0 h-3 w-3 text-muted-foreground transition-transform duration-200"
-                    [class.rotate-180]="isSubmenuExpanded(item.id)"
-                  />
-                }
+              @if (item.hasChildren && !isSidebarCollapsed()) {
+              <z-icon zType="chevron-down"
+                class="ml-auto shrink-0 h-3 w-3 text-muted-foreground transition-transform duration-200"
+                [class.rotate-180]="isSubmenuExpanded(item.id)" />
+              }
 
-                @if (item.active && !isSidebarCollapsed()) {
-                  <div
-                    class="absolute bottom-2 right-0 top-2 w-0.5 rounded-l-full bg-primary"
-                  ></div>
-                }
-              </button>
+              @if (item.active && !isSidebarCollapsed()) {
+              <div class="absolute bottom-2 right-0 top-2 w-0.5 rounded-l-full bg-primary"></div>
+              }
+            </button>
 
-              <ng-template #collapsedSubmenu>
-                @if (isSidebarCollapsed() && item.hasChildren) {
-                  <div
-                    class="min-w-[240px] rounded-2xl border border-border bg-popover p-2 text-popover-foreground shadow-2xl"
-                  >
-                    <div class="mb-2 flex items-center gap-2 rounded-xl bg-muted/60 px-3 py-2">
-                      <div
-                        class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary"
-                      >
-                        <z-icon class="text-sm" [zType]="item.icon" />
-                      </div>
-                      <div class="min-w-0">
-                        <p class="truncate text-sm font-semibold text-foreground">
-                          {{ item.label }}
-                        </p>
-                        <p class="text-muted-foreground text-[10px] uppercase tracking-[0.16em]">
-                          Submódulos
-                        </p>
-                      </div>
-                    </div>
-                    <ul class="space-y-1">
-                      @for (child of item.children; track child.id) {
-                        <li>
-                          <button
-                            type="button"
-                            (click)="navigateToItem(child)"
-                            (keydown.enter)="navigateToItem(child)"
-                            class="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                          >
-                            <span class="bg-primary/20 h-2 w-2 shrink-0 rounded-full"></span>
-                            <span class="truncate">{{ child.label }}</span>
-                            @if (child.active) {
-                              <span
-                                class="ml-auto rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary"
-                              >
-                                Activo
-                              </span>
-                            }
-                          </button>
-                        </li>
-                      }
-                    </ul>
+            <ng-template #collapsedSubmenu>
+              @if (isSidebarCollapsed() && item.hasChildren) {
+              <div class="min-w-60 rounded-2xl border border-border bg-popover p-2 text-popover-foreground shadow-2xl">
+                <div class="mb-2 flex items-center gap-2 rounded-xl bg-muted/60 px-3 py-2">
+                  <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <z-icon class="text-sm" [zType]="item.icon" />
                   </div>
-                }
-              </ng-template>
-
-              @if (item.hasChildren && !isSidebarCollapsed() && isSubmenuExpanded(item.id)) {
-                <ul
-                  class="mt-1.5 ml-4 space-y-1 border-l border-border/80 pl-4 animate-in slide-in-from-top-1 duration-200"
-                >
+                  <div class="min-w-0">
+                    <p class="truncate text-sm font-semibold text-foreground">
+                      {{ item.label }}
+                    </p>
+                    <p class="text-muted-foreground text-[10px] uppercase tracking-[0.16em]">
+                      Submódulos
+                    </p>
+                  </div>
+                </div>
+                <ul class="space-y-1">
                   @for (child of item.children; track child.id) {
-                    <li>
-                      <button
-                        type="button"
-                        class="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-xs font-medium text-muted-foreground transition-all hover:bg-primary/5 hover:text-primary"
-                        (click)="navigateToItem(child)"
-                        (keydown.enter)="navigateToItem(child)"
-                        [class.text-primary]="child.active"
-                        [class.bg-primary/5]="child.active"
-                      >
-                        <z-icon class="text-[10px] opacity-60" [zType]="child.icon" />
-                        {{ child.label }}
-                      </button>
-                    </li>
+                  <li>
+                    <button type="button" (click)="navigateToItem(child)" (keydown.enter)="navigateToItem(child)"
+                      class="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+                      <span class="bg-primary/20 h-2 w-2 shrink-0 rounded-full"></span>
+                      <span class="truncate">{{ child.label }}</span>
+                      @if (child.active) {
+                      <span
+                        class="ml-auto rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
+                        Activo
+                      </span>
+                      }
+                    </button>
+                  </li>
                   }
                 </ul>
+              </div>
               }
-            </li>
+            </ng-template>
+
+            @if (item.hasChildren && !isSidebarCollapsed() && isSubmenuExpanded(item.id)) {
+            <ul
+              class="mt-1.5 ml-4 space-y-1 border-l border-border/80 pl-4 animate-in slide-in-from-top-1 duration-200">
+              @for (child of item.children; track child.id) {
+              <li>
+                <button type="button"
+                  class="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-xs font-medium text-muted-foreground transition-all hover:bg-primary/5 hover:text-primary"
+                  (click)="navigateToItem(child)" (keydown.enter)="navigateToItem(child)"
+                  [class.text-primary]="child.active" [class.bg-primary/5]="child.active">
+                  <z-icon class="text-[10px] opacity-60" [zType]="child.icon" />
+                  {{ child.label }}
+                </button>
+              </li>
+              }
+            </ul>
+            }
+          </li>
           }
         </ul>
 
         @if (getVisibleMenuItems().length === 0 && sidebarSearch()) {
-          <div class="px-3 py-6 text-center text-xs text-muted-foreground">
-            No hay módulos que coincidan con "{{ sidebarSearch() }}"
-          </div>
+        <div class="px-3 py-6 text-center text-xs text-muted-foreground">
+          No hay módulos que coincidan con "{{ sidebarSearch() }}"
+        </div>
         }
       </div>
     </div>
@@ -224,22 +153,12 @@
 
   <div class="mt-auto border-t border-border/70 p-4">
     <div class="flex flex-col gap-2">
-      <div
-        class="rounded-2xl border border-border/70 bg-background/80 p-2.5 shadow-sm transition-colors"
-        [class.items-center]="isSidebarCollapsed()"
-      >
-        <sga-user-menu
-          [avatar]="getUserAvatar()"
-          [name]="getUserDisplayName()"
-          [role]="getUserRole()"
-          [code]="currentUser()?.code || 'N/A'"
-          [initials]="getUserInitials()"
-          [statsItems]="userMenuStats()"
-          [stats]="currentUser()?.stats || { courses: 0, students: 0, average: '0.0' }"
-          [actions]="userMenuActions()"
-          [isCollapsed]="isSidebarCollapsed()"
-          (actionSelected)="onUserMenuAction($event)"
-        />
+      <div class="rounded-2xl border border-border/70 bg-background/80 p-2.5 shadow-sm transition-colors"
+        [class.items-center]="isSidebarCollapsed()">
+        <sga-user-menu [avatar]="getUserAvatar()" [name]="getUserDisplayName()" [role]="getUserRole()"
+          [code]="currentUser()?.code || 'N/A'" [initials]="getUserInitials()" [statsItems]="userMenuStats()"
+          [stats]="currentUser()?.stats || { courses: 0, students: 0, average: '0.0' }" [actions]="userMenuActions()"
+          [isCollapsed]="isSidebarCollapsed()" (actionSelected)="onUserMenuAction($event)" />
       </div>
     </div>
   </div>

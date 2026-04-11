@@ -1,15 +1,10 @@
-<z-card
-  (click)="expanded.set(!expanded())"
-  (keydown.enter)="expanded.set(!expanded())"
-  (keydown.space)="expanded.set(!expanded()); $event.preventDefault()"
-  tabindex="0"
-  role="button"
-  class="group flex flex-col p-6 rounded-[2.5rem] bg-card/40 border-border/10 backdrop-blur-3xl hover:bg-card/60 hover:border-primary/20 transition-all duration-500 cursor-pointer overflow-hidden w-full text-left shadow-sm hover:shadow-2xl hover:shadow-primary/5 active:scale-[0.995] outline-none relative"
->
+<z-card (click)="expanded.set(!expanded())" (keydown.enter)="expanded.set(!expanded())"
+  (keydown.space)="expanded.set(!expanded()); $event.preventDefault()" tabindex="0" role="button"
+  class="group flex flex-col p-6 rounded-[2.5rem] bg-card/40 border-border/10 backdrop-blur-3xl hover:bg-card/60 hover:border-primary/20 transition-all duration-500 cursor-pointer overflow-hidden w-full text-left shadow-sm hover:shadow-2xl hover:shadow-primary/5 active:scale-[0.995] outline-none relative">
   <!-- Background Glow Effect on Hover -->
   <div
-    class="absolute top-0 right-0 size-48 bg-primary/5 rounded-full -mr-24 -mt-24 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"
-  ></div>
+    class="absolute top-0 right-0 size-48 bg-primary/5 rounded-full -mr-24 -mt-24 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+  </div>
 
   <!-- HEADER PART (Always visible) -->
   <div class="flex flex-col lg:flex-row lg:items-center gap-6 relative z-10">
@@ -17,41 +12,33 @@
     <div class="flex items-center gap-5 flex-1 min-w-0">
       <div class="shrink-0">
         @if (log().user?.avatar) {
-          <div class="relative group/avatar">
-            <img
-              [src]="log().user?.avatar"
-              class="size-14 rounded-2xl object-cover shadow-lg border-2 border-transparent group-hover:border-primary/30 transition-all duration-500"
-              [alt]="log().user?.name"
-            />
-            <div
-              class="absolute -bottom-1 -right-1 size-5 rounded-lg border-2 border-card flex items-center justify-center shadow-lg {{
+        <div class="relative group/avatar">
+          <img [src]="log().user?.avatar"
+            class="size-14 rounded-2xl object-cover shadow-lg border-2 border-transparent group-hover:border-primary/30 transition-all duration-500"
+            [alt]="log().user?.name" />
+          <div class="absolute -bottom-1 -right-1 size-5 rounded-lg border-2 border-card flex items-center justify-center shadow-lg {{
                 actionClass()
-              }}"
-            >
-              <z-icon [zType]="actionIcon()" class="size-2.5" />
-            </div>
+              }}">
+            <z-icon [zType]="actionIcon()" class="size-2.5" />
           </div>
+        </div>
         } @else {
-          <div
-            [class]="
+        <div [class]="
               'size-14 rounded-2xl flex items-center justify-center shadow-lg border border-border/5 transition-all duration-500 ' +
               actionClass()
-            "
-          >
-            <z-icon [zType]="actionIcon()" class="h-6 w-6" />
-          </div>
+            ">
+          <z-icon [zType]="actionIcon()" class="h-6 w-6" />
+        </div>
         }
       </div>
 
       <!-- Log Content -->
       <div class="space-y-1.5 min-w-0">
         <div class="flex items-center gap-3 flex-wrap">
-          <span
-            [class]="
+          <span [class]="
               'px-2.5 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-[0.15em] border ' +
               entityClass()
-            "
-          >
+            ">
             {{ log().entity }}
           </span>
           <div class="flex items-center gap-1.5 text-muted-foreground/30 font-mono text-[9px]">
@@ -60,8 +47,7 @@
         </div>
 
         <h4
-          class="text-base font-black text-foreground leading-tight tracking-tight group-hover:text-primary transition-colors inter uppercase"
-        >
+          class="text-base font-black text-foreground leading-tight tracking-tight group-hover:text-primary transition-colors inter uppercase">
           {{ log().description }}
         </h4>
 
@@ -70,13 +56,13 @@
             <z-icon zType="terminal" class="h-3 w-3 text-primary/60" />
             <span class="text-[9px] font-mono tracking-tighter truncate max-w-[150px]">{{
               log().entityId
-            }}</span>
+              }}</span>
           </div>
           <div class="flex items-center gap-1.5">
             <z-icon zType="clock" class="h-3 w-3" />
             <span class="text-[9px] font-bold uppercase tracking-widest">{{
               log().createdAt | date: 'HH:mm:ss'
-            }}</span>
+              }}</span>
           </div>
         </div>
       </div>
@@ -84,24 +70,18 @@
 
     <!-- Meta Info Section (Right) -->
     <div
-      class="flex items-center justify-between lg:flex-col lg:items-end gap-3 shrink-0 px-1 lg:border-l lg:border-border/5 lg:pl-6"
-    >
+      class="flex items-center justify-between lg:flex-col lg:items-end gap-3 shrink-0 px-1 lg:border-l lg:border-border/5 lg:pl-6">
       <div class="text-right">
         <p class="text-xs font-black text-foreground/80 tracking-tight inter uppercase">
           {{ log().createdAt | date: 'dd MMM, yyyy' }}
         </p>
         <div class="flex items-center gap-1.5 mt-1 justify-end">
-          <z-icon
-            [zType]="log().user?.id ? 'shield' : 'monitor'"
-            class="h-3 w-3"
-            [class]="log().user?.id ? 'text-primary' : 'text-muted-foreground/20'"
-          />
-          <span
-            [class]="
+          <z-icon [zType]="log().user?.id ? 'shield' : 'monitor'" class="h-3 w-3"
+            [class]="log().user?.id ? 'text-primary' : 'text-muted-foreground/20'" />
+          <span [class]="
               'text-[10px] font-black uppercase tracking-tight truncate max-w-[120px] ' +
               (log().user?.id ? 'text-primary' : 'text-muted-foreground/40')
-            "
-          >
+            ">
             {{ log().user?.name || 'Sistema' }}
           </span>
         </div>
@@ -109,9 +89,7 @@
 
       <div
         class="size-8 rounded-xl bg-muted/5 flex items-center justify-center transition-all duration-500 group-hover:bg-primary/10"
-        [class.rotate-180]="expanded()"
-        [class.text-primary]="expanded()"
-      >
+        [class.rotate-180]="expanded()" [class.text-primary]="expanded()">
         <z-icon zType="chevron-down" class="h-4 w-4" />
       </div>
     </div>
@@ -119,117 +97,91 @@
 
   <!-- COLLAPSIBLE CONTENT (Changes) -->
   @if (expanded()) {
-    <div class="mt-8 pt-6 border-t border-border/5 animate-in slide-in-from-top-4 duration-500">
-      <div class="flex flex-col gap-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- BEFORE -->
-          <div class="space-y-4">
-            <div
-              class="flex items-center gap-3 px-4 py-1.5 bg-destructive/10 text-destructive rounded-full w-fit border border-destructive/10 shadow-sm shadow-destructive/5"
-            >
-              <z-icon zType="activity" class="h-3.5 w-3.5" />
-              <span class="text-[9px] font-black uppercase tracking-[0.2em]">Estado Anterior</span>
-            </div>
-            @if (log().before) {
-              <pre
-                class="text-[10px] font-mono leading-relaxed bg-black/5 dark:bg-black/40 p-5 rounded-[2rem] border border-border/5 max-h-60 overflow-y-auto scrollbar-thin shadow-inner"
-                >{{ log().before | json }}</pre
-              >
-            } @else {
-              <div
-                class="p-8 bg-muted/5 rounded-[2rem] border border-dashed border-border/10 text-center flex flex-col items-center gap-3"
-              >
-                <z-icon zType="ban" class="h-6 w-6 text-muted-foreground/10" />
-                <span class="text-[10px] font-black text-muted-foreground/20 uppercase inter"
-                  >Registro Inicial</span
-                >
-              </div>
-            }
+  <div class="mt-8 pt-6 border-t border-border/5 animate-in slide-in-from-top-4 duration-500">
+    <div class="flex flex-col gap-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- BEFORE -->
+        <div class="space-y-4">
+          <div
+            class="flex items-center gap-3 px-4 py-1.5 bg-destructive/10 text-destructive rounded-full w-fit border border-destructive/10 shadow-sm shadow-destructive/5">
+            <z-icon zType="activity" class="h-3.5 w-3.5" />
+            <span class="text-[9px] font-black uppercase tracking-[0.2em]">Estado Anterior</span>
           </div>
-
-          <!-- AFTER -->
-          <div class="space-y-4">
-            <div
-              class="flex items-center gap-3 px-4 py-1.5 bg-green-500/10 text-green-500 rounded-full w-fit border border-green-500/10 shadow-sm shadow-green-500/5"
-            >
-              <z-icon zType="circle-check" class="h-3.5 w-3.5" />
-              <span class="text-[9px] font-black uppercase tracking-[0.2em]"
-                >Estado Resultante</span
-              >
-            </div>
-            @if (log().after) {
-              <pre
-                class="text-[10px] font-mono leading-relaxed bg-black/5 dark:bg-black/40 p-5 rounded-[2rem] border border-border/5 max-h-60 overflow-y-auto scrollbar-thin shadow-inner"
-                >{{ log().after | json }}</pre
-              >
-            } @else {
-              <div
-                class="p-8 bg-destructive/5 rounded-[2rem] border border-dashed border-destructive/10 text-center flex flex-col items-center gap-3"
-              >
-                <z-icon zType="trash" class="h-6 w-6 text-destructive/20" />
-                <span class="text-[10px] font-black text-destructive/20 uppercase inter"
-                  >Entidad Eliminada</span
-                >
-              </div>
-            }
+          @if (log().before) {
+          <pre
+            class="text-[10px] font-mono leading-relaxed bg-black/5 dark:bg-black/40 p-5 rounded-4xl border border-border/5 max-h-60 overflow-y-auto scrollbar-thin shadow-inner">{{ log().before | json }}</pre>
+          } @else {
+          <div
+            class="p-8 bg-muted/5 rounded-4xl border border-dashed border-border/10 text-center flex flex-col items-center gap-3">
+            <z-icon zType="ban" class="h-6 w-6 text-muted-foreground/10" />
+            <span class="text-[10px] font-black text-muted-foreground/20 uppercase inter">Registro Inicial</span>
           </div>
+          }
         </div>
 
-        <!-- DETAILED COMPARISON -->
-        @if (log().action === 'UPDATE' && log().before && log().after) {
-          <div class="pt-6 border-t border-border/5">
-            <div class="flex items-center gap-3 mb-6">
-              <div
-                class="size-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center shadow-lg"
-              >
-                <z-icon zType="layers" class="h-4 w-4" />
-              </div>
-              <h5
-                class="text-[10px] font-black text-foreground/60 uppercase tracking-[0.2em] inter"
-              >
-                Campo Modificado
-              </h5>
-            </div>
+        <!-- AFTER -->
+        <div class="space-y-4">
+          <div
+            class="flex items-center gap-3 px-4 py-1.5 bg-green-500/10 text-green-500 rounded-full w-fit border border-green-500/10 shadow-sm shadow-green-500/5">
+            <z-icon zType="circle-check" class="h-3.5 w-3.5" />
+            <span class="text-[9px] font-black uppercase tracking-[0.2em]">Estado Resultante</span>
+          </div>
+          @if (log().after) {
+          <pre
+            class="text-[10px] font-mono leading-relaxed bg-black/5 dark:bg-black/40 p-5 rounded-4xl border border-border/5 max-h-60 overflow-y-auto scrollbar-thin shadow-inner">{{ log().after | json }}</pre>
+          } @else {
+          <div
+            class="p-8 bg-destructive/5 rounded-4xl border border-dashed border-destructive/10 text-center flex flex-col items-center gap-3">
+            <z-icon zType="trash" class="h-6 w-6 text-destructive/20" />
+            <span class="text-[10px] font-black text-destructive/20 uppercase inter">Entidad Eliminada</span>
+          </div>
+          }
+        </div>
+      </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              @for (change of getChanges(); track change.field) {
-                <div
-                  class="p-5 bg-card/60 rounded-[2.2rem] border border-border/5 hover:border-primary/10 transition-all duration-300 group/delta"
-                >
-                  <div class="flex items-center justify-between mb-4">
-                    <span class="text-[10px] font-black text-primary uppercase tracking-tighter">{{
-                      change.field
-                    }}</span>
-                    <z-badge
-                      zType="secondary"
-                      class="!px-2 !py-0.5 !text-[7px] !font-black !tracking-widest"
-                      >DELTA</z-badge
-                    >
-                  </div>
-                  <div class="space-y-2.5">
-                    <div
-                      class="flex items-center gap-3 p-3 bg-destructive/5 rounded-2xl border border-destructive/5"
-                    >
-                      <z-icon zType="minus" class="h-3 w-3 text-destructive/40" />
-                      <span class="text-[10px] text-destructive/50 font-black truncate">{{
-                        change.old
-                      }}</span>
-                    </div>
-                    <div
-                      class="flex items-center gap-3 p-3 bg-green-500/5 rounded-2xl border border-green-500/5 shadow-sm shadow-green-500/5"
-                    >
-                      <z-icon zType="plus" class="h-3 w-3 text-green-500" />
-                      <span class="text-[10px] text-green-500 font-black truncate">{{
-                        change.new
-                      }}</span>
-                    </div>
-                  </div>
-                </div>
-              }
+      <!-- DETAILED COMPARISON -->
+      @if (log().action === 'UPDATE' && log().before && log().after) {
+      <div class="pt-6 border-t border-border/5">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="size-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center shadow-lg">
+            <z-icon zType="layers" class="h-4 w-4" />
+          </div>
+          <h5 class="text-[10px] font-black text-foreground/60 uppercase tracking-[0.2em] inter">
+            Campo Modificado
+          </h5>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          @for (change of getChanges(); track change.field) {
+          <div
+            class="p-5 bg-card/60 rounded-[2.2rem] border border-border/5 hover:border-primary/10 transition-all duration-300 group/delta">
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-[10px] font-black text-primary uppercase tracking-tighter">{{
+                change.field
+                }}</span>
+              <z-badge zType="secondary" class="!px-2 !py-0.5 !text-[7px] !font-black !tracking-widest">DELTA</z-badge>
+            </div>
+            <div class="space-y-2.5">
+              <div class="flex items-center gap-3 p-3 bg-destructive/5 rounded-2xl border border-destructive/5">
+                <z-icon zType="minus" class="h-3 w-3 text-destructive/40" />
+                <span class="text-[10px] text-destructive/50 font-black truncate">{{
+                  change.old
+                  }}</span>
+              </div>
+              <div
+                class="flex items-center gap-3 p-3 bg-green-500/5 rounded-2xl border border-green-500/5 shadow-sm shadow-green-500/5">
+                <z-icon zType="plus" class="h-3 w-3 text-green-500" />
+                <span class="text-[10px] text-green-500 font-black truncate">{{
+                  change.new
+                  }}</span>
+              </div>
             </div>
           </div>
-        }
+          }
+        </div>
       </div>
+      }
     </div>
+  </div>
   }
 </z-card>

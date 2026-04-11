@@ -1,11 +1,9 @@
 <z-card
-  class="rounded-4xl border border-base-300/60 bg-card/85 p-5 shadow-sm transition-all hover:border-primary/20 hover:shadow-lg dark:border-base-200/60 dark:bg-base-100/90"
->
+  class="rounded-4xl border border-base-300/60 bg-card/85 p-5 shadow-sm transition-all hover:border-primary/20 hover:shadow-lg dark:border-base-200/60 dark:bg-base-100/90">
   <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
     <div class="flex min-w-0 flex-1 items-start gap-4">
       <div
-        class="flex size-12 shrink-0 items-center justify-center rounded-[var(--radius-xl)] border border-primary/15 bg-primary/10 text-primary"
-      >
+        class="flex size-12 shrink-0 items-center justify-center rounded-xl border border-primary/15 bg-primary/10 text-primary">
         <z-icon zType="calendar-alt" class="h-5 w-5" />
       </div>
 
@@ -14,10 +12,8 @@
           <h3 class="truncate text-lg font-black tracking-tight">
             {{ attendance().studentName || 'Estudiante' }}
           </h3>
-          <span
-            class="rounded-full border px-3 py-1 text-[9px] font-black uppercase tracking-widest"
-            [class]="statusClass()"
-          >
+          <span class="rounded-full border px-3 py-1 text-[9px] font-black uppercase tracking-widest"
+            [class]="statusClass()">
             {{ statusLabel() }}
           </span>
         </div>
@@ -28,29 +24,25 @@
           <div class="flex items-center gap-1.5">
             <span>Ingreso: {{ attendance().checkInTime || '--:--' }}</span>
             @if (attendance().status === 'present' || attendance().status === 'late') {
-              @if (attendance().isWithinGeofence === false) {
-                <span
-                  class="flex size-4 items-center justify-center rounded-full bg-danger/10 text-[9px] text-danger"
-                  title="Registrado fuera de la institución"
-                >
-                  <i class="fas fa-location-dot"></i>
-                </span>
-              } @else if (attendance().isWithinGeofence === true) {
-                <span
-                  class="flex size-4 items-center justify-center rounded-full bg-success/10 text-[9px] text-success"
-                  title="Registrado dentro de la institución"
-                >
-                  <i class="fas fa-location-dot"></i>
-                </span>
-              }
+            @if (attendance().isWithinGeofence === false) {
+            <span class="flex size-4 items-center justify-center rounded-full bg-danger/10 text-[9px] text-danger"
+              title="Registrado fuera de la institución">
+              <i class="fas fa-location-dot"></i>
+            </span>
+            } @else if (attendance().isWithinGeofence === true) {
+            <span class="flex size-4 items-center justify-center rounded-full bg-success/10 text-[9px] text-success"
+              title="Registrado dentro de la institución">
+              <i class="fas fa-location-dot"></i>
+            </span>
+            }
             }
           </div>
         </div>
 
         @if (attendance().observations) {
-          <p class="line-clamp-2 text-xs font-medium text-base-content/65">
-            {{ attendance().observations }}
-          </p>
+        <p class="line-clamp-2 text-xs font-medium text-base-content/65">
+          {{ attendance().observations }}
+        </p>
         }
       </div>
     </div>

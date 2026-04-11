@@ -1,13 +1,11 @@
 <z-card
-  class="group rounded-4xl border border-base-300/60 bg-card/85 p-6 shadow-sm transition-all hover:border-primary/20 hover:shadow-lg dark:border-base-200/60 dark:bg-base-100/90"
->
+  class="group rounded-4xl border border-base-300/60 bg-card/85 p-6 shadow-sm transition-all hover:border-primary/20 hover:shadow-lg dark:border-base-200/60 dark:bg-base-100/90">
   <div class="flex flex-col lg:flex-row lg:items-center gap-8">
     <!-- Left: Icon & Main Info -->
     <div class="flex items-start gap-4 flex-1">
       <div
-        class="size-14 rounded-[var(--radius-xl)] flex items-center justify-center shrink-0 shadow-lg border border-border/10 group-hover:text-primary-foreground transition-colors"
-        [ngClass]="getLevelColor(gradeLevel().level)"
-      >
+        class="size-14 rounded-xl flex items-center justify-center shrink-0 shadow-lg border border-border/10 group-hover:text-primary-foreground transition-colors"
+        [ngClass]="getLevelColor(gradeLevel().level)">
         <z-icon zType="graduation-cap" class="h-6 w-6" />
       </div>
 
@@ -16,10 +14,8 @@
           <h3 class="font-black text-lg tracking-tight uppercase inter truncate">
             {{ gradeLevel().name }}
           </h3>
-          <span
-            class="rounded-full px-3 py-1 text-[9px] font-black uppercase tracking-widest border"
-            [ngClass]="getLevelColor(gradeLevel().level)"
-          >
+          <span class="rounded-full px-3 py-1 text-[9px] font-black uppercase tracking-widest border"
+            [ngClass]="getLevelColor(gradeLevel().level)">
             {{ gradeLevel().gradeNumber }}° {{ getLevelLabel(gradeLevel().level) }}
           </span>
         </div>
@@ -27,11 +23,9 @@
           Capacidad: {{ gradeLevel().maxCapacity }} estudiantes
         </p>
         @if (gradeLevel().description) {
-          <p
-            class="text-sm text-muted-foreground font-medium leading-relaxed max-w-2xl line-clamp-1"
-          >
-            {{ gradeLevel().description }}
-          </p>
+        <p class="text-sm text-muted-foreground font-medium leading-relaxed max-w-2xl line-clamp-1">
+          {{ gradeLevel().description }}
+        </p>
         }
       </div>
     </div>
@@ -39,27 +33,21 @@
     <!-- Middle: Stats (XL only) -->
     <div class="hidden xl:flex items-center gap-3 px-8 border-x border-border/10">
       <div class="flex flex-col items-center gap-1">
-        <div
-          class="size-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center shadow-sm"
-        >
+        <div class="size-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center shadow-sm">
           <z-icon zType="graduation-cap" class="h-4 w-4" />
         </div>
         <span class="text-[8px] font-black uppercase text-muted-foreground/40">Grado</span>
       </div>
       <z-icon zType="chevron-right" class="h-4 w-4 text-muted-foreground/20" />
       <div class="flex flex-col items-center gap-1">
-        <div
-          class="size-8 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center shadow-sm"
-        >
+        <div class="size-8 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center shadow-sm">
           <z-icon zType="users" class="h-4 w-4" />
         </div>
         <span class="text-[8px] font-black uppercase text-muted-foreground/40">Alumnos</span>
       </div>
       <z-icon zType="chevron-right" class="h-4 w-4 text-muted-foreground/20" />
       <div class="flex flex-col items-center gap-1">
-        <div
-          class="size-8 rounded-xl bg-green-500/10 text-green-500 flex items-center justify-center shadow-sm"
-        >
+        <div class="size-8 rounded-xl bg-green-500/10 text-green-500 flex items-center justify-center shadow-sm">
           <z-icon zType="layers" class="h-4 w-4" />
         </div>
         <span class="text-[8px] font-black uppercase text-muted-foreground/40">Secciones</span>
@@ -67,81 +55,51 @@
     </div>
 
     <!-- Right: Metrics & Actions -->
-    <div
-      class="flex items-center justify-between lg:justify-end gap-10 shrink-0"
-      (click)="$event.stopPropagation()"
-    >
+    <div class="flex items-center justify-between lg:justify-end gap-10 shrink-0" (click)="$event.stopPropagation()">
       <div class="flex items-center gap-8">
         <div class="text-center">
           <p class="text-xs font-black inter uppercase text-primary">
             {{ gradeLevel().maxCapacity }}
           </p>
-          <span class="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60"
-            >Capacidad</span
-          >
+          <span class="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60">Capacidad</span>
         </div>
         <div class="text-center">
           <p class="text-xs font-black inter uppercase">{{ gradeLevel().gradeNumber }}°</p>
-          <span class="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60"
-            >Grado</span
-          >
+          <span class="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60">Grado</span>
         </div>
       </div>
 
       <div class="flex items-center gap-2">
-        <button
-          z-button
-          zType="ghost"
-          zSize="icon-sm"
-          class="rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
-          title="Ver secciones"
-          (click)="viewSections.emit(gradeLevel())"
-        >
+        <button z-button zType="ghost" zSize="icon-sm"
+          class="rounded-xl hover:bg-primary/10 hover:text-primary transition-all" title="Ver secciones"
+          (click)="viewSections.emit(gradeLevel())">
           <z-icon zType="layers" class="h-5 w-5" />
         </button>
 
-        <button
-          z-button
-          zType="ghost"
-          zSize="icon-sm"
-          class="rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
-          title="Ver cursos"
-          (click)="viewCourses.emit(gradeLevel())"
-        >
+        <button z-button zType="ghost" zSize="icon-sm"
+          class="rounded-xl hover:bg-primary/10 hover:text-primary transition-all" title="Ver cursos"
+          (click)="viewCourses.emit(gradeLevel())">
           <z-icon zType="book" class="h-5 w-5" />
         </button>
 
-        <button
-          z-button
-          zType="ghost"
-          zSize="icon-sm"
-          class="rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
-          title="Más acciones"
-          zPopover
-          [zContent]="actionsMenu"
-          [zPlacement]="'bottom'"
-        >
+        <button z-button zType="ghost" zSize="icon-sm"
+          class="rounded-xl hover:bg-primary/10 hover:text-primary transition-all" title="Más acciones" zPopover
+          [zContent]="actionsMenu" [zPlacement]="'bottom'">
           <z-icon zType="ellipsis" class="h-5 w-5" />
         </button>
 
         <ng-template #actionsMenu>
           <z-popover class="min-w-[160px] p-1.5 flex flex-col gap-1">
-            <button
-              z-button
-              zType="ghost"
+            <button z-button zType="ghost"
               class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
-              (click)="edit.emit(gradeLevel())"
-            >
+              (click)="edit.emit(gradeLevel())">
               <z-icon zType="settings" class="h-4 w-4" />
               Configurar
             </button>
             <div class="h-px bg-border/10 my-1 mx-2"></div>
-            <button
-              z-button
-              zType="ghost"
+            <button z-button zType="ghost"
               class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-destructive/10 hover:text-destructive transition-all"
-              (click)="delete.emit(gradeLevel())"
-            >
+              (click)="delete.emit(gradeLevel())">
               <z-icon zType="trash" class="h-4 w-4" />
               Eliminar
             </button>
@@ -152,26 +110,18 @@
   </div>
 
   <!-- Footer -->
-  <div
-    class="mt-6 flex items-center justify-between gap-4 border-t border-base-300/60 pt-6 dark:border-base-200/60"
-  >
+  <div class="mt-6 flex items-center justify-between gap-4 border-t border-base-300/60 pt-6 dark:border-base-200/60">
     <div class="flex items-center gap-1 text-[10px] font-bold text-muted-foreground">
       <z-icon zType="zap" class="h-3 w-3 text-primary" />
       Nivel: <span class="text-foreground font-mono">{{ getLevelLabel(gradeLevel().level) }}</span>
     </div>
     <div class="flex items-center gap-3">
-      <button
-        z-button
-        zType="outline"
-        type="button"
-        class="h-9 rounded-[var(--radius-xl)] px-4 text-[10px] font-black uppercase tracking-[0.18em]"
-        (click)="viewCourses.emit(gradeLevel())"
-      >
+      <button z-button zType="outline" type="button"
+        class="h-9 rounded-xl px-4 text-[10px] font-black uppercase tracking-[0.18em]"
+        (click)="viewCourses.emit(gradeLevel())">
         Ver cursos
       </button>
-      <div
-        class="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest flex items-center gap-1"
-      >
+      <div class="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest flex items-center gap-1">
         <z-icon zType="users" class="h-3 w-3" />
         Max. {{ gradeLevel().maxCapacity }} est.
       </div>

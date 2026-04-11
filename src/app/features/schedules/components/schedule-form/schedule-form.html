@@ -1,18 +1,7 @@
-<form
-  [formGroup]="form"
-  class="flex max-h-[calc(80vh-3rem)] flex-col overflow-hidden"
-  (ngSubmit)="submit()"
->
+<form [formGroup]="form" class="flex max-h-[calc(80vh-3rem)] flex-col overflow-hidden" (ngSubmit)="submit()">
   <header class="mb-4 flex items-center justify-between">
     <h2 class="text-lg font-semibold">{{ current ? 'Editar horario' : 'Nuevo horario' }}</h2>
-    <button
-      type="button"
-      z-button
-      zColor="secondary"
-      zType="ghost"
-      zShape="circle"
-      (click)="close()"
-    >
+    <button type="button" z-button zColor="secondary" zType="ghost" zShape="circle" (click)="close()">
       <i class="fas fa-times"></i>
     </button>
   </header>
@@ -23,53 +12,36 @@
         <z-form-field>
           <label z-form-label for="blockType">Tipo de bloque</label>
           <z-form-control>
-            <z-select-option
-              id="blockType"
-              [options]="blockTypeOptions"
-              formControlName="blockType"
-            ></z-select-option>
+            <z-select-option id="blockType" [options]="blockTypeOptions" formControlName="blockType"></z-select-option>
           </z-form-control>
         </z-form-field>
       </div>
       @if (!isBreakBlock()) {
-        <div class="md:col-span-2">
-          <z-form-field>
-            <label z-form-label for="sectionCourse">Curso - Sección</label>
-            <z-form-control>
-              <sga-section-course-select
-                id="sectionCourse"
-                formControlName="sectionCourse"
-                placeholder="Seleccionar curso y sección"
-                (selectionChange)="onSectionCourseSelect($event)"
-              ></sga-section-course-select>
-            </z-form-control>
-          </z-form-field>
-        </div>
+      <div class="md:col-span-2">
+        <z-form-field>
+          <label z-form-label for="sectionCourse">Curso - Sección</label>
+          <z-form-control>
+            <sga-section-course-select id="sectionCourse" formControlName="sectionCourse"
+              placeholder="Seleccionar curso y sección"
+              (selectionChange)="onSectionCourseSelect($event)"></sga-section-course-select>
+          </z-form-control>
+        </z-form-field>
+      </div>
       } @else {
-        <div class="md:col-span-2">
-          <z-form-field>
-            <label z-form-label for="title">Título del receso</label>
-            <z-form-control>
-              <input
-                z-input
-                w-full
-                id="title"
-                formControlName="title"
-                placeholder="Ej: Recreo general"
-              />
-            </z-form-control>
-          </z-form-field>
-        </div>
+      <div class="md:col-span-2">
+        <z-form-field>
+          <label z-form-label for="title">Título del receso</label>
+          <z-form-control>
+            <input z-input w-full id="title" formControlName="title" placeholder="Ej: Recreo general" />
+          </z-form-control>
+        </z-form-field>
+      </div>
       }
       <div>
         <z-form-field>
           <label z-form-label for="dayOfWeek">Día</label>
           <z-form-control>
-            <z-select-option
-              id="dayOfWeek"
-              [options]="dayOptions"
-              formControlName="dayOfWeek"
-            ></z-select-option>
+            <z-select-option id="dayOfWeek" [options]="dayOptions" formControlName="dayOfWeek"></z-select-option>
           </z-form-control>
         </z-form-field>
       </div>
@@ -77,13 +49,7 @@
         <z-form-field>
           <label z-form-label for="classroom">Aula</label>
           <z-form-control>
-            <input
-              z-input
-              w-full
-              id="classroom"
-              formControlName="classroom"
-              placeholder="Ej: Aula 006"
-            />
+            <input z-input w-full id="classroom" formControlName="classroom" placeholder="Ej: Aula 006" />
           </z-form-control>
         </z-form-field>
       </div>
@@ -99,17 +65,13 @@
         <z-form-field>
           <label z-form-label for="durationMinutes">Duración</label>
           <z-form-control>
-            <z-select-option
-              id="durationMinutes"
-              [options]="durationOptions"
-              formControlName="durationMinutes"
-            ></z-select-option>
+            <z-select-option id="durationMinutes" [options]="durationOptions"
+              formControlName="durationMinutes"></z-select-option>
           </z-form-control>
         </z-form-field>
       </div>
       <div
-        class="rounded-[var(--radius-xl)] border border-base-300/60 bg-base-100/80 px-4 py-3 text-sm md:col-span-2 dark:border-base-200/60 dark:bg-base-100"
-      >
+        class="rounded-xl border border-base-300/60 bg-base-100/80 px-4 py-3 text-sm md:col-span-2 dark:border-base-200/60 dark:bg-base-100">
         <div class="flex items-center justify-between gap-4">
           <div>
             <p class="text-[10px] font-black uppercase tracking-[0.2em] text-base-content/50">
@@ -118,8 +80,7 @@
             <p class="mt-1 text-base font-semibold text-base-content">{{ durationPreview() }}</p>
           </div>
           <span
-            class="rounded-full border border-base-300/60 bg-base-100 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-base-content/55"
-          >
+            class="rounded-full border border-base-300/60 bg-base-100 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-base-content/55">
             Formato 24h
           </span>
         </div>
@@ -131,13 +92,7 @@
         <z-form-field>
           <label z-form-label for="description">Descripción</label>
           <z-form-control>
-            <input
-              z-input
-              w-full
-              id="description"
-              formControlName="description"
-              placeholder="Opcional"
-            />
+            <input z-input w-full id="description" formControlName="description" placeholder="Opcional" />
           </z-form-control>
         </z-form-field>
       </div>

@@ -1,10 +1,8 @@
 <div
-  class="group flex items-center gap-4 p-4 rounded-[2rem] bg-card/40 border border-border/10 backdrop-blur-xl hover:bg-card/60 hover:border-primary/20 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300"
->
+  class="group flex items-center gap-4 p-4 rounded-4xl bg-card/40 border border-border/10 backdrop-blur-xl hover:bg-card/60 hover:border-primary/20 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300">
   <!-- Icon Section -->
   <div
-    class="size-12 rounded-2xl flex items-center justify-center shrink-0 shadow-lg border border-border/10 bg-primary/10 text-primary transition-all duration-500 group-hover:bg-primary group-hover:text-primary-content"
-  >
+    class="size-12 rounded-2xl flex items-center justify-center shrink-0 shadow-lg border border-border/10 bg-primary/10 text-primary transition-all duration-500 group-hover:bg-primary group-hover:text-primary-content">
     <z-icon zType="shield" class="h-5 w-5" />
   </div>
 
@@ -12,13 +10,11 @@
   <div class="flex-1 min-w-0 space-y-0.5">
     <div class="flex items-center gap-2 flex-wrap">
       <span
-        class="text-sm font-black uppercase tracking-tight inter truncate group-hover:text-primary transition-colors"
-      >
+        class="text-sm font-black uppercase tracking-tight inter truncate group-hover:text-primary transition-colors">
         {{ permission().name }}
       </span>
       <span
-        class="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-primary/5 text-primary/60 border border-primary/10 shrink-0"
-      >
+        class="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-primary/5 text-primary/60 border border-primary/10 shrink-0">
         {{ permission().scope }}
       </span>
     </div>
@@ -33,28 +29,15 @@
 
   <!-- Actions -->
   <div
-    class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0"
-  >
-    <button
-      *sgaHasPermission="'permission:update'"
-      z-button
-      zType="ghost"
-      zSize="icon-sm"
-      class="rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
-      (click)="edit.emit(permission())"
-      title="Editar Permiso"
-    >
+    class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
+    <button *sgaHasPermission="'permission:update'" z-button zType="ghost" zSize="icon-sm"
+      class="rounded-xl hover:bg-primary/10 hover:text-primary transition-all" (click)="edit.emit(permission())"
+      title="Editar Permiso">
       <z-icon zType="settings" class="h-4 w-4" />
     </button>
-    <button
-      *sgaHasPermission="'permission:delete'"
-      z-button
-      zType="ghost"
-      zSize="icon-sm"
-      class="rounded-xl text-destructive hover:bg-destructive/10 transition-all"
-      (click)="confirmDelete()"
-      title="Eliminar Permiso"
-    >
+    <button *sgaHasPermission="'permission:delete'" z-button zType="ghost" zSize="icon-sm"
+      class="rounded-xl text-destructive hover:bg-destructive/10 transition-all" (click)="confirmDelete()"
+      title="Eliminar Permiso">
       <z-icon zType="trash" class="h-4 w-4" />
     </button>
   </div>

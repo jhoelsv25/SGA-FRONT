@@ -1,33 +1,27 @@
 <div class="space-y-6 p-6">
   @if (loading()) {
-    <z-skeleton
-      [class]="'mb-6 h-[220px] w-full rounded-[var(--radius-xl)] border border-base-200'"
-    ></z-skeleton>
-    <z-skeleton
-      [class]="'h-[220px] w-full rounded-[var(--radius-xl)] border border-base-200'"
-    ></z-skeleton>
+  <z-skeleton [class]="'mb-6 h-55 w-full rounded-xl border border-base-200'"></z-skeleton>
+  <z-skeleton [class]="'h-55 w-full rounded-xl border border-base-200'"></z-skeleton>
   } @else {
-    @let current = group();
-    @if (current) {
-      <section class="rounded-[2rem] border border-base-200 bg-card p-6 shadow-sm">
-        <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-          <div class="space-y-3">
-            <button z-button zType="ghost" class="px-0 text-sm font-bold" (click)="goBack()">
-              <z-icon zType="arrow-left" class="mr-2 h-4 w-4" />
-              Volver a grupos
-            </button>
-            <div>
-              <p class="text-[10px] font-black uppercase tracking-[0.22em] text-primary/70">
-                Grupo de cobranza
-              </p>
-              <h1 class="mt-2 text-3xl font-black tracking-tight">{{ current.title }}</h1>
-              <p class="mt-1 text-sm text-base-content/60">
-                {{ current.studentCount }} estudiantes · {{ current.paymentCount }} registros
-              </p>
-              <div class="mt-3 flex flex-wrap items-center gap-2">
-                <span
-                  class="rounded-full px-3 py-1 text-[9px] font-black uppercase tracking-[0.18em]"
-                  [class]="
+  @let current = group();
+  @if (current) {
+  <section class="rounded-4xl border border-base-200 bg-card p-6 shadow-sm">
+    <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+      <div class="space-y-3">
+        <button z-button zType="ghost" class="px-0 text-sm font-bold" (click)="goBack()">
+          <z-icon zType="arrow-left" class="mr-2 h-4 w-4" />
+          Volver a grupos
+        </button>
+        <div>
+          <p class="text-[10px] font-black uppercase tracking-[0.22em] text-primary/70">
+            Grupo de cobranza
+          </p>
+          <h1 class="mt-2 text-3xl font-black tracking-tight">{{ current.title }}</h1>
+          <p class="mt-1 text-sm text-base-content/60">
+            {{ current.studentCount }} estudiantes · {{ current.paymentCount }} registros
+          </p>
+          <div class="mt-3 flex flex-wrap items-center gap-2">
+            <span class="rounded-full px-3 py-1 text-[9px] font-black uppercase tracking-[0.18em]" [class]="
                     current.status === 'overdue'
                       ? 'bg-danger/10 text-danger-700'
                       : current.status === 'pending'
@@ -35,135 +29,106 @@
                         : current.status === 'partial'
                           ? 'bg-primary/10 text-primary'
                           : 'bg-emerald-100 text-emerald-700'
-                  "
-                >
-                  {{ statusLabel(current.status) }}
-                </span>
-                <span class="text-[11px] font-semibold text-base-content/55"
-                  >Vence {{ current.dueDate | date: 'dd/MM/yyyy' }}</span
-                >
-                @if (current.targetLabel) {
-                  <span class="text-[11px] font-semibold text-base-content/55">{{
-                    current.targetLabel
-                  }}</span>
-                }
-                @if (current.internalReference) {
-                  <span class="text-[11px] font-semibold text-base-content/55"
-                    >Ref. {{ current.internalReference }}</span
-                  >
-                }
-              </div>
-            </div>
-          </div>
-
-          <div class="flex flex-col gap-3">
-            <div class="flex flex-wrap gap-2">
-              <button
-                z-button
-                zType="outline"
-                zColor="secondary"
-                class="rounded-[1.2rem]"
-                (click)="openEditGroup()"
-              >
-                <z-icon zType="file-text" class="mr-2 h-4 w-4" />
-                Editar grupo
-              </button>
-              <button
-                z-button
-                zColor="primary"
-                class="rounded-[1.2rem]"
-                (click)="openRegisterPayment()"
-              >
-                <z-icon zType="plus" class="mr-2 h-4 w-4" />
-                Registrar pago
-              </button>
-            </div>
-            <div class="grid gap-3 sm:grid-cols-3">
-              <article class="rounded-[1.3rem] border border-base-200 bg-background/70 p-4">
-                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
-                  Total
-                </p>
-                <p class="mt-2 text-2xl font-black">
-                  S/ {{ current.totalAmount | number: '1.2-2' }}
-                </p>
-              </article>
-              <article class="rounded-[1.3rem] border border-base-200 bg-background/70 p-4">
-                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
-                  Cobrado
-                </p>
-                <p class="mt-2 text-2xl font-black">
-                  S/ {{ current.paidAmount | number: '1.2-2' }}
-                </p>
-              </article>
-              <article class="rounded-[1.3rem] border border-base-200 bg-background/70 p-4">
-                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
-                  Pendiente
-                </p>
-                <p class="mt-2 text-2xl font-black">
-                  S/ {{ current.outstandingAmount | number: '1.2-2' }}
-                </p>
-              </article>
-            </div>
-            <div class="grid gap-3 sm:grid-cols-3">
-              <article class="rounded-[1.3rem] border border-base-200 bg-background/70 p-4">
-                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
-                  Monto base
-                </p>
-                <p class="mt-2 text-lg font-black">S/ {{ current.amount | number: '1.2-2' }}</p>
-              </article>
-              <article class="rounded-[1.3rem] border border-base-200 bg-background/70 p-4">
-                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
-                  Mora
-                </p>
-                <p class="mt-2 text-lg font-black">
-                  S/ {{ current.lateFee || 0 | number: '1.2-2' }}
-                </p>
-              </article>
-              <article class="rounded-[1.3rem] border border-base-200 bg-background/70 p-4">
-                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
-                  Descuento
-                </p>
-                <p class="mt-2 text-lg font-black">
-                  S/ {{ current.discountAmount || 0 | number: '1.2-2' }}
-                </p>
-              </article>
-            </div>
+                  ">
+              {{ statusLabel(current.status) }}
+            </span>
+            <span class="text-[11px] font-semibold text-base-content/55">Vence {{ current.dueDate | date: 'dd/MM/yyyy'
+              }}</span>
+            @if (current.targetLabel) {
+            <span class="text-[11px] font-semibold text-base-content/55">{{
+              current.targetLabel
+              }}</span>
+            }
+            @if (current.internalReference) {
+            <span class="text-[11px] font-semibold text-base-content/55">Ref. {{ current.internalReference }}</span>
+            }
           </div>
         </div>
-      </section>
-
-      @if (current.payments.length) {
-        <section class="grid grid-cols-1 gap-4">
-          @for (payment of current.payments; track payment.id) {
-            <sga-payment-card
-              [payment]="payment"
-              (viewDetail)="openPayment($event.id)"
-              (edit)="openPayment($event.id)"
-              (delete)="openPayment($event.id)"
-            />
-          }
-        </section>
-      } @else {
-        <div
-          class="rounded-[var(--radius-xl)] border border-dashed border-base-300 bg-background/60 p-8"
-        >
-          <z-empty
-            zIcon="credit-card"
-            zTitle="Sin pagos registrados aún"
-            zDescription="El grupo ya está creado. Ahora puedes entrar con 'Registrar pago' y asociar los abonos por estudiante."
-          ></z-empty>
-        </div>
-      }
-    } @else {
-      <div
-        class="rounded-[var(--radius-xl)] border border-dashed border-base-300 bg-background/60 p-8"
-      >
-        <z-empty
-          zIcon="folder-open"
-          zTitle="Grupo no encontrado"
-          zDescription="No encontramos pagos para el grupo seleccionado."
-        ></z-empty>
       </div>
+
+      <div class="flex flex-col gap-3">
+        <div class="flex flex-wrap gap-2">
+          <button z-button zType="outline" zColor="secondary" class="rounded-[1.2rem]" (click)="openEditGroup()">
+            <z-icon zType="file-text" class="mr-2 h-4 w-4" />
+            Editar grupo
+          </button>
+          <button z-button zColor="primary" class="rounded-[1.2rem]" (click)="openRegisterPayment()">
+            <z-icon zType="plus" class="mr-2 h-4 w-4" />
+            Registrar pago
+          </button>
+        </div>
+        <div class="grid gap-3 sm:grid-cols-3">
+          <article class="rounded-[1.3rem] border border-base-200 bg-background/70 p-4">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+              Total
+            </p>
+            <p class="mt-2 text-2xl font-black">
+              S/ {{ current.totalAmount | number: '1.2-2' }}
+            </p>
+          </article>
+          <article class="rounded-[1.3rem] border border-base-200 bg-background/70 p-4">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+              Cobrado
+            </p>
+            <p class="mt-2 text-2xl font-black">
+              S/ {{ current.paidAmount | number: '1.2-2' }}
+            </p>
+          </article>
+          <article class="rounded-[1.3rem] border border-base-200 bg-background/70 p-4">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+              Pendiente
+            </p>
+            <p class="mt-2 text-2xl font-black">
+              S/ {{ current.outstandingAmount | number: '1.2-2' }}
+            </p>
+          </article>
+        </div>
+        <div class="grid gap-3 sm:grid-cols-3">
+          <article class="rounded-[1.3rem] border border-base-200 bg-background/70 p-4">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+              Monto base
+            </p>
+            <p class="mt-2 text-lg font-black">S/ {{ current.amount | number: '1.2-2' }}</p>
+          </article>
+          <article class="rounded-[1.3rem] border border-base-200 bg-background/70 p-4">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+              Mora
+            </p>
+            <p class="mt-2 text-lg font-black">
+              S/ {{ current.lateFee || 0 | number: '1.2-2' }}
+            </p>
+          </article>
+          <article class="rounded-[1.3rem] border border-base-200 bg-background/70 p-4">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+              Descuento
+            </p>
+            <p class="mt-2 text-lg font-black">
+              S/ {{ current.discountAmount || 0 | number: '1.2-2' }}
+            </p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  @if (current.payments.length) {
+  <section class="grid grid-cols-1 gap-4">
+    @for (payment of current.payments; track payment.id) {
+    <sga-payment-card [payment]="payment" (viewDetail)="openPayment($event.id)" (edit)="openPayment($event.id)"
+      (delete)="openPayment($event.id)" />
     }
+  </section>
+  } @else {
+  <div class="rounded-xl border border-dashed border-base-300 bg-background/60 p-8">
+    <z-empty zIcon="credit-card" zTitle="Sin pagos registrados aún"
+      zDescription="El grupo ya está creado. Ahora puedes entrar con 'Registrar pago' y asociar los abonos por estudiante."></z-empty>
+  </div>
+  }
+  } @else {
+  <div class="rounded-xl border border-dashed border-base-300 bg-background/60 p-8">
+    <z-empty zIcon="folder-open" zTitle="Grupo no encontrado"
+      zDescription="No encontramos pagos para el grupo seleccionado."></z-empty>
+  </div>
+  }
   }
 </div>

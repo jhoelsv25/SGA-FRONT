@@ -93,15 +93,11 @@ import { AuthStore } from '@auth/services/store/auth.store';
       @if (loading()) {
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           @for (item of [1, 2, 3, 4, 5, 6]; track item) {
-            <z-skeleton
-              [class]="'h-[250px] w-full rounded-4xl border border-base-200'"
-            ></z-skeleton>
+            <z-skeleton [class]="'h-62.5 w-full rounded-4xl border border-base-200'"></z-skeleton>
           }
         </div>
       } @else if (filteredCourses().length === 0) {
-        <div
-          class="rounded-[var(--radius-xl)] border border-dashed border-base-300 bg-background/60 p-8"
-        >
+        <div class="rounded-xl border border-dashed border-base-300 bg-background/60 p-8">
           <z-empty
             zIcon="chalkboard-teacher"
             zTitle="Sin aulas disponibles"

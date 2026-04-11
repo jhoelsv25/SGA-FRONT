@@ -4,14 +4,12 @@
       <div class="flex items-center justify-between h-20 sm:h-24">
         <div class="flex items-center gap-4 sm:gap-6 group">
           <div
-            class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-primary to-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-primary/20 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3 shrink-0"
-          >
+            class="w-12 h-12 sm:w-14 sm:h-14 bg-linear-to-br from-primary to-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-primary/20 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3 shrink-0">
             <i class="fas fa-chalkboard-teacher text-xl sm:text-2xl"></i>
           </div>
           <div class="min-w-0">
             <h1
-              class="text-xl sm:text-2xl font-black tracking-tight text-base-content whitespace-nowrap overflow-hidden text-ellipsis"
-            >
+              class="text-xl sm:text-2xl font-black tracking-tight text-base-content whitespace-nowrap overflow-hidden text-ellipsis">
               {{ sectionName() }}
             </h1>
             <div class="flex items-center gap-2 mt-0.5">
@@ -23,99 +21,78 @@
           </div>
         </div>
 
-        <nav
-          class="hidden lg:flex items-center bg-base-200/50 p-1.5 rounded-2xl gap-1 border border-base-300/30"
-        >
+        <nav class="hidden lg:flex items-center bg-base-200/50 p-1.5 rounded-2xl gap-1 border border-base-300/30">
           @let navs =
-            [
-              { path: 'timeline', label: 'Muro', icon: 'fa-house' },
-              { path: 'tasks', label: 'Tareas', icon: 'fa-list-check' },
-              { path: 'people', label: 'Personas', icon: 'fa-users' },
-              { path: 'grades', label: 'Notas', icon: 'fa-chart-simple' },
-            ];
+          [
+          { path: 'timeline', label: 'Muro', icon: 'fa-house' },
+          { path: 'tasks', label: 'Tareas', icon: 'fa-list-check' },
+          { path: 'people', label: 'Personas', icon: 'fa-users' },
+          { path: 'grades', label: 'Notas', icon: 'fa-chart-simple' },
+          ];
           @for (nav of navs; track nav.path) {
-            <a
-              [routerLink]="nav.path"
-              routerLinkActive="bg-white dark:bg-zinc-800 text-primary shadow-sm border-base-200/80"
-              class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-base-content/60 hover:text-primary transition-all duration-300 border border-transparent"
-            >
-              <i [class]="'fa-solid ' + nav.icon + ' text-xs'"></i>
-              {{ nav.label }}
-            </a>
+          <a [routerLink]="nav.path"
+            routerLinkActive="bg-white dark:bg-zinc-800 text-primary shadow-sm border-base-200/80"
+            class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-base-content/60 hover:text-primary transition-all duration-300 border border-transparent">
+            <i [class]="'fa-solid ' + nav.icon + ' text-xs'"></i>
+            {{ nav.label }}
+          </a>
           }
         </nav>
 
         <div class="flex items-center gap-3 sm:gap-4">
           <div class="relative">
-            <button
-              type="button"
+            <button type="button"
               class="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-2xl bg-base-200/50 hover:bg-primary/10 hover:text-primary transition-all duration-300 border border-transparent hover:border-primary/20 text-base-content/70 relative"
-              (click)="showNotificationPanel.set(!showNotificationPanel())"
-              title="Notificaciones"
-            >
+              (click)="showNotificationPanel.set(!showNotificationPanel())" title="Notificaciones">
               <i class="fas fa-bell"></i>
               @if (notifications().length > 0) {
-                <span
-                  class="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-xl bg-primary text-[10px] font-black text-white shadow-lg shadow-primary/30 animate-in zoom-in"
-                >
-                  {{ notifications().length > 9 ? '9+' : notifications().length }}
-                </span>
+              <span
+                class="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-xl bg-primary text-[10px] font-black text-white shadow-lg shadow-primary/30 animate-in zoom-in">
+                {{ notifications().length > 9 ? '9+' : notifications().length }}
+              </span>
               }
             </button>
 
             @if (showNotificationPanel()) {
-              <div
-                class="absolute right-0 top-full mt-4 w-80 max-h-[28rem] overflow-hidden rounded-[2rem] bg-white dark:bg-zinc-900 border border-base-200 shadow-2xl z-50 animate-in slide-in-from-top-4 duration-500"
-              >
+            <div
+              class="absolute right-0 top-full mt-4 w-80 max-h-112 overflow-hidden rounded-4xl bg-white dark:bg-zinc-900 border border-base-200 shadow-2xl z-50 animate-in slide-in-from-top-4 duration-500">
+              <div class="flex items-center justify-between px-6 py-5 border-b border-base-100 bg-base-200/20">
+                <span class="text-sm font-black text-base-content uppercase tracking-wider">Notificaciones</span>
+                <button type="button" class="text-base-content/40 hover:text-primary transition-colors"
+                  (click)="clearNotifications()">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <div class="overflow-y-auto max-h-[20rem]">
+                @for (n of notifications(); track n.title + n.body) {
                 <div
-                  class="flex items-center justify-between px-6 py-5 border-b border-base-100 bg-base-200/20"
-                >
-                  <span class="text-sm font-black text-base-content uppercase tracking-wider"
-                    >Notificaciones</span
-                  >
-                  <button
-                    type="button"
-                    class="text-base-content/40 hover:text-primary transition-colors"
-                    (click)="clearNotifications()"
-                  >
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div>
-                <div class="overflow-y-auto max-h-[20rem]">
-                  @for (n of notifications(); track n.title + n.body) {
-                    <div
-                      class="px-6 py-4 hover:bg-primary/5 border-b border-base-100 last:border-0 transition-colors group"
-                    >
-                      <p
-                        class="text-sm font-bold text-base-content group-hover:text-primary transition-colors"
-                      >
-                        {{ n.title }}
-                      </p>
-                      @if (n.body) {
-                        <p class="text-xs text-base-content/60 mt-1 leading-relaxed">
-                          {{ n.body }}
-                        </p>
-                      }
-                    </div>
-                  } @empty {
-                    <div class="flex flex-col items-center justify-center py-12 px-6 text-center">
-                      <div
-                        class="w-12 h-12 bg-base-200/50 rounded-2xl flex items-center justify-center text-base-content/20 mb-3"
-                      >
-                        <i class="fas fa-bell-slash text-xl"></i>
-                      </div>
-                      <p class="text-sm text-base-content/40 font-bold uppercase tracking-widest">
-                        Sin novedades
-                      </p>
-                    </div>
+                  class="px-6 py-4 hover:bg-primary/5 border-b border-base-100 last:border-0 transition-colors group">
+                  <p class="text-sm font-bold text-base-content group-hover:text-primary transition-colors">
+                    {{ n.title }}
+                  </p>
+                  @if (n.body) {
+                  <p class="text-xs text-base-content/60 mt-1 leading-relaxed">
+                    {{ n.body }}
+                  </p>
                   }
                 </div>
+                } @empty {
+                <div class="flex flex-col items-center justify-center py-12 px-6 text-center">
+                  <div
+                    class="w-12 h-12 bg-base-200/50 rounded-2xl flex items-center justify-center text-base-content/20 mb-3">
+                    <i class="fas fa-bell-slash text-xl"></i>
+                  </div>
+                  <p class="text-sm text-base-content/40 font-bold uppercase tracking-widest">
+                    Sin novedades
+                  </p>
+                </div>
+                }
               </div>
+            </div>
             }
           </div>
           <div
-            class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-tr from-base-200 to-base-300 border-2 border-white dark:border-zinc-800 flex items-center justify-center font-bold text-base-content/70 shadow-sm shrink-0 overflow-hidden hover:scale-110 transition-transform duration-300"
-          >
+            class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-tr from-base-200 to-base-300 border-2 border-white dark:border-zinc-800 flex items-center justify-center font-bold text-base-content/70 shadow-sm shrink-0 overflow-hidden hover:scale-110 transition-transform duration-300">
             <i class="fas fa-user text-sm"></i>
           </div>
         </div>
@@ -125,13 +102,10 @@
       <nav class="lg:hidden pb-4 overflow-x-auto scrollbar-hide">
         <div class="flex items-center gap-2 min-w-max pb-2">
           @for (nav of navs; track nav.path) {
-            <a
-              [routerLink]="nav.path"
-              routerLinkActive="bg-primary text-white shadow-lg shadow-primary/20"
-              class="px-5 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-base-content/60 transition-all duration-300 border border-transparent"
-            >
-              {{ nav.label }}
-            </a>
+          <a [routerLink]="nav.path" routerLinkActive="bg-primary text-white shadow-lg shadow-primary/20"
+            class="px-5 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-base-content/60 transition-all duration-300 border border-transparent">
+            {{ nav.label }}
+          </a>
           }
         </div>
       </nav>
@@ -144,24 +118,13 @@
 
   <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-4 sm:bottom-8 sm:right-8">
     @if (showFloatingChat()) {
-      <sga-classroom-chat
-        [floating]="true"
-        (requestClose)="showFloatingChat.set(false)"
-      ></sga-classroom-chat>
+    <sga-classroom-chat [floating]="true" (requestClose)="showFloatingChat.set(false)"></sga-classroom-chat>
     }
 
-    <button
-      type="button"
+    <button type="button"
       class="flex h-16 w-16 items-center justify-center rounded-[1.75rem] bg-primary text-white shadow-[0_18px_40px_-18px_rgba(0,0,0,0.45)] ring-1 ring-white/30 transition-all hover:scale-105 hover:shadow-[0_24px_52px_-20px_rgba(0,0,0,0.55)]"
-      (click)="showFloatingChat.set(!showFloatingChat())"
-      aria-label="Abrir chat del aula"
-      title="Abrir chat"
-    >
-      <i
-        class="fa-solid"
-        [class.fa-xmark]="showFloatingChat()"
-        [class.fa-comment-dots]="!showFloatingChat()"
-      ></i>
+      (click)="showFloatingChat.set(!showFloatingChat())" aria-label="Abrir chat del aula" title="Abrir chat">
+      <i class="fa-solid" [class.fa-xmark]="showFloatingChat()" [class.fa-comment-dots]="!showFloatingChat()"></i>
     </button>
   </div>
 </div>

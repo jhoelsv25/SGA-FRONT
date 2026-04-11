@@ -10,200 +10,136 @@
         duración o aula antes de guardar.
       </p>
     </div>
-    <button
-      type="button"
-      z-button
-      zColor="secondary"
-      zType="ghost"
-      zShape="circle"
-      (click)="close()"
-    >
+    <button type="button" z-button zColor="secondary" zType="ghost" zShape="circle" (click)="close()">
       <i class="fas fa-times"></i>
     </button>
   </header>
 
   <div class="flex-1 overflow-y-auto pr-1">
     @if (loading()) {
-      <div class="flex min-h-[420px] items-center justify-center">
-        <span class="loading loading-spinner loading-lg text-primary"></span>
-      </div>
+    <div class="flex min-h-[420px] items-center justify-center">
+      <span class="loading loading-spinner loading-lg text-primary"></span>
+    </div>
     } @else {
-      <div class="space-y-5">
-        <div class="grid gap-3 md:grid-cols-4">
-          @for (item of plannerSummary(); track item.label) {
-            <div class="rounded-[1.5rem] border border-border bg-card px-4 py-4">
-              <p class="text-[10px] font-black uppercase tracking-[0.18em] text-muted-foreground">
-                {{ item.label }}
-              </p>
-              <p class="mt-2 text-2xl font-black tracking-tight text-foreground">
-                {{ item.value }}
-              </p>
-            </div>
-          }
+    <div class="space-y-5">
+      <div class="grid gap-3 md:grid-cols-4">
+        @for (item of plannerSummary(); track item.label) {
+        <div class="rounded-3xl border border-border bg-card px-4 py-4">
+          <p class="text-[10px] font-black uppercase tracking-[0.18em] text-muted-foreground">
+            {{ item.label }}
+          </p>
+          <p class="mt-2 text-2xl font-black tracking-tight text-foreground">
+            {{ item.value }}
+          </p>
         </div>
+        }
+      </div>
 
-        <div class="rounded-[1.75rem] border border-border bg-card p-5">
-          <div class="grid gap-4 lg:grid-cols-[1.1fr_auto_auto] lg:items-end">
-            <div>
-              <label class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground"
-                >Docente objetivo</label
-              >
-              <div class="mt-2">
-                <z-select-option
-                  [options]="teacherOptions()"
-                  [ngModel]="selectedTeacherId()"
-                  (ngModelChange)="selectedTeacherId.set($event)"
-                ></z-select-option>
-              </div>
-            </div>
-            <button
-              z-button
-              type="button"
-              class="h-11 rounded-[1rem] px-5 text-xs font-black uppercase tracking-[0.16em]"
-              (click)="generateDrafts()"
-            >
-              Generar propuesta
-            </button>
-            <div
-              class="rounded-[1rem] border border-border bg-background/80 px-4 py-3 text-sm text-muted-foreground"
-            >
-              {{ pendingCourses().length }} curso(s) sin bloque todavía
+      <div class="rounded-[1.75rem] border border-border bg-card p-5">
+        <div class="grid gap-4 lg:grid-cols-[1.1fr_auto_auto] lg:items-end">
+          <div>
+            <label class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Docente
+              objetivo</label>
+            <div class="mt-2">
+              <z-select-option [options]="teacherOptions()" [ngModel]="selectedTeacherId()"
+                (ngModelChange)="selectedTeacherId.set($event)"></z-select-option>
             </div>
           </div>
+          <button z-button type="button" class="h-11 rounded-2xl px-5 text-xs font-black uppercase tracking-[0.16em]"
+            (click)="generateDrafts()">
+            Generar propuesta
+          </button>
+          <div class="rounded-2xl border border-border bg-background/80 px-4 py-3 text-sm text-muted-foreground">
+            {{ pendingCourses().length }} curso(s) sin bloque todavía
+          </div>
+        </div>
+      </div>
+
+      @if (drafts().length) {
+      <div class="rounded-[1.75rem] border border-border bg-card">
+        <div class="border-b border-border px-5 py-4">
+          <p class="text-sm font-semibold text-foreground">Propuesta editable</p>
+          <p class="mt-1 text-sm text-muted-foreground">
+            Puedes mover manualmente cada bloque antes de guardarlo.
+          </p>
         </div>
 
-        @if (drafts().length) {
-          <div class="rounded-[1.75rem] border border-border bg-card">
-            <div class="border-b border-border px-5 py-4">
-              <p class="text-sm font-semibold text-foreground">Propuesta editable</p>
-              <p class="mt-1 text-sm text-muted-foreground">
-                Puedes mover manualmente cada bloque antes de guardarlo.
-              </p>
-            </div>
+        <div class="space-y-3 p-5">
+          @for (draft of drafts(); track draft.key; let i = $index) {
+          <div class="rounded-[1.35rem] border border-border bg-background/80 p-4">
+            <div class="grid gap-3 xl:grid-cols-[1.4fr_1fr_120px_120px_120px_1fr_auto] xl:items-end">
+              <div>
+                <p class="text-sm font-semibold text-foreground">{{ draft.title }}</p>
+                <p class="mt-1 text-xs text-muted-foreground">
+                  {{ draft.teacherName }} · {{ draft.specialization || 'Sin especialidad' }}
+                </p>
+              </div>
 
-            <div class="space-y-3 p-5">
-              @for (draft of drafts(); track draft.key; let i = $index) {
-                <div class="rounded-[1.35rem] border border-border bg-background/80 p-4">
-                  <div
-                    class="grid gap-3 xl:grid-cols-[1.4fr_1fr_120px_120px_120px_1fr_auto] xl:items-end"
-                  >
-                    <div>
-                      <p class="text-sm font-semibold text-foreground">{{ draft.title }}</p>
-                      <p class="mt-1 text-xs text-muted-foreground">
-                        {{ draft.teacherName }} · {{ draft.specialization || 'Sin especialidad' }}
-                      </p>
-                    </div>
-
-                    <div>
-                      <label
-                        class="text-[10px] font-black uppercase tracking-[0.18em] text-muted-foreground"
-                        >Día</label
-                      >
-                      <div class="mt-2">
-                        <z-select-option
-                          [options]="[
+              <div>
+                <label class="text-[10px] font-black uppercase tracking-[0.18em] text-muted-foreground">Día</label>
+                <div class="mt-2">
+                  <z-select-option [options]="[
                             { value: 'monday', label: 'Lunes' },
                             { value: 'tuesday', label: 'Martes' },
                             { value: 'wednesday', label: 'Miércoles' },
                             { value: 'thursday', label: 'Jueves' },
                             { value: 'friday', label: 'Viernes' },
                             { value: 'saturday', label: 'Sábado' },
-                          ]"
-                          [ngModel]="draft.dayOfWeek"
-                          (ngModelChange)="updateDraft(i, { dayOfWeek: $event })"
-                        ></z-select-option>
-                      </div>
-                    </div>
-
-                    <div>
-                      <label
-                        class="text-[10px] font-black uppercase tracking-[0.18em] text-muted-foreground"
-                        >Inicio</label
-                      >
-                      <input
-                        z-input
-                        class="mt-2 w-full"
-                        type="time"
-                        [ngModel]="draft.startAt"
-                        (ngModelChange)="updateDraft(i, { startAt: $event })"
-                      />
-                    </div>
-
-                    <div>
-                      <label
-                        class="text-[10px] font-black uppercase tracking-[0.18em] text-muted-foreground"
-                        >Duración</label
-                      >
-                      <input
-                        z-input
-                        class="mt-2 w-full"
-                        type="number"
-                        min="15"
-                        step="15"
-                        [ngModel]="draft.durationMinutes"
-                        (ngModelChange)="updateDraft(i, { durationMinutes: +$event })"
-                      />
-                    </div>
-
-                    <div>
-                      <label
-                        class="text-[10px] font-black uppercase tracking-[0.18em] text-muted-foreground"
-                        >Termina</label
-                      >
-                      <div
-                        class="mt-2 rounded-[1rem] border border-border bg-card px-3 py-2.5 text-sm font-semibold text-foreground"
-                      >
-                        {{ draft.endAt }}
-                      </div>
-                    </div>
-
-                    <div>
-                      <label
-                        class="text-[10px] font-black uppercase tracking-[0.18em] text-muted-foreground"
-                        >Aula</label
-                      >
-                      <input
-                        z-input
-                        class="mt-2 w-full"
-                        [ngModel]="draft.classroom"
-                        (ngModelChange)="updateDraft(i, { classroom: $event })"
-                      />
-                    </div>
-
-                    <button
-                      type="button"
-                      z-button
-                      zType="outline"
-                      zColor="danger"
-                      class="h-11 rounded-[1rem] px-4 text-xs font-black uppercase tracking-[0.16em]"
-                      (click)="removeDraft(i)"
-                    >
-                      Quitar
-                    </button>
-                  </div>
+                          ]" [ngModel]="draft.dayOfWeek"
+                    (ngModelChange)="updateDraft(i, { dayOfWeek: $event })"></z-select-option>
                 </div>
-              }
+              </div>
+
+              <div>
+                <label class="text-[10px] font-black uppercase tracking-[0.18em] text-muted-foreground">Inicio</label>
+                <input z-input class="mt-2 w-full" type="time" [ngModel]="draft.startAt"
+                  (ngModelChange)="updateDraft(i, { startAt: $event })" />
+              </div>
+
+              <div>
+                <label class="text-[10px] font-black uppercase tracking-[0.18em] text-muted-foreground">Duración</label>
+                <input z-input class="mt-2 w-full" type="number" min="15" step="15" [ngModel]="draft.durationMinutes"
+                  (ngModelChange)="updateDraft(i, { durationMinutes: +$event })" />
+              </div>
+
+              <div>
+                <label class="text-[10px] font-black uppercase tracking-[0.18em] text-muted-foreground">Termina</label>
+                <div
+                  class="mt-2 rounded-2xl border border-border bg-card px-3 py-2.5 text-sm font-semibold text-foreground">
+                  {{ draft.endAt }}
+                </div>
+              </div>
+
+              <div>
+                <label class="text-[10px] font-black uppercase tracking-[0.18em] text-muted-foreground">Aula</label>
+                <input z-input class="mt-2 w-full" [ngModel]="draft.classroom"
+                  (ngModelChange)="updateDraft(i, { classroom: $event })" />
+              </div>
+
+              <button type="button" z-button zType="outline" zColor="danger"
+                class="h-11 rounded-2xl px-4 text-xs font-black uppercase tracking-[0.16em]" (click)="removeDraft(i)">
+                Quitar
+              </button>
             </div>
           </div>
-        } @else {
-          <div
-            class="rounded-[1.75rem] border border-dashed border-border bg-card/70 px-6 py-10 text-center"
-          >
-            <div
-              class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary"
-            >
-              <i class="fas fa-shuffle text-xl"></i>
-            </div>
-            <p class="mt-4 text-base font-semibold text-foreground">
-              Todavía no hay una propuesta generada
-            </p>
-            <p class="mt-2 text-sm leading-6 text-muted-foreground">
-              Usa el filtro por docente si quieres una carga específica o genera una propuesta
-              general para todos los cursos pendientes.
-            </p>
-          </div>
-        }
+          }
+        </div>
       </div>
+      } @else {
+      <div class="rounded-[1.75rem] border border-dashed border-border bg-card/70 px-6 py-10 text-center">
+        <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary">
+          <i class="fas fa-shuffle text-xl"></i>
+        </div>
+        <p class="mt-4 text-base font-semibold text-foreground">
+          Todavía no hay una propuesta generada
+        </p>
+        <p class="mt-2 text-sm leading-6 text-muted-foreground">
+          Usa el filtro por docente si quieres una carga específica o genera una propuesta
+          general para todos los cursos pendientes.
+        </p>
+      </div>
+      }
+    </div>
     }
   </div>
 
@@ -211,13 +147,7 @@
     <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">
       Cerrar
     </button>
-    <button
-      type="button"
-      z-button
-      zColor="primary"
-      [disabled]="saving() || !drafts().length"
-      (click)="saveDrafts()"
-    >
+    <button type="button" z-button zColor="primary" [disabled]="saving() || !drafts().length" (click)="saveDrafts()">
       {{ saving() ? 'Guardando...' : 'Guardar propuesta' }}
     </button>
   </footer>

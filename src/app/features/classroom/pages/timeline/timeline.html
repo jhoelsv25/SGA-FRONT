@@ -3,29 +3,18 @@
 
   <sga-classroom-timeline-publisher />
 
-  <section
-    class="rounded-[2rem] border border-base-200 bg-card px-6 py-6 shadow-[0_18px_48px_-36px_rgba(15,23,42,0.28)]"
-  >
+  <section class="rounded-4xl border border-base-200 bg-card px-6 py-6 shadow-[0_18px_48px_-36px_rgba(15,23,42,0.28)]">
     <div class="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
       <div class="space-y-2">
-        <label class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70"
-          >Buscar en el muro</label
-        >
-        <input
-          type="text"
-          [value]="search()"
-          (input)="onSearchChange($any($event.target).value)"
+        <label class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Buscar en el muro</label>
+        <input type="text" [value]="search()" (input)="onSearchChange($any($event.target).value)"
           placeholder="Buscar por publicación, autor o recurso..."
-          class="h-14 w-full rounded-[1.75rem] border border-base-300 bg-background px-5 text-sm font-medium outline-none transition-all focus:border-primary/20 focus:ring-4 focus:ring-primary/5 dark:bg-base-100"
-        />
+          class="h-14 w-full rounded-[1.75rem] border border-base-300 bg-background px-5 text-sm font-medium outline-none transition-all focus:border-primary/20 focus:ring-4 focus:ring-primary/5 dark:bg-base-100" />
       </div>
       <div class="flex items-center gap-3 lg:justify-end">
-        <button
-          type="button"
+        <button type="button"
           class="h-14 rounded-[1.75rem] border border-base-300 px-6 text-xs font-black uppercase tracking-[0.18em] text-base-content/70 transition hover:border-primary/20 hover:text-primary disabled:opacity-50"
-          [disabled]="!search().trim()"
-          (click)="clearSearch()"
-        >
+          [disabled]="!search().trim()" (click)="clearSearch()">
           Limpiar
         </button>
       </div>
@@ -35,33 +24,30 @@
   <!-- Feed Area -->
   <div class="space-y-6">
     @if (store.loading()) {
-      <sga-classroom-timeline-skeleton />
+    <sga-classroom-timeline-skeleton />
     } @else {
-      @for (item of store.feed(); track item.id; let i = $index) {
-        <sga-classroom-timeline-feed-item [item]="item" [style.animation-delay]="i * 100 + 'ms'" />
-      } @empty {
-        <div class="py-32 flex flex-col items-center justify-center text-center">
-          <div
-            class="w-24 h-24 bg-base-200/50 rounded-3xl flex items-center justify-center text-base-content/10 mb-8 animate-bounce"
-          >
-            <i class="fa-solid fa-cloud-sun text-4xl"></i>
-          </div>
-          <h3 class="text-2xl font-black text-base-content/60 tracking-tight">
-            Todo despejado por hoy
-          </h3>
-          <p class="text-base-content/40 font-medium max-w-xs mt-2">
-            No hay publicaciones recientes en esta sección del aula.
-          </p>
-        </div>
-      }
+    @for (item of store.feed(); track item.id; let i = $index) {
+    <sga-classroom-timeline-feed-item [item]="item" [style.animation-delay]="i * 100 + 'ms'" />
+    } @empty {
+    <div class="py-32 flex flex-col items-center justify-center text-center">
+      <div
+        class="w-24 h-24 bg-base-200/50 rounded-3xl flex items-center justify-center text-base-content/10 mb-8 animate-bounce">
+        <i class="fa-solid fa-cloud-sun text-4xl"></i>
+      </div>
+      <h3 class="text-2xl font-black text-base-content/60 tracking-tight">
+        Todo despejado por hoy
+      </h3>
+      <p class="text-base-content/40 font-medium max-w-xs mt-2">
+        No hay publicaciones recientes en esta sección del aula.
+      </p>
+    </div>
+    }
 
-      @if (store.feedLoadingMore()) {
-        <div class="py-8 flex items-center justify-center">
-          <div
-            class="h-10 w-10 rounded-full border-2 border-primary/20 border-t-primary animate-spin"
-          ></div>
-        </div>
-      }
+    @if (store.feedLoadingMore()) {
+    <div class="py-8 flex items-center justify-center">
+      <div class="h-10 w-10 rounded-full border-2 border-primary/20 border-t-primary animate-spin"></div>
+    </div>
+    }
     }
   </div>
 </div>

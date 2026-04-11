@@ -1,79 +1,50 @@
 <ng-template #filters>
-  <div class="relative flex min-w-80 flex-col gap-5 rounded-[var(--radius-xl)] bg-card p-5">
+  <div class="relative flex min-w-80 flex-col gap-5 rounded-xl bg-card p-5">
     <div class="flex items-center justify-between border-b border-base-200 pb-3">
       <h3 class="text-xs font-bold text-base-content/50 uppercase tracking-widest">
         Filtros Activos
       </h3>
       @if (hasActiveFilters()) {
-        <button
-          type="button"
-          class="text-xs font-semibold uppercase tracking-widest text-primary transition hover:opacity-80"
-          (click)="clearFilters()"
-        >
-          Limpiar
-        </button>
+      <button type="button"
+        class="text-xs font-semibold uppercase tracking-widest text-primary transition hover:opacity-80"
+        (click)="clearFilters()">
+        Limpiar
+      </button>
       }
     </div>
 
     <z-form-field>
       <label z-form-label>Buscar</label>
       <z-form-control>
-        <input
-          z-input
-          placeholder="Nombre, email..."
-          [ngModel]="filterSearch()"
-          (ngModelChange)="filterSearch.set($event)"
-        />
+        <input z-input placeholder="Nombre, email..." [ngModel]="filterSearch()"
+          (ngModelChange)="filterSearch.set($event)" />
       </z-form-control>
     </z-form-field>
 
     <z-form-field>
       <label z-form-label>Rol de Usuario</label>
       <z-form-control>
-        <z-select-option
-          [options]="rolesFilter"
-          [ngModel]="filterRole()"
-          (ngModelChange)="filterRole.set($event)"
-          placeholder="Todos"
-        ></z-select-option>
+        <z-select-option [options]="rolesFilter" [ngModel]="filterRole()" (ngModelChange)="filterRole.set($event)"
+          placeholder="Todos"></z-select-option>
       </z-form-control>
     </z-form-field>
 
     <z-form-field>
       <label z-form-label>Fecha de registro</label>
       <z-form-control>
-        <sga-user-date-range-filter
-          [preset]="filterDatePreset()"
-          [fromDate]="filterCreatedFrom()"
-          [toDate]="filterCreatedTo()"
-          (rangeChange)="onDateRangeChange($event)"
-        />
+        <sga-user-date-range-filter [preset]="filterDatePreset()" [fromDate]="filterCreatedFrom()"
+          [toDate]="filterCreatedTo()" (rangeChange)="onDateRangeChange($event)" />
       </z-form-control>
     </z-form-field>
 
-    <button
-      type="button"
-      z-button
-      class="mt-1 h-11 w-full rounded-2xl font-bold uppercase tracking-widest"
-      (click)="applyFilters()"
-    >
+    <button type="button" z-button class="mt-1 h-11 w-full rounded-2xl font-bold uppercase tracking-widest"
+      (click)="applyFilters()">
       Aplicar Filtros
     </button>
   </div>
 </ng-template>
 
-<sga-header-detail
-  [config]="headerConfig()"
-  [actions]="headerActions()"
-  (action)="onHeaderAction($event)"
-  [filterTemplate]="filters"
-  [hasActiveFilters]="hasActiveFilters()"
-/>
-<sga-users-table
-  [users]="data()"
-  [loading]="loading()"
-  [pagination]="pagination()"
-  [actions]="rowActions()"
-  (actionClick)="onRowAction($event)"
-  (loadMore)="onLoadMore($event)"
-/>
+<sga-header-detail [config]="headerConfig()" [actions]="headerActions()" (action)="onHeaderAction($event)"
+  [filterTemplate]="filters" [hasActiveFilters]="hasActiveFilters()" />
+<sga-users-table [users]="data()" [loading]="loading()" [pagination]="pagination()" [actions]="rowActions()"
+  (actionClick)="onRowAction($event)" (loadMore)="onLoadMore($event)" />

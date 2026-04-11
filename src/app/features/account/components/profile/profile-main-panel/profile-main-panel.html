@@ -1,11 +1,11 @@
-<section class="overflow-hidden rounded-[2rem] border border-base-200 bg-card shadow-sm">
+<section class="overflow-hidden rounded-4xl border border-base-200 bg-card shadow-sm">
   <div class="border-b border-base-200 bg-base-100/65 px-6 py-5">
     <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">
       {{ editing() ? 'Edición de perfil' : 'Perfil personal' }}
     </p>
     <h2 class="mt-2 text-2xl font-black tracking-tight text-base-content">
       {{
-        editing() ? 'Actualiza tu información por secciones' : 'Información organizada por pestañas'
+      editing() ? 'Actualiza tu información por secciones' : 'Información organizada por pestañas'
       }}
     </h2>
     <p class="mt-2 text-sm text-base-content/60">
@@ -18,144 +18,134 @@
     <z-tab-group class="gap-6" [zShowArrow]="false" zAlignTabs="start">
       <z-tab label="Información básica">
         @if (!editing()) {
-          <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            @for (item of summaryRows(); track item.label) {
-              <div class="rounded-[1.4rem] border border-base-200 bg-base-100/75 p-4">
-                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
-                  {{ item.label }}
-                </p>
-                <p class="mt-2 text-sm font-semibold text-base-content/80">{{ item.value }}</p>
-              </div>
-            }
+        <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          @for (item of summaryRows(); track item.label) {
+          <div class="rounded-[1.4rem] border border-base-200 bg-base-100/75 p-4">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+              {{ item.label }}
+            </p>
+            <p class="mt-2 text-sm font-semibold text-base-content/80">{{ item.value }}</p>
           </div>
+          }
+        </div>
         } @else {
-          <form
-            [formGroup]="profileForm()"
-            class="rounded-[1.75rem] border border-base-200 bg-base-100/45 p-5"
-          >
-            <div class="mb-4">
-              <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
-                Cuenta
-              </p>
-              <p class="mt-1 text-sm text-base-content/60">
-                Acceso principal y medios de contacto.
-              </p>
-            </div>
+        <form [formGroup]="profileForm()" class="rounded-[1.75rem] border border-base-200 bg-base-100/45 p-5">
+          <div class="mb-4">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+              Cuenta
+            </p>
+            <p class="mt-1 text-sm text-base-content/60">
+              Acceso principal y medios de contacto.
+            </p>
+          </div>
 
-            <div class="grid gap-4 md:grid-cols-2">
-              <div>
-                <label class="label-form" for="username">Usuario</label>
-                <input z-input id="username" formControlName="username" />
-              </div>
-              <div>
-                <label class="label-form" for="email">Correo</label>
-                <input z-input id="email" type="email" formControlName="email" />
-              </div>
-              <div>
-                <label class="label-form" for="phone">Teléfono</label>
-                <input z-input id="phone" formControlName="phone" />
-              </div>
-              <div>
-                <label class="label-form" for="mobile">Celular</label>
-                <input z-input id="mobile" formControlName="mobile" />
-              </div>
+          <div class="grid gap-4 md:grid-cols-2">
+            <div>
+              <label class="label-form" for="username">Usuario</label>
+              <input z-input id="username" formControlName="username" />
             </div>
-          </form>
+            <div>
+              <label class="label-form" for="email">Correo</label>
+              <input z-input id="email" type="email" formControlName="email" />
+            </div>
+            <div>
+              <label class="label-form" for="phone">Teléfono</label>
+              <input z-input id="phone" formControlName="phone" />
+            </div>
+            <div>
+              <label class="label-form" for="mobile">Celular</label>
+              <input z-input id="mobile" formControlName="mobile" />
+            </div>
+          </div>
+        </form>
         }
       </z-tab>
 
       <z-tab label="Datos personales">
         @if (!editing()) {
-          <div class="grid gap-4 md:grid-cols-2">
-            @for (item of profileRows(); track item.label) {
-              <div class="rounded-[1.4rem] border border-base-200 bg-base-100/75 p-4">
-                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
-                  {{ item.label }}
-                </p>
-                <p class="mt-2 text-sm font-semibold text-base-content/80">{{ item.value }}</p>
-              </div>
-            }
+        <div class="grid gap-4 md:grid-cols-2">
+          @for (item of profileRows(); track item.label) {
+          <div class="rounded-[1.4rem] border border-base-200 bg-base-100/75 p-4">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+              {{ item.label }}
+            </p>
+            <p class="mt-2 text-sm font-semibold text-base-content/80">{{ item.value }}</p>
           </div>
+          }
+        </div>
         } @else {
-          <form [formGroup]="profileForm()" class="space-y-6">
-            <section class="rounded-[1.75rem] border border-base-200 bg-base-100/45 p-5">
-              <div class="mb-4">
-                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
-                  Identidad
-                </p>
-                <p class="mt-1 text-sm text-base-content/60">
-                  Información personal visible en el sistema.
-                </p>
-              </div>
+        <form [formGroup]="profileForm()" class="space-y-6">
+          <section class="rounded-[1.75rem] border border-base-200 bg-base-100/45 p-5">
+            <div class="mb-4">
+              <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+                Identidad
+              </p>
+              <p class="mt-1 text-sm text-base-content/60">
+                Información personal visible en el sistema.
+              </p>
+            </div>
 
-              <div class="grid gap-4 md:grid-cols-2">
-                <div>
-                  <label class="label-form" for="firstName">Nombres</label>
-                  <input z-input id="firstName" formControlName="firstName" />
-                </div>
-                <div>
-                  <label class="label-form" for="lastName">Apellidos</label>
-                  <input z-input id="lastName" formControlName="lastName" />
-                </div>
-                <div>
-                  <label class="label-form" for="documentType">Tipo de documento</label>
-                  <z-select-option
-                    id="documentType"
-                    formControlName="documentType"
-                    [options]="documentTypeOptions()"
-                  ></z-select-option>
-                </div>
-                <div>
-                  <label class="label-form" for="documentNumber">Número de documento</label>
-                  <input z-input id="documentNumber" formControlName="documentNumber" />
-                </div>
-                <div>
-                  <label class="label-form" for="birthDate">Fecha de nacimiento</label>
-                  <input z-input id="birthDate" type="date" formControlName="birthDate" />
-                </div>
-                <div>
-                  <label class="label-form" for="gender">Género</label>
-                  <z-select-option
-                    id="gender"
-                    formControlName="gender"
-                    [options]="genderOptions()"
-                  ></z-select-option>
-                </div>
+            <div class="grid gap-4 md:grid-cols-2">
+              <div>
+                <label class="label-form" for="firstName">Nombres</label>
+                <input z-input id="firstName" formControlName="firstName" />
               </div>
-            </section>
+              <div>
+                <label class="label-form" for="lastName">Apellidos</label>
+                <input z-input id="lastName" formControlName="lastName" />
+              </div>
+              <div>
+                <label class="label-form" for="documentType">Tipo de documento</label>
+                <z-select-option id="documentType" formControlName="documentType"
+                  [options]="documentTypeOptions()"></z-select-option>
+              </div>
+              <div>
+                <label class="label-form" for="documentNumber">Número de documento</label>
+                <input z-input id="documentNumber" formControlName="documentNumber" />
+              </div>
+              <div>
+                <label class="label-form" for="birthDate">Fecha de nacimiento</label>
+                <input z-input id="birthDate" type="date" formControlName="birthDate" />
+              </div>
+              <div>
+                <label class="label-form" for="gender">Género</label>
+                <z-select-option id="gender" formControlName="gender" [options]="genderOptions()"></z-select-option>
+              </div>
+            </div>
+          </section>
 
-            <section class="rounded-[1.75rem] border border-base-200 bg-base-100/45 p-5">
-              <div class="mb-4">
-                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
-                  Ubicación
-                </p>
-                <p class="mt-1 text-sm text-base-content/60">Datos territoriales y de domicilio.</p>
-              </div>
+          <section class="rounded-[1.75rem] border border-base-200 bg-base-100/45 p-5">
+            <div class="mb-4">
+              <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+                Ubicación
+              </p>
+              <p class="mt-1 text-sm text-base-content/60">Datos territoriales y de domicilio.</p>
+            </div>
 
-              <div class="grid gap-4 md:grid-cols-2">
-                <div class="md:col-span-2">
-                  <label class="label-form" for="address">Dirección</label>
-                  <input z-input id="address" formControlName="address" />
-                </div>
-                <div>
-                  <label class="label-form" for="district">Distrito</label>
-                  <input z-input id="district" formControlName="district" />
-                </div>
-                <div>
-                  <label class="label-form" for="province">Provincia</label>
-                  <input z-input id="province" formControlName="province" />
-                </div>
-                <div>
-                  <label class="label-form" for="department">Departamento</label>
-                  <input z-input id="department" formControlName="department" />
-                </div>
-                <div>
-                  <label class="label-form" for="nationality">Nacionalidad</label>
-                  <input z-input id="nationality" formControlName="nationality" />
-                </div>
+            <div class="grid gap-4 md:grid-cols-2">
+              <div class="md:col-span-2">
+                <label class="label-form" for="address">Dirección</label>
+                <input z-input id="address" formControlName="address" />
               </div>
-            </section>
-          </form>
+              <div>
+                <label class="label-form" for="district">Distrito</label>
+                <input z-input id="district" formControlName="district" />
+              </div>
+              <div>
+                <label class="label-form" for="province">Provincia</label>
+                <input z-input id="province" formControlName="province" />
+              </div>
+              <div>
+                <label class="label-form" for="department">Departamento</label>
+                <input z-input id="department" formControlName="department" />
+              </div>
+              <div>
+                <label class="label-form" for="nationality">Nacionalidad</label>
+                <input z-input id="nationality" formControlName="nationality" />
+              </div>
+            </div>
+          </section>
+        </form>
         }
       </z-tab>
 
@@ -170,57 +160,49 @@
                 <p class="mt-1 text-sm text-base-content/60">{{ roleSectionDescription() }}</p>
               </div>
               <span
-                class="rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-primary"
-              >
+                class="rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-primary">
                 {{ roleBadge() }}
               </span>
             </div>
 
             @if (editing() && roleEditGroups().length) {
-              <div class="space-y-4">
-                @for (group of roleEditGroups(); track group.key) {
-                  <div class="rounded-[1.5rem] border border-base-200 bg-card px-4 py-4">
-                    <p class="text-[10px] font-black uppercase tracking-[0.18em] text-primary/70">
-                      {{ group.title }}
-                    </p>
-                    <div class="mt-3 grid gap-3 md:grid-cols-2">
-                      @for (item of group.rows; track item.label) {
-                        <div
-                          class="rounded-[1.15rem] border border-base-200 bg-base-100/70 px-4 py-3"
-                        >
-                          <p
-                            class="text-[10px] font-black uppercase tracking-[0.16em] text-base-content/40"
-                          >
-                            {{ item.label }}
-                          </p>
-                          <p class="mt-2 text-sm font-semibold text-base-content/80">
-                            {{ item.value }}
-                          </p>
-                        </div>
-                      }
-                    </div>
-                  </div>
-                }
-              </div>
-            } @else if (roleRows().length) {
-              <div class="grid gap-3 md:grid-cols-2">
-                @for (item of roleRows(); track item.label) {
-                  <div class="rounded-[1.4rem] border border-base-200 bg-base-100/75 p-4">
-                    <p
-                      class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45"
-                    >
+            <div class="space-y-4">
+              @for (group of roleEditGroups(); track group.key) {
+              <div class="rounded-3xl border border-base-200 bg-card px-4 py-4">
+                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-primary/70">
+                  {{ group.title }}
+                </p>
+                <div class="mt-3 grid gap-3 md:grid-cols-2">
+                  @for (item of group.rows; track item.label) {
+                  <div class="rounded-[1.15rem] border border-base-200 bg-base-100/70 px-4 py-3">
+                    <p class="text-[10px] font-black uppercase tracking-[0.16em] text-base-content/40">
                       {{ item.label }}
                     </p>
-                    <p class="mt-2 text-sm font-semibold text-base-content/80">{{ item.value }}</p>
+                    <p class="mt-2 text-sm font-semibold text-base-content/80">
+                      {{ item.value }}
+                    </p>
                   </div>
-                }
+                  }
+                </div>
               </div>
+              }
+            </div>
+            } @else if (roleRows().length) {
+            <div class="grid gap-3 md:grid-cols-2">
+              @for (item of roleRows(); track item.label) {
+              <div class="rounded-[1.4rem] border border-base-200 bg-base-100/75 p-4">
+                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+                  {{ item.label }}
+                </p>
+                <p class="mt-2 text-sm font-semibold text-base-content/80">{{ item.value }}</p>
+              </div>
+              }
+            </div>
             } @else {
-              <div
-                class="rounded-[1.5rem] border border-dashed border-base-300 bg-base-100/60 px-4 py-4 text-sm text-base-content/55"
-              >
-                Este perfil no tiene metadatos adicionales editables o visibles para su rol.
-              </div>
+            <div
+              class="rounded-3xl border border-dashed border-base-300 bg-base-100/60 px-4 py-4 text-sm text-base-content/55">
+              Este perfil no tiene metadatos adicionales editables o visibles para su rol.
+            </div>
             }
           </section>
         </div>

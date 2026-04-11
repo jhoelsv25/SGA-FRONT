@@ -1,688 +1,571 @@
 <div class="space-y-6 p-6">
   @if (loading()) {
-    <z-skeleton [class]="'mb-6 h-12 w-40 rounded-[var(--radius-xl)]'"></z-skeleton>
-    <z-skeleton
-      [class]="'mb-6 h-[260px] w-full rounded-[var(--radius-xl)] border border-base-200'"
-    ></z-skeleton>
-    <z-skeleton
-      [class]="'h-[260px] w-full rounded-[var(--radius-xl)] border border-base-200'"
-    ></z-skeleton>
+  <z-skeleton [class]="'mb-6 h-12 w-40 rounded-xl'"></z-skeleton>
+  <z-skeleton [class]="'mb-6 h-[260px] w-full rounded-xl border border-base-200'"></z-skeleton>
+  <z-skeleton [class]="'h-[260px] w-full rounded-xl border border-base-200'"></z-skeleton>
   } @else {
-    @let current = student();
-    @if (current) {
-      <section class="relative mt-6">
-        <button
-          z-button
-          zType="ghost"
-          zSize="icon-lg"
-          class="absolute -left-4 top-1/2 z-20 -translate-y-1/2 rounded-2xl border border-base-200 bg-base-100 shadow-xl transition-all hover:-translate-x-2 hover:bg-base-200"
-          (click)="goBack()"
-          aria-label="Volver a estudiantes"
-        >
-          <z-icon zType="arrow-left" class="h-4 w-4 text-base-content/70" />
-        </button>
+  @let current = student();
+  @if (current) {
+  <section class="relative mt-6">
+    <button z-button zType="ghost" zSize="icon-lg"
+      class="absolute -left-4 top-1/2 z-20 -translate-y-1/2 rounded-2xl border border-base-200 bg-base-100 shadow-xl transition-all hover:-translate-x-2 hover:bg-base-200"
+      (click)="goBack()" aria-label="Volver a estudiantes">
+      <z-icon zType="arrow-left" class="h-4 w-4 text-base-content/70" />
+    </button>
 
-        <div
-          class="relative overflow-hidden rounded-4xl border border-base-200 bg-base-100 p-8 shadow-xl shadow-primary/5"
-        >
-          <div
-            class="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-primary/8 blur-[55px]"
-          ></div>
-          <div
-            class="pointer-events-none absolute -left-10 -bottom-10 h-32 w-32 rounded-full bg-secondary/8 blur-[48px]"
-          ></div>
-
-          <div
-            class="relative z-10 flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between"
-          >
-            <div class="flex min-w-0 items-center gap-6">
-              @if (current.photoUrl) {
-                <img
-                  [src]="current.photoUrl"
-                  [alt]="fullName()"
-                  class="h-20 w-20 shrink-0 rounded-3xl border border-primary/15 object-cover shadow-2xl shadow-primary/15"
-                />
-              } @else {
-                <div
-                  class="flex h-20 w-20 shrink-0 flex-col items-center justify-center rounded-3xl bg-primary text-2xl font-black text-primary-foreground shadow-2xl shadow-primary/30"
-                >
-                  {{ initials() }}
-                </div>
-              }
-
-              <div class="min-w-0">
-                <div class="flex flex-wrap items-center gap-3">
-                  <h1 class="truncate text-3xl font-black tracking-tighter text-base-content">
-                    {{ fullName() }}
-                  </h1>
-                  <span
-                    class="rounded-lg border border-primary/20 bg-primary/10 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest text-primary"
-                  >
-                    {{ current.studentCode }}
-                  </span>
-                  <span
-                    class="rounded-lg px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest"
-                    [class.border-success/20]="current.isActive"
-                    [class.bg-success/10]="current.isActive"
-                    [class.text-success]="current.isActive"
-                    [class.border-base-300]="!current.isActive"
-                    [class.bg-base-200]="!current.isActive"
-                    [class.text-base-content/70]="!current.isActive"
-                  >
-                    {{ statusLabel() }}
-                  </span>
-                </div>
-
-                <p class="mt-1 text-sm font-medium text-base-content/50">
-                  {{ current.email }}. Gestiona su operación académica diaria desde un solo lugar.
-                </p>
-
-                <div class="mt-3 flex flex-wrap gap-3">
-                  <div
-                    class="flex items-center gap-2 rounded-full border border-primary/10 bg-primary/5 px-3 py-1"
-                  >
-                    <z-icon zType="graduation-cap" class="h-3 w-3 text-primary/70" />
-                    <span class="text-[10px] font-black uppercase tracking-widest text-primary/70">
-                      Grado {{ current.grade || '-' }}
-                    </span>
-                  </div>
-                  <div
-                    class="flex items-center gap-2 rounded-full border border-primary/10 bg-primary/5 px-3 py-1"
-                  >
-                    <z-icon zType="calendar" class="h-3 w-3 text-primary/70" />
-                    <span class="text-[10px] font-black uppercase tracking-widest text-primary/70">
-                      {{ current.age }} años
-                    </span>
-                  </div>
-                  <div
-                    class="flex items-center gap-2 rounded-full border border-primary/10 bg-primary/5 px-3 py-1"
-                  >
-                    <z-icon zType="shield" class="h-3 w-3 text-primary/70" />
-                    <span class="text-[10px] font-black uppercase tracking-widest text-primary/70">
-                      {{ current.docType }} {{ current.docNumber }}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="relative z-10 flex w-full shrink-0 items-center gap-3 lg:w-auto">
-              @if (isPublicViewer()) {
-                <div
-                  class="rounded-3xl border border-primary/15 bg-primary/8 px-5 py-4 text-left lg:max-w-sm"
-                >
-                  <p class="text-[10px] font-black uppercase tracking-[0.18em] text-primary/70">
-                    Perfil estudiante
-                  </p>
-                  <p class="mt-2 text-sm font-semibold text-base-content/75">
-                    {{ publicProfileSummary() }}
-                  </p>
-                </div>
-              }
-              <button
-                *sgaHasPermission="'student:update'"
-                z-button
-                zColor="primary"
-                class="h-14 w-full rounded-4xl px-8 text-base font-bold shadow-2xl shadow-primary/30 transition-all hover:scale-105 lg:w-auto"
-                (click)="openEdit()"
-              >
-                <z-icon zType="settings" class="mr-2 h-5 w-5" />
-                Editar estudiante
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section
-        class="grid grid-cols-1 gap-4"
-        [class.lg:grid-cols-4]="canViewOperational()"
-        [class.lg:grid-cols-3]="isPublicViewer()"
-      >
-        <article class="rounded-4xl border border-base-200 bg-card p-5">
-          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">
-            {{ isPublicViewer() ? 'Nivel actual' : 'Matrículas' }}
-          </p>
-          @if (isPublicViewer()) {
-            <p class="mt-3 text-2xl font-black tracking-tight">{{ current.grade || '-' }}</p>
-            <p class="mt-1 text-sm text-base-content/55">{{ currentSectionName() }}</p>
-          } @else {
-            <p class="mt-3 text-3xl font-black tracking-tight">{{ enrollments().length }}</p>
-            <p class="mt-1 text-sm text-base-content/55">
-              {{ currentSectionName() }}
-            </p>
-          }
-        </article>
-
-        <article class="rounded-4xl border border-base-200 bg-card p-5">
-          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">
-            {{ isPublicViewer() ? 'Apoderado principal' : 'Apoderados' }}
-          </p>
-          @if (isPublicViewer()) {
-            <p class="mt-3 text-lg font-black tracking-tight">
-              {{ guardianName(primaryGuardian()) }}
-            </p>
-            <p class="mt-1 text-sm text-base-content/55">
-              {{ primaryGuardianRelationshipLabel() }}
-            </p>
-          } @else {
-            <p class="mt-3 text-3xl font-black tracking-tight">{{ guardians().length }}</p>
-            <p class="mt-1 text-sm text-base-content/55">
-              {{ guardianName(primaryGuardian()) }}
-            </p>
-          }
-        </article>
-
-        <article class="rounded-4xl border border-base-200 bg-card p-5">
-          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">
-            {{ isPublicViewer() ? 'Institución' : 'Observaciones' }}
-          </p>
-          @if (isPublicViewer()) {
-            <p class="mt-3 text-lg font-black tracking-tight">{{ institutionName() }}</p>
-            <p class="mt-1 text-sm text-base-content/55">{{ statusLabel() }}</p>
-          } @else {
-            <p class="mt-3 text-3xl font-black tracking-tight">{{ observations().length }}</p>
-            <p class="mt-1 text-sm text-base-content/55">
-              {{
-                latestObservation()
-                  ? observationTypeLabel(latestObservation()!.type)
-                  : 'Sin registros'
-              }}
-            </p>
-          }
-        </article>
-
-        @if (canViewOperational()) {
-          <article class="rounded-4xl border border-base-200 bg-card p-5">
-            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Perfil</p>
-            <p class="mt-3 text-lg font-black tracking-tight">{{ genderLabel() }}</p>
-            <p class="mt-1 text-sm text-base-content/55">
-              {{ current.phone || current.address || 'Sin contacto adicional' }}
-            </p>
-          </article>
-        }
-      </section>
-
-      @if (isPublicViewer()) {
-        <section class="grid grid-cols-1 gap-6">
-          <article class="rounded-4xl border border-base-200 bg-card p-6">
-            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">
-              Presentación
-            </p>
-            <h2 class="mt-2 text-2xl font-black tracking-tight">Perfil del estudiante</h2>
-            <p class="mt-4 text-sm leading-7 text-base-content/70">
-              {{ fullName() }} forma parte de {{ institutionName() }} y actualmente cursa
-              {{ current.grade || 'su nivel asignado' }}. Tiene {{ current.age }} años y su
-              matrícula vigente está asociada a {{ currentSectionName() }}.
-            </p>
-            <div class="mt-5 rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
-              <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
-                Apoderado principal
-              </p>
-              <p class="mt-2 text-sm font-semibold text-base-content/75">
-                {{ guardianName(primaryGuardian()) }} · {{ primaryGuardianRelationshipLabel() }}
-              </p>
-            </div>
-          </article>
-        </section>
-      }
-
-      <section
-        class="grid grid-cols-1 gap-6"
-        [class.xl:grid-cols-[1.2fr_0.8fr]]="canViewOperational()"
-      >
-        @if (canViewOperational()) {
-          <div class="rounded-4xl border border-base-200 bg-card p-6">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">
-                  Accesos rápidos
-                </p>
-                <h2 class="mt-2 text-2xl font-black tracking-tight">Operación del estudiante</h2>
-              </div>
-            </div>
-
-            <div class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
-              <button
-                z-button
-                zType="outline"
-                class="h-14 justify-start rounded-4xl px-5 text-left"
-                [sgaDisableIfNoPermission]="'enrollment:view'"
-                (click)="goToEnrollments()"
-              >
-                <z-icon zType="folder" class="mr-3 h-5 w-5" />
-                <span class="text-sm font-bold">Matrículas</span>
-              </button>
-              <button
-                z-button
-                zType="outline"
-                class="h-14 justify-start rounded-4xl px-5 text-left"
-                [sgaDisableIfNoPermission]="'attendance:register'"
-                (click)="goToAttendance()"
-              >
-                <z-icon zType="check" class="mr-3 h-5 w-5" />
-                <span class="text-sm font-bold">Asistencia</span>
-              </button>
-              <button
-                z-button
-                zType="outline"
-                class="h-14 justify-start rounded-4xl px-5 text-left"
-                [sgaDisableIfNoPermission]="'guardian:view'"
-                (click)="goToGuardians()"
-              >
-                <z-icon zType="users" class="mr-3 h-5 w-5" />
-                <span class="text-sm font-bold">Apoderados</span>
-              </button>
-              <button
-                z-button
-                zType="outline"
-                class="h-14 justify-start rounded-4xl px-5 text-left"
-                [sgaDisableIfNoPermission]="'observation:view'"
-                (click)="goToObservations()"
-              >
-                <z-icon zType="file-text" class="mr-3 h-5 w-5" />
-                <span class="text-sm font-bold">Observaciones</span>
-              </button>
-            </div>
-          </div>
-        }
-
-        <div class="space-y-6">
-          <article class="rounded-4xl border border-base-200 bg-card p-6">
-            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">
-              Identificación
-            </p>
-            <div class="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
-                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
-                  Documento
-                </p>
-                <p class="mt-2 text-sm font-bold text-base-content">
-                  {{ current.docType }} {{ current.docNumber }}
-                </p>
-              </div>
-              <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
-                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
-                  Género
-                </p>
-                <p class="mt-2 text-sm font-bold text-base-content">{{ genderLabel() }}</p>
-              </div>
-              <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
-                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
-                  Nacimiento
-                </p>
-                <p class="mt-2 text-sm font-bold text-base-content">{{ birthDateLabel() }}</p>
-              </div>
-              <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
-                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
-                  Edad
-                </p>
-                <p class="mt-2 text-sm font-bold text-base-content">{{ current.age }} años</p>
-              </div>
-            </div>
-          </article>
-
-          <article class="rounded-4xl border border-base-200 bg-card p-6">
-            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">
-              Contacto
-            </p>
-            <div class="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
-                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
-                  Correo
-                </p>
-                <p class="mt-2 text-sm font-bold text-base-content">
-                  {{ current.email || 'Sin correo' }}
-                </p>
-              </div>
-              <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
-                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
-                  Teléfono
-                </p>
-                <p class="mt-2 text-sm font-bold text-base-content">
-                  {{ current.phone || 'Sin teléfono' }}
-                </p>
-              </div>
-              <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4 md:col-span-2">
-                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
-                  Dirección
-                </p>
-                <p class="mt-2 text-sm font-bold text-base-content">
-                  {{ current.address || 'Sin dirección registrada' }}
-                </p>
-              </div>
-            </div>
-          </article>
-
-          <article class="overflow-hidden rounded-4xl border border-base-200 bg-card">
-            <div class="border-b border-base-200 px-6 py-5">
-              <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">
-                Carnet estudiantil
-              </p>
-              <h3 class="mt-2 text-xl font-black tracking-tight">Identificación académica</h3>
-            </div>
-
-            <div class="space-y-5 p-6">
-              <div
-                class="overflow-hidden rounded-[2rem] border border-base-200 bg-linear-to-br from-sky-950 via-primary to-emerald-600 p-5 text-white shadow-xl shadow-primary/10 print:shadow-none"
-              >
-                <div class="flex items-start justify-between gap-4">
-                  <div class="min-w-0">
-                    <p class="text-[10px] font-black uppercase tracking-[0.22em] text-white/55">
-                      SISAE Student ID
-                    </p>
-                    <h4 class="mt-2 truncate text-xl font-black tracking-tight">
-                      {{ fullName() }}
-                    </h4>
-                    <p class="mt-1 text-sm font-medium text-white/70">
-                      Grado {{ current.grade || '-' }} · {{ currentSectionName() }}
-                    </p>
-                  </div>
-                  <span
-                    class="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-white/80"
-                  >
-                    {{ current.studentCode }}
-                  </span>
-                </div>
-
-                <div class="mt-5 grid grid-cols-1 gap-4 md:grid-cols-[1fr_240px]">
-                  <div class="space-y-3">
-                    <div class="rounded-2xl border border-white/10 bg-white/8 px-4 py-3">
-                      <p class="text-[10px] font-black uppercase tracking-[0.18em] text-white/45">
-                        Código credencial
-                      </p>
-                      <p class="mt-2 text-sm font-black tracking-[0.2em] text-white">
-                        {{ credential()?.credentialCode || 'Generando...' }}
-                      </p>
-                    </div>
-                    <div class="rounded-2xl border border-white/10 bg-white/8 px-4 py-3">
-                      <p class="text-[10px] font-black uppercase tracking-[0.18em] text-white/45">
-                        Documento
-                      </p>
-                      <p class="mt-2 text-sm font-bold text-white/80">
-                        {{ current.docType }} {{ current.docNumber }}
-                      </p>
-                    </div>
-                    <div class="rounded-2xl border border-white/10 bg-white/8 px-4 py-3">
-                      <p class="text-[10px] font-black uppercase tracking-[0.18em] text-white/45">
-                        Emitido
-                      </p>
-                      <p class="mt-2 text-sm font-bold text-white/80">
-                        {{
-                          credential()?.issuedAt
-                            ? (credential()?.issuedAt! | date: 'dd/MM/yyyy HH:mm')
-                            : 'Pendiente'
-                        }}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div
-                    class="rounded-[1.6rem] border border-white/10 bg-white p-4 text-zinc-900 shadow-lg"
-                  >
-                    <div class="flex h-full flex-col rounded-[1.2rem] border border-zinc-200 p-4">
-                      <div
-                        class="mx-auto flex h-28 w-28 items-center justify-center overflow-hidden rounded-[1.5rem] border border-zinc-200 bg-zinc-100 shadow-sm"
-                      >
-                        @if (current.photoUrl) {
-                          <img
-                            [src]="current.photoUrl"
-                            [alt]="fullName()"
-                            class="h-full w-full object-cover"
-                          />
-                        } @else {
-                          <div
-                            class="flex h-full w-full items-center justify-center bg-primary text-3xl font-black text-primary-foreground"
-                          >
-                            {{ initials() }}
-                          </div>
-                        }
-                      </div>
-
-                      <div class="mt-4 text-center">
-                        <p class="text-[9px] font-black uppercase tracking-[0.2em] text-zinc-500">
-                          Carnet escolar
-                        </p>
-                        <p class="mt-2 line-clamp-2 text-sm font-black text-zinc-900">
-                          {{ fullName() }}
-                        </p>
-                        <p
-                          class="mt-1 text-[10px] font-bold uppercase tracking-[0.18em] text-zinc-500"
-                        >
-                          {{ current.studentCode }}
-                        </p>
-                      </div>
-
-                      <div class="mt-4 rounded-2xl border border-zinc-200 bg-zinc-50 px-3 py-3">
-                        <p class="text-[9px] font-black uppercase tracking-[0.18em] text-zinc-500">
-                          Código de registro
-                        </p>
-                        <div
-                          class="mt-3 flex h-14 items-end justify-center gap-[2px] overflow-hidden rounded-xl bg-white px-3 py-2"
-                        >
-                          @for (bar of credentialBarcodeBars(); track $index) {
-                            <span
-                              class="block rounded-sm bg-zinc-950"
-                              [style.width.px]="bar"
-                              [style.height.%]="$index % 5 === 0 ? 95 : $index % 3 === 0 ? 78 : 88"
-                            ></span>
-                          }
-                        </div>
-                        <p
-                          class="mt-2 text-center text-[10px] font-black tracking-[0.22em] text-zinc-800"
-                        >
-                          {{ credential()?.credentialCode || current.studentCode }}
-                        </p>
-                      </div>
-
-                      <div class="mt-4 rounded-2xl bg-zinc-950 px-3 py-3 text-center text-white">
-                        <p class="text-[8px] font-black uppercase tracking-[0.18em] text-white/55">
-                          Footer SISAE
-                        </p>
-                        <p class="mt-1 text-[10px] font-black uppercase tracking-[0.16em]">
-                          {{ current.grade || 'Nivel' }} · {{ currentSectionName() }}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="flex flex-wrap gap-3">
-                <button
-                  *sgaHasPermission="'student:update'"
-                  z-button
-                  zType="outline"
-                  class="h-12 rounded-3xl px-5 text-[10px] font-black uppercase tracking-[0.18em]"
-                  [disabled]="credentialLoading()"
-                  (click)="regenerateCredential()"
-                >
-                  <i class="fa-solid fa-rotate-right mr-2 text-sm"></i>
-                  {{ credentialLoading() ? 'Generando' : 'Regenerar carnet' }}
-                </button>
-                <button
-                  [sgaDisableIfNoPermission]="'student:view'"
-                  z-button
-                  class="h-12 rounded-3xl px-5 text-[10px] font-black uppercase tracking-[0.18em]"
-                  (click)="printCredential()"
-                >
-                  <i class="fa-solid fa-print mr-2 text-sm"></i>
-                  Imprimir carnet
-                </button>
-              </div>
-            </div>
-          </article>
-
-          <article class="rounded-4xl border border-base-200 bg-card p-6">
-            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">
-              Situación académica
-            </p>
-            @if (currentEnrollment()) {
-              <div class="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
-                  <p
-                    class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45"
-                  >
-                    Sección
-                  </p>
-                  <p class="mt-2 text-sm font-bold text-base-content">
-                    {{ currentEnrollment()!.section.name }}
-                  </p>
-                </div>
-                <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
-                  <p
-                    class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45"
-                  >
-                    Año académico
-                  </p>
-                  <p class="mt-2 text-sm font-bold text-base-content">
-                    {{ currentEnrollment()!.academicYear.year }}
-                  </p>
-                </div>
-                <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
-                  <p
-                    class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45"
-                  >
-                    Estado
-                  </p>
-                  <p class="mt-2 text-sm font-bold text-base-content">
-                    {{ enrollmentStatusLabel(currentEnrollment()!.status) }}
-                  </p>
-                </div>
-                <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
-                  <p
-                    class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45"
-                  >
-                    Tipo
-                  </p>
-                  <p class="mt-2 text-sm font-bold text-base-content">
-                    {{ enrollmentTypeLabel(currentEnrollment()!.enrollmentType) }}
-                  </p>
-                </div>
-                <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4 md:col-span-2">
-                  <p
-                    class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45"
-                  >
-                    Fecha de matrícula
-                  </p>
-                  <p class="mt-2 text-sm font-bold text-base-content">
-                    {{ currentEnrollment()!.enrollmentDate | date: 'dd/MM/yyyy' }}
-                  </p>
-                </div>
-              </div>
-            } @else {
-              <p class="mt-4 text-sm text-base-content/60">
-                El estudiante aún no tiene matrícula registrada.
-              </p>
-            }
-          </article>
-
-          <article class="rounded-4xl border border-base-200 bg-card p-6">
-            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">
-              Apoderado principal
-            </p>
-            @if (primaryGuardian()) {
-              <div class="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
-                  <p
-                    class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45"
-                  >
-                    Nombre
-                  </p>
-                  <p class="mt-2 text-sm font-bold text-base-content">
-                    {{ guardianName(primaryGuardian()) }}
-                  </p>
-                </div>
-                <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
-                  <p
-                    class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45"
-                  >
-                    Relación
-                  </p>
-                  <p class="mt-2 text-sm font-bold text-base-content">
-                    {{ guardianRelationshipLabel(primaryGuardian()!.guardian?.relationship) }}
-                  </p>
-                </div>
-                <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
-                  <p
-                    class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45"
-                  >
-                    Correo
-                  </p>
-                  <p class="mt-2 text-sm font-bold text-base-content">
-                    {{ guardianEmail(primaryGuardian()) }}
-                  </p>
-                </div>
-                <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
-                  <p
-                    class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45"
-                  >
-                    Emergencia
-                  </p>
-                  <p class="mt-2 text-sm font-bold text-base-content">
-                    {{ yesNoLabel(primaryGuardian()!.emergencyContact) }}
-                  </p>
-                </div>
-                <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
-                  <p
-                    class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45"
-                  >
-                    Recojo autorizado
-                  </p>
-                  <p class="mt-2 text-sm font-bold text-base-content">
-                    {{ yesNoLabel(primaryGuardian()!.pickupAuthorization) }}
-                  </p>
-                </div>
-                <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
-                  <p
-                    class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45"
-                  >
-                    Convive con el estudiante
-                  </p>
-                  <p class="mt-2 text-sm font-bold text-base-content">
-                    {{ yesNoLabel(primaryGuardian()!.guardian?.livesWithStudent) }}
-                  </p>
-                </div>
-              </div>
-            } @else {
-              <p class="mt-4 text-sm text-base-content/60">
-                Aún no hay apoderado principal registrado.
-              </p>
-            }
-          </article>
-
-          <article class="rounded-4xl border border-base-200 bg-card p-6">
-            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">
-              Última observación
-            </p>
-            @if (latestObservation()) {
-              <div class="mt-4 space-y-2">
-                <p class="text-sm font-bold uppercase tracking-widest text-primary/70">
-                  {{ observationTypeLabel(latestObservation()!.type) }}
-                </p>
-                <p class="text-sm text-base-content/75">{{ latestObservation()!.observation }}</p>
-                <p class="text-xs text-base-content/50">
-                  {{ latestObservation()!.date | date: 'dd/MM/yyyy' }}
-                </p>
-              </div>
-            } @else {
-              <p class="mt-4 text-sm text-base-content/60">
-                No hay observaciones registradas todavía.
-              </p>
-            }
-          </article>
-        </div>
-      </section>
-    } @else {
-      <div
-        class="rounded-[var(--radius-xl)] border border-dashed border-base-300 bg-background/60 p-8"
-      >
-        <z-empty
-          zIcon="graduation-cap"
-          zTitle="Estudiante no encontrado"
-          zDescription="No se encontró el estudiante solicitado."
-        ></z-empty>
+    <div class="relative overflow-hidden rounded-4xl border border-base-200 bg-base-100 p-8 shadow-xl shadow-primary/5">
+      <div class="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-primary/8 blur-[55px]"></div>
+      <div class="pointer-events-none absolute -left-10 -bottom-10 h-32 w-32 rounded-full bg-secondary/8 blur-[48px]">
       </div>
+
+      <div class="relative z-10 flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+        <div class="flex min-w-0 items-center gap-6">
+          @if (current.photoUrl) {
+          <img [src]="current.photoUrl" [alt]="fullName()"
+            class="h-20 w-20 shrink-0 rounded-3xl border border-primary/15 object-cover shadow-2xl shadow-primary/15" />
+          } @else {
+          <div
+            class="flex h-20 w-20 shrink-0 flex-col items-center justify-center rounded-3xl bg-primary text-2xl font-black text-primary-foreground shadow-2xl shadow-primary/30">
+            {{ initials() }}
+          </div>
+          }
+
+          <div class="min-w-0">
+            <div class="flex flex-wrap items-center gap-3">
+              <h1 class="truncate text-3xl font-black tracking-tighter text-base-content">
+                {{ fullName() }}
+              </h1>
+              <span
+                class="rounded-lg border border-primary/20 bg-primary/10 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest text-primary">
+                {{ current.studentCode }}
+              </span>
+              <span class="rounded-lg px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest"
+                [class.border-success/20]="current.isActive" [class.bg-success/10]="current.isActive"
+                [class.text-success]="current.isActive" [class.border-base-300]="!current.isActive"
+                [class.bg-base-200]="!current.isActive" [class.text-base-content/70]="!current.isActive">
+                {{ statusLabel() }}
+              </span>
+            </div>
+
+            <p class="mt-1 text-sm font-medium text-base-content/50">
+              {{ current.email }}. Gestiona su operación académica diaria desde un solo lugar.
+            </p>
+
+            <div class="mt-3 flex flex-wrap gap-3">
+              <div class="flex items-center gap-2 rounded-full border border-primary/10 bg-primary/5 px-3 py-1">
+                <z-icon zType="graduation-cap" class="h-3 w-3 text-primary/70" />
+                <span class="text-[10px] font-black uppercase tracking-widest text-primary/70">
+                  Grado {{ current.grade || '-' }}
+                </span>
+              </div>
+              <div class="flex items-center gap-2 rounded-full border border-primary/10 bg-primary/5 px-3 py-1">
+                <z-icon zType="calendar" class="h-3 w-3 text-primary/70" />
+                <span class="text-[10px] font-black uppercase tracking-widest text-primary/70">
+                  {{ current.age }} años
+                </span>
+              </div>
+              <div class="flex items-center gap-2 rounded-full border border-primary/10 bg-primary/5 px-3 py-1">
+                <z-icon zType="shield" class="h-3 w-3 text-primary/70" />
+                <span class="text-[10px] font-black uppercase tracking-widest text-primary/70">
+                  {{ current.docType }} {{ current.docNumber }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="relative z-10 flex w-full shrink-0 items-center gap-3 lg:w-auto">
+          @if (isPublicViewer()) {
+          <div class="rounded-3xl border border-primary/15 bg-primary/8 px-5 py-4 text-left lg:max-w-sm">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-primary/70">
+              Perfil estudiante
+            </p>
+            <p class="mt-2 text-sm font-semibold text-base-content/75">
+              {{ publicProfileSummary() }}
+            </p>
+          </div>
+          }
+          <button *sgaHasPermission="'student:update'" z-button zColor="primary"
+            class="h-14 w-full rounded-4xl px-8 text-base font-bold shadow-2xl shadow-primary/30 transition-all hover:scale-105 lg:w-auto"
+            (click)="openEdit()">
+            <z-icon zType="settings" class="mr-2 h-5 w-5" />
+            Editar estudiante
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid grid-cols-1 gap-4" [class.lg:grid-cols-4]="canViewOperational()"
+    [class.lg:grid-cols-3]="isPublicViewer()">
+    <article class="rounded-4xl border border-base-200 bg-card p-5">
+      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">
+        {{ isPublicViewer() ? 'Nivel actual' : 'Matrículas' }}
+      </p>
+      @if (isPublicViewer()) {
+      <p class="mt-3 text-2xl font-black tracking-tight">{{ current.grade || '-' }}</p>
+      <p class="mt-1 text-sm text-base-content/55">{{ currentSectionName() }}</p>
+      } @else {
+      <p class="mt-3 text-3xl font-black tracking-tight">{{ enrollments().length }}</p>
+      <p class="mt-1 text-sm text-base-content/55">
+        {{ currentSectionName() }}
+      </p>
+      }
+    </article>
+
+    <article class="rounded-4xl border border-base-200 bg-card p-5">
+      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">
+        {{ isPublicViewer() ? 'Apoderado principal' : 'Apoderados' }}
+      </p>
+      @if (isPublicViewer()) {
+      <p class="mt-3 text-lg font-black tracking-tight">
+        {{ guardianName(primaryGuardian()) }}
+      </p>
+      <p class="mt-1 text-sm text-base-content/55">
+        {{ primaryGuardianRelationshipLabel() }}
+      </p>
+      } @else {
+      <p class="mt-3 text-3xl font-black tracking-tight">{{ guardians().length }}</p>
+      <p class="mt-1 text-sm text-base-content/55">
+        {{ guardianName(primaryGuardian()) }}
+      </p>
+      }
+    </article>
+
+    <article class="rounded-4xl border border-base-200 bg-card p-5">
+      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">
+        {{ isPublicViewer() ? 'Institución' : 'Observaciones' }}
+      </p>
+      @if (isPublicViewer()) {
+      <p class="mt-3 text-lg font-black tracking-tight">{{ institutionName() }}</p>
+      <p class="mt-1 text-sm text-base-content/55">{{ statusLabel() }}</p>
+      } @else {
+      <p class="mt-3 text-3xl font-black tracking-tight">{{ observations().length }}</p>
+      <p class="mt-1 text-sm text-base-content/55">
+        {{
+        latestObservation()
+        ? observationTypeLabel(latestObservation()!.type)
+        : 'Sin registros'
+        }}
+      </p>
+      }
+    </article>
+
+    @if (canViewOperational()) {
+    <article class="rounded-4xl border border-base-200 bg-card p-5">
+      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Perfil</p>
+      <p class="mt-3 text-lg font-black tracking-tight">{{ genderLabel() }}</p>
+      <p class="mt-1 text-sm text-base-content/55">
+        {{ current.phone || current.address || 'Sin contacto adicional' }}
+      </p>
+    </article>
     }
+  </section>
+
+  @if (isPublicViewer()) {
+  <section class="grid grid-cols-1 gap-6">
+    <article class="rounded-4xl border border-base-200 bg-card p-6">
+      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">
+        Presentación
+      </p>
+      <h2 class="mt-2 text-2xl font-black tracking-tight">Perfil del estudiante</h2>
+      <p class="mt-4 text-sm leading-7 text-base-content/70">
+        {{ fullName() }} forma parte de {{ institutionName() }} y actualmente cursa
+        {{ current.grade || 'su nivel asignado' }}. Tiene {{ current.age }} años y su
+        matrícula vigente está asociada a {{ currentSectionName() }}.
+      </p>
+      <div class="mt-5 rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
+        <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+          Apoderado principal
+        </p>
+        <p class="mt-2 text-sm font-semibold text-base-content/75">
+          {{ guardianName(primaryGuardian()) }} · {{ primaryGuardianRelationshipLabel() }}
+        </p>
+      </div>
+    </article>
+  </section>
+  }
+
+  <section class="grid grid-cols-1 gap-6" [class.xl:grid-cols-[1.2fr_0.8fr]]="canViewOperational()">
+    @if (canViewOperational()) {
+    <div class="rounded-4xl border border-base-200 bg-card p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">
+            Accesos rápidos
+          </p>
+          <h2 class="mt-2 text-2xl font-black tracking-tight">Operación del estudiante</h2>
+        </div>
+      </div>
+
+      <div class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+        <button z-button zType="outline" class="h-14 justify-start rounded-4xl px-5 text-left"
+          [sgaDisableIfNoPermission]="'enrollment:view'" (click)="goToEnrollments()">
+          <z-icon zType="folder" class="mr-3 h-5 w-5" />
+          <span class="text-sm font-bold">Matrículas</span>
+        </button>
+        <button z-button zType="outline" class="h-14 justify-start rounded-4xl px-5 text-left"
+          [sgaDisableIfNoPermission]="'attendance:register'" (click)="goToAttendance()">
+          <z-icon zType="check" class="mr-3 h-5 w-5" />
+          <span class="text-sm font-bold">Asistencia</span>
+        </button>
+        <button z-button zType="outline" class="h-14 justify-start rounded-4xl px-5 text-left"
+          [sgaDisableIfNoPermission]="'guardian:view'" (click)="goToGuardians()">
+          <z-icon zType="users" class="mr-3 h-5 w-5" />
+          <span class="text-sm font-bold">Apoderados</span>
+        </button>
+        <button z-button zType="outline" class="h-14 justify-start rounded-4xl px-5 text-left"
+          [sgaDisableIfNoPermission]="'observation:view'" (click)="goToObservations()">
+          <z-icon zType="file-text" class="mr-3 h-5 w-5" />
+          <span class="text-sm font-bold">Observaciones</span>
+        </button>
+      </div>
+    </div>
+    }
+
+    <div class="space-y-6">
+      <article class="rounded-4xl border border-base-200 bg-card p-6">
+        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">
+          Identificación
+        </p>
+        <div class="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+              Documento
+            </p>
+            <p class="mt-2 text-sm font-bold text-base-content">
+              {{ current.docType }} {{ current.docNumber }}
+            </p>
+          </div>
+          <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+              Género
+            </p>
+            <p class="mt-2 text-sm font-bold text-base-content">{{ genderLabel() }}</p>
+          </div>
+          <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+              Nacimiento
+            </p>
+            <p class="mt-2 text-sm font-bold text-base-content">{{ birthDateLabel() }}</p>
+          </div>
+          <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+              Edad
+            </p>
+            <p class="mt-2 text-sm font-bold text-base-content">{{ current.age }} años</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="rounded-4xl border border-base-200 bg-card p-6">
+        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">
+          Contacto
+        </p>
+        <div class="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+              Correo
+            </p>
+            <p class="mt-2 text-sm font-bold text-base-content">
+              {{ current.email || 'Sin correo' }}
+            </p>
+          </div>
+          <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+              Teléfono
+            </p>
+            <p class="mt-2 text-sm font-bold text-base-content">
+              {{ current.phone || 'Sin teléfono' }}
+            </p>
+          </div>
+          <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4 md:col-span-2">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+              Dirección
+            </p>
+            <p class="mt-2 text-sm font-bold text-base-content">
+              {{ current.address || 'Sin dirección registrada' }}
+            </p>
+          </div>
+        </div>
+      </article>
+
+      <article class="overflow-hidden rounded-4xl border border-base-200 bg-card">
+        <div class="border-b border-base-200 px-6 py-5">
+          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">
+            Carnet estudiantil
+          </p>
+          <h3 class="mt-2 text-xl font-black tracking-tight">Identificación académica</h3>
+        </div>
+
+        <div class="space-y-5 p-6">
+          <div
+            class="overflow-hidden rounded-4xl border border-base-200 bg-linear-to-br from-sky-950 via-primary to-emerald-600 p-5 text-white shadow-xl shadow-primary/10 print:shadow-none">
+            <div class="flex items-start justify-between gap-4">
+              <div class="min-w-0">
+                <p class="text-[10px] font-black uppercase tracking-[0.22em] text-white/55">
+                  SISAE Student ID
+                </p>
+                <h4 class="mt-2 truncate text-xl font-black tracking-tight">
+                  {{ fullName() }}
+                </h4>
+                <p class="mt-1 text-sm font-medium text-white/70">
+                  Grado {{ current.grade || '-' }} · {{ currentSectionName() }}
+                </p>
+              </div>
+              <span
+                class="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-white/80">
+                {{ current.studentCode }}
+              </span>
+            </div>
+
+            <div class="mt-5 grid grid-cols-1 gap-4 md:grid-cols-[1fr_240px]">
+              <div class="space-y-3">
+                <div class="rounded-2xl border border-white/10 bg-white/8 px-4 py-3">
+                  <p class="text-[10px] font-black uppercase tracking-[0.18em] text-white/45">
+                    Código credencial
+                  </p>
+                  <p class="mt-2 text-sm font-black tracking-[0.2em] text-white">
+                    {{ credential()?.credentialCode || 'Generando...' }}
+                  </p>
+                </div>
+                <div class="rounded-2xl border border-white/10 bg-white/8 px-4 py-3">
+                  <p class="text-[10px] font-black uppercase tracking-[0.18em] text-white/45">
+                    Documento
+                  </p>
+                  <p class="mt-2 text-sm font-bold text-white/80">
+                    {{ current.docType }} {{ current.docNumber }}
+                  </p>
+                </div>
+                <div class="rounded-2xl border border-white/10 bg-white/8 px-4 py-3">
+                  <p class="text-[10px] font-black uppercase tracking-[0.18em] text-white/45">
+                    Emitido
+                  </p>
+                  <p class="mt-2 text-sm font-bold text-white/80">
+                    {{
+                    credential()?.issuedAt
+                    ? (credential()?.issuedAt! | date: 'dd/MM/yyyy HH:mm')
+                    : 'Pendiente'
+                    }}
+                  </p>
+                </div>
+              </div>
+
+              <div class="rounded-[1.6rem] border border-white/10 bg-white p-4 text-zinc-900 shadow-lg">
+                <div class="flex h-full flex-col rounded-[1.2rem] border border-zinc-200 p-4">
+                  <div
+                    class="mx-auto flex h-28 w-28 items-center justify-center overflow-hidden rounded-3xl border border-zinc-200 bg-zinc-100 shadow-sm">
+                    @if (current.photoUrl) {
+                    <img [src]="current.photoUrl" [alt]="fullName()" class="h-full w-full object-cover" />
+                    } @else {
+                    <div
+                      class="flex h-full w-full items-center justify-center bg-primary text-3xl font-black text-primary-foreground">
+                      {{ initials() }}
+                    </div>
+                    }
+                  </div>
+
+                  <div class="mt-4 text-center">
+                    <p class="text-[9px] font-black uppercase tracking-[0.2em] text-zinc-500">
+                      Carnet escolar
+                    </p>
+                    <p class="mt-2 line-clamp-2 text-sm font-black text-zinc-900">
+                      {{ fullName() }}
+                    </p>
+                    <p class="mt-1 text-[10px] font-bold uppercase tracking-[0.18em] text-zinc-500">
+                      {{ current.studentCode }}
+                    </p>
+                  </div>
+
+                  <div class="mt-4 rounded-2xl border border-zinc-200 bg-zinc-50 px-3 py-3">
+                    <p class="text-[9px] font-black uppercase tracking-[0.18em] text-zinc-500">
+                      Código de registro
+                    </p>
+                    <div
+                      class="mt-3 flex h-14 items-end justify-center gap-[2px] overflow-hidden rounded-xl bg-white px-3 py-2">
+                      @for (bar of credentialBarcodeBars(); track $index) {
+                      <span class="block rounded-sm bg-zinc-950" [style.width.px]="bar"
+                        [style.height.%]="$index % 5 === 0 ? 95 : $index % 3 === 0 ? 78 : 88"></span>
+                      }
+                    </div>
+                    <p class="mt-2 text-center text-[10px] font-black tracking-[0.22em] text-zinc-800">
+                      {{ credential()?.credentialCode || current.studentCode }}
+                    </p>
+                  </div>
+
+                  <div class="mt-4 rounded-2xl bg-zinc-950 px-3 py-3 text-center text-white">
+                    <p class="text-[8px] font-black uppercase tracking-[0.18em] text-white/55">
+                      Footer SISAE
+                    </p>
+                    <p class="mt-1 text-[10px] font-black uppercase tracking-[0.16em]">
+                      {{ current.grade || 'Nivel' }} · {{ currentSectionName() }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-3">
+            <button *sgaHasPermission="'student:update'" z-button zType="outline"
+              class="h-12 rounded-3xl px-5 text-[10px] font-black uppercase tracking-[0.18em]"
+              [disabled]="credentialLoading()" (click)="regenerateCredential()">
+              <i class="fa-solid fa-rotate-right mr-2 text-sm"></i>
+              {{ credentialLoading() ? 'Generando' : 'Regenerar carnet' }}
+            </button>
+            <button [sgaDisableIfNoPermission]="'student:view'" z-button
+              class="h-12 rounded-3xl px-5 text-[10px] font-black uppercase tracking-[0.18em]"
+              (click)="printCredential()">
+              <i class="fa-solid fa-print mr-2 text-sm"></i>
+              Imprimir carnet
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <article class="rounded-4xl border border-base-200 bg-card p-6">
+        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">
+          Situación académica
+        </p>
+        @if (currentEnrollment()) {
+        <div class="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+              Sección
+            </p>
+            <p class="mt-2 text-sm font-bold text-base-content">
+              {{ currentEnrollment()!.section.name }}
+            </p>
+          </div>
+          <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+              Año académico
+            </p>
+            <p class="mt-2 text-sm font-bold text-base-content">
+              {{ currentEnrollment()!.academicYear.year }}
+            </p>
+          </div>
+          <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+              Estado
+            </p>
+            <p class="mt-2 text-sm font-bold text-base-content">
+              {{ enrollmentStatusLabel(currentEnrollment()!.status) }}
+            </p>
+          </div>
+          <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+              Tipo
+            </p>
+            <p class="mt-2 text-sm font-bold text-base-content">
+              {{ enrollmentTypeLabel(currentEnrollment()!.enrollmentType) }}
+            </p>
+          </div>
+          <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4 md:col-span-2">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+              Fecha de matrícula
+            </p>
+            <p class="mt-2 text-sm font-bold text-base-content">
+              {{ currentEnrollment()!.enrollmentDate | date: 'dd/MM/yyyy' }}
+            </p>
+          </div>
+        </div>
+        } @else {
+        <p class="mt-4 text-sm text-base-content/60">
+          El estudiante aún no tiene matrícula registrada.
+        </p>
+        }
+      </article>
+
+      <article class="rounded-4xl border border-base-200 bg-card p-6">
+        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">
+          Apoderado principal
+        </p>
+        @if (primaryGuardian()) {
+        <div class="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+              Nombre
+            </p>
+            <p class="mt-2 text-sm font-bold text-base-content">
+              {{ guardianName(primaryGuardian()) }}
+            </p>
+          </div>
+          <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+              Relación
+            </p>
+            <p class="mt-2 text-sm font-bold text-base-content">
+              {{ guardianRelationshipLabel(primaryGuardian()!.guardian?.relationship) }}
+            </p>
+          </div>
+          <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+              Correo
+            </p>
+            <p class="mt-2 text-sm font-bold text-base-content">
+              {{ guardianEmail(primaryGuardian()) }}
+            </p>
+          </div>
+          <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+              Emergencia
+            </p>
+            <p class="mt-2 text-sm font-bold text-base-content">
+              {{ yesNoLabel(primaryGuardian()!.emergencyContact) }}
+            </p>
+          </div>
+          <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+              Recojo autorizado
+            </p>
+            <p class="mt-2 text-sm font-bold text-base-content">
+              {{ yesNoLabel(primaryGuardian()!.pickupAuthorization) }}
+            </p>
+          </div>
+          <div class="rounded-3xl border border-base-200 bg-base-100 px-4 py-4">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+              Convive con el estudiante
+            </p>
+            <p class="mt-2 text-sm font-bold text-base-content">
+              {{ yesNoLabel(primaryGuardian()!.guardian?.livesWithStudent) }}
+            </p>
+          </div>
+        </div>
+        } @else {
+        <p class="mt-4 text-sm text-base-content/60">
+          Aún no hay apoderado principal registrado.
+        </p>
+        }
+      </article>
+
+      <article class="rounded-4xl border border-base-200 bg-card p-6">
+        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">
+          Última observación
+        </p>
+        @if (latestObservation()) {
+        <div class="mt-4 space-y-2">
+          <p class="text-sm font-bold uppercase tracking-widest text-primary/70">
+            {{ observationTypeLabel(latestObservation()!.type) }}
+          </p>
+          <p class="text-sm text-base-content/75">{{ latestObservation()!.observation }}</p>
+          <p class="text-xs text-base-content/50">
+            {{ latestObservation()!.date | date: 'dd/MM/yyyy' }}
+          </p>
+        </div>
+        } @else {
+        <p class="mt-4 text-sm text-base-content/60">
+          No hay observaciones registradas todavía.
+        </p>
+        }
+      </article>
+    </div>
+  </section>
+  } @else {
+  <div class="rounded-xl border border-dashed border-base-300 bg-background/60 p-8">
+    <z-empty zIcon="graduation-cap" zTitle="Estudiante no encontrado"
+      zDescription="No se encontró el estudiante solicitado."></z-empty>
+  </div>
+  }
   }
 </div>

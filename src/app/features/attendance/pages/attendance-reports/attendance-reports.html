@@ -1,9 +1,5 @@
 <div class="p-6">
-  <sga-header-detail
-    [config]="headerConfig()"
-    [actions]="headerActions()"
-    (action)="onHeaderAction($event)"
-  />
+  <sga-header-detail [config]="headerConfig()" [actions]="headerActions()" (action)="onHeaderAction($event)" />
 
   <section class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
     <article class="rounded-4xl border border-base-200 bg-card p-5">
@@ -35,29 +31,15 @@
   <section class="mb-6 rounded-4xl border border-base-200 bg-card p-5">
     <div class="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
       <div class="space-y-2">
-        <label class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70"
-          >Buscar</label
-        >
-        <input
-          z-input
-          type="text"
-          [value]="searchTerm()"
-          [placeholder]="
+        <label class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Buscar</label>
+        <input z-input type="text" [value]="searchTerm()" [placeholder]="
             roleType() === 'student'
               ? 'Buscar por estado o sesión...'
               : 'Buscar por estudiante, estado o sesión...'
-          "
-          (input)="onSearch(($any($event.target).value ?? '').toString())"
-        />
+          " (input)="onSearch(($any($event.target).value ?? '').toString())" />
       </div>
       <div class="flex items-center gap-3 lg:justify-end">
-        <button
-          z-button
-          zType="outline"
-          class="rounded-4xl"
-          [disabled]="!hasSearch()"
-          (click)="clearFilters()"
-        >
+        <button z-button zType="outline" class="rounded-4xl" [disabled]="!hasSearch()" (click)="clearFilters()">
           Limpiar
         </button>
       </div>
@@ -65,25 +47,20 @@
   </section>
 
   @if (loading()) {
-    <div class="grid grid-cols-1 gap-4">
-      <z-skeleton [class]="'h-[180px] w-full rounded-4xl border border-base-200'"></z-skeleton>
-      <z-skeleton [class]="'h-[180px] w-full rounded-4xl border border-base-200'"></z-skeleton>
-    </div>
+  <div class="grid grid-cols-1 gap-4">
+    <z-skeleton [class]="'h-[180px] w-full rounded-4xl border border-base-200'"></z-skeleton>
+    <z-skeleton [class]="'h-[180px] w-full rounded-4xl border border-base-200'"></z-skeleton>
+  </div>
   } @else if (data().length) {
-    <section class="grid grid-cols-1 gap-4">
-      @for (row of data(); track row.id || row.enrollmentId + row.date + row.status) {
-        <sga-attendance-report-card [attendance]="row" />
-      }
-    </section>
+  <section class="grid grid-cols-1 gap-4">
+    @for (row of data(); track row.id || row.enrollmentId + row.date + row.status) {
+    <sga-attendance-report-card [attendance]="row" />
+    }
+  </section>
   } @else {
-    <div
-      class="rounded-[var(--radius-xl)] border border-dashed border-base-300 bg-background/60 p-8"
-    >
-      <z-empty
-        zIcon="calendar-alt"
-        zTitle="Sin asistencias"
-        zDescription="No hay registros de asistencia para los filtros actuales."
-      ></z-empty>
-    </div>
+  <div class="rounded-xl border border-dashed border-base-300 bg-background/60 p-8">
+    <z-empty zIcon="calendar-alt" zTitle="Sin asistencias"
+      zDescription="No hay registros de asistencia para los filtros actuales."></z-empty>
+  </div>
   }
 </div>

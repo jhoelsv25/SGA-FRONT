@@ -1,12 +1,10 @@
 <z-card
-  class="group rounded-4xl border border-base-300/60 bg-card/85 p-6 shadow-sm transition-all hover:border-primary/20 hover:shadow-lg dark:border-base-200/60 dark:bg-base-100/90"
->
+  class="group rounded-4xl border border-base-300/60 bg-card/85 p-6 shadow-sm transition-all hover:border-primary/20 hover:shadow-lg dark:border-base-200/60 dark:bg-base-100/90">
   <div class="flex flex-col gap-6">
     <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
       <div class="flex min-w-0 flex-1 items-start gap-4">
         <div
-          class="flex size-14 shrink-0 items-center justify-center rounded-[var(--radius-xl)] border border-primary/15 bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground"
-        >
+          class="flex size-14 shrink-0 items-center justify-center rounded-xl border border-primary/15 bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
           <z-icon zType="file-text" class="h-6 w-6" />
         </div>
 
@@ -15,14 +13,11 @@
             <h3 class="truncate text-lg font-black uppercase tracking-tight">
               {{ payment().studentName || 'Pago sin estudiante' }}
             </h3>
-            <span
-              class="rounded-full border px-3 py-1 text-[9px] font-black uppercase tracking-widest"
-              [class]="statusClass()"
-            >
+            <span class="rounded-full border px-3 py-1 text-[9px] font-black uppercase tracking-widest"
+              [class]="statusClass()">
               {{ statusLabel() }}
             </span>
           </div>
-
           <p class="truncate text-sm font-semibold text-muted-foreground">
             {{ payment().concept }}
           </p>
@@ -34,9 +29,9 @@
           </div>
 
           @if (payment().reference) {
-            <p class="line-clamp-2 text-xs font-medium text-base-content/65">
-              Ref. {{ payment().reference }}
-            </p>
+          <p class="line-clamp-2 text-xs font-medium text-base-content/65">
+            Ref. {{ payment().reference }}
+          </p>
           }
         </div>
       </div>
@@ -47,51 +42,32 @@
             <p class="text-xs font-black uppercase text-primary">
               S/ {{ remainingAmount() | number: '1.2-2' }}
             </p>
-            <span class="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60"
-              >Saldo</span
-            >
+            <span class="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60">Saldo</span>
           </div>
           <div>
             <p class="text-xs font-black uppercase">S/ {{ payment().amount | number: '1.2-2' }}</p>
-            <span class="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60"
-              >Monto</span
-            >
+            <span class="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60">Monto</span>
           </div>
         </div>
 
-        <button
-          z-button
-          zType="ghost"
-          zSize="icon-sm"
-          class="rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
-          title="Más acciones"
-          zPopover
-          [zContent]="actionsMenu"
-          [zPlacement]="'bottom'"
-        >
+        <button z-button zType="ghost" zSize="icon-sm"
+          class="rounded-xl hover:bg-primary/10 hover:text-primary transition-all" title="Más acciones" zPopover
+          [zContent]="actionsMenu" [zPlacement]="'bottom'">
           <z-icon zType="ellipsis" class="h-5 w-5" />
         </button>
 
         <ng-template #actionsMenu>
-          <z-popover class="min-w-[170px] p-1.5 flex flex-col gap-1">
-            <button
-              *sgaHasPermission="'payment:update'"
-              z-button
-              zType="ghost"
+          <z-popover class="min-w-42.5 p-1.5 flex flex-col gap-1">
+            <button *sgaHasPermission="'payment:update'" z-button zType="ghost"
               class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
-              (click)="edit.emit(payment())"
-            >
+              (click)="edit.emit(payment())">
               <z-icon zType="settings" class="h-4 w-4" />
               Editar
             </button>
             <div class="mx-2 my-1 h-px bg-border/10"></div>
-            <button
-              *sgaHasPermission="'payment:delete'"
-              z-button
-              zType="ghost"
+            <button *sgaHasPermission="'payment:delete'" z-button zType="ghost"
               class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-destructive/10 hover:text-destructive transition-all"
-              (click)="delete.emit(payment())"
-            >
+              (click)="delete.emit(payment())">
               <z-icon zType="trash" class="h-4 w-4" />
               Eliminar
             </button>
@@ -101,34 +77,20 @@
     </div>
 
     <div
-      class="flex flex-wrap items-center justify-between gap-4 border-t border-base-300/60 pt-5 dark:border-base-200/60"
-    >
-      <div
-        class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground"
-      >
+      class="flex flex-wrap items-center justify-between gap-4 border-t border-base-300/60 pt-5 dark:border-base-200/60">
+      <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
         <z-icon zType="sparkles" class="h-3.5 w-3.5 text-primary" />
         Pago operativo
       </div>
 
       <div class="flex flex-wrap items-center gap-3">
-        <button
-          [sgaDisableIfNoPermission]="'payment:view'"
-          z-button
-          zType="default"
-          type="button"
-          class="h-9 rounded-[var(--radius-xl)] px-4 text-[10px] font-black uppercase tracking-[0.18em]"
-          (click)="viewDetail.emit(payment())"
-        >
+        <button [sgaDisableIfNoPermission]="'payment:view'" z-button zType="default" type="button"
+          class="h-9 rounded-xl px-4 text-[10px] font-black uppercase tracking-[0.18em]"
+          (click)="viewDetail.emit(payment())">
           Detalle
         </button>
-        <button
-          *sgaHasPermission="'payment:update'"
-          z-button
-          zType="outline"
-          type="button"
-          class="h-9 rounded-[var(--radius-xl)] px-4 text-[10px] font-black uppercase tracking-[0.18em]"
-          (click)="edit.emit(payment())"
-        >
+        <button *sgaHasPermission="'payment:update'" z-button zType="outline" type="button"
+          class="h-9 rounded-xl px-4 text-[10px] font-black uppercase tracking-[0.18em]" (click)="edit.emit(payment())">
           Editar
         </button>
       </div>

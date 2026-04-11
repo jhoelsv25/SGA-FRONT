@@ -1,4 +1,4 @@
-<section class="mt-8 rounded-[2rem] border border-base-200 bg-base-100 p-6">
+<section class="mt-8 rounded-4xl border border-base-200 bg-base-100 p-6">
   <div class="flex flex-wrap items-center justify-between gap-4">
     <div>
       <p class="text-[10px] font-black uppercase tracking-[0.22em] text-base-content/45">
@@ -9,78 +9,67 @@
       </h2>
     </div>
     <div
-      class="rounded-full border border-base-300 bg-base-100 px-4 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-base-content/55"
-    >
+      class="rounded-full border border-base-300 bg-base-100 px-4 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-base-content/55">
       {{ todayCount() }} movimientos
     </div>
   </div>
 
   @if (recentEvents().length) {
-    <div class="mt-6 overflow-hidden rounded-[1.5rem] border border-base-200">
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-base-200">
-          <thead class="bg-base-100/80">
-            <tr
-              class="text-left text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45"
-            >
-              <th class="px-4 py-4">Hora</th>
-              <th class="px-4 py-4">Tipo</th>
-              <th class="px-4 py-4">Persona</th>
-              <th class="px-4 py-4">Código</th>
-              <th class="px-4 py-4">Documento</th>
-              <th class="px-4 py-4">Movimiento</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-base-200 bg-base-100 text-sm">
-            @for (row of recentEvents(); track row.id) {
-              <tr>
-                <td class="px-4 py-4 font-black text-base-content">
-                  {{ row.eventAt | date: 'HH:mm:ss' }}
-                </td>
-                <td class="px-4 py-4">
-                  <span
-                    class="rounded-full border border-base-300 bg-base-100 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em]"
-                  >
-                    {{ personTypeLabel(row.personType) }}
-                  </span>
-                </td>
-                <td class="px-4 py-4 font-semibold text-base-content">{{ row.personName }}</td>
-                <td class="px-4 py-4 text-base-content/65">{{ row.entityCode || 'Sin código' }}</td>
-                <td class="px-4 py-4 text-base-content/65">
-                  {{ row.documentNumber || 'Sin documento' }}
-                </td>
-                <td class="px-4 py-4">
-                  <span
-                    class="rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em]"
-                    [class.bg-success]="row.eventType === 'entry'"
-                    [class.text-white]="row.eventType === 'entry'"
-                    [class.bg-amber-600]="row.eventType === 'exit'"
-                    [class.text-white]="row.eventType === 'exit'"
-                  >
-                    {{ eventTypeLabel(row.eventType) }}
-                  </span>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
+  <div class="mt-6 overflow-hidden rounded-3xl border border-base-200">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-base-200">
+        <thead class="bg-base-100/80">
+          <tr class="text-left text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+            <th class="px-4 py-4">Hora</th>
+            <th class="px-4 py-4">Tipo</th>
+            <th class="px-4 py-4">Persona</th>
+            <th class="px-4 py-4">Código</th>
+            <th class="px-4 py-4">Documento</th>
+            <th class="px-4 py-4">Movimiento</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-base-200 bg-base-100 text-sm">
+          @for (row of recentEvents(); track row.id) {
+          <tr>
+            <td class="px-4 py-4 font-black text-base-content">
+              {{ row.eventAt | date: 'HH:mm:ss' }}
+            </td>
+            <td class="px-4 py-4">
+              <span
+                class="rounded-full border border-base-300 bg-base-100 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em]">
+                {{ personTypeLabel(row.personType) }}
+              </span>
+            </td>
+            <td class="px-4 py-4 font-semibold text-base-content">{{ row.personName }}</td>
+            <td class="px-4 py-4 text-base-content/65">{{ row.entityCode || 'Sin código' }}</td>
+            <td class="px-4 py-4 text-base-content/65">
+              {{ row.documentNumber || 'Sin documento' }}
+            </td>
+            <td class="px-4 py-4">
+              <span class="rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em]"
+                [class.bg-success]="row.eventType === 'entry'" [class.text-white]="row.eventType === 'entry'"
+                [class.bg-amber-600]="row.eventType === 'exit'" [class.text-white]="row.eventType === 'exit'">
+                {{ eventTypeLabel(row.eventType) }}
+              </span>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
     </div>
+  </div>
   } @else {
-    <div
-      class="mt-6 rounded-[1.75rem] border border-dashed border-base-300 bg-base-100/60 p-10 text-center"
-    >
-      <div class="mx-auto max-w-xl">
-        <div
-          class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-[1.5rem] bg-base-200/80 text-base-content/25"
-        >
-          <i class="fa-solid fa-right-left text-2xl"></i>
-        </div>
-        <h3 class="text-xl font-black text-base-content/70">Sin movimientos registrados</h3>
-        <p class="mt-2 text-sm font-medium leading-6 text-base-content/45">
-          Cuando se registren ingresos o salidas, aquí aparecerá la tabla operativa del día.
-        </p>
+  <div class="mt-6 rounded-[1.75rem] border border-dashed border-base-300 bg-base-100/60 p-10 text-center">
+    <div class="mx-auto max-w-xl">
+      <div
+        class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-3xl bg-base-200/80 text-base-content/25">
+        <i class="fa-solid fa-right-left text-2xl"></i>
       </div>
+      <h3 class="text-xl font-black text-base-content/70">Sin movimientos registrados</h3>
+      <p class="mt-2 text-sm font-medium leading-6 text-base-content/45">
+        Cuando se registren ingresos o salidas, aquí aparecerá la tabla operativa del día.
+      </p>
     </div>
+  </div>
   }
 </section>

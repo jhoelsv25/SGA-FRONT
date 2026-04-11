@@ -1,41 +1,29 @@
 <ng-template #filters>
-  <div class="relative flex min-w-80 flex-col gap-4 rounded-[var(--radius-xl)] bg-card p-5">
+  <div class="relative flex min-w-80 flex-col gap-4 rounded-xl bg-card p-5">
     <div class="flex items-center justify-between pb-2 border-b border-base-200">
       <h3 class="text-xs font-bold text-base-content/50 uppercase tracking-widest">
         Filtros Activos
       </h3>
       @if (filterSearch() || filterStatus()) {
-        <button
-          type="button"
-          class="text-xs text-primary font-medium hover:underline"
-          (click)="clearFilters()"
-        >
-          Limpiar
-        </button>
+      <button type="button" class="text-xs text-primary font-medium hover:underline" (click)="clearFilters()">
+        Limpiar
+      </button>
       }
     </div>
 
     <z-form-field>
       <label z-form-label>Buscar</label>
       <z-form-control>
-        <input
-          z-input
-          placeholder="Nombre, código..."
-          [ngModel]="filterSearch()"
-          (ngModelChange)="filterSearch.set($event)"
-        />
+        <input z-input placeholder="Nombre, código..." [ngModel]="filterSearch()"
+          (ngModelChange)="filterSearch.set($event)" />
       </z-form-control>
     </z-form-field>
 
     <z-form-field>
       <label z-form-label>Estado</label>
       <z-form-control>
-        <z-select-option
-          [options]="statuses"
-          [ngModel]="filterStatus()"
-          (ngModelChange)="filterStatus.set($event)"
-          placeholder="Todos"
-        ></z-select-option>
+        <z-select-option [options]="statuses" [ngModel]="filterStatus()" (ngModelChange)="filterStatus.set($event)"
+          placeholder="Todos"></z-select-option>
       </z-form-control>
     </z-form-field>
 
@@ -45,37 +33,24 @@
   </div>
 </ng-template>
 
-<sga-header-detail
-  [config]="headerConfig()"
-  [actions]="headerActions()"
-  (action)="onHeaderAction($event)"
-  (refresh)="onRefresh()"
-  [filterTemplate]="filters"
-  [hasActiveFilters]="hasActiveFilters()"
-/>
+<sga-header-detail [config]="headerConfig()" [actions]="headerActions()" (action)="onHeaderAction($event)"
+  (refresh)="onRefresh()" [filterTemplate]="filters" [hasActiveFilters]="hasActiveFilters()" />
 
 <div class="p-6">
   <div class="grid grid-cols-1 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
     @if (loading() && !data().length) {
-      <sga-institution-skeleton />
+    <sga-institution-skeleton />
     } @else {
-      @for (inst of data(); track inst.id) {
-        <sga-institution-card
-          [institution]="inst"
-          (edit)="openForm(undefined, inst)"
-          (delete)="deleteInstitution(inst.id!)"
-          (statusChange)="updateStatus(inst.id!, $event)"
-        />
-      } @empty {
-        <div class="grid grid-col-span-full">
-          <z-empty
-            zIcon="building"
-            zTitle="Sin instituciones registradas"
-            zDescription="Aún no tienes ninguna institución. Crea la primera para comenzar a gestionar tu sistema educativo."
-          >
-          </z-empty>
-        </div>
-      }
+    @for (inst of data(); track inst.id) {
+    <sga-institution-card [institution]="inst" (edit)="openForm(undefined, inst)" (delete)="deleteInstitution(inst.id!)"
+      (statusChange)="updateStatus(inst.id!, $event)" />
+    } @empty {
+    <div class="grid grid-col-span-full">
+      <z-empty zIcon="building" zTitle="Sin instituciones registradas"
+        zDescription="Aún no tienes ninguna institución. Crea la primera para comenzar a gestionar tu sistema educativo.">
+      </z-empty>
+    </div>
+    }
     }
   </div>
 </div>
