@@ -1,86 +1,122 @@
-<div class="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700 p-6 ">
-    <!-- Header -->
-    <header
-        class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-card p-8 rounded-[2.5rem] border border-border/10 shadow-2xl overflow-hidden relative">
-        <div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32 blur-3xl opacity-50"></div>
+<div class="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700 p-6">
+  <!-- Header -->
+  <header
+    class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-card p-8 rounded-[2.5rem] border border-border/10 shadow-2xl overflow-hidden relative"
+  >
+    <div
+      class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32 blur-3xl opacity-50"
+    ></div>
 
-        <div class="flex items-center gap-6 relative z-10 w-full lg:w-auto">
-            <div
-                class="size-20 rounded-3xl bg-primary text-primary-content flex items-center justify-center shadow-2xl shadow-primary/30">
-                <z-icon zType="shield" class="h-10 w-10" />
-            </div>
-            <div class="space-y-1">
-                <div class="flex items-center gap-3">
-                    <h1 class="text-3xl font-black text-foreground tracking-tight uppercase inter">
-                        {{ pageTitle() }}
-                    </h1>
-                    <span
-                        class="px-3 py-1 bg-green-500/10 text-green-500 rounded-full text-[10px] font-black uppercase tracking-widest border border-green-500/20">
-                        Seguridad en Vivo
-                    </span>
-                </div>
-                <p class="text-muted-foreground text-sm font-medium">
-                    {{ pageSubtitle() }}
-                </p>
-
-                <div class="flex gap-4 mt-2">
-                    <div class="flex items-center gap-2 px-3 py-1 bg-primary/5 rounded-full border border-primary/10">
-                        <z-icon zType="activity" class="h-3 w-3 text-primary/60" />
-                        <span class="text-[10px] font-black text-primary/70 uppercase tracking-widest">
-                            {{ store.sessions().length }} Sesiones detectadas
-                        </span>
-                    </div>
-                </div>
-            </div>
+    <div class="flex items-center gap-6 relative z-10 w-full lg:w-auto">
+      <div
+        class="size-20 rounded-3xl bg-primary text-primary-content flex items-center justify-center shadow-2xl shadow-primary/30"
+      >
+        <z-icon zType="shield" class="h-10 w-10" />
+      </div>
+      <div class="space-y-1">
+        <div class="flex items-center gap-3">
+          <h1 class="text-3xl font-black text-foreground tracking-tight uppercase inter">
+            {{ pageTitle() }}
+          </h1>
+          <span
+            class="px-3 py-1 bg-green-500/10 text-green-500 rounded-full text-[10px] font-black uppercase tracking-widest border border-green-500/20"
+          >
+            Seguridad en Vivo
+          </span>
         </div>
+        <p class="text-muted-foreground text-sm font-medium">
+          {{ pageSubtitle() }}
+        </p>
 
-        <div class="relative z-10 flex w-full items-center gap-3 lg:w-auto">
-            @if (userId()) {
-            <button z-button zType="ghost" zSize="lg" (click)="goToGlobalSessions()" class="h-11 rounded-2xl gap-2 px-6 font-bold uppercase tracking-widest">
-                <z-icon zType="arrow-left" class="h-5 w-5" />
-                Todas las sesiones
-            </button>
-            }
-            <button z-button zType="outline" zSize="lg" (click)="refresh()" class="h-11 rounded-2xl gap-2 px-8 font-bold uppercase tracking-widest">
-                <z-icon zType="loader-circle" class="h-5 w-5" [class.animate-spin]="store.loading()" />
-                Sincronizar
-            </button>
+        <div class="flex gap-4 mt-2">
+          <div
+            class="flex items-center gap-2 px-3 py-1 bg-primary/5 rounded-full border border-primary/10"
+          >
+            <z-icon zType="activity" class="h-3 w-3 text-primary/60" />
+            <span class="text-[10px] font-black text-primary/70 uppercase tracking-widest">
+              {{ store.sessions().length }} Sesiones detectadas
+            </span>
+          </div>
         </div>
-    </header>
-
-    <!-- Search Bar -->
-    <div class="grid grid-cols-1 gap-4 relative z-10">
-        <div class="relative group">
-            <z-icon zType="search"
-                class="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/30 group-focus-within:text-primary transition-colors" />
-            <input z-input type="text" [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)"
-                placeholder="Buscar por nombre, apellido, IP o agentes..."
-                class="h-12 w-full border-border/20 bg-card pl-14 pr-5 text-sm font-medium shadow-sm transition-all placeholder:text-muted-foreground/30 focus-visible:ring-2 focus-visible:ring-primary/20" />
-        </div>
+      </div>
     </div>
 
-    <!-- Sessions List -->
-    <div class="space-y-4 pb-12">
-        @if (store.loading() && !store.sessions().length) {
-        @for (i of [1, 2, 3, 4]; track i) {
-        <div class="h-32 w-full bg-card/40 animate-pulse rounded-[2rem] border border-border/10 backdrop-blur-md"></div>
-        }
-        } @else {
-        <div class="grid grid-cols-1 gap-4">
-            @for (session of filteredSessions(); track session.id) {
-            <sga-session-card [session]="session" (revoke)="revokeSession($event)" />
-            } @empty {
-            <z-empty zTitle="No se encontraron sesiones"
-                zDescription="No hay registros que coincidan con los criterios de búsqueda." zIcon="shield"
-                class="bg-card/40 border border-border/10 rounded-[3rem] p-16 backdrop-blur-xl">
-                @if (searchTerm()) {
-                <button z-button zType="outline" class="mt-6 rounded-2xl px-8" (click)="searchTerm.set('')">
-                    Limpiar Búsqueda
-                </button>
-                }
-            </z-empty>
-            }
-        </div>
-        }
+    <div class="relative z-10 flex w-full items-center gap-3 lg:w-auto">
+      @if (userId()) {
+        <button
+          z-button
+          zType="ghost"
+          zSize="lg"
+          (click)="goToGlobalSessions()"
+          class="h-11 rounded-2xl gap-2 px-6 font-bold uppercase tracking-widest"
+        >
+          <z-icon zType="arrow-left" class="h-5 w-5" />
+          Todas las sesiones
+        </button>
+      }
+      <button
+        z-button
+        zType="outline"
+        zSize="lg"
+        (click)="refresh()"
+        class="h-11 rounded-2xl gap-2 px-8 font-bold uppercase tracking-widest"
+      >
+        <z-icon zType="loader-circle" class="h-5 w-5" [class.animate-spin]="store.loading()" />
+        Sincronizar
+      </button>
     </div>
+  </header>
+
+  <!-- Search Bar -->
+  <div class="grid grid-cols-1 gap-4 relative z-10">
+    <div class="relative group">
+      <z-icon
+        zType="search"
+        class="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/30 group-focus-within:text-primary transition-colors"
+      />
+      <input
+        z-input
+        type="text"
+        [ngModel]="searchTerm()"
+        (ngModelChange)="searchTerm.set($event)"
+        placeholder="Buscar por nombre, apellido, IP o agentes..."
+        class="h-12 w-full border-border/20 bg-card pl-14 pr-5 text-sm font-medium shadow-sm transition-all placeholder:text-muted-foreground/30 focus-visible:ring-2 focus-visible:ring-primary/20"
+      />
+    </div>
+  </div>
+
+  <!-- Sessions List -->
+  <div class="space-y-4 pb-12">
+    @if (store.loading() && !store.sessions().length) {
+      @for (i of [1, 2, 3, 4]; track i) {
+        <div
+          class="h-32 w-full bg-card/40 animate-pulse rounded-[2rem] border border-border/10 backdrop-blur-md"
+        ></div>
+      }
+    } @else {
+      <div class="grid grid-cols-1 gap-4">
+        @for (session of filteredSessions(); track session.id) {
+          <sga-session-card [session]="session" (revoke)="revokeSession($event)" />
+        } @empty {
+          <z-empty
+            zTitle="No se encontraron sesiones"
+            zDescription="No hay registros que coincidan con los criterios de búsqueda."
+            zIcon="shield"
+            class="bg-card/40 border border-border/10 rounded-[3rem] p-16 backdrop-blur-xl"
+          >
+            @if (searchTerm()) {
+              <button
+                z-button
+                zType="outline"
+                class="mt-6 rounded-2xl px-8"
+                (click)="searchTerm.set('')"
+              >
+                Limpiar Búsqueda
+              </button>
+            }
+          </z-empty>
+        }
+      </div>
+    }
+  </div>
 </div>

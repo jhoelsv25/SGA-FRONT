@@ -10,7 +10,11 @@ import { HeaderConfig } from '@core/types/header-types';
 import { ActionConfig } from '@core/types/action-types';
 import { DataSourceColumn } from '@core/types/data-source-types';
 import { PaginationType } from '@core/types/pagination-types';
-import { Institution, InstitutionCreate, InstitutionUpdate } from '../../institution/types/institution-types';
+import {
+  Institution,
+  InstitutionCreate,
+  InstitutionUpdate,
+} from '../../institution/types/institution-types';
 import { HEADER_CONFIG_INSTITUTION } from '../../institution/config/header.config';
 import { COLUMN_CONFIG_INSTITUTION } from '../../institution/config/column.config';
 import { ACTION_CONFIG_INSTITUTION } from '../../institution/config/action.config';

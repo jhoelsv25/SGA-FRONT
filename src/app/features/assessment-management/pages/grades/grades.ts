@@ -1,9 +1,21 @@
 import { AssessmentSelect } from '@/shared/widgets/selects';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AssessmentStore } from '../../services/store/assessment.store';
-import { type Assessment, type AssessmentScore, type PeriodCompetencyGrade } from '../../types/assessment-types';
+import {
+  type Assessment,
+  type AssessmentScore,
+  type PeriodCompetencyGrade,
+} from '../../types/assessment-types';
 import { AssessmentFiltersService } from '../../services/assessment-filters.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HeaderDetail } from '@shared/widgets/header-detail/header-detail';
@@ -11,11 +23,12 @@ import { HeaderConfig } from '@core/types/header-types';
 import { ActionConfig } from '@core/types/action-types';
 import { AssessmentApi } from '../../services/assessment-api';
 
-type ScoreRow = Pick<AssessmentScore, 'enrollmentId' | 'score' | 'observation'> & { studentName: string };
+type ScoreRow = Pick<AssessmentScore, 'enrollmentId' | 'score' | 'observation'> & {
+  studentName: string;
+};
 
 @Component({
   selector: 'sga-grades',
-  standalone: true,
   imports: [CommonModule, FormsModule, AssessmentSelect, HeaderDetail],
   templateUrl: './grades.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,13 +48,22 @@ export default class Grades implements OnInit {
   public studentContextName = signal('');
   public consolidationLoading = signal(false);
   public visibleScores = computed(() =>
-    this.localScores().filter((score) => !this.enrollmentContextId() || score.enrollmentId === this.enrollmentContextId()),
+    this.localScores().filter(
+      (score) => !this.enrollmentContextId() || score.enrollmentId === this.enrollmentContextId(),
+    ),
   );
-  public readonly selectedAssessment = computed<Assessment | null>(() =>
-    this.assessmentStore.assessments().find((assessment) => assessment.id === this.selectedAssessmentId()) ?? null,
+  public readonly selectedAssessment = computed<Assessment | null>(
+    () =>
+      this.assessmentStore
+        .assessments()
+        .find((assessment) => assessment.id === this.selectedAssessmentId()) ?? null,
   );
-  public readonly canShowConsolidated = computed(
-    () => Boolean(this.selectedAssessment()?.period?.id && this.selectedAssessment()?.sectionCourse?.id && this.selectedAssessment()?.competency?.id),
+  public readonly canShowConsolidated = computed(() =>
+    Boolean(
+      this.selectedAssessment()?.period?.id &&
+      this.selectedAssessment()?.sectionCourse?.id &&
+      this.selectedAssessment()?.competency?.id,
+    ),
   );
   public readonly headerConfig = computed<HeaderConfig>(() => ({
     title: 'Notas finales',
@@ -76,8 +98,12 @@ export default class Grades implements OnInit {
     const total = rows.reduce((acc, score) => acc + Number(score.score || 0), 0);
     return Number((total / rows.length).toFixed(1));
   });
-  public readonly approvedCount = computed(() => this.visibleScores().filter((score) => Number(score.score) >= 11).length);
-  public readonly observedCount = computed(() => this.visibleScores().filter((score) => !!String(score.observation ?? '').trim()).length);
+  public readonly approvedCount = computed(
+    () => this.visibleScores().filter((score) => Number(score.score) >= 11).length,
+  );
+  public readonly observedCount = computed(
+    () => this.visibleScores().filter((score) => !!String(score.observation ?? '').trim()).length,
+  );
   public readonly consolidatedAverage = computed(() => {
     const rows = this.consolidatedRows();
     if (!rows.length) return 0;
@@ -114,7 +140,8 @@ export default class Grades implements OnInit {
 
       const saved = this.filters.gradesAssessmentId();
       const fallback = assessments[0]?.id ?? '';
-      const next = saved && assessments.some((assessment) => assessment.id === saved) ? saved : fallback;
+      const next =
+        saved && assessments.some((assessment) => assessment.id === saved) ? saved : fallback;
 
       if (next && next !== this.selectedAssessmentId()) {
         this.onAssessmentChange(next);
@@ -163,24 +190,26 @@ export default class Grades implements OnInit {
   }
 
   syncScoresFromStore(scores: AssessmentScore[]) {
-    this.localScores.set(scores.map(s => ({
-      enrollmentId: s.enrollmentId,
-      studentName: s.studentName ?? '',
-      score: s.score,
-      observation: s.observation ?? ''
-    })));
+    this.localScores.set(
+      scores.map((s) => ({
+        enrollmentId: s.enrollmentId,
+        studentName: s.studentName ?? '',
+        score: s.score,
+        observation: s.observation ?? '',
+      })),
+    );
   }
 
   saveGrades() {
     const request = {
       assessmentId: this.selectedAssessmentId(),
-      scores: this.localScores().map(s => ({
+      scores: this.localScores().map((s) => ({
         enrollmentId: s.enrollmentId,
         score: s.score,
-        observation: s.observation
-      }))
+        observation: s.observation,
+      })),
     };
-    
+
     this.assessmentStore.saveScores(request).subscribe({
       next: () => {
         const assessment = this.selectedAssessment();
@@ -197,14 +226,14 @@ export default class Grades implements OnInit {
   }
 
   updateScore(enrollmentId: string, score: number) {
-    this.localScores.update(prev => 
-      prev.map(s => s.enrollmentId === enrollmentId ? { ...s, score } : s)
+    this.localScores.update((prev) =>
+      prev.map((s) => (s.enrollmentId === enrollmentId ? { ...s, score } : s)),
     );
   }
 
   updateObservation(enrollmentId: string, observation: string) {
-    this.localScores.update(prev => 
-      prev.map(s => s.enrollmentId === enrollmentId ? { ...s, observation } : s)
+    this.localScores.update((prev) =>
+      prev.map((s) => (s.enrollmentId === enrollmentId ? { ...s, observation } : s)),
     );
   }
 

@@ -7,7 +7,7 @@ import { Toast } from '@core/services/toast';
 
 @Component({
   selector: 'sga-classroom-task-item',
-  standalone: true,
+
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './classroom-task-item.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,5 +42,4 @@ export class ClassroomTaskItem {
     if (status === 'closed') return 'Cerrada';
     return 'Publicada';
   }
-
 }

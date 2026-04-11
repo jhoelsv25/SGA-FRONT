@@ -1,5 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { NotificationSocketService } from '@core/services/notification-socket.service';
 import { TeacherAttendanceApi } from '@features/teachers/services/api/teacher-attendance-api';
@@ -12,7 +20,7 @@ declare const L: any;
 
 @Component({
   selector: 'sga-realtime-teaching-overview',
-  standalone: true,
+
   imports: [CommonModule, ZardIconComponent, ZardInputDirective],
   templateUrl: './realtime-teaching-overview.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,7 +35,7 @@ export class RealtimeTeachingOverviewComponent implements OnInit, OnDestroy {
   readonly viewMode = signal<'list' | 'map'>('list');
   readonly search = signal('');
   readonly institution = signal<Institution | null>(null);
-  
+
   private map: any;
   private markers: any[] = [];
   private geofenceCircle: any;
@@ -35,26 +43,28 @@ export class RealtimeTeachingOverviewComponent implements OnInit, OnDestroy {
   readonly loading = signal(false);
   readonly data = signal<{
     counts: { ongoing: number; ready: number; upcoming: number; missed: number; finished: number };
-      activeTeachers: Array<{
-        scheduleId: string;
-        teacherId: string;
-        teacherName: string;
-        teacherCode: string;
-        courseName: string;
-        sectionName: string;
-        classroom: string;
-        progressPercentage: number;
-        endsInMinutes: number;
-        latitude?: number;
-        longitude?: number;
-        isWithinGeofence?: boolean;
-      }>;
+    activeTeachers: Array<{
+      scheduleId: string;
+      teacherId: string;
+      teacherName: string;
+      teacherCode: string;
+      courseName: string;
+      sectionName: string;
+      classroom: string;
+      progressPercentage: number;
+      endsInMinutes: number;
+      latitude?: number;
+      longitude?: number;
+      isWithinGeofence?: boolean;
+    }>;
   } | null>(null);
 
   readonly activeCount = computed(() => this.data()?.counts.ongoing ?? 0);
   readonly hasMapCoordinates = computed(() => {
     const inst = this.institution();
-    return this.toCoordinate(inst?.latitude) !== null && this.toCoordinate(inst?.longitude) !== null;
+    return (
+      this.toCoordinate(inst?.latitude) !== null && this.toCoordinate(inst?.longitude) !== null
+    );
   });
   readonly filteredTeachers = computed(() => {
     const term = this.search().trim().toLowerCase();
@@ -62,13 +72,7 @@ export class RealtimeTeachingOverviewComponent implements OnInit, OnDestroy {
     if (!term) return items;
 
     return items.filter((item) =>
-      [
-        item.teacherName,
-        item.teacherCode,
-        item.courseName,
-        item.sectionName,
-        item.classroom,
-      ]
+      [item.teacherName, item.teacherCode, item.courseName, item.sectionName, item.classroom]
         .filter(Boolean)
         .some((value) => value.toLowerCase().includes(term)),
     );
@@ -77,11 +81,13 @@ export class RealtimeTeachingOverviewComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.load();
     this.notificationSocket.connect();
-    this.overviewSubscription = this.notificationSocket.teacherRealtimeOverview$.subscribe((payload) => {
-      this.data.set(payload);
-      this.loading.set(false);
-      this.updateMapMarkers();
-    });
+    this.overviewSubscription = this.notificationSocket.teacherRealtimeOverview$.subscribe(
+      (payload) => {
+        this.data.set(payload);
+        this.loading.set(false);
+        this.updateMapMarkers();
+      },
+    );
     this.loadInstitution();
   }
 
@@ -90,7 +96,7 @@ export class RealtimeTeachingOverviewComponent implements OnInit, OnDestroy {
       next: (inst) => {
         this.institution.set(inst);
         this.initMap();
-      }
+      },
     });
   }
 
@@ -102,20 +108,20 @@ export class RealtimeTeachingOverviewComponent implements OnInit, OnDestroy {
 
     setTimeout(() => {
       if (this.map) return;
-      
+
       const mapEl = document.getElementById('monitoring-map');
       if (!mapEl) return;
 
       this.map = L.map('monitoring-map').setView([latitude, longitude], 16);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
+        attribution: '© OpenStreetMap contributors',
       }).addTo(this.map);
 
       this.geofenceCircle = L.circle([latitude, longitude], {
         color: '#b02234',
         fillColor: '#b02234',
         fillOpacity: 0.1,
-        radius: this.toRadius(inst.geofenceRadius)
+        radius: this.toRadius(inst.geofenceRadius),
       }).addTo(this.map);
 
       this.updateMapMarkers();
@@ -126,11 +132,11 @@ export class RealtimeTeachingOverviewComponent implements OnInit, OnDestroy {
     if (!this.map) return;
 
     // Clear existing markers
-    this.markers.forEach(m => m.remove());
+    this.markers.forEach((m) => m.remove());
     this.markers = [];
 
     const teachers = this.filteredTeachers();
-    teachers.forEach(t => {
+    teachers.forEach((t) => {
       if (t.latitude && t.longitude) {
         const color = t.isWithinGeofence ? '#10b981' : '#ef4444';
         const marker = L.circleMarker([t.latitude, t.longitude], {
@@ -139,7 +145,7 @@ export class RealtimeTeachingOverviewComponent implements OnInit, OnDestroy {
           color: '#fff',
           weight: 2,
           opacity: 1,
-          fillOpacity: 0.8
+          fillOpacity: 0.8,
         }).addTo(this.map);
 
         marker.bindPopup(`
@@ -199,10 +205,7 @@ export class RealtimeTeachingOverviewComponent implements OnInit, OnDestroy {
     });
   }
 
-  openTeacherMonitoring(item: {
-    teacherId: string;
-    teacherName: string;
-  }): void {
+  openTeacherMonitoring(item: { teacherId: string; teacherName: string }): void {
     this.router.navigate(['/teachers/attendances'], {
       queryParams: {
         ...(item.teacherId ? { teacherId: item.teacherId } : {}),

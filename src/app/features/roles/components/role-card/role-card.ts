@@ -13,7 +13,7 @@ import { Role } from '@features/admin-services/api/role-api';
 
 @Component({
   selector: 'sga-role-card',
-  standalone: true,
+
   imports: [
     CommonModule,
     ZardCardComponent,

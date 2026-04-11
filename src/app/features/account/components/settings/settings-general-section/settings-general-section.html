@@ -1,0 +1,59 @@
+<z-card>
+  <div class="border-border/70 border-b p-6">
+    <h2 class="text-xl font-semibold text-foreground">General</h2>
+    <p class="mt-1 text-sm text-muted-foreground">Datos desde users/:id.</p>
+  </div>
+
+  @if (loading()) {
+    <div class="p-6 text-sm text-muted-foreground">Cargando informacion...</div>
+  } @else {
+    <div class="grid gap-4 p-6 md:grid-cols-2">
+      @for (item of generalRows(); track item.label) {
+        <div class="rounded-xl border border-border bg-background/80 p-4">
+          <p class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+            {{ item.label }}
+          </p>
+          <p class="mt-2 text-sm font-medium text-foreground">{{ item.value }}</p>
+        </div>
+      }
+    </div>
+
+    @if (roleRows().length) {
+      <div class="border-border/70 border-t p-6">
+        <div class="mb-4">
+          <p class="text-[10px] font-black uppercase tracking-[0.18em] text-primary/70">
+            Contexto del rol
+          </p>
+          <p class="mt-1 text-sm text-muted-foreground">
+            Datos operativos cargados específicamente para este perfil.
+          </p>
+        </div>
+        <div class="grid gap-4 md:grid-cols-2">
+          @for (item of roleRows(); track item.label) {
+            <div class="rounded-xl border border-border bg-background/80 p-4">
+              <p class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                {{ item.label }}
+              </p>
+              <p class="mt-2 text-sm font-medium text-foreground">{{ item.value }}</p>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  }
+
+  <div class="border-border/70 flex flex-wrap gap-3 border-t p-6">
+    <a
+      routerLink="/account/profile"
+      class="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground"
+    >
+      Ver perfil completo
+    </a>
+    <a
+      routerLink="/account/change-password"
+      class="inline-flex items-center gap-2 rounded-xl border border-border bg-background px-4 py-2.5 text-sm font-semibold text-foreground"
+    >
+      Cambiar contrasena
+    </a>
+  </div>
+</z-card>

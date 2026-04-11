@@ -11,10 +11,9 @@ import { EnrollmentApi } from '../../../enrollments/services/enrollment-api';
 
 type StudentRow = { id: string; name: string; studentCode: string; status: AttendanceStatus };
 
-
 @Component({
   selector: 'sga-attendances',
-  standalone: true,
+
   imports: [CommonModule, FormsModule, NgClass, ZardInputDirective, SectionCourseSelect],
   templateUrl: './attendances.html',
   styleUrl: './attendances.css',
@@ -38,11 +37,11 @@ export default class Attendances implements OnInit {
       sectionCourseId: this.selectedSectionCourse(),
       date: this.attendanceDate(),
       sessionType: 'lecture',
-      attendances: this.students().map(s => ({
+      attendances: this.students().map((s) => ({
         enrollmentId: s.id,
         status: s.status as AttendanceStatus,
-        checkInTime: '08:00:00'
-      }))
+        checkInTime: '08:00:00',
+      })),
     };
 
     this.store.saveBulk(request).subscribe();
@@ -82,7 +81,7 @@ export default class Attendances implements OnInit {
                 prev.map((s) => {
                   const att = attendanceRes.data.find((a) => a.enrollmentId === s.id);
                   return att ? { ...s, status: att.status } : s;
-                })
+                }),
               );
             }
           },
@@ -92,8 +91,8 @@ export default class Attendances implements OnInit {
   }
 
   updateStatus(studentId: string, status: string): void {
-    this.students.update(prev =>
-      prev.map(s => (s.id === studentId ? { ...s, status: status as AttendanceStatus } : s))
+    this.students.update((prev) =>
+      prev.map((s) => (s.id === studentId ? { ...s, status: status as AttendanceStatus } : s)),
     );
   }
 
@@ -111,18 +110,22 @@ export default class Attendances implements OnInit {
       const worksheet = workbook.Sheets[firstSheetName];
       const json = XLSX.utils.sheet_to_json<Record<string, unknown>>(worksheet);
 
-      this.students.update(prev => {
+      this.students.update((prev) => {
         const newState = [...prev];
-        json.forEach(row => {
-          const code = String(row['DNI'] || row['Matricula_ID'] || row['studentCode'] || row['Codigo'] || '').trim();
-          const rawStatus = String(row['Estado'] || row['status'] || '').toLowerCase().trim();
+        json.forEach((row) => {
+          const code = String(
+            row['DNI'] || row['Matricula_ID'] || row['studentCode'] || row['Codigo'] || '',
+          ).trim();
+          const rawStatus = String(row['Estado'] || row['status'] || '')
+            .toLowerCase()
+            .trim();
           if (code && rawStatus) {
             let status: AttendanceStatus = 'present';
             if (['f', 'falta', 'absent'].includes(rawStatus)) status = 'absent';
             else if (['t', 'tardanza', 'late'].includes(rawStatus)) status = 'late';
             else if (['j', 'justificado', 'excused'].includes(rawStatus)) status = 'excused';
 
-            const index = newState.findIndex(s => s.studentCode === code);
+            const index = newState.findIndex((s) => s.studentCode === code);
             if (index !== -1) {
               newState[index] = { ...newState[index], status };
             }

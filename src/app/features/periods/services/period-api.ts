@@ -15,18 +15,20 @@ export class PeriodApi {
       const v = params[key];
       if (v !== undefined && v !== null && v !== '') httpParams = httpParams.set(key, String(v));
     });
-    return this.http.get<Period[] | DataResponse<Period>>(this.baseUrl, { params: httpParams }).pipe(
-      map((res) => {
-        if (Array.isArray(res)) {
-          const data = res.map((p) => ({
-            ...p,
-            order: (p as Period & { periodNumber?: number }).periodNumber ?? p.order,
-          })) as Period[];
-          return { data, page: 1, size: data.length, total: data.length };
-        }
-        return res;
-      }),
-    );
+    return this.http
+      .get<Period[] | DataResponse<Period>>(this.baseUrl, { params: httpParams })
+      .pipe(
+        map((res) => {
+          if (Array.isArray(res)) {
+            const data = res.map((p) => ({
+              ...p,
+              order: (p as Period & { periodNumber?: number }).periodNumber ?? p.order,
+            })) as Period[];
+            return { data, page: 1, size: data.length, total: data.length };
+          }
+          return res;
+        }),
+      );
   }
 
   getById(id: string): Observable<Period> {

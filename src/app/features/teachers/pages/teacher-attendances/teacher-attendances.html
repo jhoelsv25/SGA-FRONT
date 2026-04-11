@@ -1,8 +1,12 @@
 @if (teacherContextId()) {
-  <div class="mx-6 rounded-4xl border border-primary/15 bg-primary/8 px-5 py-4 text-sm text-primary dark:bg-primary/10">
+  <div
+    class="mx-6 rounded-4xl border border-primary/15 bg-primary/8 px-5 py-4 text-sm text-primary dark:bg-primary/10"
+  >
     <div class="flex flex-wrap items-center justify-between gap-3">
       <div class="space-y-1">
-        <p class="text-[10px] font-black uppercase tracking-[0.24em] text-primary/70">Contexto de docente</p>
+        <p class="text-[10px] font-black uppercase tracking-[0.24em] text-primary/70">
+          Contexto de docente
+        </p>
         <p class="font-semibold">
           Mostrando bloques de
           <span class="font-black">{{ teacherContextName() || 'docente seleccionado' }}</span>
@@ -25,16 +29,23 @@
   <div class="rounded-[2rem] border border-base-200 bg-base-100 px-6 py-5 shadow-sm">
     <div class="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
       <div class="space-y-2">
-        <p class="text-[10px] font-black uppercase tracking-[0.24em] text-primary/65">Seguimiento docente</p>
+        <p class="text-[10px] font-black uppercase tracking-[0.24em] text-primary/65">
+          Seguimiento docente
+        </p>
         <h1 class="text-3xl font-black tracking-tight text-base-content">Control por horario</h1>
         <p class="max-w-2xl text-sm text-base-content/60">
-          La tabla solo lista los bloques programados. El registro se hace desde un modal para mantener la vista limpia.
+          La tabla solo lista los bloques programados. El registro se hace desde un modal para
+          mantener la vista limpia.
         </p>
       </div>
 
       <div class="flex flex-col gap-3 sm:flex-row sm:items-end">
         <div class="min-w-[280px]">
-          <label for="teacher-attendance-search" class="mb-1.5 block text-sm font-semibold text-base-content/70">Buscar</label>
+          <label
+            for="teacher-attendance-search"
+            class="mb-1.5 block text-sm font-semibold text-base-content/70"
+            >Buscar</label
+          >
           <input
             z-input
             w-full
@@ -48,7 +59,11 @@
         </div>
 
         <div>
-          <label for="teacher-attendance-date" class="mb-1.5 block text-sm font-semibold text-base-content/70">Fecha de control</label>
+          <label
+            for="teacher-attendance-date"
+            class="mb-1.5 block text-sm font-semibold text-base-content/70"
+            >Fecha de control</label
+          >
           <z-date-picker
             id="teacher-attendance-date"
             class="block w-full"
@@ -82,16 +97,32 @@
       <p class="mt-2 text-2xl font-black">{{ filteredRows().length }}</p>
     </div>
     <div class="rounded-3xl border border-success/20 bg-success/8 px-4 py-4 shadow-sm">
-      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-success-700 dark:text-success">Cumplidos</p>
-      <p class="mt-2 text-2xl font-black text-success-700 dark:text-success">{{ fulfilledCount() }}</p>
+      <p
+        class="text-[10px] font-black uppercase tracking-[0.2em] text-success-700 dark:text-success"
+      >
+        Cumplidos
+      </p>
+      <p class="mt-2 text-2xl font-black text-success-700 dark:text-success">
+        {{ fulfilledCount() }}
+      </p>
     </div>
     <div class="rounded-3xl border border-warning/20 bg-warning/8 px-4 py-4 shadow-sm">
-      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-warning-700 dark:text-warning">Parciales</p>
-      <p class="mt-2 text-2xl font-black text-warning-700 dark:text-warning">{{ partialCount() }}</p>
+      <p
+        class="text-[10px] font-black uppercase tracking-[0.2em] text-warning-700 dark:text-warning"
+      >
+        Parciales
+      </p>
+      <p class="mt-2 text-2xl font-black text-warning-700 dark:text-warning">
+        {{ partialCount() }}
+      </p>
     </div>
     <div class="rounded-3xl border border-danger/20 bg-danger/8 px-4 py-4 shadow-sm">
-      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-danger-700 dark:text-danger">Incumplidos</p>
-      <p class="mt-2 text-2xl font-black text-danger-700 dark:text-danger">{{ unfulfilledCount() }}</p>
+      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-danger-700 dark:text-danger">
+        Incumplidos
+      </p>
+      <p class="mt-2 text-2xl font-black text-danger-700 dark:text-danger">
+        {{ unfulfilledCount() }}
+      </p>
     </div>
     <div class="rounded-3xl border border-info/20 bg-info/8 px-4 py-4 shadow-sm">
       <p class="text-[10px] font-black uppercase tracking-[0.2em] text-info">Reprogramados</p>
@@ -105,77 +136,135 @@
 
   <div class="space-y-4">
     @if (loading()) {
-      <div class="rounded-4xl border border-base-200 bg-base-100 px-6 py-12 text-center text-sm text-base-content/50 shadow-sm">
+      <div
+        class="rounded-4xl border border-base-200 bg-base-100 px-6 py-12 text-center text-sm text-base-content/50 shadow-sm"
+      >
         Cargando bloques programados...
       </div>
     } @else if (rows().length === 0) {
-      <div class="rounded-4xl border border-base-200 bg-base-100 px-6 py-12 text-center text-sm text-base-content/50 shadow-sm">
+      <div
+        class="rounded-4xl border border-base-200 bg-base-100 px-6 py-12 text-center text-sm text-base-content/50 shadow-sm"
+      >
         No hay bloques programados para la fecha seleccionada.
       </div>
     } @else if (filteredRows().length === 0) {
-      <div class="rounded-4xl border border-base-200 bg-base-100 px-6 py-12 text-center text-sm text-base-content/50 shadow-sm">
+      <div
+        class="rounded-4xl border border-base-200 bg-base-100 px-6 py-12 text-center text-sm text-base-content/50 shadow-sm"
+      >
         No encontramos coincidencias para la búsqueda actual.
       </div>
     } @else {
       @for (row of filteredRows(); track row.scheduleId) {
-        <article class="group rounded-[2rem] border border-base-200 bg-card/40 p-4 shadow-sm transition-all duration-200 hover:border-primary/20 hover:bg-card/60 hover:shadow-xl hover:shadow-primary/5">
+        <article
+          class="group rounded-[2rem] border border-base-200 bg-card/40 p-4 shadow-sm transition-all duration-200 hover:border-primary/20 hover:bg-card/60 hover:shadow-xl hover:shadow-primary/5"
+        >
           <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div class="flex min-w-0 items-start gap-4 flex-1">
-              <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-border/10 bg-primary/10 text-[10px] font-black uppercase tracking-[0.14em] text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+              <div
+                class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-border/10 bg-primary/10 text-[10px] font-black uppercase tracking-[0.14em] text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground"
+              >
                 {{ (row.teacherCode || 'DOC').slice(0, 3) }}
               </div>
 
               <div class="min-w-0 flex-1 space-y-3">
                 <div class="flex flex-wrap items-center gap-3">
                   <div class="min-w-0">
-                    <p class="text-base font-black tracking-tight text-base-content truncate">{{ row.teacherName || 'Docente sin nombre' }}</p>
-                    <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">{{ row.teacherCode || 'Sin código' }}</p>
+                    <p class="text-base font-black tracking-tight text-base-content truncate">
+                      {{ row.teacherName || 'Docente sin nombre' }}
+                    </p>
+                    <p
+                      class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45"
+                    >
+                      {{ row.teacherCode || 'Sin código' }}
+                    </p>
                   </div>
-                  <span class="inline-flex rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em]" [class]="statusClass(row.complianceStatus)">
+                  <span
+                    class="inline-flex rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em]"
+                    [class]="statusClass(row.complianceStatus)"
+                  >
                     {{ statusLabel(row.complianceStatus) }}
                   </span>
                 </div>
 
                 <div class="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-5">
                   <div class="rounded-2xl bg-base-200/35 px-4 py-3">
-                    <p class="text-[9px] font-black uppercase tracking-[0.16em] text-base-content/40">Curso / Sección</p>
-                    <p class="mt-1 text-sm font-black text-base-content line-clamp-1">{{ row.courseName || 'Curso sin nombre' }}</p>
-                    <p class="text-[11px] uppercase tracking-[0.14em] text-base-content/55">{{ row.sectionName || 'Sección sin nombre' }}</p>
+                    <p
+                      class="text-[9px] font-black uppercase tracking-[0.16em] text-base-content/40"
+                    >
+                      Curso / Sección
+                    </p>
+                    <p class="mt-1 text-sm font-black text-base-content line-clamp-1">
+                      {{ row.courseName || 'Curso sin nombre' }}
+                    </p>
+                    <p class="text-[11px] uppercase tracking-[0.14em] text-base-content/55">
+                      {{ row.sectionName || 'Sección sin nombre' }}
+                    </p>
                   </div>
 
                   <div class="rounded-2xl bg-base-200/35 px-4 py-3">
-                    <p class="text-[9px] font-black uppercase tracking-[0.16em] text-base-content/40">Bloque</p>
-                    <p class="mt-1 text-sm font-black text-base-content line-clamp-1">{{ row.title }}</p>
-                    <p class="text-[11px] text-base-content/55 line-clamp-1">{{ row.classroom || 'Sin aula asignada' }}</p>
+                    <p
+                      class="text-[9px] font-black uppercase tracking-[0.16em] text-base-content/40"
+                    >
+                      Bloque
+                    </p>
+                    <p class="mt-1 text-sm font-black text-base-content line-clamp-1">
+                      {{ row.title }}
+                    </p>
+                    <p class="text-[11px] text-base-content/55 line-clamp-1">
+                      {{ row.classroom || 'Sin aula asignada' }}
+                    </p>
                   </div>
 
                   <div class="rounded-2xl bg-base-200/35 px-4 py-3">
-                    <p class="text-[9px] font-black uppercase tracking-[0.16em] text-base-content/40">Horario</p>
-                    <p class="mt-1 text-sm font-black text-base-content">{{ formatPlannedRange(row) }}</p>
-                    <p class="text-[11px] text-base-content/55">{{ row.plannedMinutes }} min programados</p>
+                    <p
+                      class="text-[9px] font-black uppercase tracking-[0.16em] text-base-content/40"
+                    >
+                      Horario
+                    </p>
+                    <p class="mt-1 text-sm font-black text-base-content">
+                      {{ formatPlannedRange(row) }}
+                    </p>
+                    <p class="text-[11px] text-base-content/55">
+                      {{ row.plannedMinutes }} min programados
+                    </p>
                   </div>
 
                   <div class="rounded-2xl bg-base-200/35 px-4 py-3">
-                    <p class="text-[9px] font-black uppercase tracking-[0.16em] text-base-content/40">Registrado</p>
+                    <p
+                      class="text-[9px] font-black uppercase tracking-[0.16em] text-base-content/40"
+                    >
+                      Registrado
+                    </p>
                     @if (row.actualStartTime || row.actualEndTime) {
                       <div class="mt-1 space-y-1">
                         <div class="flex items-center gap-2">
                           <p class="text-sm font-black text-base-content">
-                            {{ formatTime(row.actualStartTime) }} - {{ formatTime(row.actualEndTime) }}
+                            {{ formatTime(row.actualStartTime) }} -
+                            {{ formatTime(row.actualEndTime) }}
                           </p>
-                          @if (row.attendanceStatus === 'present' || row.attendanceStatus === 'late') {
+                          @if (
+                            row.attendanceStatus === 'present' || row.attendanceStatus === 'late'
+                          ) {
                             @if (row.isWithinGeofence === false) {
-                              <span class="flex size-5 items-center justify-center rounded-full bg-danger/10 text-[10px] text-danger" title="Registrado fuera de la institución">
+                              <span
+                                class="flex size-5 items-center justify-center rounded-full bg-danger/10 text-[10px] text-danger"
+                                title="Registrado fuera de la institución"
+                              >
                                 <i class="fas fa-location-dot"></i>
                               </span>
                             } @else if (row.isWithinGeofence === true) {
-                              <span class="flex size-5 items-center justify-center rounded-full bg-success/10 text-[10px] text-success" title="Registrado dentro de la institución">
+                              <span
+                                class="flex size-5 items-center justify-center rounded-full bg-success/10 text-[10px] text-success"
+                                title="Registrado dentro de la institución"
+                              >
                                 <i class="fas fa-location-dot"></i>
                               </span>
                             }
                           }
                         </div>
-                        <p class="text-[11px] text-base-content/55">{{ row.actualMinutes }} min reales</p>
+                        <p class="text-[11px] text-base-content/55">
+                          {{ row.actualMinutes }} min reales
+                        </p>
                       </div>
                     } @else {
                       <p class="mt-1 text-sm font-semibold text-base-content/45">Sin registro</p>
@@ -183,8 +272,14 @@
                   </div>
 
                   <div class="rounded-2xl bg-base-200/35 px-4 py-3">
-                    <p class="text-[9px] font-black uppercase tracking-[0.16em] text-base-content/40">Cumplimiento</p>
-                    <p class="mt-1 text-lg font-black text-base-content">{{ percentageLabel(row.compliancePercentage) }}</p>
+                    <p
+                      class="text-[9px] font-black uppercase tracking-[0.16em] text-base-content/40"
+                    >
+                      Cumplimiento
+                    </p>
+                    <p class="mt-1 text-lg font-black text-base-content">
+                      {{ percentageLabel(row.compliancePercentage) }}
+                    </p>
                     <p class="text-[11px] text-base-content/55">
                       {{ row.actualMinutes }} / {{ row.plannedMinutes }} min
                     </p>

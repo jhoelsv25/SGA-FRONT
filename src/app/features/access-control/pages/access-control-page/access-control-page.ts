@@ -1,21 +1,41 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { ZardInputDirective } from '@/shared/components/input';
-import { ZardDatePickerComponent } from '@/shared/components/date-picker';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { Toast } from '@core/services/toast';
 import { GeolocationService } from '@core/services/geolocation.service';
 import { InstitutionStore } from '@features/admin-services/store/institution.store';
-import { AccessControlApi, AccessControlEvent, AccessControlEventType, AccessControlResolvedPerson } from '../../services/access-control-api';
+import {
+  AccessControlApi,
+  AccessControlEvent,
+  AccessControlEventType,
+  AccessControlResolvedPerson,
+} from '../../services/access-control-api';
+import { AccessControlEventsTableComponent } from '../../components/access-control-events-table/access-control-events-table';
+import { AccessControlHeaderComponent } from '../../components/access-control-header/access-control-header';
+import { AccessControlLivePanelComponent } from '../../components/access-control-live-panel/access-control-live-panel';
+import { AccessControlSidebarComponent } from '../../components/access-control-sidebar/access-control-sidebar';
 
 @Component({
-  selector: 'sga-general-attendance-page',
-  standalone: true,
-  imports: [CommonModule, FormsModule, ZardInputDirective, ZardDatePickerComponent],
-  templateUrl: './general-attendance.html',
+  selector: 'sga-access-control-page',
+
+  imports: [
+    CommonModule,
+    AccessControlHeaderComponent,
+    AccessControlLivePanelComponent,
+    AccessControlSidebarComponent,
+    AccessControlEventsTableComponent,
+  ],
+  templateUrl: './access-control-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class GeneralAttendancePage implements OnInit, OnDestroy {
+export default class AccessControlPage implements OnInit, OnDestroy {
   private readonly accessControlApi = inject(AccessControlApi);
   private readonly toast = inject(Toast);
   private readonly geoService = inject(GeolocationService);
@@ -36,14 +56,22 @@ export default class GeneralAttendancePage implements OnInit, OnDestroy {
   private resolveTimer: ReturnType<typeof setTimeout> | null = null;
 
   readonly todayCount = computed(() => this.recentEvents().length);
-  readonly entryCount = computed(() => this.recentEvents().filter((row) => row.eventType === 'entry').length);
-  readonly exitCount = computed(() => this.recentEvents().filter((row) => row.eventType === 'exit').length);
+  readonly entryCount = computed(
+    () => this.recentEvents().filter((row) => row.eventType === 'entry').length,
+  );
+  readonly exitCount = computed(
+    () => this.recentEvents().filter((row) => row.eventType === 'exit').length,
+  );
   readonly geoError = computed(() => this.geoService.error());
   readonly geoErrorKind = computed(() => this.geoService.errorKind());
   readonly hasPosition = computed(() => Boolean(this.geoService.currentPosition()));
   readonly needsLocationValidation = computed(() => {
     const institution = this.institutionStore.institution();
-    return Boolean(institution?.latitude !== undefined && institution?.longitude !== undefined && institution?.geofenceRadius);
+    return Boolean(
+      institution?.latitude !== undefined &&
+      institution?.longitude !== undefined &&
+      institution?.geofenceRadius,
+    );
   });
   readonly locationReady = computed(() => !this.needsLocationValidation() || this.hasPosition());
   readonly accessBlocked = computed(() => {
@@ -55,7 +83,8 @@ export default class GeneralAttendancePage implements OnInit, OnDestroy {
   readonly geofenceStatus = computed(() => {
     const institution = this.institutionStore.institution();
     const pos = this.geoService.currentPosition();
-    if (!institution?.latitude || !institution?.longitude || !institution?.geofenceRadius || !pos) return null;
+    if (!institution?.latitude || !institution?.longitude || !institution?.geofenceRadius || !pos)
+      return null;
 
     const distance = this.geoService.calculateDistance(
       pos.coords.latitude,
@@ -107,6 +136,14 @@ export default class GeneralAttendancePage implements OnInit, OnDestroy {
     this.scheduleResolve(value);
   }
 
+  setEventType(value: AccessControlEventType) {
+    this.eventType.set(value);
+  }
+
+  setNotes(value: string) {
+    this.notes.set(value);
+  }
+
   resolveCode() {
     const code = this.scanCode().trim();
     if (!code) {
@@ -129,7 +166,9 @@ export default class GeneralAttendancePage implements OnInit, OnDestroy {
       error: (err) => {
         this.resolving.set(false);
         this.resolvedPreview.set(null);
-        this.resolveError.set(err?.error?.message || 'No se encontró ninguna persona con ese DNI o código.');
+        this.resolveError.set(
+          err?.error?.message || 'No se encontró ninguna persona con ese DNI o código.',
+        );
       },
     });
   }
@@ -152,7 +191,13 @@ export default class GeneralAttendancePage implements OnInit, OnDestroy {
     const pos = this.geoService.currentPosition();
     let isWithinGeofence = true;
 
-    if (inst && pos && inst.latitude !== undefined && inst.longitude !== undefined && inst.geofenceRadius !== undefined) {
+    if (
+      inst &&
+      pos &&
+      inst.latitude !== undefined &&
+      inst.longitude !== undefined &&
+      inst.geofenceRadius !== undefined
+    ) {
       const distance = this.geoService.calculateDistance(
         pos.coords.latitude,
         pos.coords.longitude,
@@ -163,35 +208,29 @@ export default class GeneralAttendancePage implements OnInit, OnDestroy {
     }
 
     this.saving.set(true);
-    this.accessControlApi.register({
-      code,
-      eventType: this.eventType(),
-      notes: this.notes().trim() || undefined,
-      latitude: pos?.coords.latitude,
-      longitude: pos?.coords.longitude,
-      isWithinGeofence,
-    }).subscribe({
-      next: (res) => {
-        this.saving.set(false);
-        this.scanCode.set('');
-        this.notes.set('');
-        this.lastRegistered.set(res.data);
-        this.recentEvents.update((current) => [res.data, ...current].slice(0, 20));
-        this.toast.success(res.message || 'Movimiento registrado');
-      },
-      error: (err) => {
-        this.saving.set(false);
-        this.toast.error(err?.error?.message || 'No se pudo registrar el movimiento');
-      },
-    });
-  }
-
-  eventTypeLabel(value: AccessControlEventType) {
-    return value === 'entry' ? 'Ingreso' : 'Salida';
-  }
-
-  personTypeLabel(value?: string) {
-    return value === 'teacher' ? 'Docente' : value === 'student' ? 'Estudiante' : 'Persona';
+    this.accessControlApi
+      .register({
+        code,
+        eventType: this.eventType(),
+        notes: this.notes().trim() || undefined,
+        latitude: pos?.coords.latitude,
+        longitude: pos?.coords.longitude,
+        isWithinGeofence,
+      })
+      .subscribe({
+        next: (res) => {
+          this.saving.set(false);
+          this.scanCode.set('');
+          this.notes.set('');
+          this.lastRegistered.set(res.data);
+          this.recentEvents.update((current) => [res.data, ...current].slice(0, 20));
+          this.toast.success(res.message || 'Movimiento registrado');
+        },
+        error: (err) => {
+          this.saving.set(false);
+          this.toast.error(err?.error?.message || 'No se pudo registrar el movimiento');
+        },
+      });
   }
 
   locationHelpText() {

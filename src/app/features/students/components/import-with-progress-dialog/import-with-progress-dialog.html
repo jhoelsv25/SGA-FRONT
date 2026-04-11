@@ -26,7 +26,7 @@
   </header>
 
   <!-- Step indicator -->
-  <sga-import-step-indicator [currentStep]="step()"  />
+  <sga-import-step-indicator [currentStep]="step()" />
 
   <!-- Step: Upload -->
   @if (step() === 'upload') {
@@ -39,7 +39,7 @@
       (dragLeave)="onDragLeave($event)"
       (fileDropped)="onDrop($event)"
       (downloadTemplate)="downloadTemplate()"
-     />
+    />
   }
 
   <!-- Step: Mapping -->
@@ -53,18 +53,18 @@
       (mappingChange)="onMappingChange($event)"
       (startImport)="startImport()"
       (cancelled)="close()"
-     />
+    />
   }
 
   <!-- Step: Importing -->
   @if (step() === 'importing') {
-    <sga-import-step-importing [progress]="progress()"  />
+    <sga-import-step-importing [progress]="progress()" />
   }
 
   <!-- Step: Done -->
   @if (step() === 'done') {
     @if (result(); as res) {
-      <sga-import-step-done [result]="res" (closed)="close()"  />
+      <sga-import-step-done [result]="res" (closed)="close()" />
     }
   }
 

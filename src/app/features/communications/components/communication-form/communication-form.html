@@ -1,9 +1,16 @@
-<form [formGroup]="form" class="flex max-h-[calc(92vh-2rem)] flex-col overflow-hidden" (ngSubmit)="submit()">
-
+<form
+  [formGroup]="form"
+  class="flex max-h-[calc(92vh-2rem)] flex-col overflow-hidden"
+  (ngSubmit)="submit()"
+>
   <!-- Header -->
-  <header class="flex shrink-0 items-start justify-between gap-4 border-b border-border/60 px-6 py-5">
+  <header
+    class="flex shrink-0 items-start justify-between gap-4 border-b border-border/60 px-6 py-5"
+  >
     <div>
-      <p class="text-[10px] font-black uppercase tracking-[0.28em] text-primary/70">Comunicaciones</p>
+      <p class="text-[10px] font-black uppercase tracking-[0.28em] text-primary/70">
+        Comunicaciones
+      </p>
       <h2 class="mt-1 text-2xl font-black tracking-tight text-base-content">
         {{ current ? 'Editar comunicación' : 'Nueva comunicación' }}
       </h2>
@@ -11,7 +18,14 @@
         Configura el mensaje, audiencia y modo de entrega.
       </p>
     </div>
-    <button type="button" z-button zColor="secondary" zType="ghost" zShape="circle" (click)="close()">
+    <button
+      type="button"
+      z-button
+      zColor="secondary"
+      zType="ghost"
+      zShape="circle"
+      (click)="close()"
+    >
       <i class="fas fa-times"></i>
     </button>
   </header>
@@ -19,7 +33,9 @@
   <div class="flex-1 overflow-y-auto">
     <!-- ── SEND MODE toggle ── prominently at top -->
     <div class="px-6 pt-6 pb-4">
-      <p class="mb-3 text-[10px] font-black uppercase tracking-[0.24em] text-base-content/45">Modo de envío</p>
+      <p class="mb-3 text-[10px] font-black uppercase tracking-[0.24em] text-base-content/45">
+        Modo de envío
+      </p>
       <div class="grid grid-cols-2 gap-3">
         <button
           type="button"
@@ -29,11 +45,13 @@
           [class.border-base-200]="form.get('sendMode')?.value !== 'now'"
           (click)="form.get('sendMode')?.setValue('now')"
         >
-          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl"
-               [class.bg-primary]="form.get('sendMode')?.value === 'now'"
-               [class.text-white]="form.get('sendMode')?.value === 'now'"
-               [class.bg-base-200]="form.get('sendMode')?.value !== 'now'"
-               [class.text-base-content/40]="form.get('sendMode')?.value !== 'now'">
+          <div
+            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl"
+            [class.bg-primary]="form.get('sendMode')?.value === 'now'"
+            [class.text-white]="form.get('sendMode')?.value === 'now'"
+            [class.bg-base-200]="form.get('sendMode')?.value !== 'now'"
+            [class.text-base-content/40]="form.get('sendMode')?.value !== 'now'"
+          >
             <i class="fas fa-bolt text-sm"></i>
           </div>
           <div>
@@ -50,11 +68,13 @@
           [class.border-base-200]="form.get('sendMode')?.value !== 'scheduled'"
           (click)="form.get('sendMode')?.setValue('scheduled')"
         >
-          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl"
-               [class.bg-primary]="form.get('sendMode')?.value === 'scheduled'"
-               [class.text-white]="form.get('sendMode')?.value === 'scheduled'"
-               [class.bg-base-200]="form.get('sendMode')?.value !== 'scheduled'"
-               [class.text-base-content/40]="form.get('sendMode')?.value !== 'scheduled'">
+          <div
+            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl"
+            [class.bg-primary]="form.get('sendMode')?.value === 'scheduled'"
+            [class.text-white]="form.get('sendMode')?.value === 'scheduled'"
+            [class.bg-base-200]="form.get('sendMode')?.value !== 'scheduled'"
+            [class.text-base-content/40]="form.get('sendMode')?.value !== 'scheduled'"
+          >
             <i class="fas fa-calendar-alt text-sm"></i>
           </div>
           <div>
@@ -66,11 +86,15 @@
 
       @if (form.get('sendMode')?.value === 'scheduled') {
         <div class="mt-3 rounded-[1.25rem] border border-primary/20 bg-primary/5 p-4">
-          <label class="mb-2 block text-[10px] font-black uppercase tracking-[0.18em] text-primary/70" for="scheduledAt">
+          <label
+            class="mb-2 block text-[10px] font-black uppercase tracking-[0.18em] text-primary/70"
+            for="scheduledAt"
+          >
             Fecha y hora de publicación
           </label>
           <input
-            z-input w-full
+            z-input
+            w-full
             id="scheduledAt"
             type="datetime-local"
             formControlName="scheduledAt"
@@ -82,7 +106,10 @@
         </div>
       } @else if (form.get('sendMode')?.value === 'now') {
         <div class="mt-3">
-          <label class="mb-2 block text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45" for="status">
+          <label
+            class="mb-2 block text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45"
+            for="status"
+          >
             ¿Publicar o guardar como borrador?
           </label>
           <z-select-option
@@ -96,15 +123,21 @@
     </div>
 
     <div class="border-t border-base-200/50 px-6 py-4">
-      <p class="mb-4 text-[10px] font-black uppercase tracking-[0.24em] text-base-content/45">Mensaje</p>
+      <p class="mb-4 text-[10px] font-black uppercase tracking-[0.24em] text-base-content/45">
+        Mensaje
+      </p>
 
       <div class="grid gap-4 md:grid-cols-2">
         <div class="md:col-span-2">
-          <label class="mb-2 block text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45" for="subject">
+          <label
+            class="mb-2 block text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45"
+            for="subject"
+          >
             Asunto
           </label>
           <input
-            z-input w-full
+            z-input
+            w-full
             id="subject"
             formControlName="subject"
             placeholder="Título del anuncio o comunicación"
@@ -113,7 +146,10 @@
         </div>
 
         <div class="md:col-span-2">
-          <label class="mb-2 block text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45" for="body">
+          <label
+            class="mb-2 block text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45"
+            for="body"
+          >
             Contenido del mensaje
           </label>
           <textarea
@@ -126,7 +162,10 @@
         </div>
 
         <div>
-          <label class="mb-2 block text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45" for="audience">
+          <label
+            class="mb-2 block text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45"
+            for="audience"
+          >
             Audiencia
           </label>
           <z-select-option
@@ -138,7 +177,10 @@
         </div>
 
         <div>
-          <label class="mb-2 block text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45" for="priority">
+          <label
+            class="mb-2 block text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45"
+            for="priority"
+          >
             Prioridad
           </label>
           <z-select-option
@@ -151,26 +193,34 @@
 
         @if (form.get('audience')?.value === 'students') {
           <div class="md:col-span-2">
-            <label class="mb-2 block text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45" for="sectionId">
+            <label
+              class="mb-2 block text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45"
+              for="sectionId"
+            >
               Sección (opcional)
             </label>
             <sga-section-select
-            id="sectionId"
-            formControlName="sectionId"
-            placeholder="Aplicar a todas las secciones"
-          ></sga-section-select>
-          <p class="mt-1.5 text-[10px] font-medium text-base-content/45">
-            Si eliges sección, la notificación se limitará solo a los alumnos/docentes de ese grupo.
-          </p>
-        </div>
-      }
+              id="sectionId"
+              formControlName="sectionId"
+              placeholder="Aplicar a todas las secciones"
+            ></sga-section-select>
+            <p class="mt-1.5 text-[10px] font-medium text-base-content/45">
+              Si eliges sección, la notificación se limitará solo a los alumnos/docentes de ese
+              grupo.
+            </p>
+          </div>
+        }
 
         <div class="md:col-span-2">
-          <label class="mb-2 block text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45" for="attachmentUrl">
+          <label
+            class="mb-2 block text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45"
+            for="attachmentUrl"
+          >
             URL adjunta (opcional)
           </label>
           <input
-            z-input w-full
+            z-input
+            w-full
             id="attachmentUrl"
             formControlName="attachmentUrl"
             placeholder="https://drive.google.com/... o cualquier enlace de recurso"
@@ -185,7 +235,9 @@
   </div>
 
   <!-- Footer -->
-  <footer class="flex shrink-0 items-center justify-between gap-3 border-t border-border/60 px-6 py-4">
+  <footer
+    class="flex shrink-0 items-center justify-between gap-3 border-t border-border/60 px-6 py-4"
+  >
     <div class="text-xs font-medium text-base-content/40">
       @if (form.get('sendMode')?.value === 'scheduled') {
         <span class="rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-primary">
@@ -198,7 +250,9 @@
       }
     </div>
     <div class="flex gap-2">
-      <button type="button" z-button zColor="secondary" zType="ghost" (click)="close()">Cancelar</button>
+      <button type="button" z-button zColor="secondary" zType="ghost" (click)="close()">
+        Cancelar
+      </button>
       <button type="submit" z-button zColor="primary" [disabled]="form.invalid">
         <i class="fas fa-paper-plane mr-2 text-xs"></i>
         {{ form.get('sendMode')?.value === 'scheduled' ? 'Programar envío' : 'Publicar ahora' }}

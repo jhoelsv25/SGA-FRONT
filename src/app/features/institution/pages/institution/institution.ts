@@ -4,7 +4,11 @@ import { DialogConfirmService } from '@shared/widgets/dialog-confirm';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { HeaderDetail } from '@shared/widgets/header-detail/header-detail';
 import { InstitutionStore } from '@features/admin-services/store/institution.store';
-import { Institution as InstitutionType, InstitutionStatus, INSTITUTION_STATUS_LABELS } from '../../types/institution-types';
+import {
+  Institution as InstitutionType,
+  InstitutionStatus,
+  INSTITUTION_STATUS_LABELS,
+} from '../../types/institution-types';
 import { InstitutionForm } from '../../components/institution-form/institution-form';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -23,8 +27,19 @@ import { ZardFormImports } from '@/shared/components/form';
 
 @Component({
   selector: 'sga-institution',
-  standalone: true,
-  imports: [CommonModule, FormsModule, HeaderDetail, InstitutionCardComponent, InstitutionSkeleton, ZardEmptyComponent, ZardInputDirective, ZardButtonComponent, SelectOptionComponent, ...ZardFormImports],
+
+  imports: [
+    CommonModule,
+    FormsModule,
+    HeaderDetail,
+    InstitutionCardComponent,
+    InstitutionSkeleton,
+    ZardEmptyComponent,
+    ZardInputDirective,
+    ZardButtonComponent,
+    SelectOptionComponent,
+    ...ZardFormImports,
+  ],
   templateUrl: './institution.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -43,18 +58,21 @@ export default class Institution {
   public statuses = [
     { value: '', label: 'Todos' },
     { value: InstitutionStatus.ACTIVE, label: INSTITUTION_STATUS_LABELS[InstitutionStatus.ACTIVE] },
-    { value: InstitutionStatus.INACTIVE, label: INSTITUTION_STATUS_LABELS[InstitutionStatus.INACTIVE] },
-    { value: InstitutionStatus.CLOSED, label: INSTITUTION_STATUS_LABELS[InstitutionStatus.CLOSED] }
+    {
+      value: InstitutionStatus.INACTIVE,
+      label: INSTITUTION_STATUS_LABELS[InstitutionStatus.INACTIVE],
+    },
+    { value: InstitutionStatus.CLOSED, label: INSTITUTION_STATUS_LABELS[InstitutionStatus.CLOSED] },
   ];
 
   constructor() {
-    this.route.queryParams.pipe(takeUntilDestroyed()).subscribe(params => {
+    this.route.queryParams.pipe(takeUntilDestroyed()).subscribe((params) => {
       this.filterStatus.set(params['status'] || '');
       this.filterSearch.set(params['search'] || '');
       this.store.loadAll({
         page: this.store.pagination().page,
         size: this.store.pagination().size,
-        ...params
+        ...params,
       });
     });
   }
@@ -84,14 +102,14 @@ export default class Institution {
     this.store.loadAll({
       page: this.pagination().page,
       size: this.pagination().size,
-      ...this.urlParams.getAllParams()
+      ...this.urlParams.getAllParams(),
     });
   }
 
   applyFilters() {
     this.urlParams.setParams({
       status: this.filterStatus(),
-      search: this.filterSearch()
+      search: this.filterSearch(),
     });
   }
 
@@ -118,7 +136,7 @@ export default class Institution {
       title: 'Eliminar institución',
       message: '¿Estás seguro de eliminar esta institución? Esta acción no se puede deshacer.',
       acceptButtonProps: { label: 'Eliminar', color: 'danger' },
-      rejectButtonProps: { label: 'Cancelar', color: 'secondary' }
+      rejectButtonProps: { label: 'Cancelar', color: 'secondary' },
     });
 
     if (confirmed) {

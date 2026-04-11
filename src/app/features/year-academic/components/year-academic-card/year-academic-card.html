@@ -1,12 +1,13 @@
 <z-card
   class="group p-6 rounded-[2.5rem] bg-card/40 border-border/10 backdrop-blur-2xl hover:bg-card/60 hover:border-primary/20 transition-all shadow-sm hover:shadow-2xl hover:shadow-primary/5 cursor-pointer"
-  (click)="viewDetail.emit(year())">
+  (click)="viewDetail.emit(year())"
+>
   <div class="flex flex-col lg:flex-row lg:items-center gap-8">
-
     <!-- Left Section: Year Icon & Main Info -->
     <div class="flex items-start gap-4 flex-1">
       <div
-        class="size-14 rounded-2xl flex flex-col items-center justify-center shrink-0 shadow-lg border border-border/10 bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+        class="size-14 rounded-2xl flex flex-col items-center justify-center shrink-0 shadow-lg border border-border/10 bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+      >
         <span class="text-[9px] font-black uppercase tracking-tighter leading-none">Año</span>
         <span class="text-xl font-bold leading-none">{{ year().year }}</span>
       </div>
@@ -16,8 +17,10 @@
           <h3 class="font-black text-lg tracking-tight uppercase inter truncate">
             {{ year().name }}
           </h3>
-          <span class="rounded-full px-3 py-1 text-[9px] font-black uppercase tracking-widest border"
-            [ngClass]="getStatusColor(year().status)">
+          <span
+            class="rounded-full px-3 py-1 text-[9px] font-black uppercase tracking-widest border"
+            [ngClass]="getStatusColor(year().status)"
+          >
             {{ getStatusLabel(year().status) }}
           </span>
         </div>
@@ -26,9 +29,9 @@
         </p>
         <p class="text-sm text-muted-foreground font-medium leading-relaxed max-w-2xl line-clamp-1">
           @if ((year().periods?.length ?? 0) > 0) {
-          {{ year().periods!.length }} período(s) registrado(s)
+            {{ year().periods!.length }} período(s) registrado(s)
           } @else {
-          Sin períodos registrados aún
+            Sin períodos registrados aún
           }
         </p>
       </div>
@@ -37,21 +40,27 @@
     <!-- Middle Section: Stats (XL only) -->
     <div class="hidden xl:flex items-center gap-3 px-8 border-x border-border/10">
       <div class="flex flex-col items-center gap-1">
-        <div class="size-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center shadow-sm">
+        <div
+          class="size-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center shadow-sm"
+        >
           <z-icon zType="calendar" class="h-4 w-4" />
         </div>
         <span class="text-[8px] font-black uppercase text-muted-foreground/40">Inicio</span>
       </div>
       <z-icon zType="chevron-right" class="h-4 w-4 text-muted-foreground/20" />
       <div class="flex flex-col items-center gap-1">
-        <div class="size-8 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center shadow-sm">
+        <div
+          class="size-8 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center shadow-sm"
+        >
           <z-icon zType="layers" class="h-4 w-4" />
         </div>
         <span class="text-[8px] font-black uppercase text-muted-foreground/40">Períodos</span>
       </div>
       <z-icon zType="chevron-right" class="h-4 w-4 text-muted-foreground/20" />
       <div class="flex flex-col items-center gap-1">
-        <div class="size-8 rounded-xl bg-green-500/10 text-green-500 flex items-center justify-center shadow-sm">
+        <div
+          class="size-8 rounded-xl bg-green-500/10 text-green-500 flex items-center justify-center shadow-sm"
+        >
           <z-icon zType="activity" class="h-4 w-4" />
         </div>
         <span class="text-[8px] font-black uppercase text-muted-foreground/40">Estado</span>
@@ -59,54 +68,83 @@
     </div>
 
     <!-- Right Section: Metrics & Actions -->
-    <div class="flex items-center justify-between lg:justify-end gap-10 shrink-0" (click)="$event.stopPropagation()">
+    <div
+      class="flex items-center justify-between lg:justify-end gap-10 shrink-0"
+      (click)="$event.stopPropagation()"
+    >
       <div class="flex items-center gap-8">
         <div class="text-center">
-          <p class="text-xs font-black inter uppercase">{{ year().startDate | date:'shortDate' }}</p>
-          <span class="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60">Inicio</span>
+          <p class="text-xs font-black inter uppercase">
+            {{ year().startDate | date: 'shortDate' }}
+          </p>
+          <span class="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60"
+            >Inicio</span
+          >
         </div>
         <div class="text-center">
-          <p class="text-xs font-black inter uppercase">{{ year().endDate | date:'shortDate' }}</p>
-          <span class="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60">Fin</span>
+          <p class="text-xs font-black inter uppercase">{{ year().endDate | date: 'shortDate' }}</p>
+          <span class="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60"
+            >Fin</span
+          >
         </div>
         <div class="text-center">
           <p class="text-xs font-black inter uppercase text-primary">{{ year().passingGrade }}</p>
-          <span class="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60">Min. Aprob.</span>
+          <span class="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60"
+            >Min. Aprob.</span
+          >
         </div>
       </div>
 
       <div class="flex items-center gap-2">
-
         @if (canManage() || canCreatePeriod()) {
-          <button z-button zType="ghost" zSize="icon-sm"
-            class="rounded-xl hover:bg-primary/10 hover:text-primary transition-all" title="Más acciones" zPopover
-            [zContent]="actionsMenu" [zPlacement]="'bottom'">
+          <button
+            z-button
+            zType="ghost"
+            zSize="icon-sm"
+            class="rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
+            title="Más acciones"
+            zPopover
+            [zContent]="actionsMenu"
+            [zPlacement]="'bottom'"
+          >
             <z-icon zType="ellipsis" class="h-5 w-5" />
           </button>
 
           <ng-template #actionsMenu>
             <z-popover class="min-w-[180px] p-1.5 flex flex-col gap-1">
               @if (canCreatePeriod()) {
-                <button *sgaHasPermission="'academic_period:create'" z-button zType="ghost"
+                <button
+                  *sgaHasPermission="'academic_period:create'"
+                  z-button
+                  zType="ghost"
                   class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
-                  (click)="createPeriod.emit(year())">
+                  (click)="createPeriod.emit(year())"
+                >
                   <z-icon zType="layers" class="h-4 w-4" />
                   Crear Período
                 </button>
               }
               @if (canManage()) {
-                <button *sgaHasPermission="'academic_year:update'" z-button zType="ghost"
+                <button
+                  *sgaHasPermission="'academic_year:update'"
+                  z-button
+                  zType="ghost"
                   class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
-                  (click)="edit.emit(year())">
+                  (click)="edit.emit(year())"
+                >
                   <z-icon zType="settings" class="h-4 w-4" />
                   Configurar
                 </button>
               }
               @if (canManage()) {
                 <div class="h-px bg-border/10 my-1 mx-2"></div>
-                <button *sgaHasPermission="'academic_year:delete'" z-button zType="ghost"
+                <button
+                  *sgaHasPermission="'academic_year:delete'"
+                  z-button
+                  zType="ghost"
                   class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-destructive/10 hover:text-destructive transition-all"
-                  (click)="delete.emit(year())">
+                  (click)="delete.emit(year())"
+                >
                   <z-icon zType="trash" class="h-4 w-4" />
                   Eliminar
                 </button>
@@ -125,9 +163,11 @@
       Año Académico:
       <span class="text-foreground font-mono">{{ year().year }}</span>
     </div>
-    <div class="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest flex items-center gap-1">
+    <div
+      class="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest flex items-center gap-1"
+    >
       <z-icon zType="layers" class="h-3 w-3" />
-      {{ (year().periods?.length ?? 0) }} período(s)
+      {{ year().periods?.length ?? 0 }} período(s)
     </div>
   </div>
 </z-card>

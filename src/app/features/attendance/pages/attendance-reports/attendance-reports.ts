@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, computed, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+  computed,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HeaderDetail } from '@shared/widgets/header-detail/header-detail';
 import { ZardInputDirective } from '@/shared/components/input';
@@ -11,11 +18,17 @@ import { HeaderConfig } from '@core/types/header-types';
 import { ActionConfig } from '@core/types/action-types';
 import { AuthStore } from '@auth/services/store/auth.store';
 
-
 @Component({
   selector: 'sga-attendance-reports',
-  standalone: true,
-  imports: [CommonModule, HeaderDetail, ZardInputDirective, ZardEmptyComponent, ZardSkeletonComponent, AttendanceReportCardComponent],
+
+  imports: [
+    CommonModule,
+    HeaderDetail,
+    ZardInputDirective,
+    ZardEmptyComponent,
+    ZardSkeletonComponent,
+    AttendanceReportCardComponent,
+  ],
   templateUrl: './attendance-reports.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -42,7 +55,13 @@ export default class AttendanceReportsPage implements OnInit {
     showFilters: false,
   }));
   readonly headerActions = signal<ActionConfig[]>([
-    { key: 'refresh', label: 'Actualizar', icon: 'fas fa-sync-alt', typeAction: 'header', color: 'primary' },
+    {
+      key: 'refresh',
+      label: 'Actualizar',
+      icon: 'fas fa-sync-alt',
+      typeAction: 'header',
+      color: 'primary',
+    },
   ]);
 
   data = computed(() => {

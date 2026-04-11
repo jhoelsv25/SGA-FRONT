@@ -12,14 +12,16 @@ export class YearAcademicApi {
   private readonly baseUrl = 'academic-years';
 
   getAll(params: Params): Observable<DataResponse<YearAcademic>> {
-    return this.http.get<YearAcademic[] | DataResponse<YearAcademic>>(this.baseUrl, { params }).pipe(
-      map((res) => {
-        if (Array.isArray(res)) {
-          return { data: res, page: 1, size: res.length, total: res.length };
-        }
-        return res;
-      }),
-    );
+    return this.http
+      .get<YearAcademic[] | DataResponse<YearAcademic>>(this.baseUrl, { params })
+      .pipe(
+        map((res) => {
+          if (Array.isArray(res)) {
+            return { data: res, page: 1, size: res.length, total: res.length };
+          }
+          return res;
+        }),
+      );
   }
   getById(id: string): Observable<YearAcademic> {
     return this.http.get<YearAcademic>(`${this.baseUrl}/${id}`);

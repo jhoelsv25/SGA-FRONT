@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ZardButtonComponent } from '@/shared/components/button';
@@ -18,15 +26,15 @@ declare const L: any;
 
 @Component({
   selector: 'sga-institution-config',
-  standalone: true,
+
   imports: [
-    CommonModule, 
-    ReactiveFormsModule, 
-    ZardButtonComponent, 
-    ZardInputDirective, 
-    ZardIconComponent, 
+    CommonModule,
+    ReactiveFormsModule,
+    ZardButtonComponent,
+    ZardInputDirective,
+    ZardIconComponent,
     HeaderDetailComponent,
-    ...ZardFormImports
+    ...ZardFormImports,
   ],
   templateUrl: './institution-config.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -50,13 +58,19 @@ export default class InstitutionConfig implements OnInit, OnDestroy {
   public saving = signal(false);
   public institution = signal<Institution | null>(null);
   public formInvalid = signal(true);
-  public preview = signal<{ latitude: number | null; longitude: number | null; geofenceRadius: number }>({
+  public preview = signal<{
+    latitude: number | null;
+    longitude: number | null;
+    geofenceRadius: number;
+  }>({
     latitude: null,
     longitude: null,
     geofenceRadius: 50,
   });
-  
-  public isSuperAdmin = computed(() => this.authStore.currentUser()?.profile?.type === 'superadmin');
+
+  public isSuperAdmin = computed(
+    () => this.authStore.currentUser()?.profile?.type === 'superadmin',
+  );
   public isCapturingLocation = computed(() => this.geoService.isWatching());
   public geolocationError = computed(() => this.geoService.error());
   public hasPreviewCoordinates = computed(() => {
@@ -65,14 +79,14 @@ export default class InstitutionConfig implements OnInit, OnDestroy {
   });
 
   public headerActions = computed(() => [
-    { 
-      key: 'save', 
-      label: this.saving() ? 'Guardando...' : 'Guardar Cambios', 
+    {
+      key: 'save',
+      label: this.saving() ? 'Guardando...' : 'Guardar Cambios',
       icon: 'fa-save',
       color: 'primary',
       typeAction: 'header' as const,
-      disabled: this.formInvalid() || this.saving() || this.loading()
-    }
+      disabled: this.formInvalid() || this.saving() || this.loading(),
+    },
   ]);
 
   constructor() {
@@ -88,7 +102,10 @@ export default class InstitutionConfig implements OnInit, OnDestroy {
       this.syncPreviewFromForm();
       this.queuePreviewRefresh();
     });
-    this.formStateSubscription = merge(this.configForm.statusChanges, this.configForm.valueChanges).subscribe(() => {
+    this.formStateSubscription = merge(
+      this.configForm.statusChanges,
+      this.configForm.valueChanges,
+    ).subscribe(() => {
       this.formInvalid.set(this.configForm.invalid);
     });
     this.formInvalid.set(this.configForm.invalid);
@@ -115,7 +132,7 @@ export default class InstitutionConfig implements OnInit, OnDestroy {
         this.loading.set(false);
         this.queuePreviewRefresh();
       },
-      error: () => this.loading.set(false)
+      error: () => this.loading.set(false),
     });
   }
 
@@ -133,14 +150,14 @@ export default class InstitutionConfig implements OnInit, OnDestroy {
 
     this.currentPosition$
       .pipe(
-        filter(pos => !!pos),
-        take(1)
+        filter((pos) => !!pos),
+        take(1),
       )
-      .subscribe(pos => {
+      .subscribe((pos) => {
         if (pos) {
           this.configForm.patchValue({
             latitude: pos.coords.latitude,
-            longitude: pos.coords.longitude
+            longitude: pos.coords.longitude,
           });
           this.syncPreviewFromForm();
           this.queuePreviewRefresh();
@@ -152,7 +169,7 @@ export default class InstitutionConfig implements OnInit, OnDestroy {
 
   onSubmit() {
     if (this.configForm.invalid || !this.institution()) return;
-    
+
     this.saving.set(true);
     const id = this.institution()!.id;
     this.api.update(id, this.configForm.value).subscribe({
@@ -160,7 +177,7 @@ export default class InstitutionConfig implements OnInit, OnDestroy {
         this.saving.set(false);
         this.toast.success('Configuración guardada', { description: 'Éxito' });
       },
-      error: () => this.saving.set(false)
+      error: () => this.saving.set(false),
     });
   }
 
@@ -168,7 +185,11 @@ export default class InstitutionConfig implements OnInit, OnDestroy {
     const { latitude, longitude } = this.preview();
     if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return;
 
-    window.open(`https://www.google.com/maps?q=${latitude},${longitude}`, '_blank', 'noopener,noreferrer');
+    window.open(
+      `https://www.google.com/maps?q=${latitude},${longitude}`,
+      '_blank',
+      'noopener,noreferrer',
+    );
   }
 
   private syncPreviewFromForm(): void {

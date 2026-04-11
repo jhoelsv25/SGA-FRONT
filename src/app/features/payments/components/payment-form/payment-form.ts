@@ -13,7 +13,14 @@ import { Payment, PaymentCreate } from '../../types/payment-types';
 
 @Component({
   selector: 'sga-payment-form',
-  imports: [CommonModule, ReactiveFormsModule, ZardButtonComponent, ZardInputDirective, StudentSelect, SelectOptionComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    ZardButtonComponent,
+    ZardInputDirective,
+    StudentSelect,
+    SelectOptionComponent,
+  ],
   templateUrl: './payment-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -57,16 +64,28 @@ export class PaymentForm implements OnInit {
       studentId: [this.current?.studentId ?? '', [Validators.required]],
       paymentGroupId: [this.current?.paymentGroupId ?? this.group?.id ?? ''],
       concept: [this.current?.concept ?? this.group?.title ?? '', [Validators.required]],
-      amount: [this.current?.amount ?? this.group?.amount ?? null, [Validators.required, Validators.min(0.01)]],
-      dueDate: [this.current?.dueDate?.slice(0, 10) ?? this.group?.dueDate?.slice?.(0, 10) ?? '', [Validators.required]],
+      amount: [
+        this.current?.amount ?? this.group?.amount ?? null,
+        [Validators.required, Validators.min(0.01)],
+      ],
+      dueDate: [
+        this.current?.dueDate?.slice(0, 10) ?? this.group?.dueDate?.slice?.(0, 10) ?? '',
+        [Validators.required],
+      ],
       amountPaid: [this.current?.paidAmount ?? 0, [Validators.min(0)]],
       paymentDate: [this.current?.paidAt?.slice(0, 10) ?? this.today],
       paymentMethod: [this.current?.paymentMethod ?? 'cash', [Validators.required]],
-      installmentNumber: [this.current?.installmentNumber ?? 1, [Validators.required, Validators.min(1)]],
+      installmentNumber: [
+        this.current?.installmentNumber ?? 1,
+        [Validators.required, Validators.min(1)],
+      ],
       receiptNumber: [this.current?.receiptNumber ?? ''],
       payerName: [this.current?.payerName ?? ''],
       lateFee: [this.current?.lateFee ?? this.group?.lateFee ?? 0, [Validators.min(0)]],
-      discountAmount: [this.current?.discountAmount ?? this.group?.discountAmount ?? 0, [Validators.min(0)]],
+      discountAmount: [
+        this.current?.discountAmount ?? this.group?.discountAmount ?? 0,
+        [Validators.min(0)],
+      ],
       internalReference: [this.current?.internalReference ?? this.group?.internalReference ?? ''],
       externalReference: [this.current?.externalReference ?? this.current?.reference ?? ''],
       observations: [this.current?.observations ?? this.group?.observations ?? ''],

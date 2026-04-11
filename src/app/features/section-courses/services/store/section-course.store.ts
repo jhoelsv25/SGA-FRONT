@@ -43,7 +43,8 @@ export const SectionCourseStore = signalStore(
           patchState(store, { loading: true });
           return api.getAll(params || {}).pipe(
             tap({
-              next: (res) => patchState(store, { data: res.data ?? [], total: res.total, loading: false }),
+              next: (res) =>
+                patchState(store, { data: res.data ?? [], total: res.total, loading: false }),
               error: (err) => {
                 patchState(store, { loading: false });
                 toast.error('Error al cargar cursos por sección: ' + (err?.message ?? ''));
@@ -58,7 +59,8 @@ export const SectionCourseStore = signalStore(
       const obs = api.create(payload).pipe(
         tap({
           next: (res) => {
-            const created = (res as { data?: SectionCourse }).data ?? (res as unknown as SectionCourse);
+            const created =
+              (res as { data?: SectionCourse }).data ?? (res as unknown as SectionCourse);
             patchState(store, { data: [created, ...store.data()], loading: false });
             toast.success('Curso asignado a sección correctamente');
           },
@@ -75,7 +77,8 @@ export const SectionCourseStore = signalStore(
       return api.update(id, payload).pipe(
         tap({
           next: (res) => {
-            const updated = (res as { data?: SectionCourse }).data ?? (res as unknown as SectionCourse);
+            const updated =
+              (res as { data?: SectionCourse }).data ?? (res as unknown as SectionCourse);
             patchState(store, {
               data: store.data().map((i) => (i.id === id ? updated : i)),
               loading: false,

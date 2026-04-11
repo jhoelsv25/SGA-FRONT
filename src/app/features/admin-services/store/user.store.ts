@@ -40,15 +40,15 @@ export const UserStore = signalStore(
               next: (response) => {
                 const isLoadMore = !!params?.['cursor'];
                 const newUsers = isLoadMore ? [...store.users(), ...response.data] : response.data;
-                patchState(store, { 
-                  users: newUsers, 
+                patchState(store, {
+                  users: newUsers,
                   pagination: {
                     limit: store.pagination().limit,
                     loadedCount: newUsers.length,
                     hasNext: !!response.nextCursor,
-                    nextCursor: response.nextCursor
+                    nextCursor: response.nextCursor,
                   },
-                  loading: false 
+                  loading: false,
                 });
               },
               error: (error) => {

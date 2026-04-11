@@ -8,4 +8,5 @@ export const USER_COLUMN: DataSourceColumn[] = [
   { key: 'roleName', label: 'Rol', sortable: true },
   { key: 'lastLogin', label: 'Última sesión', type: 'datetime', sortable: true },
   { key: 'isActive', label: 'Activo', type: 'boolean' },
-  { key: 'createdAt', label: 'Creado', sortable: true, type: 'datetime' }];
+  { key: 'createdAt', label: 'Creado', sortable: true, type: 'datetime' },
+];

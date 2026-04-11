@@ -1,6 +1,15 @@
 import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
 import { ZardInputDirective } from '@/shared/components/input';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  OnInit,
+  signal,
+  input,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
@@ -28,11 +37,18 @@ type ScoreRow = {
   observation: string;
 };
 
-
 @Component({
   selector: 'sga-assessment-scores',
-  standalone: true,
-  imports: [CommonModule, FormsModule, DataSource, SgaTemplate, ZardInputDirective, SelectOptionComponent, HeaderDetail, SectionCourseSelect],
+  imports: [
+    CommonModule,
+    FormsModule,
+    DataSource,
+    SgaTemplate,
+    ZardInputDirective,
+    SelectOptionComponent,
+    HeaderDetail,
+    SectionCourseSelect,
+  ],
   templateUrl: './scores.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -54,11 +70,25 @@ export default class AssessmentScoresPage implements OnInit {
   public columns: DataSourceColumn[] = [
     { key: 'studentCode', label: 'Código', width: '120px' },
     { key: 'studentName', label: 'Estudiante', sortable: true },
-    { key: 'score', label: 'Calificación', width: '150px', type: 'custom', customTemplate: 'scoreTemplate' },
-    { key: 'observation', label: 'Observación', type: 'custom', customTemplate: 'observationTemplate' }];
+    {
+      key: 'score',
+      label: 'Calificación',
+      width: '150px',
+      type: 'custom',
+      customTemplate: 'scoreTemplate',
+    },
+    {
+      key: 'observation',
+      label: 'Observación',
+      type: 'custom',
+      customTemplate: 'observationTemplate',
+    },
+  ];
 
   public canSave = computed(() => this.selectedAssessment() && this.studentScores().length > 0);
-  public hasActiveFilters = computed(() => Boolean(this.selectedSectionCourse() || this.selectedAssessment()));
+  public hasActiveFilters = computed(() =>
+    Boolean(this.selectedSectionCourse() || this.selectedAssessment()),
+  );
 
   public filteredAssessments = computed(() => {
     return this.store.assessments().map((a) => ({
@@ -123,9 +153,13 @@ export default class AssessmentScoresPage implements OnInit {
     return Number((total / rows.length).toFixed(1));
   });
 
-  public readonly approvedCount = computed(() => this.studentScores().filter((row) => Number(row.score) >= 11).length);
+  public readonly approvedCount = computed(
+    () => this.studentScores().filter((row) => Number(row.score) >= 11).length,
+  );
 
-  public readonly pendingCount = computed(() => this.studentScores().filter((row) => Number(row.score) <= 0).length);
+  public readonly pendingCount = computed(
+    () => this.studentScores().filter((row) => Number(row.score) <= 0).length,
+  );
 
   constructor() {
     // Aplica selección previa guardada de sección
@@ -207,7 +241,8 @@ export default class AssessmentScoresPage implements OnInit {
         const options = this.sectionCourseOptions();
         const saved = this.filters.scoresSectionCourseId();
         const fallback = options[0]?.value?.toString() ?? '';
-        const nextSection = saved && options.some((o) => o.value?.toString() === saved) ? saved : fallback;
+        const nextSection =
+          saved && options.some((o) => o.value?.toString() === saved) ? saved : fallback;
 
         if (nextSection) {
           this.onSectionCourseChange(nextSection);
@@ -293,7 +328,7 @@ export default class AssessmentScoresPage implements OnInit {
       return;
     }
 
-    const studentsInCourse = this.studentScores().map(s => String(s.studentCode || '').trim());
+    const studentsInCourse = this.studentScores().map((s) => String(s.studentCode || '').trim());
     const maxScore = Number(currentAssessment.maxScore || 20);
 
     this.dialog.open(ScoresImportDialog, {
@@ -305,14 +340,14 @@ export default class AssessmentScoresPage implements OnInit {
         onImport: (mappedData: { studentCode: string; score: number; observation?: string }[]) => {
           const request = {
             assessmentId,
-            scores: mappedData.map(d => {
-              const match = this.studentScores().find(s => s.studentCode === d.studentCode);
+            scores: mappedData.map((d) => {
+              const match = this.studentScores().find((s) => s.studentCode === d.studentCode);
               return {
                 enrollmentId: match?.enrollmentId!,
                 score: d.score,
-                observation: d.observation || ''
+                observation: d.observation || '',
               };
-            })
+            }),
           };
 
           this.assessmentApi.saveScoresBulk(request).subscribe({
@@ -320,10 +355,11 @@ export default class AssessmentScoresPage implements OnInit {
               this.toast.success('Notas importadas y guardadas correctamente');
               this.loadData(assessmentId);
             },
-            error: (err: Error) => this.toast.error('Error al guardar notas importadas: ' + err.message)
+            error: (err: Error) =>
+              this.toast.error('Error al guardar notas importadas: ' + err.message),
           });
-        }
-      }
+        },
+      },
     });
   }
 }

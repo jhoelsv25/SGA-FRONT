@@ -15,11 +15,16 @@ interface ManualAttendanceDialogData {
   teachers: { id: string; teacherCode: string; specialization: string }[];
 }
 
-
 @Component({
   selector: 'sga-teacher-attendance-manual-form',
-  standalone: true,
-  imports: [ReactiveFormsModule, ZardButtonComponent, ZardInputDirective, SelectOptionComponent, TeacherSelect],
+
+  imports: [
+    ReactiveFormsModule,
+    ZardButtonComponent,
+    ZardInputDirective,
+    SelectOptionComponent,
+    TeacherSelect,
+  ],
   templateUrl: './teacher-attendance-manual-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -36,7 +41,8 @@ export class TeacherAttendanceManualForm {
     { value: 'present' satisfies TeacherAttendanceStatus, label: 'Presente' },
     { value: 'late' satisfies TeacherAttendanceStatus, label: 'Tardanza' },
     { value: 'absent' satisfies TeacherAttendanceStatus, label: 'Falta' },
-    { value: 'excused' satisfies TeacherAttendanceStatus, label: 'Justificado' }];
+    { value: 'excused' satisfies TeacherAttendanceStatus, label: 'Justificado' },
+  ];
 
   form = this.fb.group({
     teacherId: ['', [Validators.required]],
@@ -90,7 +96,8 @@ export class TeacherAttendanceManualForm {
             status,
             checkInTime,
             observations: observations || undefined,
-          }],
+          },
+        ],
       })
       .subscribe({
         next: (res) => {
@@ -104,7 +111,9 @@ export class TeacherAttendanceManualForm {
         },
         error: (error) => {
           this.loading = false;
-          this.toast.error(error?.error?.message ?? error?.message ?? 'No se pudo registrar asistencia');
+          this.toast.error(
+            error?.error?.message ?? error?.message ?? 'No se pudo registrar asistencia',
+          );
         },
       });
   }

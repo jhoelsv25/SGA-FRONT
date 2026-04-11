@@ -27,16 +27,31 @@ export class CompetencyApi {
   }
 
   getById(id: string): Observable<Competency> {
-    return this.http.get<GetOneRes>(`${this.baseUrl}/${id}`).pipe(
-      map((res) => ('data' in res && res.data ? res.data : (res as Competency))),
-    );
+    return this.http
+      .get<GetOneRes>(`${this.baseUrl}/${id}`)
+      .pipe(map((res) => ('data' in res && res.data ? res.data : (res as Competency))));
   }
 
-  create(payload: { code: string; name: string; description?: string; expectedAchievement?: string; course: string }): Observable<ApiEntityResponse<Competency>> {
+  create(payload: {
+    code: string;
+    name: string;
+    description?: string;
+    expectedAchievement?: string;
+    course: string;
+  }): Observable<ApiEntityResponse<Competency>> {
     return this.http.post<ApiEntityResponse<Competency>>(this.baseUrl, payload);
   }
 
-  update(id: string, payload: Partial<{ code: string; name: string; description?: string; expectedAchievement?: string; course: string }>): Observable<ApiEntityResponse<Competency>> {
+  update(
+    id: string,
+    payload: Partial<{
+      code: string;
+      name: string;
+      description?: string;
+      expectedAchievement?: string;
+      course: string;
+    }>,
+  ): Observable<ApiEntityResponse<Competency>> {
     return this.http.patch<ApiEntityResponse<Competency>>(`${this.baseUrl}/${id}`, payload);
   }
 

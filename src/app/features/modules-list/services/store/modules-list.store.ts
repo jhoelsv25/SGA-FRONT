@@ -32,14 +32,22 @@ export const ModulesListStore = signalStore(
       subtitle: 'Listado con paginación por cursor (ideal para muchos datos)',
     },
     actions: [
-      { key: 'refresh', label: 'Actualizar', typeAction: 'header', icon: 'fas fa-sync-alt', color: 'primary' }],
+      {
+        key: 'refresh',
+        label: 'Actualizar',
+        typeAction: 'header',
+        icon: 'fas fa-sync-alt',
+        color: 'primary',
+      },
+    ],
     columns: [
       { key: 'name', label: 'Nombre', sortable: true },
       { key: 'key', label: 'Clave' },
       { key: 'path', label: 'Ruta' },
       { key: 'order', label: 'Orden', type: 'number' },
       { key: 'visibility', label: 'Visibilidad' },
-      { key: 'isActive', label: 'Activo', type: 'boolean' }],
+      { key: 'isActive', label: 'Activo', type: 'boolean' },
+    ],
     cursorPagination: null,
   }),
   withMethods((store, api = inject(ModulesListApi), toast = inject(Toast)) => ({
@@ -83,7 +91,8 @@ export const ModulesListStore = signalStore(
               const cursorRes = res as unknown as ModulesListCursorResponse;
               const prev = store.data();
               const newData = [...prev, ...cursorRes.data];
-              const loadedCount = (store.cursorPagination()?.loadedCount ?? 0) + cursorRes.data.length;
+              const loadedCount =
+                (store.cursorPagination()?.loadedCount ?? 0) + cursorRes.data.length;
               patchState(store, {
                 data: newData,
                 loading: false,

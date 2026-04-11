@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
@@ -47,12 +54,31 @@ const DAY_OPTIONS: SelectOption[] = [
   { value: 'saturday', label: 'Sábado' },
 ];
 
-const QUICK_STARTS = ['07:00', '07:45', '08:30', '09:15', '10:15', '11:00', '11:45', '14:00', '14:45', '15:30', '16:15', '17:00'];
+const QUICK_STARTS = [
+  '07:00',
+  '07:45',
+  '08:30',
+  '09:15',
+  '10:15',
+  '11:00',
+  '11:45',
+  '14:00',
+  '14:45',
+  '15:30',
+  '16:15',
+  '17:00',
+];
 
 @Component({
   selector: 'sga-schedule-planner',
-  standalone: true,
-  imports: [CommonModule, FormsModule, ZardButtonComponent, ZardInputDirective, SelectOptionComponent],
+
+  imports: [
+    CommonModule,
+    FormsModule,
+    ZardButtonComponent,
+    ZardInputDirective,
+    SelectOptionComponent,
+  ],
   templateUrl: './schedule-planner.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -84,7 +110,11 @@ export class SchedulePlanner implements OnInit {
     const scheduledSectionCourseIds = new Set(
       this.schedules()
         .filter((schedule) => schedule.blockType !== 'break')
-        .map((schedule) => typeof schedule.sectionCourse === 'object' ? schedule.sectionCourse?.id : schedule.sectionCourse)
+        .map((schedule) =>
+          typeof schedule.sectionCourse === 'object'
+            ? schedule.sectionCourse?.id
+            : schedule.sectionCourse,
+        )
         .filter((value): value is string => Boolean(value)),
     );
 
@@ -100,7 +130,9 @@ export class SchedulePlanner implements OnInit {
     const breakBlocks = scheduleList.filter((item) => item.blockType === 'break').length;
     const activeTeachers = new Set(
       scheduleList
-        .map((item) => typeof item.sectionCourse === 'object' ? item.sectionCourse?.teacher?.id : null)
+        .map((item) =>
+          typeof item.sectionCourse === 'object' ? item.sectionCourse?.teacher?.id : null,
+        )
         .filter((value): value is string => Boolean(value)),
     ).size;
 
@@ -136,9 +168,10 @@ export class SchedulePlanner implements OnInit {
   }
 
   teacherLabel(teacher: Teacher) {
-    const name = typeof teacher.person === 'object'
-      ? [teacher.person?.firstName, teacher.person?.lastName].filter(Boolean).join(' ')
-      : teacher.teacherCode;
+    const name =
+      typeof teacher.person === 'object'
+        ? [teacher.person?.firstName, teacher.person?.lastName].filter(Boolean).join(' ')
+        : teacher.teacherCode;
     return [name || teacher.teacherCode, teacher.specialization].filter(Boolean).join(' · ');
   }
 
@@ -237,8 +270,14 @@ export class SchedulePlanner implements OnInit {
       dayOfWeek: schedule.dayOfWeek,
       startAt: this.formatTime(schedule.startAt),
       endAt: this.formatTime(schedule.endAt),
-      teacherId: typeof schedule.sectionCourse === 'object' ? schedule.sectionCourse?.teacher?.id ?? null : null,
-      sectionId: typeof schedule.sectionCourse === 'object' ? schedule.sectionCourse?.section?.id ?? null : null,
+      teacherId:
+        typeof schedule.sectionCourse === 'object'
+          ? (schedule.sectionCourse?.teacher?.id ?? null)
+          : null,
+      sectionId:
+        typeof schedule.sectionCourse === 'object'
+          ? (schedule.sectionCourse?.section?.id ?? null)
+          : null,
     }));
   }
 
@@ -250,10 +289,11 @@ export class SchedulePlanner implements OnInit {
     for (const day of DAY_OPTIONS.map((item) => item.value as Schedule['dayOfWeek'])) {
       for (const startAt of QUICK_STARTS) {
         const endAt = this.addMinutes(startAt, 45);
-        const hasConflict = occupied.some((slot) =>
-          slot.dayOfWeek === day &&
-          this.overlaps(startAt, endAt, slot.startAt, slot.endAt) &&
-          (slot.teacherId === teacherId || slot.sectionId === sectionId),
+        const hasConflict = occupied.some(
+          (slot) =>
+            slot.dayOfWeek === day &&
+            this.overlaps(startAt, endAt, slot.startAt, slot.endAt) &&
+            (slot.teacherId === teacherId || slot.sectionId === sectionId),
         );
 
         if (!hasConflict) {
@@ -292,9 +332,13 @@ export class SchedulePlanner implements OnInit {
   }
 
   private teacherNameFromSectionCourse(sectionCourse: SectionCourse) {
-    return [sectionCourse.teacher?.person?.firstName, sectionCourse.teacher?.person?.lastName]
-      .filter(Boolean)
-      .join(' ') || sectionCourse.teacher?.teacherCode || 'Docente';
+    return (
+      [sectionCourse.teacher?.person?.firstName, sectionCourse.teacher?.person?.lastName]
+        .filter(Boolean)
+        .join(' ') ||
+      sectionCourse.teacher?.teacherCode ||
+      'Docente'
+    );
   }
 
   private toSectionCourseTitle(sectionCourse: SectionCourse) {

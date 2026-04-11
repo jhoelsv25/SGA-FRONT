@@ -30,7 +30,9 @@ export class PaymentApi {
   }
 
   getGroups(params?: Params): Observable<PaymentGroupsListResponse> {
-    return this.http.get<PaymentGroupsListResponse>(`${this.baseUrl}/groups`, { params: params ?? {} });
+    return this.http.get<PaymentGroupsListResponse>(`${this.baseUrl}/groups`, {
+      params: params ?? {},
+    });
   }
 
   getGroupById(id: string): Observable<PaymentGroupResponse> {

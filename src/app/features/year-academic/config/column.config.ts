@@ -13,4 +13,5 @@ export const YEAR_ACADEMIC_COLUMN: DataSourceColumn[] = [
     truncate: false,
     truncateLength: 30,
   },
-  { key: 'status', label: 'Estado', sortable: true }];
+  { key: 'status', label: 'Estado', sortable: true },
+];

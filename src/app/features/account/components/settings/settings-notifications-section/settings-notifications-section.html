@@ -1,0 +1,170 @@
+<z-card>
+  <div class="border-border/70 border-b p-6">
+    <h2 class="text-xl font-semibold text-foreground">Notificaciones</h2>
+    <p class="mt-1 text-sm text-muted-foreground">Preferencias guardadas en tu cuenta.</p>
+  </div>
+
+  <div class="space-y-3 p-6">
+    @for (item of notificationRows(); track item.key) {
+      <button
+        type="button"
+        class="flex w-full items-center justify-between rounded-xl border border-border bg-background/80 p-4 text-left transition hover:border-primary/30"
+        (click)="preferenceToggle.emit(item.key)"
+      >
+        <span class="pr-4">
+          <span class="block text-sm font-semibold text-foreground">{{ item.label }}</span>
+          <span class="mt-1 block text-sm leading-6 text-muted-foreground">{{
+            item.description
+          }}</span>
+        </span>
+        <span
+          class="inline-flex rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em]"
+          [class.bg-emerald-500/10]="preferences()[item.key]"
+          [class.text-emerald-600]="preferences()[item.key]"
+          [class.bg-muted]="!preferences()[item.key]"
+          [class.text-muted-foreground]="!preferences()[item.key]"
+        >
+          {{ preferences()[item.key] ? 'Activo' : 'Pausado' }}
+        </span>
+      </button>
+    }
+
+    @if (showTeacherReminderConfig()) {
+      <div class="rounded-2xl border border-primary/15 bg-primary/5 p-5">
+        <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+          <div class="max-w-2xl">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-primary">
+              Clase en vivo
+            </p>
+            <h3 class="mt-2 text-base font-semibold text-foreground">
+              Recordatorio previo para iniciar clase
+            </h3>
+            <p class="mt-1 text-sm leading-6 text-muted-foreground">
+              El sistema revisa cada minuto tus horarios del dia y te avisa antes de que empiece el
+              bloque.
+            </p>
+          </div>
+          <button
+            type="button"
+            class="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] transition"
+            [class.border-emerald-500/30]="liveClassReminderEnabled()"
+            [class.bg-emerald-500/10]="liveClassReminderEnabled()"
+            [class.text-emerald-700]="liveClassReminderEnabled()"
+            [class.border-border]="!liveClassReminderEnabled()"
+            [class.bg-background]="!liveClassReminderEnabled()"
+            [class.text-muted-foreground]="!liveClassReminderEnabled()"
+            (click)="liveReminderToggle.emit()"
+          >
+            {{ liveClassReminderEnabled() ? 'Activo' : 'Pausado' }}
+          </button>
+        </div>
+
+        <div class="mt-4 rounded-xl border border-border bg-background/80 p-4">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                Anticipacion
+              </p>
+              <p class="mt-1 text-sm text-foreground">
+                @if (liveClassReminderLeadMinutes() === 0) {
+                  Al iniciar el bloque
+                } @else {
+                  {{ liveClassReminderLeadMinutes() }} min antes
+                }
+              </p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              @for (minutes of liveClassReminderPresets(); track minutes) {
+                <button
+                  type="button"
+                  class="rounded-full border px-3 py-1.5 text-xs font-semibold transition"
+                  [class.border-primary]="liveClassReminderLeadMinutes() === minutes"
+                  [class.bg-primary]="liveClassReminderLeadMinutes() === minutes"
+                  [class.text-primary-foreground]="liveClassReminderLeadMinutes() === minutes"
+                  [class.border-border]="liveClassReminderLeadMinutes() !== minutes"
+                  [class.bg-background]="liveClassReminderLeadMinutes() !== minutes"
+                  [class.text-muted-foreground]="liveClassReminderLeadMinutes() !== minutes"
+                  (click)="liveReminderLeadChange.emit(minutes)"
+                >
+                  {{ reminderLeadLabel()(minutes) }}
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (showGlobalReminderConfig()) {
+      <div class="rounded-2xl border border-border bg-background/90 p-5">
+        <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+          <div class="max-w-2xl">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-primary">
+              Regla global
+            </p>
+            <h3 class="mt-2 text-base font-semibold text-foreground">
+              Recordatorio institucional para docentes
+            </h3>
+            <p class="mt-1 text-sm leading-6 text-muted-foreground">
+              Este valor se usa como predeterminado para todos los docentes. Si un docente no
+              personaliza su ajuste, el sistema toma esta configuracion global.
+            </p>
+          </div>
+          <button
+            type="button"
+            class="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] transition"
+            [class.border-emerald-500/30]="globalLiveClassReminderEnabled()"
+            [class.bg-emerald-500/10]="globalLiveClassReminderEnabled()"
+            [class.text-emerald-700]="globalLiveClassReminderEnabled()"
+            [class.border-border]="!globalLiveClassReminderEnabled()"
+            [class.bg-background]="!globalLiveClassReminderEnabled()"
+            [class.text-muted-foreground]="!globalLiveClassReminderEnabled()"
+            (click)="globalReminderToggle.emit()"
+          >
+            {{ globalLiveClassReminderEnabled() ? 'Activo' : 'Pausado' }}
+          </button>
+        </div>
+
+        <div class="mt-4 rounded-xl border border-border bg-card p-4">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                Anticipacion global
+              </p>
+              <p class="mt-1 text-sm text-foreground">
+                @if (globalLiveClassReminderLeadMinutes() === 0) {
+                  Al iniciar el bloque
+                } @else {
+                  {{ globalLiveClassReminderLeadMinutes() }} min antes
+                }
+              </p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              @for (minutes of liveClassReminderPresets(); track minutes) {
+                <button
+                  type="button"
+                  class="rounded-full border px-3 py-1.5 text-xs font-semibold transition"
+                  [class.border-primary]="globalLiveClassReminderLeadMinutes() === minutes"
+                  [class.bg-primary]="globalLiveClassReminderLeadMinutes() === minutes"
+                  [class.text-primary-foreground]="globalLiveClassReminderLeadMinutes() === minutes"
+                  [class.border-border]="globalLiveClassReminderLeadMinutes() !== minutes"
+                  [class.bg-background]="globalLiveClassReminderLeadMinutes() !== minutes"
+                  [class.text-muted-foreground]="globalLiveClassReminderLeadMinutes() !== minutes"
+                  (click)="globalReminderLeadChange.emit(minutes)"
+                >
+                  {{ reminderLeadLabel()(minutes) }}
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <div
+      class="rounded-xl border border-border bg-background/80 px-4 py-3 text-xs text-muted-foreground"
+    >
+      {{ preferenceStatus() }}
+    </div>
+  </div>
+</z-card>

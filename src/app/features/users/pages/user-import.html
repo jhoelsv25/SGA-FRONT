@@ -19,7 +19,9 @@
 
         <div class="space-y-1">
           <div class="flex flex-wrap items-center gap-3">
-            <h1 class="inter text-3xl font-black uppercase tracking-tight text-foreground">Importar Usuarios</h1>
+            <h1 class="inter text-3xl font-black uppercase tracking-tight text-foreground">
+              Importar Usuarios
+            </h1>
             <span
               class="rounded-full border border-green-500/20 bg-green-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-green-500"
             >
@@ -27,7 +29,8 @@
             </span>
           </div>
           <p class="text-sm font-medium text-muted-foreground">
-            Sube el archivo, compara headers, mapea columnas y sigue la importación en vivo hasta ver el resultado final.
+            Sube el archivo, compara headers, mapea columnas y sigue la importación en vivo hasta
+            ver el resultado final.
           </p>
         </div>
       </div>
@@ -37,7 +40,8 @@
         z-button
         zType="outline"
         class="rounded-2xl px-6"
-        (click)="downloadTemplate()">
+        (click)="downloadTemplate()"
+      >
         <z-icon zType="file-text" class="mr-2 h-4 w-4" />
         Descargar plantilla
       </button>
@@ -67,16 +71,23 @@
       }
 
       @if (step() === 'mapping') {
-        <z-card class="rounded-[2.5rem] border border-border/10 bg-card/60 shadow-2xl backdrop-blur-xl">
+        <z-card
+          class="rounded-[2.5rem] border border-border/10 bg-card/60 shadow-2xl backdrop-blur-xl"
+        >
           <div class="mb-8 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h2 class="text-xl font-black uppercase tracking-tight text-foreground">Mapeo de columnas</h2>
+              <h2 class="text-xl font-black uppercase tracking-tight text-foreground">
+                Mapeo de columnas
+              </h2>
               <p class="text-sm text-muted-foreground">
-                El backend ya leyó {{ rowCount() }} fila(s) y detectó {{ headers().length }} header(s). Ahora define cómo se guardan.
+                El backend ya leyó {{ rowCount() }} fila(s) y detectó
+                {{ headers().length }} header(s). Ahora define cómo se guardan.
               </p>
             </div>
             <div class="rounded-2xl bg-primary/10 px-4 py-3 text-right">
-              <div class="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Archivo cargado</div>
+              <div class="text-[10px] font-black uppercase tracking-[0.2em] text-primary">
+                Archivo cargado
+              </div>
               <div class="text-sm font-semibold text-foreground">{{ selectedFile()?.name }}</div>
             </div>
           </div>
@@ -84,10 +95,15 @@
           <div class="space-y-4">
             @if (getDetectedRoleLabels().length > 0) {
               <div class="rounded-[1.75rem] border border-primary/10 bg-primary/5 p-4">
-                <div class="mb-2 text-[11px] font-black uppercase tracking-[0.2em] text-primary">Roles detectados</div>
+                <div class="mb-2 text-[11px] font-black uppercase tracking-[0.2em] text-primary">
+                  Roles detectados
+                </div>
                 <div class="flex flex-wrap gap-2">
                   @for (role of getDetectedRoleLabels(); track role) {
-                    <span class="rounded-full bg-card px-3 py-1 text-xs font-semibold text-foreground">{{ role }}</span>
+                    <span
+                      class="rounded-full bg-card px-3 py-1 text-xs font-semibold text-foreground"
+                      >{{ role }}</span
+                    >
                   }
                 </div>
               </div>
@@ -97,28 +113,42 @@
               <div class="rounded-[1.75rem] border border-amber-500/20 bg-amber-500/5 p-4">
                 <div class="mb-3 flex items-center gap-2 text-amber-600">
                   <z-icon zType="triangle-alert" class="h-4 w-4" />
-                  <span class="text-sm font-black uppercase tracking-tight">Validaciones pendientes</span>
+                  <span class="text-sm font-black uppercase tracking-tight"
+                    >Validaciones pendientes</span
+                  >
                 </div>
                 <div class="space-y-2">
                   @for (issue of validationIssues(); track issue) {
-                    <div class="rounded-2xl bg-background/80 px-4 py-3 text-sm text-muted-foreground">{{ issue }}</div>
+                    <div
+                      class="rounded-2xl bg-background/80 px-4 py-3 text-sm text-muted-foreground"
+                    >
+                      {{ issue }}
+                    </div>
                   }
                 </div>
               </div>
             }
 
             @for (field of fieldOptions; track field.key) {
-              <div class="grid gap-3 rounded-[1.75rem] border border-border/10 bg-background/70 p-4 md:grid-cols-[220px_minmax(0,1fr)]">
+              <div
+                class="grid gap-3 rounded-[1.75rem] border border-border/10 bg-background/70 p-4 md:grid-cols-[220px_minmax(0,1fr)]"
+              >
                 <div>
                   <div class="flex items-center gap-2">
-                    <span class="text-sm font-black uppercase tracking-tight text-foreground">{{ field.label }}</span>
+                    <span class="text-sm font-black uppercase tracking-tight text-foreground">{{
+                      field.label
+                    }}</span>
                     @if (field.required) {
-                      <span class="rounded-full bg-red-500/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-red-500">
+                      <span
+                        class="rounded-full bg-red-500/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-red-500"
+                      >
                         requerido
                       </span>
                     }
                   </div>
-                  <p class="mt-1 text-xs leading-relaxed text-muted-foreground">{{ field.description }}</p>
+                  <p class="mt-1 text-xs leading-relaxed text-muted-foreground">
+                    {{ field.description }}
+                  </p>
                 </div>
 
                 <div class="space-y-2">
@@ -144,13 +174,16 @@
           </div>
 
           <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-between">
-            <button z-button zType="ghost" class="rounded-2xl" (click)="resetFlow()">Subir otro archivo</button>
+            <button z-button zType="ghost" class="rounded-2xl" (click)="resetFlow()">
+              Subir otro archivo
+            </button>
             <button
               *sgaHasPermission="'user:import'"
               z-button
               class="rounded-2xl px-8"
               [disabled]="!canStartImport()"
-              (click)="startAsyncImport()">
+              (click)="startAsyncImport()"
+            >
               <z-icon zType="upload" class="mr-2 h-4 w-4" />
               Iniciar importación
             </button>
@@ -159,12 +192,17 @@
       }
 
       @if (step() === 'importing') {
-        <z-card class="rounded-[2.5rem] border border-border/10 bg-card/60 shadow-2xl backdrop-blur-xl">
+        <z-card
+          class="rounded-[2.5rem] border border-border/10 bg-card/60 shadow-2xl backdrop-blur-xl"
+        >
           <div class="mb-6 flex items-start justify-between gap-4">
             <div>
-              <h2 class="text-xl font-black uppercase tracking-tight text-foreground">Importando en tiempo real</h2>
+              <h2 class="text-xl font-black uppercase tracking-tight text-foreground">
+                Importando en tiempo real
+              </h2>
               <p class="text-sm text-muted-foreground">
-                El archivo ya está en backend. El job procesa fila por fila y va reportando avances y errores.
+                El archivo ya está en backend. El job procesa fila por fila y va reportando avances
+                y errores.
               </p>
             </div>
             <div class="rounded-2xl bg-primary/10 px-4 py-3 text-primary">
@@ -177,24 +215,42 @@
             <z-progress-bar [progress]="progress()?.percentage ?? 0" class="h-4" />
             <div class="grid gap-4 sm:grid-cols-3">
               <div class="rounded-[1.5rem] bg-background/70 p-4">
-                <div class="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Procesadas</div>
+                <div
+                  class="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground"
+                >
+                  Procesadas
+                </div>
                 <div class="mt-2 text-2xl font-black text-foreground">
                   {{ progress()?.processed ?? 0 }} / {{ progress()?.total ?? rowCount() }}
                 </div>
               </div>
               <div class="rounded-[1.5rem] bg-background/70 p-4">
-                <div class="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Creadas</div>
-                <div class="mt-2 text-2xl font-black text-green-600">{{ progress()?.created ?? 0 }}</div>
+                <div
+                  class="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground"
+                >
+                  Creadas
+                </div>
+                <div class="mt-2 text-2xl font-black text-green-600">
+                  {{ progress()?.created ?? 0 }}
+                </div>
               </div>
               <div class="rounded-[1.5rem] bg-background/70 p-4">
-                <div class="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Errores</div>
-                <div class="mt-2 text-2xl font-black text-red-500">{{ progress()?.errors?.length ?? 0 }}</div>
+                <div
+                  class="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground"
+                >
+                  Errores
+                </div>
+                <div class="mt-2 text-2xl font-black text-red-500">
+                  {{ progress()?.errors?.length ?? 0 }}
+                </div>
               </div>
             </div>
 
             @if ((progress()?.errors?.length ?? 0) > 0) {
               <div class="rounded-[1.75rem] border border-red-500/10 bg-red-500/5 p-4">
-                <div class="mb-3 text-sm font-black uppercase tracking-tight text-red-600">Errores detectados</div>
+                <div class="mb-3 text-sm font-black uppercase tracking-tight text-red-600">
+                  Errores detectados
+                </div>
                 <div class="max-h-72 space-y-2 overflow-auto pr-2">
                   @for (error of progress()?.errors ?? []; track $index) {
                     <div class="rounded-2xl bg-background/80 px-4 py-3 text-sm">
@@ -210,37 +266,56 @@
       }
 
       @if (step() === 'done') {
-        <z-card class="rounded-[2.5rem] border border-border/10 bg-card/60 shadow-2xl backdrop-blur-xl">
+        <z-card
+          class="rounded-[2.5rem] border border-border/10 bg-card/60 shadow-2xl backdrop-blur-xl"
+        >
           <div class="mb-8 flex items-start gap-4">
-            <div class="flex h-14 w-14 items-center justify-center rounded-[1.5rem] bg-green-500/10 text-green-500">
+            <div
+              class="flex h-14 w-14 items-center justify-center rounded-[1.5rem] bg-green-500/10 text-green-500"
+            >
               <z-icon zType="check" class="h-7 w-7" />
             </div>
             <div>
-              <h2 class="text-2xl font-black uppercase tracking-tight text-foreground">Importación finalizada</h2>
+              <h2 class="text-2xl font-black uppercase tracking-tight text-foreground">
+                Importación finalizada
+              </h2>
               <p class="text-sm text-muted-foreground">
-                El proceso terminó. Aquí tienes el detalle de lo que sí entró y lo que quedó rechazado.
+                El proceso terminó. Aquí tienes el detalle de lo que sí entró y lo que quedó
+                rechazado.
               </p>
             </div>
           </div>
 
           <div class="grid gap-4 sm:grid-cols-3">
             <div class="rounded-[1.75rem] bg-background/70 p-5">
-              <div class="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Filas</div>
+              <div class="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+                Filas
+              </div>
               <div class="mt-2 text-3xl font-black text-foreground">{{ result()?.total ?? 0 }}</div>
             </div>
             <div class="rounded-[1.75rem] bg-background/70 p-5">
-              <div class="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Creadas</div>
-              <div class="mt-2 text-3xl font-black text-green-600">{{ result()?.created ?? 0 }}</div>
+              <div class="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+                Creadas
+              </div>
+              <div class="mt-2 text-3xl font-black text-green-600">
+                {{ result()?.created ?? 0 }}
+              </div>
             </div>
             <div class="rounded-[1.75rem] bg-background/70 p-5">
-              <div class="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Observadas</div>
-              <div class="mt-2 text-3xl font-black text-red-500">{{ result()?.errors?.length ?? 0 }}</div>
+              <div class="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+                Observadas
+              </div>
+              <div class="mt-2 text-3xl font-black text-red-500">
+                {{ result()?.errors?.length ?? 0 }}
+              </div>
             </div>
           </div>
 
           @if ((result()?.errors?.length ?? 0) > 0) {
             <div class="mt-6 rounded-[1.75rem] border border-border/10 bg-background/60 p-5">
-              <div class="mb-4 text-sm font-black uppercase tracking-tight text-foreground">Detalle de filas no importadas</div>
+              <div class="mb-4 text-sm font-black uppercase tracking-tight text-foreground">
+                Detalle de filas no importadas
+              </div>
               <div class="max-h-80 space-y-2 overflow-auto pr-2">
                 @for (error of result()?.errors ?? []; track $index) {
                   <div class="rounded-2xl border border-border/10 bg-card px-4 py-3 text-sm">
@@ -254,14 +329,17 @@
 
           <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-between">
             <div class="flex flex-col gap-3 sm:flex-row">
-              <button z-button zType="outline" class="rounded-2xl" (click)="resetFlow()">Importar otro archivo</button>
+              <button z-button zType="outline" class="rounded-2xl" (click)="resetFlow()">
+                Importar otro archivo
+              </button>
               @if ((result()?.errors?.length ?? 0) > 0) {
                 <button
                   *sgaHasPermission="'user:export'"
                   z-button
                   zType="outline"
                   class="rounded-2xl"
-                  (click)="exportErrors()">
+                  (click)="exportErrors()"
+                >
                   <z-icon zType="file-text" class="mr-2 h-4 w-4" />
                   Descargar errores
                 </button>
@@ -271,16 +349,23 @@
               [sgaDisableIfNoPermission]="'user:view'"
               z-button
               class="rounded-2xl px-8"
-              (click)="goBack()">Volver a usuarios</button>
+              (click)="goBack()"
+            >
+              Volver a usuarios
+            </button>
           </div>
         </z-card>
       }
     </div>
 
     <div class="flex flex-col gap-6">
-      <z-card class="rounded-[2.5rem] border border-border/10 bg-card/40 shadow-xl backdrop-blur-2xl">
+      <z-card
+        class="rounded-[2.5rem] border border-border/10 bg-card/40 shadow-xl backdrop-blur-2xl"
+      >
         <div class="mb-5 flex items-center gap-4">
-          <div class="flex size-12 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-500 shadow-lg">
+          <div
+            class="flex size-12 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-500 shadow-lg"
+          >
             <z-icon zType="layers" class="h-5 w-5" />
           </div>
           <h4 class="inter text-sm font-black uppercase tracking-[0.2em]">Proceso</h4>
@@ -289,22 +374,32 @@
         <div class="space-y-3">
           <div class="rounded-2xl bg-background/70 px-4 py-3 text-sm">
             <div class="font-black uppercase tracking-tight text-foreground">1. Subida</div>
-            <div class="text-muted-foreground">El backend recibe el archivo y extrae solo los headers y filas.</div>
+            <div class="text-muted-foreground">
+              El backend recibe el archivo y extrae solo los headers y filas.
+            </div>
           </div>
           <div class="rounded-2xl bg-background/70 px-4 py-3 text-sm">
             <div class="font-black uppercase tracking-tight text-foreground">2. Mapeo</div>
-            <div class="text-muted-foreground">Comparas columnas del Excel contra los campos reales de `users`.</div>
+            <div class="text-muted-foreground">
+              Comparas columnas del Excel contra los campos reales de `users`.
+            </div>
           </div>
           <div class="rounded-2xl bg-background/70 px-4 py-3 text-sm">
             <div class="font-black uppercase tracking-tight text-foreground">3. Job + Socket</div>
-            <div class="text-muted-foreground">BullMQ procesa el lote y Socket.IO publica el avance en vivo.</div>
+            <div class="text-muted-foreground">
+              BullMQ procesa el lote y Socket.IO publica el avance en vivo.
+            </div>
           </div>
         </div>
       </z-card>
 
-      <z-card class="rounded-[2.5rem] border border-border/10 bg-card/40 shadow-xl backdrop-blur-2xl">
+      <z-card
+        class="rounded-[2.5rem] border border-border/10 bg-card/40 shadow-xl backdrop-blur-2xl"
+      >
         <div class="mb-5 flex items-center gap-4">
-          <div class="flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-lg">
+          <div
+            class="flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-lg"
+          >
             <z-icon zType="shield" class="h-5 w-5" />
           </div>
           <h4 class="inter text-sm font-black uppercase tracking-[0.2em]">Reglas</h4>
@@ -350,9 +445,13 @@
         </ul>
       </z-card>
 
-      <z-card class="rounded-[2.5rem] border border-border/10 bg-card/40 shadow-xl backdrop-blur-2xl">
+      <z-card
+        class="rounded-[2.5rem] border border-border/10 bg-card/40 shadow-xl backdrop-blur-2xl"
+      >
         <div class="mb-5 flex items-center gap-4">
-          <div class="flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-lg">
+          <div
+            class="flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-lg"
+          >
             <z-icon zType="clock" class="h-5 w-5" />
           </div>
           <h4 class="inter text-sm font-black uppercase tracking-[0.2em]">Historial</h4>
@@ -368,10 +467,14 @@
               <div class="rounded-2xl bg-background/70 px-4 py-3">
                 <div class="flex items-start justify-between gap-3">
                   <div class="min-w-0">
-                    <div class="truncate text-sm font-bold text-foreground">{{ item.fileName }}</div>
+                    <div class="truncate text-sm font-bold text-foreground">
+                      {{ item.fileName }}
+                    </div>
                     <div class="mt-1 text-[11px] text-muted-foreground">Job {{ item.jobId }}</div>
                   </div>
-                  <span class="rounded-full bg-card px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-primary">
+                  <span
+                    class="rounded-full bg-card px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-primary"
+                  >
                     {{ item.status }}
                   </span>
                 </div>
@@ -391,10 +494,20 @@
                 </div>
                 <div class="mt-3 flex gap-2">
                   @if ((item.errorDetails?.length ?? 0) > 0) {
-                    <button z-button zType="outline" class="rounded-xl px-3 py-2 text-[11px]" (click)="openHistoryDetail(item)">
+                    <button
+                      z-button
+                      zType="outline"
+                      class="rounded-xl px-3 py-2 text-[11px]"
+                      (click)="openHistoryDetail(item)"
+                    >
                       Ver errores
                     </button>
-                    <button z-button zType="outline" class="rounded-xl px-3 py-2 text-[11px]" (click)="exportHistoryErrors(item)">
+                    <button
+                      z-button
+                      zType="outline"
+                      class="rounded-xl px-3 py-2 text-[11px]"
+                      (click)="exportHistoryErrors(item)"
+                    >
                       Descargar
                     </button>
                   }
@@ -409,13 +522,19 @@
 
   @if (selectedHistory(); as historyItem) {
     <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div class="max-h-[80vh] w-full max-w-3xl overflow-hidden rounded-[2rem] border border-border/10 bg-card shadow-2xl">
+      <div
+        class="max-h-[80vh] w-full max-w-3xl overflow-hidden rounded-[2rem] border border-border/10 bg-card shadow-2xl"
+      >
         <div class="flex items-center justify-between border-b border-border/10 px-6 py-4">
           <div>
-            <div class="text-lg font-black uppercase tracking-tight text-foreground">Errores del historial</div>
+            <div class="text-lg font-black uppercase tracking-tight text-foreground">
+              Errores del historial
+            </div>
             <div class="text-sm text-muted-foreground">{{ historyItem.fileName }}</div>
           </div>
-          <button z-button zType="ghost" class="rounded-xl" (click)="closeHistoryDetail()">Cerrar</button>
+          <button z-button zType="ghost" class="rounded-xl" (click)="closeHistoryDetail()">
+            Cerrar
+          </button>
         </div>
 
         <div class="max-h-[60vh] space-y-2 overflow-auto p-6">

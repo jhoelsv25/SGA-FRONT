@@ -2,7 +2,14 @@ import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardSkeletonComponent } from '@/shared/components/skeleton';
 import { ZardEmptyComponent } from '@/shared/components/empty';
 import { ZardIconComponent } from '@/shared/components/icon';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
@@ -12,15 +19,26 @@ import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { PeriodForm } from '@features/periods/components/period-form/period-form';
 import { PeriodApi } from '@features/periods/services/period-api';
 import { YearAcademicApi } from '../../services/api/year-academic-api';
-import { AcademicYearStatus, Modality, type YearAcademic, type YearAcademicPeriod } from '../../types/year-academi-types';
+import {
+  AcademicYearStatus,
+  Modality,
+  type YearAcademic,
+  type YearAcademicPeriod,
+} from '../../types/year-academi-types';
 import { PeriodStatus } from '@features/periods/types/period-types';
 import { Toast } from '@core/services/toast';
 
-
 @Component({
   selector: 'sga-year-academic-detail',
-  standalone: true,
-  imports: [CommonModule, ZardButtonComponent, ZardIconComponent, PeriodCardComponent, ZardEmptyComponent, ZardSkeletonComponent],
+
+  imports: [
+    CommonModule,
+    ZardButtonComponent,
+    ZardIconComponent,
+    PeriodCardComponent,
+    ZardEmptyComponent,
+    ZardSkeletonComponent,
+  ],
   templateUrl: './year-academic-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -54,8 +72,14 @@ export default class YearAcademicDetailComponent implements OnInit {
         const list: Period[] = (data.periods ?? []).map((p: YearAcademicPeriod) => ({
           id: p.id,
           name: p.name,
-          startDate: typeof p.startDate === 'string' ? p.startDate : (p.startDate as Date)?.toISOString?.()?.slice(0, 10) ?? '',
-          endDate: typeof p.endDate === 'string' ? p.endDate : (p.endDate as Date)?.toISOString?.()?.slice(0, 10) ?? '',
+          startDate:
+            typeof p.startDate === 'string'
+              ? p.startDate
+              : ((p.startDate as Date)?.toISOString?.()?.slice(0, 10) ?? ''),
+          endDate:
+            typeof p.endDate === 'string'
+              ? p.endDate
+              : ((p.endDate as Date)?.toISOString?.()?.slice(0, 10) ?? ''),
           order: p.periodNumber,
           status: (p.status as PeriodStatus) ?? undefined,
           yearAcademic: { id: data.id, name: data.name },
@@ -89,11 +113,13 @@ export default class YearAcademicDetailComponent implements OnInit {
   }
 
   editPeriod(period: Period): void {
-    this.dialog.open(PeriodForm, {
-      data: { current: period },
-      width: '440px',
-      maxHeight: '80vh',
-    }).closed.subscribe(() => this.refreshPeriods());
+    this.dialog
+      .open(PeriodForm, {
+        data: { current: period },
+        width: '440px',
+        maxHeight: '80vh',
+      })
+      .closed.subscribe(() => this.refreshPeriods());
   }
 
   updatePeriodStatus(event: { period: Period; status: PeriodStatus }): void {
@@ -174,8 +200,14 @@ export default class YearAcademicDetailComponent implements OnInit {
         const list: Period[] = (data.periods ?? []).map((p: YearAcademicPeriod) => ({
           id: p.id,
           name: p.name,
-          startDate: typeof p.startDate === 'string' ? p.startDate : (p.startDate as Date)?.toISOString?.()?.slice(0, 10) ?? '',
-          endDate: typeof p.endDate === 'string' ? p.endDate : (p.endDate as Date)?.toISOString?.()?.slice(0, 10) ?? '',
+          startDate:
+            typeof p.startDate === 'string'
+              ? p.startDate
+              : ((p.startDate as Date)?.toISOString?.()?.slice(0, 10) ?? ''),
+          endDate:
+            typeof p.endDate === 'string'
+              ? p.endDate
+              : ((p.endDate as Date)?.toISOString?.()?.slice(0, 10) ?? ''),
           order: p.periodNumber,
           status: (p.status as PeriodStatus) ?? undefined,
           yearAcademic: { id: data.id, name: data.name },

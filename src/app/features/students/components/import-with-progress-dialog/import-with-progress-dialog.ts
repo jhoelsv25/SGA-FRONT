@@ -1,6 +1,13 @@
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardDialogRef } from '@shared/components/dialog';
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, signal, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnDestroy,
+  signal,
+  input,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StudentApi } from '../../services/api/student-api';
 import { StudentsImportSocketService } from '../../services/students-import.socket';
@@ -16,13 +23,21 @@ const FIELD_OPTIONS = [
   { key: 'name', label: 'Nombre', required: true },
   { key: 'email', label: 'Email', required: true },
   { key: 'age', label: 'Edad', required: false },
-  { key: 'grade', label: 'Grado', required: false }] as const;
-
+  { key: 'grade', label: 'Grado', required: false },
+] as const;
 
 @Component({
   selector: 'sga-import-with-progress-dialog',
-  standalone: true,
-  imports: [CommonModule, ZardButtonComponent, ImportStepIndicator, ImportStepUpload, ImportStepMapping, ImportStepImporting, ImportStepDone],
+
+  imports: [
+    CommonModule,
+    ZardButtonComponent,
+    ImportStepIndicator,
+    ImportStepUpload,
+    ImportStepMapping,
+    ImportStepImporting,
+    ImportStepDone,
+  ],
   templateUrl: './import-with-progress-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -43,7 +58,12 @@ export class ImportWithProgressDialog implements OnDestroy {
   columnMapping = signal<Record<string, string>>({});
   loading = signal(false);
   errorMessage = signal<string | null>(null);
-  progress = signal<{ processed: number; total: number; percentage: number; created: number } | null>(null);
+  progress = signal<{
+    processed: number;
+    total: number;
+    percentage: number;
+    created: number;
+  } | null>(null);
   result = signal<{ created: number; errors: { row: number; message: string }[] } | null>(null);
   isDragging = signal(false);
 
@@ -186,7 +206,9 @@ export class ImportWithProgressDialog implements OnDestroy {
     this.studentApi.startImport(uploadId, mapping).subscribe({
       next: () => {},
       error: (err) => {
-        this.errorMessage.set(err?.error?.message ?? err?.message ?? 'Error al iniciar importación');
+        this.errorMessage.set(
+          err?.error?.message ?? err?.message ?? 'Error al iniciar importación',
+        );
         this.step.set('mapping');
         this.socketService.disconnect();
       },

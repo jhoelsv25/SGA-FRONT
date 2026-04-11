@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
@@ -9,10 +16,9 @@ import type { ClassroomFeedItem } from '../../types/classroom-types';
 import Chat from '../chat/chat';
 import { AuthStore } from '@auth/services/store/auth.store';
 
-
 @Component({
   selector: 'sga-classroom',
-  standalone: true,
+
   imports: [CommonModule, RouterModule, Chat],
   templateUrl: './classroom.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,38 +48,40 @@ export default class Classroom implements OnInit, OnDestroy {
         this.store.loadChat(id);
         this.socket.connect(id);
 
-        this.sectionCourseApi.getById(id).pipe(takeUntil(this.destroy$)).subscribe({
-          next: (sc) => {
-            const name = sc.section?.name && sc.course?.name
-              ? `${sc.course.name} - ${sc.section.name}`
-              : sc.section?.name ?? sc.course?.name ?? 'Aula Virtual';
-            this.sectionName.set(name);
-          },
-          error: () => { this.sectionName.set('Aula Virtual'); },
-        });
+        this.sectionCourseApi
+          .getById(id)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: (sc) => {
+              const name =
+                sc.section?.name && sc.course?.name
+                  ? `${sc.course.name} - ${sc.section.name}`
+                  : (sc.section?.name ?? sc.course?.name ?? 'Aula Virtual');
+              this.sectionName.set(name);
+            },
+            error: () => {
+              this.sectionName.set('Aula Virtual');
+            },
+          });
 
         this.socket.message$
           .pipe(takeUntil(this.destroy$))
           .subscribe((msg) => this.store.receiveMessage(msg));
 
-        this.socket.feedEvent$
-          .pipe(takeUntil(this.destroy$))
-          .subscribe((event) => {
-            if (event.action === 'deleted' && event.id) {
-              this.store.removeFeedItem(event.id);
-              return;
-            }
+        this.socket.feedEvent$.pipe(takeUntil(this.destroy$)).subscribe((event) => {
+          if (event.action === 'deleted' && event.id) {
+            this.store.removeFeedItem(event.id);
+            return;
+          }
 
-            if (event.item) {
-              this.store.receiveFeedUpdate(event.item as ClassroomFeedItem);
-            }
-          });
+          if (event.item) {
+            this.store.receiveFeedUpdate(event.item as ClassroomFeedItem);
+          }
+        });
 
-        this.socket.notification$
-          .pipe(takeUntil(this.destroy$))
-          .subscribe((n) => {
-            this.notifications.update((prev) => [n, ...prev].slice(0, 20));
-          });
+        this.socket.notification$.pipe(takeUntil(this.destroy$)).subscribe((n) => {
+          this.notifications.update((prev) => [n, ...prev].slice(0, 20));
+        });
       }
     });
   }

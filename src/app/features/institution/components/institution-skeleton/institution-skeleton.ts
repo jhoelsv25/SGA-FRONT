@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-
 @Component({
   selector: 'sga-institution-skeleton',
-  standalone: true,
+
   templateUrl: './institution-skeleton.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

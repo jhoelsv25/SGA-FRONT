@@ -2,7 +2,11 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Params } from '@angular/router';
 import { DataResponse } from '@core/types/pagination-types';
-import { Teacher, TeacherCredentialResponse, TeacherResponse } from '@features/teachers/types/teacher-types';
+import {
+  Teacher,
+  TeacherCredentialResponse,
+  TeacherResponse,
+} from '@features/teachers/types/teacher-types';
 import { catchError, forkJoin, map, Observable, of } from 'rxjs';
 
 @Injectable({
@@ -39,14 +43,19 @@ export class TeacherApi {
   }
 
   regenerateCredential(id: string): Observable<TeacherCredentialResponse> {
-    return this.http.post<TeacherCredentialResponse>(`${this.baseUrl}/${id}/credential/regenerate`, {});
+    return this.http.post<TeacherCredentialResponse>(
+      `${this.baseUrl}/${id}/credential/regenerate`,
+      {},
+    );
   }
 
   delete(id: string): Observable<TeacherResponse> {
     return this.http.delete<TeacherResponse>(`${this.baseUrl}/${id}`);
   }
 
-  import(rows: Partial<Teacher>[]): Observable<{ created: number; errors?: { row: number; message: string }[] }> {
+  import(
+    rows: Partial<Teacher>[],
+  ): Observable<{ created: number; errors?: { row: number; message: string }[] }> {
     if (rows.length === 0) return of({ created: 0, errors: [] });
 
     return forkJoin(

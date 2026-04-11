@@ -20,7 +20,8 @@ export class CommunicationApi {
 
   private mapFromApi(item: any): Communication {
     const publishedAt = item.publishedAt ?? null;
-    const isScheduled = item.status === 'draft' && publishedAt && new Date(publishedAt).getTime() > Date.now();
+    const isScheduled =
+      item.status === 'draft' && publishedAt && new Date(publishedAt).getTime() > Date.now();
     return {
       id: item.id,
       subject: item.title,
@@ -61,25 +62,27 @@ export class CommunicationApi {
   getAll(params?: Params): Observable<CommunicationsListResponse> {
     return this.http
       .get<{ data: any[]; message?: string }>(this.baseUrl, { params: params ?? {} })
-      .pipe(map(res => ({ ...res, data: (res.data ?? []).map(item => this.mapFromApi(item)) })));
+      .pipe(
+        map((res) => ({ ...res, data: (res.data ?? []).map((item) => this.mapFromApi(item)) })),
+      );
   }
 
   getById(id: string): Observable<CommunicationResponse> {
     return this.http
       .get<{ data: any; message: string }>(`${this.baseUrl}/${id}`)
-      .pipe(map(res => ({ ...res, data: this.mapFromApi(res.data) })));
+      .pipe(map((res) => ({ ...res, data: this.mapFromApi(res.data) })));
   }
 
   create(data: CommunicationCreate): Observable<CommunicationResponse> {
     return this.http
       .post<{ data: any; message: string }>(this.baseUrl, this.mapToApi(data))
-      .pipe(map(res => ({ ...res, data: this.mapFromApi(res.data) })));
+      .pipe(map((res) => ({ ...res, data: this.mapFromApi(res.data) })));
   }
 
   update(id: string, data: CommunicationUpdate): Observable<CommunicationResponse> {
     return this.http
       .patch<{ data: any; message: string }>(`${this.baseUrl}/${id}`, this.mapToApi(data))
-      .pipe(map(res => ({ ...res, data: this.mapFromApi(res.data) })));
+      .pipe(map((res) => ({ ...res, data: this.mapFromApi(res.data) })));
   }
 
   delete(id: string): Observable<{ message: string }> {

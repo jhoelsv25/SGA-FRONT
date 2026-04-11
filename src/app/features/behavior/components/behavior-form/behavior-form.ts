@@ -15,7 +15,15 @@ import type { CurrentUser } from '@auth/types/auth-type';
 
 @Component({
   selector: 'sga-behavior-form',
-  imports: [ReactiveFormsModule, ZardButtonComponent, ZardCheckboxComponent, ZardInputDirective, SelectOptionComponent, StudentSelect, SectionCourseSelect],
+  imports: [
+    ReactiveFormsModule,
+    ZardButtonComponent,
+    ZardCheckboxComponent,
+    ZardInputDirective,
+    SelectOptionComponent,
+    StudentSelect,
+    SectionCourseSelect,
+  ],
   templateUrl: './behavior-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -32,13 +40,15 @@ export class BehaviorForm implements OnInit {
 
   typeOptions: LocalSelectOption[] = [
     { value: 'positive', label: 'Logro / Positivo' },
-    { value: 'negative', label: 'Incidencia / Negativo' }];
+    { value: 'negative', label: 'Incidencia / Negativo' },
+  ];
 
   severityOptions: LocalSelectOption[] = [
     { value: 'low', label: 'Baja' },
     { value: 'medium', label: 'Media' },
     { value: 'high', label: 'Alta' },
-    { value: 'critical', label: 'Crítica' }];
+    { value: 'critical', label: 'Crítica' },
+  ];
 
   categoryOptions: LocalSelectOption[] = [
     { value: 'Disciplina', label: 'Disciplina' },
@@ -46,19 +56,20 @@ export class BehaviorForm implements OnInit {
     { value: 'Convivencia', label: 'Convivencia' },
     { value: 'Respeto', label: 'Respeto' },
     { value: 'Puntualidad', label: 'Puntualidad' },
-    { value: 'Otros', label: 'Otros' }];
+    { value: 'Otros', label: 'Otros' },
+  ];
 
   readonly selectedType = computed(() => this.form?.get('type')?.value ?? 'negative');
   readonly isNegative = computed(() => this.selectedType() === 'negative');
   readonly isPositive = computed(() => this.selectedType() === 'positive');
   readonly isAcademicCategory = computed(() => this.form?.get('category')?.value === 'Académico');
   readonly formTitle = computed(() =>
-    this.current ? 'Editar registro de conducta' : 'Nuevo registro de conducta'
+    this.current ? 'Editar registro de conducta' : 'Nuevo registro de conducta',
   );
   readonly formSubtitle = computed(() =>
     this.isPositive()
       ? 'Documenta reconocimientos, avances y acciones positivas del estudiante.'
-      : 'Registra incidencias, observaciones y acciones de seguimiento del caso.'
+      : 'Registra incidencias, observaciones y acciones de seguimiento del caso.',
   );
 
   ngOnInit() {
@@ -68,13 +79,18 @@ export class BehaviorForm implements OnInit {
       type: [this.current?.type ?? 'negative', [Validators.required]],
       category: [this.current?.category ?? 'Disciplina', [Validators.required]],
       severity: [this.current?.severity ?? 'low'],
-      recordDate: [this.current?.recordDate ?? new Date().toISOString().slice(0, 10), [Validators.required]],
+      recordDate: [
+        this.current?.recordDate ?? new Date().toISOString().slice(0, 10),
+        [Validators.required],
+      ],
       description: [this.current?.description ?? '', [Validators.required]],
       place: [this.current?.place ?? ''],
       witnesses: [this.current?.witnesses ?? ''],
       measuresTaken: [this.current?.measuresTaken ?? ''],
       guardianNotified: [this.current?.guardianNotified ?? false],
-      actionToken: [this.current?.actionToken ?? 'REG-' + Math.random().toString(36).substring(7).toUpperCase()],
+      actionToken: [
+        this.current?.actionToken ?? 'REG-' + Math.random().toString(36).substring(7).toUpperCase(),
+      ],
       sectionCourse: [this.current?.sectionCourse?.id ?? this.current?.sectionCourse ?? ''],
     });
 
@@ -87,11 +103,12 @@ export class BehaviorForm implements OnInit {
   submit() {
     if (this.form.invalid) return;
     const v = this.form.value as BehaviorCreate;
-    
+
     // Auto-fill period if not present
     if (!v.period) {
       const periods = this.periodStore.periods();
-      const activePeriod = periods.find((p) => p.vigencia === 1 || p.status === 'in_progress') ?? periods[0];
+      const activePeriod =
+        periods.find((p) => p.vigencia === 1 || p.status === 'in_progress') ?? periods[0];
       if (activePeriod) v.period = activePeriod.id;
     }
 

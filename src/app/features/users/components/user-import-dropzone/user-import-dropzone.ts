@@ -6,7 +6,7 @@ import { ZardIconComponent } from '@/shared/components/icon';
 
 @Component({
   selector: 'sga-user-import-dropzone',
-  standalone: true,
+
   imports: [CommonModule, ZardButtonComponent, ZardCardComponent, ZardIconComponent],
   templateUrl: './user-import-dropzone.html',
   styles: [

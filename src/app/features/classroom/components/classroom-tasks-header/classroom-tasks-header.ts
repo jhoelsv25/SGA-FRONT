@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 
 @Component({
   selector: 'sga-classroom-tasks-header',
-  standalone: true,
+
   templateUrl: './classroom-tasks-header.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

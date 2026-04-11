@@ -32,10 +32,10 @@ export const AssessmentStore = signalStore(
           return api.getAll(params || {}).pipe(
             tap({
               next: (response) => {
-                patchState(store, { 
-                  assessments: response.data, 
-                  total: response.total, 
-                  loading: false 
+                patchState(store, {
+                  assessments: response.data,
+                  total: response.total,
+                  loading: false,
                 });
               },
               error: (error) => {

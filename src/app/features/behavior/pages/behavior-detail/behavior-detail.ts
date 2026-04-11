@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardEmptyComponent } from '@/shared/components/empty';
@@ -13,8 +20,14 @@ import { BehaviorForm } from '../../components/behavior-form/behavior-form';
 
 @Component({
   selector: 'sga-behavior-detail',
-  standalone: true,
-  imports: [CommonModule, ZardButtonComponent, ZardIconComponent, ZardEmptyComponent, ZardSkeletonComponent],
+
+  imports: [
+    CommonModule,
+    ZardButtonComponent,
+    ZardIconComponent,
+    ZardEmptyComponent,
+    ZardSkeletonComponent,
+  ],
   templateUrl: './behavior-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -25,7 +38,9 @@ export default class BehaviorDetailPage implements OnInit {
   private readonly dialog = inject(DialogModalService);
   private readonly toast = inject(Toast);
 
-  readonly behavior = signal<Behavior | null>((history.state?.behavior as Behavior | undefined) ?? null);
+  readonly behavior = signal<Behavior | null>(
+    (history.state?.behavior as Behavior | undefined) ?? null,
+  );
   readonly loading = signal(true);
 
   readonly typeLabel = computed(() => {
@@ -62,11 +77,13 @@ export default class BehaviorDetailPage implements OnInit {
   openEdit(): void {
     const current = this.behavior();
     if (!current) return;
-    this.dialog.open(BehaviorForm, {
-      data: { current },
-      width: '520px',
-      maxHeight: '80vh',
-    }).closed.subscribe(() => this.reload());
+    this.dialog
+      .open(BehaviorForm, {
+        data: { current },
+        width: '520px',
+        maxHeight: '80vh',
+      })
+      .closed.subscribe(() => this.reload());
   }
 
   deleteCurrent(): void {

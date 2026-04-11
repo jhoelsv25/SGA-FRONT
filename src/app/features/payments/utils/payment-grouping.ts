@@ -62,7 +62,8 @@ function mapGroup(key: string, payments: Payment[]): PaymentGroup {
   const totalAmount = payments.reduce((sum, payment) => sum + Number(payment.amount || 0), 0);
   const paidAmount = payments.reduce((sum, payment) => sum + Number(payment.paidAmount || 0), 0);
   const outstandingAmount = payments.reduce(
-    (sum, payment) => sum + Math.max(Number(payment.amount || 0) - Number(payment.paidAmount || 0), 0),
+    (sum, payment) =>
+      sum + Math.max(Number(payment.amount || 0) - Number(payment.paidAmount || 0), 0),
     0,
   );
   const overdueCount = payments.filter((payment) => payment.status === 'overdue').length;
@@ -86,7 +87,11 @@ function mapGroup(key: string, payments: Payment[]): PaymentGroup {
   };
 }
 
-function resolveGroupStatus(input: { overdueCount: number; pendingCount: number; partialCount: number }): PaymentGroup['status'] {
+function resolveGroupStatus(input: {
+  overdueCount: number;
+  pendingCount: number;
+  partialCount: number;
+}): PaymentGroup['status'] {
   if (input.overdueCount > 0) return 'overdue';
   if (input.pendingCount > 0) return 'pending';
   if (input.partialCount > 0) return 'partial';

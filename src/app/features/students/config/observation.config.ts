@@ -42,7 +42,8 @@ export const OBSERVATION_COLUMN: DataSourceColumn[] = [
     key: 'teacherName',
     label: 'Docente',
     sortable: true,
-  }];
+  },
+];
 
 export const OBSERVATION_ACTIONS: ActionConfig[] = [
   {
@@ -72,4 +73,5 @@ export const OBSERVATION_ACTIONS: ActionConfig[] = [
     icon: 'fas fa-trash',
     typeAction: 'row',
     color: 'danger',
-  }];
+  },
+];

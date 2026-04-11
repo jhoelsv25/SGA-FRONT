@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Toast } from '@core/services/toast';
 import { TeacherAttendanceApi } from '@features/teachers/services/api/teacher-attendance-api';
@@ -25,7 +32,7 @@ type MonitoringRow = TeacherScheduleMonitoringRow & {
 
 @Component({
   selector: 'sga-teacher-attendances',
-  standalone: true,
+
   imports: [
     CommonModule,
     FormsModule,
@@ -56,18 +63,19 @@ export default class TeacherAttendancesPage implements OnInit {
   readonly saving = signal(false);
   readonly filteredRows = computed(() => {
     const term = this.search().trim().toLowerCase();
-    const items = this.rows().filter((row) =>
-      !term ||
-      [
-        row.teacherName,
-        row.teacherCode,
-        row.courseName,
-        row.sectionName,
-        row.title,
-        row.classroom,
-      ]
-        .filter(Boolean)
-        .some((value) => value.toLowerCase().includes(term)),
+    const items = this.rows().filter(
+      (row) =>
+        !term ||
+        [
+          row.teacherName,
+          row.teacherCode,
+          row.courseName,
+          row.sectionName,
+          row.title,
+          row.classroom,
+        ]
+          .filter(Boolean)
+          .some((value) => value.toLowerCase().includes(term)),
     );
 
     return [...items].sort((a, b) => this.compareRowsBySchedulePriority(a, b));
@@ -107,7 +115,8 @@ export default class TeacherAttendancesPage implements OnInit {
   }
 
   onDateChange(value: unknown): void {
-    const normalized = value instanceof Date ? this.formatDateInput(value) : String(value ?? '').slice(0, 10);
+    const normalized =
+      value instanceof Date ? this.formatDateInput(value) : String(value ?? '').slice(0, 10);
     this.syncDateParam(normalized);
   }
 
@@ -135,7 +144,9 @@ export default class TeacherAttendancesPage implements OnInit {
         },
         error: (error) => {
           this.loading.set(false);
-          this.toast.error(error?.error?.message ?? error?.message ?? 'No se pudo cargar el seguimiento');
+          this.toast.error(
+            error?.error?.message ?? error?.message ?? 'No se pudo cargar el seguimiento',
+          );
         },
       });
   }
@@ -193,9 +204,12 @@ export default class TeacherAttendancesPage implements OnInit {
   }
 
   statusClass(status: TeacherScheduleComplianceStatus): string {
-    if (status === 'fulfilled') return 'border-success/20 bg-success/10 text-success-700 dark:text-success';
-    if (status === 'partial') return 'border-warning/20 bg-warning/10 text-warning-700 dark:text-warning';
-    if (status === 'unfulfilled') return 'border-danger/20 bg-danger/10 text-danger-700 dark:text-danger';
+    if (status === 'fulfilled')
+      return 'border-success/20 bg-success/10 text-success-700 dark:text-success';
+    if (status === 'partial')
+      return 'border-warning/20 bg-warning/10 text-warning-700 dark:text-warning';
+    if (status === 'unfulfilled')
+      return 'border-danger/20 bg-danger/10 text-danger-700 dark:text-danger';
     if (status === 'reprogrammed') return 'border-info/20 bg-info/10 text-info';
     return 'border-base-200 bg-base-200/70 text-base-content/60';
   }

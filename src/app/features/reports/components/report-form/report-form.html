@@ -1,35 +1,62 @@
 <form [formGroup]="form" class="grid gap-4" (ngSubmit)="submit()">
   <header class="flex items-center justify-between mb-4">
     <h2 class="text-lg font-semibold">{{ current ? 'Editar reporte' : 'Generar reporte' }}</h2>
-    <button type="button" z-button zColor="secondary" zType="ghost" zShape="circle" (click)="close()">
+    <button
+      type="button"
+      z-button
+      zColor="secondary"
+      zType="ghost"
+      zShape="circle"
+      (click)="close()"
+    >
       <i class="fas fa-times"></i>
     </button>
   </header>
   <div class="grid gap-4">
     <div>
       <label class="label-form" for="name">Nombre del reporte</label>
-      <input z-input w-full id="name" formControlName="name" placeholder="Nombre del reporte"  />
+      <input z-input w-full id="name" formControlName="name" placeholder="Nombre del reporte" />
     </div>
     <div>
       <label class="label-form" for="type">Tipo</label>
-      <z-select-option id="type" formControlName="type" [options]="typeOptions" placeholder="Tipo de reporte"></z-select-option>
+      <z-select-option
+        id="type"
+        formControlName="type"
+        [options]="typeOptions"
+        placeholder="Tipo de reporte"
+      ></z-select-option>
     </div>
     <div>
       <label class="label-form" for="format">Formato</label>
-      <z-select-option id="format" formControlName="format" [options]="formatOptions" placeholder="Formato de salida"></z-select-option>
+      <z-select-option
+        id="format"
+        formControlName="format"
+        [options]="formatOptions"
+        placeholder="Formato de salida"
+      ></z-select-option>
     </div>
 
     @if (isAcademicReport()) {
       <div class="rounded-3xl border border-base-200 bg-base-100/60 p-4">
-        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Parámetros académicos</p>
+        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">
+          Parámetros académicos
+        </p>
         <div class="mt-4 grid gap-4 md:grid-cols-2">
           <div>
             <label class="label-form" for="sectionCourse">Curso - sección</label>
-            <sga-section-course-select id="sectionCourse" formControlName="sectionCourse" placeholder="Seleccionar curso y sección"></sga-section-course-select>
+            <sga-section-course-select
+              id="sectionCourse"
+              formControlName="sectionCourse"
+              placeholder="Seleccionar curso y sección"
+            ></sga-section-course-select>
           </div>
           <div>
             <label class="label-form" for="period">Período</label>
-            <sga-period-select id="period" formControlName="period" placeholder="Seleccionar período"></sga-period-select>
+            <sga-period-select
+              id="period"
+              formControlName="period"
+              placeholder="Seleccionar período"
+            ></sga-period-select>
           </div>
           <div>
             <label class="label-form" for="competency">Competencia</label>
@@ -42,14 +69,20 @@
           </div>
           <div>
             <label class="label-form" for="student">Estudiante</label>
-            <sga-student-select id="student" formControlName="student" placeholder="Todos o un estudiante"></sga-student-select>
+            <sga-student-select
+              id="student"
+              formControlName="student"
+              placeholder="Todos o un estudiante"
+            ></sga-student-select>
           </div>
         </div>
       </div>
     }
   </div>
   <footer class="flex justify-end gap-2 mt-4">
-    <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">Cancelar</button>
+    <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">
+      Cancelar
+    </button>
     <button type="submit" z-button zColor="primary" [disabled]="form.invalid">Generar</button>
   </footer>
 </form>

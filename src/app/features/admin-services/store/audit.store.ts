@@ -50,9 +50,9 @@ export const AuditStore = signalStore(
       pipe(
         switchMap((params) => {
           if (!store.nextCursor()) return [];
-          
+
           patchState(store, { loading: true });
-          
+
           const cursorParams: Record<string, string | number | boolean> = {
             ...(params as Record<string, string | number | boolean>),
             limit: 50,

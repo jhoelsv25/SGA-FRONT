@@ -33,4 +33,5 @@ export const ACTION_CONFIG_INSTITUTION: ActionConfig[] = [
     typeAction: 'row',
     color: 'danger',
     permissions: ['institution:delete'],
-  }];
+  },
+];

@@ -8,7 +8,7 @@ import type { VirtualClassroomItem } from '../../types/virtual-classroom-types';
 
 @Component({
   selector: 'sga-classroom-course-card',
-  standalone: true,
+
   imports: [CommonModule, RouterModule, ZardButtonComponent, ZardCardComponent, ZardIconComponent],
   templateUrl: './classroom-course-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

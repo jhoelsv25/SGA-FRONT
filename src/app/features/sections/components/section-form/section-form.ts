@@ -10,8 +10,15 @@ import { GradeLevelSelect, YearAcademicSelect } from '@/shared/widgets/selects';
 
 @Component({
   selector: 'sga-section-form',
-  standalone: true,
-  imports: [ReactiveFormsModule, ZardButtonComponent, SelectOptionComponent, ZardInputDirective, GradeLevelSelect, YearAcademicSelect],
+
+  imports: [
+    ReactiveFormsModule,
+    ZardButtonComponent,
+    SelectOptionComponent,
+    ZardInputDirective,
+    GradeLevelSelect,
+    YearAcademicSelect,
+  ],
   templateUrl: './section-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -26,7 +33,8 @@ export class SectionForm implements OnInit {
   shiftOptions = [
     { value: 'morning', label: 'Mañana' },
     { value: 'afternoon', label: 'Tarde' },
-    { value: 'evening', label: 'Noche' }];
+    { value: 'evening', label: 'Noche' },
+  ];
 
   ngOnInit() {
     this.current = this.data?.current ?? null;
@@ -46,21 +54,24 @@ export class SectionForm implements OnInit {
     if (!s) return null;
     if (s.gradeId) return s.gradeId;
     if (!s.grade) return null;
-    return typeof s.grade === 'string' ? s.grade : s.grade?.id ?? null;
+    return typeof s.grade === 'string' ? s.grade : (s.grade?.id ?? null);
   }
 
   private resolveYearId(s?: Section | null): string | null {
     if (!s) return null;
     if (s.yearAcademicId) return s.yearAcademicId;
     if (!s.yearAcademic) return null;
-    return typeof s.yearAcademic === 'string' ? s.yearAcademic : (s.yearAcademic as { id?: string })?.id ?? null;
+    return typeof s.yearAcademic === 'string'
+      ? s.yearAcademic
+      : ((s.yearAcademic as { id?: string })?.id ?? null);
   }
 
   submit() {
     if (this.form.invalid) return;
     const raw = this.form.value;
     const capacityVal = raw.capacity != null && raw.capacity !== '' ? Number(raw.capacity) : null;
-    const availableSlotsVal = raw.availableSlots != null && raw.availableSlots !== '' ? Number(raw.availableSlots) : 0;
+    const availableSlotsVal =
+      raw.availableSlots != null && raw.availableSlots !== '' ? Number(raw.availableSlots) : 0;
 
     const v: SectionCreate = {
       name: raw.name,
@@ -69,7 +80,10 @@ export class SectionForm implements OnInit {
       shift: raw.shift,
       tutor: raw.tutor ?? '',
       classroom: raw.classroom ?? '',
-      availableSlots: Math.max(0, Math.floor(Number.isNaN(availableSlotsVal) ? 0 : availableSlotsVal)),
+      availableSlots: Math.max(
+        0,
+        Math.floor(Number.isNaN(availableSlotsVal) ? 0 : availableSlotsVal),
+      ),
     };
     if (capacityVal != null && !Number.isNaN(capacityVal)) {
       const cap = Math.floor(capacityVal);

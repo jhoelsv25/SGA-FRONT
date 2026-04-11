@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardEmptyComponent } from '@/shared/components/empty';
@@ -15,7 +22,7 @@ import { EnrollmentForm } from '../../components/enrollment-form/enrollment-form
 
 @Component({
   selector: 'sga-enrollment-detail',
-  standalone: true,
+
   imports: [
     CommonModule,
     ZardButtonComponent,
@@ -35,7 +42,9 @@ export default class EnrollmentDetailPage implements OnInit {
   private readonly dialog = inject(DialogModalService);
   private readonly toast = inject(Toast);
 
-  readonly enrollment = signal<Enrollment | null>((history.state?.enrollment as Enrollment | undefined) ?? null);
+  readonly enrollment = signal<Enrollment | null>(
+    (history.state?.enrollment as Enrollment | undefined) ?? null,
+  );
   readonly loading = signal(true);
 
   readonly studentName = computed(() => {
@@ -43,7 +52,12 @@ export default class EnrollmentDetailPage implements OnInit {
     const personName = student?.person
       ? `${student.person.firstName ?? ''} ${student.person.lastName ?? ''}`.trim()
       : '';
-    return personName || `${student?.firstName ?? ''} ${student?.lastName ?? ''}`.trim() || student?.studentCode || '';
+    return (
+      personName ||
+      `${student?.firstName ?? ''} ${student?.lastName ?? ''}`.trim() ||
+      student?.studentCode ||
+      ''
+    );
   });
 
   readonly statusLabel = computed(() => {
@@ -62,7 +76,10 @@ export default class EnrollmentDetailPage implements OnInit {
       returning: 'Reinscripción',
       transfer: 'Traslado',
     };
-    return map[this.enrollment()?.enrollmentType ?? ''] ?? (this.enrollment()?.enrollmentType || 'Sin tipo');
+    return (
+      map[this.enrollment()?.enrollmentType ?? ''] ??
+      (this.enrollment()?.enrollmentType || 'Sin tipo')
+    );
   });
 
   ngOnInit(): void {
@@ -109,11 +126,13 @@ export default class EnrollmentDetailPage implements OnInit {
   openEdit(): void {
     const current = this.enrollment();
     if (!current) return;
-    this.dialog.open(EnrollmentForm, {
-      data: { current },
-      width: '520px',
-      maxHeight: '80vh',
-    }).closed.subscribe(() => this.reload());
+    this.dialog
+      .open(EnrollmentForm, {
+        data: { current },
+        width: '520px',
+        maxHeight: '80vh',
+      })
+      .closed.subscribe(() => this.reload());
   }
 
   deleteCurrent(): void {

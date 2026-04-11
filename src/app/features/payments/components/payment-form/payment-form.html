@@ -1,13 +1,32 @@
 <form [formGroup]="form" class="grid gap-6" (ngSubmit)="submit()">
   <header class="flex items-start justify-between gap-4">
     <div>
-      <p class="text-[10px] font-black uppercase tracking-[0.22em] text-primary/70">Operación financiera</p>
-      <h2 class="mt-2 text-2xl font-black tracking-tight">{{ isEditMode ? 'Editar pago' : group ? 'Registrar pago del grupo' : 'Registrar nuevo pago' }}</h2>
+      <p class="text-[10px] font-black uppercase tracking-[0.22em] text-primary/70">
+        Operación financiera
+      </p>
+      <h2 class="mt-2 text-2xl font-black tracking-tight">
+        {{
+          isEditMode ? 'Editar pago' : group ? 'Registrar pago del grupo' : 'Registrar nuevo pago'
+        }}
+      </h2>
       <p class="mt-1 text-sm text-base-content/60">
-        {{ isEditMode ? 'Actualiza el compromiso de pago y mantén consistente el historial.' : group ? 'El grupo ya define el concepto, monto base y condiciones. Aquí solo registras el abono individual.' : 'Crea un cobro con vencimiento claro y una referencia fácil de rastrear.' }}
+        {{
+          isEditMode
+            ? 'Actualiza el compromiso de pago y mantén consistente el historial.'
+            : group
+              ? 'El grupo ya define el concepto, monto base y condiciones. Aquí solo registras el abono individual.'
+              : 'Crea un cobro con vencimiento claro y una referencia fácil de rastrear.'
+        }}
       </p>
     </div>
-    <button type="button" z-button zColor="secondary" zType="ghost" zShape="circle" (click)="close()">
+    <button
+      type="button"
+      z-button
+      zColor="secondary"
+      zType="ghost"
+      zShape="circle"
+      (click)="close()"
+    >
       <i class="fas fa-times"></i>
     </button>
   </header>
@@ -16,20 +35,32 @@
     <section class="grid gap-4 rounded-[1.6rem] border border-base-200 bg-background/60 p-5">
       @if (group) {
         <div class="rounded-[1.3rem] border border-primary/15 bg-primary/5 p-4">
-          <p class="text-[10px] font-black uppercase tracking-[0.18em] text-primary/70">Grupo seleccionado</p>
-          <h3 class="mt-2 text-lg font-black tracking-tight text-base-content">{{ group.title }}</h3>
+          <p class="text-[10px] font-black uppercase tracking-[0.18em] text-primary/70">
+            Grupo seleccionado
+          </p>
+          <h3 class="mt-2 text-lg font-black tracking-tight text-base-content">
+            {{ group.title }}
+          </h3>
           <div class="mt-3 grid gap-3 md:grid-cols-3">
             <div>
-              <p class="text-[10px] font-black uppercase tracking-[0.16em] text-base-content/45">Monto base</p>
-              <p class="mt-1 text-sm font-bold">S/ {{ group.amount | number:'1.2-2' }}</p>
+              <p class="text-[10px] font-black uppercase tracking-[0.16em] text-base-content/45">
+                Monto base
+              </p>
+              <p class="mt-1 text-sm font-bold">S/ {{ group.amount | number: '1.2-2' }}</p>
             </div>
             <div>
-              <p class="text-[10px] font-black uppercase tracking-[0.16em] text-base-content/45">Mora</p>
-              <p class="mt-1 text-sm font-bold">S/ {{ (group.lateFee || 0) | number:'1.2-2' }}</p>
+              <p class="text-[10px] font-black uppercase tracking-[0.16em] text-base-content/45">
+                Mora
+              </p>
+              <p class="mt-1 text-sm font-bold">S/ {{ group.lateFee || 0 | number: '1.2-2' }}</p>
             </div>
             <div>
-              <p class="text-[10px] font-black uppercase tracking-[0.16em] text-base-content/45">Descuento</p>
-              <p class="mt-1 text-sm font-bold">S/ {{ (group.discountAmount || 0) | number:'1.2-2' }}</p>
+              <p class="text-[10px] font-black uppercase tracking-[0.16em] text-base-content/45">
+                Descuento
+              </p>
+              <p class="mt-1 text-sm font-bold">
+                S/ {{ group.discountAmount || 0 | number: '1.2-2' }}
+              </p>
             </div>
           </div>
         </div>
@@ -37,24 +68,51 @@
 
       <div>
         <label class="label-form" for="studentId">Estudiante</label>
-        <sga-student-select id="studentId" formControlName="studentId" placeholder="Seleccionar estudiante"></sga-student-select>
+        <sga-student-select
+          id="studentId"
+          formControlName="studentId"
+          placeholder="Seleccionar estudiante"
+        ></sga-student-select>
       </div>
 
       @if (!group) {
         <div class="grid gap-4 md:grid-cols-2">
           <div class="md:col-span-2">
             <label class="label-form" for="concept">Concepto</label>
-            <input z-input w-full id="concept" formControlName="concept" placeholder="Ej. Pensión marzo, matrícula, taller" />
+            <input
+              z-input
+              w-full
+              id="concept"
+              formControlName="concept"
+              placeholder="Ej. Pensión marzo, matrícula, taller"
+            />
           </div>
 
           <div>
             <label class="label-form" for="amount">Monto</label>
-            <input z-input w-full id="amount" type="number" min="0.01" step="0.01" formControlName="amount" placeholder="0.00" />
+            <input
+              z-input
+              w-full
+              id="amount"
+              type="number"
+              min="0.01"
+              step="0.01"
+              formControlName="amount"
+              placeholder="0.00"
+            />
           </div>
 
           <div>
             <label class="label-form" for="dueDate">Fecha de vencimiento</label>
-            <input z-input w-full id="dueDate" type="date" formControlName="dueDate" [min]="today" placeholder="Fecha de vencimiento" />
+            <input
+              z-input
+              w-full
+              id="dueDate"
+              type="date"
+              formControlName="dueDate"
+              [min]="today"
+              placeholder="Fecha de vencimiento"
+            />
           </div>
         </div>
       }
@@ -62,7 +120,16 @@
       <div class="grid gap-4 md:grid-cols-2">
         <div>
           <label class="label-form" for="amountPaid">Monto pagado</label>
-          <input z-input w-full id="amountPaid" type="number" min="0" step="0.01" formControlName="amountPaid" placeholder="0.00" />
+          <input
+            z-input
+            w-full
+            id="amountPaid"
+            type="number"
+            min="0"
+            step="0.01"
+            formControlName="amountPaid"
+            placeholder="0.00"
+          />
         </div>
         <div>
           <label class="label-form" for="paymentDate">Fecha de pago</label>
@@ -73,11 +140,21 @@
       <div class="grid gap-4 md:grid-cols-2">
         <div>
           <label class="label-form" for="paymentMethod">Método de pago</label>
-          <z-select-option id="paymentMethod" formControlName="paymentMethod" [options]="methodOptions" [searchable]="false"></z-select-option>
+          <z-select-option
+            id="paymentMethod"
+            formControlName="paymentMethod"
+            [options]="methodOptions"
+            [searchable]="false"
+          ></z-select-option>
         </div>
         <div>
           <label class="label-form" for="status">Estado operativo</label>
-          <z-select-option id="status" formControlName="status" [options]="statusOptions" [searchable]="false"></z-select-option>
+          <z-select-option
+            id="status"
+            formControlName="status"
+            [options]="statusOptions"
+            [searchable]="false"
+          ></z-select-option>
         </div>
       </div>
 
@@ -85,32 +162,74 @@
         <div class="grid gap-4 md:grid-cols-3">
           <div>
             <label class="label-form" for="installmentNumber">Cuota</label>
-            <input z-input w-full id="installmentNumber" type="number" min="1" formControlName="installmentNumber" />
+            <input
+              z-input
+              w-full
+              id="installmentNumber"
+              type="number"
+              min="1"
+              formControlName="installmentNumber"
+            />
           </div>
           <div>
             <label class="label-form" for="lateFee">Mora</label>
-            <input z-input w-full id="lateFee" type="number" min="0" step="0.01" formControlName="lateFee" />
+            <input
+              z-input
+              w-full
+              id="lateFee"
+              type="number"
+              min="0"
+              step="0.01"
+              formControlName="lateFee"
+            />
           </div>
           <div>
             <label class="label-form" for="discountAmount">Descuento</label>
-            <input z-input w-full id="discountAmount" type="number" min="0" step="0.01" formControlName="discountAmount" />
+            <input
+              z-input
+              w-full
+              id="discountAmount"
+              type="number"
+              min="0"
+              step="0.01"
+              formControlName="discountAmount"
+            />
           </div>
         </div>
       } @else {
         <div>
           <label class="label-form" for="installmentNumber">Cuota</label>
-          <input z-input w-full id="installmentNumber" type="number" min="1" formControlName="installmentNumber" />
+          <input
+            z-input
+            w-full
+            id="installmentNumber"
+            type="number"
+            min="1"
+            formControlName="installmentNumber"
+          />
         </div>
       }
 
       <div class="grid gap-4 md:grid-cols-2">
         <div>
           <label class="label-form" for="receiptNumber">Nro. recibo</label>
-          <input z-input w-full id="receiptNumber" formControlName="receiptNumber" placeholder="REC-2026-0001" />
+          <input
+            z-input
+            w-full
+            id="receiptNumber"
+            formControlName="receiptNumber"
+            placeholder="REC-2026-0001"
+          />
         </div>
         <div>
           <label class="label-form" for="payerName">Pagador</label>
-          <input z-input w-full id="payerName" formControlName="payerName" placeholder="Nombre de quien paga" />
+          <input
+            z-input
+            w-full
+            id="payerName"
+            formControlName="payerName"
+            placeholder="Nombre de quien paga"
+          />
         </div>
       </div>
 
@@ -118,17 +237,35 @@
         <div class="grid gap-4 md:grid-cols-2">
           <div>
             <label class="label-form" for="internalReference">Referencia interna</label>
-            <input z-input w-full id="internalReference" formControlName="internalReference" placeholder="Código interno de caja o tesorería" />
+            <input
+              z-input
+              w-full
+              id="internalReference"
+              formControlName="internalReference"
+              placeholder="Código interno de caja o tesorería"
+            />
           </div>
           <div>
             <label class="label-form" for="externalReference">Referencia externa</label>
-            <input z-input w-full id="externalReference" formControlName="externalReference" placeholder="Voucher, operación, Yape, Plin" />
+            <input
+              z-input
+              w-full
+              id="externalReference"
+              formControlName="externalReference"
+              placeholder="Voucher, operación, Yape, Plin"
+            />
           </div>
         </div>
       } @else {
         <div>
           <label class="label-form" for="externalReference">Referencia externa</label>
-          <input z-input w-full id="externalReference" formControlName="externalReference" placeholder="Voucher, operación, Yape, Plin" />
+          <input
+            z-input
+            w-full
+            id="externalReference"
+            formControlName="externalReference"
+            placeholder="Voucher, operación, Yape, Plin"
+          />
         </div>
       }
 
@@ -169,23 +306,35 @@
       <p class="text-[10px] font-black uppercase tracking-[0.22em] text-primary/70">Vista rápida</p>
       <div class="mt-4 space-y-3">
         <div class="rounded-[1.2rem] border border-base-200 bg-background/70 p-4">
-          <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">Monto</p>
-          <p class="mt-2 text-2xl font-black tracking-tight">S/ {{ amountPreview | number:'1.2-2' }}</p>
-        </div>
-
-        <div class="rounded-[1.2rem] border border-base-200 bg-background/70 p-4">
-          <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">Total operativo</p>
-          <p class="mt-2 text-2xl font-black tracking-tight">S/ {{ netAmountPreview | number:'1.2-2' }}</p>
-        </div>
-
-        <div class="rounded-[1.2rem] border border-base-200 bg-background/70 p-4">
-          <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">Vencimiento</p>
-          <p class="mt-2 text-sm font-bold text-base-content">
-            {{ dueDatePreview ? (dueDatePreview | date:'dd/MM/yyyy') : 'Sin fecha definida aún' }}
+          <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+            Monto
+          </p>
+          <p class="mt-2 text-2xl font-black tracking-tight">
+            S/ {{ amountPreview | number: '1.2-2' }}
           </p>
         </div>
 
-        <div class="rounded-[1.2rem] border border-base-200 bg-background/70 p-4 text-sm text-base-content/60">
+        <div class="rounded-[1.2rem] border border-base-200 bg-background/70 p-4">
+          <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+            Total operativo
+          </p>
+          <p class="mt-2 text-2xl font-black tracking-tight">
+            S/ {{ netAmountPreview | number: '1.2-2' }}
+          </p>
+        </div>
+
+        <div class="rounded-[1.2rem] border border-base-200 bg-background/70 p-4">
+          <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+            Vencimiento
+          </p>
+          <p class="mt-2 text-sm font-bold text-base-content">
+            {{ dueDatePreview ? (dueDatePreview | date: 'dd/MM/yyyy') : 'Sin fecha definida aún' }}
+          </p>
+        </div>
+
+        <div
+          class="rounded-[1.2rem] border border-base-200 bg-background/70 p-4 text-sm text-base-content/60"
+        >
           Usa una referencia clara para conciliar rápido el pago cuando llegue el comprobante.
         </div>
       </div>
@@ -193,7 +342,9 @@
   </div>
 
   <footer class="mt-2 flex justify-end gap-2">
-    <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">Cancelar</button>
+    <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">
+      Cancelar
+    </button>
     <button type="submit" z-button zColor="primary" [disabled]="form.invalid || saving">
       {{ saving ? 'Guardando...' : isEditMode ? 'Guardar cambios' : 'Registrar pago' }}
     </button>

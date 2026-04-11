@@ -16,7 +16,16 @@ import { PaymentGroupForm } from '../../components/payment-group-form/payment-gr
 
 @Component({
   selector: 'sga-payments',
-  imports: [CommonModule, SelectOptionComponent, ZardButtonComponent, ListToolbarComponent, ZardEmptyComponent, ZardSkeletonComponent, ZardPopoverDirective, ZardPopoverComponent],
+  imports: [
+    CommonModule,
+    SelectOptionComponent,
+    ZardButtonComponent,
+    ListToolbarComponent,
+    ZardEmptyComponent,
+    ZardSkeletonComponent,
+    ZardPopoverDirective,
+    ZardPopoverComponent,
+  ],
   templateUrl: './payments.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -48,7 +57,8 @@ export default class PaymentsPage {
   });
   pageDescription = computed(() => {
     const routePath = this.route.routeConfig?.path;
-    if (routePath === 'pending') return 'Monitorea grupos con cobros pendientes, mora o abonos parciales.';
+    if (routePath === 'pending')
+      return 'Monitorea grupos con cobros pendientes, mora o abonos parciales.';
     if (routePath === 'history') return 'Revisa grupos ya regularizados.';
     return 'Crea cabeceras de cobro y luego registra pagos individuales dentro de cada grupo.';
   });
@@ -69,19 +79,29 @@ export default class PaymentsPage {
     });
   });
 
-  activeFiltersCount = computed(() => [this.filters.paymentSearch(), this.filters.paymentStatus()].filter(Boolean).length);
+  activeFiltersCount = computed(
+    () => [this.filters.paymentSearch(), this.filters.paymentStatus()].filter(Boolean).length,
+  );
   pendingCount = computed(() => this.data().filter((item) => item.status === 'pending').length);
   paidCount = computed(() => this.data().filter((item) => item.status === 'paid').length);
   overdueCount = computed(() => this.data().filter((item) => item.status === 'overdue').length);
-  totalAmount = computed(() => this.data().reduce((sum, item) => sum + Number(item.totalAmount || 0), 0));
-  outstandingAmount = computed(() => this.data().reduce((sum, item) => sum + Number(item.outstandingAmount || 0), 0));
+  totalAmount = computed(() =>
+    this.data().reduce((sum, item) => sum + Number(item.totalAmount || 0), 0),
+  );
+  outstandingAmount = computed(() =>
+    this.data().reduce((sum, item) => sum + Number(item.outstandingAmount || 0), 0),
+  );
   collectionFocus = computed(() => {
     if (this.overdueCount() > 0) return 'Hay grupos con mora que requieren seguimiento inmediato.';
     if (this.pendingCount() > 0) return 'Tienes grupos creados esperando registro de pagos.';
     if (this.data().length > 0) return 'Los grupos visibles están estables.';
     return 'Todavía no hay grupos de cobro creados.';
   });
-  priorityGroups = computed(() => [...this.data()].sort((a, b) => Number(b.outstandingAmount || 0) - Number(a.outstandingAmount || 0)).slice(0, 3));
+  priorityGroups = computed(() =>
+    [...this.data()]
+      .sort((a, b) => Number(b.outstandingAmount || 0) - Number(a.outstandingAmount || 0))
+      .slice(0, 3),
+  );
 
   statusOptions = computed<SelectOption[]>(() => [
     { value: '', label: 'Todos' },
@@ -111,16 +131,18 @@ export default class PaymentsPage {
   }
 
   openCreate(): void {
-    this.dialog.open(PaymentGroupForm, {
-      width: '680px',
-      maxHeight: '88vh',
-    }).closed.subscribe((result?: any) => {
-      if (result?.id) {
-        this.openGroupDetail(result.id);
-      } else {
-        this.loadGroups();
-      }
-    });
+    this.dialog
+      .open(PaymentGroupForm, {
+        width: '680px',
+        maxHeight: '88vh',
+      })
+      .closed.subscribe((result?: any) => {
+        if (result?.id) {
+          this.openGroupDetail(result.id);
+        } else {
+          this.loadGroups();
+        }
+      });
   }
 
   openGroupDetail(groupId: string): void {

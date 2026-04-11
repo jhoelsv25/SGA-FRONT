@@ -56,8 +56,8 @@ export const PermissionStore = signalStore(
           error: (err) => {
             patchState(store, { loading: false });
             toast.error(err.message || 'Error al crear el permiso');
-          }
-        })
+          },
+        }),
       );
     },
     update: (id: string, permission: Partial<Permission>) => {
@@ -70,8 +70,8 @@ export const PermissionStore = signalStore(
           error: (err) => {
             patchState(store, { loading: false });
             toast.error(err.message || 'Error al actualizar el permiso');
-          }
-        })
+          },
+        }),
       );
     },
     delete: (id: string) => {
@@ -80,18 +80,18 @@ export const PermissionStore = signalStore(
         tap({
           next: () => {
             const current = store.permissions();
-            patchState(store, { 
-              permissions: current.filter(p => p.id !== id),
+            patchState(store, {
+              permissions: current.filter((p) => p.id !== id),
               total: store.total() - 1,
-              loading: false 
+              loading: false,
             });
             toast.success('Permiso eliminado correctamente');
           },
           error: (err) => {
             patchState(store, { loading: false });
             toast.error(err.message || 'Error al eliminar el permiso');
-          }
-        })
+          },
+        }),
       );
     },
   })),

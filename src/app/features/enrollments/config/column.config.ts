@@ -21,4 +21,5 @@ export const ENROLLMENT_COLUMN: DataSourceColumn[] = [
       graduated: 'bg-slate-100 text-slate-700',
     },
   },
-  { key: 'enrollmentDate', label: 'Fecha', type: 'date', format: 'short', sortable: true }];
+  { key: 'enrollmentDate', label: 'Fecha', type: 'date', format: 'short', sortable: true },
+];

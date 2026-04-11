@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'sga-classroom-grades-filters',
-  standalone: true,
+
   imports: [FormsModule],
   templateUrl: './classroom-grades-filters.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

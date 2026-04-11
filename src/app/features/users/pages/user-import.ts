@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardCardComponent } from '@/shared/components/card';
@@ -17,19 +24,59 @@ import {
 import { UserImportDropzone } from '../components/user-import-dropzone/user-import-dropzone';
 
 const FIELD_OPTIONS = [
-  { key: 'username', label: 'Usuario', required: true, description: 'Identificador único del usuario' },
-  { key: 'email', label: 'Correo', required: false, description: 'Opcional. Correo único para usuario y persona' },
-  { key: 'firstName', label: 'Nombres', required: true, description: 'Nombres de la persona asociada' },
-  { key: 'lastName', label: 'Apellidos', required: true, description: 'Apellidos de la persona asociada' },
-  { key: 'docNumber', label: 'DNI / Nro. Documento', required: false, description: 'Se usará como contraseña por defecto' },
-  { key: 'birthDate', label: 'Fecha Nacimiento', required: false, description: 'Formato YYYY-MM-DD' },
+  {
+    key: 'username',
+    label: 'Usuario',
+    required: true,
+    description: 'Identificador único del usuario',
+  },
+  {
+    key: 'email',
+    label: 'Correo',
+    required: false,
+    description: 'Opcional. Correo único para usuario y persona',
+  },
+  {
+    key: 'firstName',
+    label: 'Nombres',
+    required: true,
+    description: 'Nombres de la persona asociada',
+  },
+  {
+    key: 'lastName',
+    label: 'Apellidos',
+    required: true,
+    description: 'Apellidos de la persona asociada',
+  },
+  {
+    key: 'docNumber',
+    label: 'DNI / Nro. Documento',
+    required: false,
+    description: 'Se usará como contraseña por defecto',
+  },
+  {
+    key: 'birthDate',
+    label: 'Fecha Nacimiento',
+    required: false,
+    description: 'Formato YYYY-MM-DD',
+  },
   { key: 'gender', label: 'Género', required: false, description: 'M, F u O' },
   { key: 'address', label: 'Dirección', required: false, description: 'Dirección de domicilio' },
   { key: 'phone', label: 'Teléfono', required: false, description: 'Teléfono fijo' },
   { key: 'mobile', label: 'Celular', required: false, description: 'Número de celular' },
   { key: 'role', label: 'Rol', required: true, description: 'Nombre o UUID del rol existente' },
-  { key: 'institution', label: 'Institucion', required: false, description: 'Nombre o UUID de la institución' },
-  { key: 'password', label: 'Contraseña', required: false, description: 'Opcional. Si falta, se usa el DNI' },
+  {
+    key: 'institution',
+    label: 'Institucion',
+    required: false,
+    description: 'Nombre o UUID de la institución',
+  },
+  {
+    key: 'password',
+    label: 'Contraseña',
+    required: false,
+    description: 'Opcional. Si falta, se usa el DNI',
+  },
   { key: 'status', label: 'Estado', required: false, description: 'ACTIVE, INACTIVE o SUSPENDED' },
   { key: 'isActive', label: 'Activo', required: false, description: 'true/false, si/no, 1/0' },
   {
@@ -153,7 +200,7 @@ type ImportHistoryItem = {
 
 @Component({
   selector: 'sga-user-import',
-  standalone: true,
+
   imports: [
     CommonModule,
     ZardButtonComponent,
@@ -238,13 +285,17 @@ export default class UserImportPage implements OnDestroy, OnInit {
         } catch (error) {
           this.isUploading.set(false);
           this.errorMessage.set(
-            error instanceof Error ? error.message : 'No se pudo validar localmente el archivo cargado',
+            error instanceof Error
+              ? error.message
+              : 'No se pudo validar localmente el archivo cargado',
           );
         }
       },
       error: (err) => {
         this.isUploading.set(false);
-        this.errorMessage.set(err?.error?.message ?? err?.message ?? 'No se pudo procesar el archivo');
+        this.errorMessage.set(
+          err?.error?.message ?? err?.message ?? 'No se pudo procesar el archivo',
+        );
       },
     });
   }
@@ -316,7 +367,9 @@ export default class UserImportPage implements OnDestroy, OnInit {
       error: (err) => {
         this.step.set('mapping');
         this.socketService.disconnect();
-        this.errorMessage.set(err?.error?.message ?? err?.message ?? 'No se pudo iniciar la importación');
+        this.errorMessage.set(
+          err?.error?.message ?? err?.message ?? 'No se pudo iniciar la importación',
+        );
       },
     });
   }
@@ -351,7 +404,9 @@ export default class UserImportPage implements OnDestroy, OnInit {
         URL.revokeObjectURL(url);
       },
       error: (err) => {
-        this.errorMessage.set(err?.error?.message ?? err?.message ?? 'No se pudo descargar la plantilla');
+        this.errorMessage.set(
+          err?.error?.message ?? err?.message ?? 'No se pudo descargar la plantilla',
+        );
       },
     });
   }
@@ -460,7 +515,9 @@ export default class UserImportPage implements OnDestroy, OnInit {
     const roles = this.detectedRoles();
 
     if (roles.has('estudiante') && !mapping['studentCode']) {
-      issues.push('El archivo contiene filas con rol Estudiante y falta mapear "Codigo Estudiante"');
+      issues.push(
+        'El archivo contiene filas con rol Estudiante y falta mapear "Codigo Estudiante"',
+      );
     }
 
     if (roles.has('docente') || roles.has('director')) {
@@ -477,7 +534,9 @@ export default class UserImportPage implements OnDestroy, OnInit {
       for (const field of teacherRequired) {
         if (!mapping[field]) {
           const label = FIELD_OPTIONS.find((option) => option.key === field)?.label ?? field;
-          issues.push(`El archivo contiene filas con rol Docente/Director y falta mapear "${label}"`);
+          issues.push(
+            `El archivo contiene filas con rol Docente/Director y falta mapear "${label}"`,
+          );
         }
       }
     }
@@ -554,7 +613,10 @@ export default class UserImportPage implements OnDestroy, OnInit {
         const normalizedHeader = normalize(header);
         return candidates.some((candidate) => {
           const normalizedCandidate = normalize(candidate);
-          return normalizedHeader === normalizedCandidate || normalizedHeader.includes(normalizedCandidate);
+          return (
+            normalizedHeader === normalizedCandidate ||
+            normalizedHeader.includes(normalizedCandidate)
+          );
         });
       });
 

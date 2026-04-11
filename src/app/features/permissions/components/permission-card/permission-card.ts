@@ -8,7 +8,7 @@ import { Permission } from '@features/admin-services/api/permission-api';
 
 @Component({
   selector: 'sga-permission-card',
-  standalone: true,
+
   imports: [CommonModule, ZardButtonComponent, ZardIconComponent, SgaHasPermissionDirective],
   templateUrl: './permission-card.html',
   styleUrls: ['./permission-card.css'],

@@ -9,13 +9,15 @@ export default [
   },
   {
     path: 'enrollments',
-    loadComponent: () => import('../enrollments/pages/enrollments/enrollments').then((m) => m.default),
+    loadComponent: () =>
+      import('../enrollments/pages/enrollments/enrollments').then((m) => m.default),
     title: 'Matrículas',
     data: { permissions: ['enrollment:view'] },
   },
   {
     path: 'enrollments/:id',
-    loadComponent: () => import('../enrollments/pages/enrollment-detail/enrollment-detail').then((m) => m.default),
+    loadComponent: () =>
+      import('../enrollments/pages/enrollment-detail/enrollment-detail').then((m) => m.default),
     title: 'Detalle de Matrícula',
     data: { permissions: ['enrollment:view'] },
   },
@@ -41,4 +43,5 @@ export default [
     path: '',
     redirectTo: 'list',
     pathMatch: 'full',
-  }] as Routes;
+  },
+] as Routes;

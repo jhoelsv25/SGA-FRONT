@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardEmptyComponent } from '@/shared/components/empty';
@@ -13,8 +20,14 @@ import { CommunicationForm } from '../../components/communication-form/communica
 
 @Component({
   selector: 'sga-communication-detail',
-  standalone: true,
-  imports: [CommonModule, ZardButtonComponent, ZardIconComponent, ZardEmptyComponent, ZardSkeletonComponent],
+
+  imports: [
+    CommonModule,
+    ZardButtonComponent,
+    ZardIconComponent,
+    ZardEmptyComponent,
+    ZardSkeletonComponent,
+  ],
   templateUrl: './communication-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -25,7 +38,9 @@ export default class CommunicationDetailPage implements OnInit {
   private readonly dialog = inject(DialogModalService);
   private readonly toast = inject(Toast);
 
-  readonly communication = signal<Communication | null>((history.state?.communication as Communication | undefined) ?? null);
+  readonly communication = signal<Communication | null>(
+    (history.state?.communication as Communication | undefined) ?? null,
+  );
   readonly loading = signal(true);
 
   readonly statusLabel = computed(() => {
@@ -35,7 +50,9 @@ export default class CommunicationDetailPage implements OnInit {
       sent: 'Enviada',
       failed: 'Fallida',
     };
-    return map[this.communication()?.status ?? ''] ?? (this.communication()?.status || 'Sin estado');
+    return (
+      map[this.communication()?.status ?? ''] ?? (this.communication()?.status || 'Sin estado')
+    );
   });
 
   readonly typeLabel = computed(() => {
@@ -79,11 +96,13 @@ export default class CommunicationDetailPage implements OnInit {
   openEdit(): void {
     const current = this.communication();
     if (!current) return;
-    this.dialog.open(CommunicationForm, {
-      data: { current },
-      width: '780px',
-      maxHeight: '92vh',
-    }).closed.subscribe(() => this.reload());
+    this.dialog
+      .open(CommunicationForm, {
+        data: { current },
+        width: '780px',
+        maxHeight: '92vh',
+      })
+      .closed.subscribe(() => this.reload());
   }
 
   deleteCurrent(): void {

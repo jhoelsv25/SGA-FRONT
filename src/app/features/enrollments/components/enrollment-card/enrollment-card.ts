@@ -10,7 +10,7 @@ import type { Enrollment } from '../../types/enrollment-types';
 
 @Component({
   selector: 'sga-enrollment-card',
-  standalone: true,
+
   imports: [
     CommonModule,
     ZardButtonComponent,
@@ -36,7 +36,12 @@ export class EnrollmentCardComponent {
     const personName = student?.person
       ? `${student.person.firstName ?? ''} ${student.person.lastName ?? ''}`.trim()
       : '';
-    return personName || `${student?.firstName ?? ''} ${student?.lastName ?? ''}`.trim() || student?.studentCode || 'Sin estudiante';
+    return (
+      personName ||
+      `${student?.firstName ?? ''} ${student?.lastName ?? ''}`.trim() ||
+      student?.studentCode ||
+      'Sin estudiante'
+    );
   });
 
   readonly statusLabel = computed(() => {

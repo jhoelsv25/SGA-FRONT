@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, HostListener, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  HostListener,
+  inject,
+  signal,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HeaderDetail } from '@/shared/widgets/header-detail/header-detail';
@@ -30,7 +37,7 @@ type ImportResult = { created: number; errors: { row: number; message: string }[
 
 @Component({
   selector: 'sga-students',
-  standalone: true,
+
   imports: [
     CommonModule,
     FormsModule,
@@ -214,7 +221,8 @@ export default class StudentsPage {
     this.router.navigate(['/students/enrollments'], {
       queryParams: {
         studentId: student.id,
-        studentName: `${student.firstName ?? ''} ${student.lastName ?? ''}`.trim() || student.studentCode,
+        studentName:
+          `${student.firstName ?? ''} ${student.lastName ?? ''}`.trim() || student.studentCode,
       },
     });
   }
@@ -223,7 +231,8 @@ export default class StudentsPage {
     this.router.navigate(['/students/guardians'], {
       queryParams: {
         studentId: student.id,
-        studentName: `${student.firstName ?? ''} ${student.lastName ?? ''}`.trim() || student.studentCode,
+        studentName:
+          `${student.firstName ?? ''} ${student.lastName ?? ''}`.trim() || student.studentCode,
       },
     });
   }
@@ -232,7 +241,8 @@ export default class StudentsPage {
     this.router.navigate(['/attendance/register'], {
       queryParams: {
         studentId: student.id,
-        studentName: `${student.firstName ?? ''} ${student.lastName ?? ''}`.trim() || student.studentCode,
+        studentName:
+          `${student.firstName ?? ''} ${student.lastName ?? ''}`.trim() || student.studentCode,
       },
     });
   }
@@ -241,7 +251,8 @@ export default class StudentsPage {
     this.router.navigate(['/students/observations'], {
       queryParams: {
         studentId: student.id,
-        studentName: `${student.firstName ?? ''} ${student.lastName ?? ''}`.trim() || student.studentCode,
+        studentName:
+          `${student.firstName ?? ''} ${student.lastName ?? ''}`.trim() || student.studentCode,
       },
     });
   }
@@ -274,10 +285,13 @@ export default class StudentsPage {
   }
 
   private openImport() {
-    const ref = this.dialog.open<ImportResult | null, void, ImportWithProgressDialog>(ImportWithProgressDialog, {
-      width: '960px',
-      maxHeight: '80vh',
-    });
+    const ref = this.dialog.open<ImportResult | null, void, ImportWithProgressDialog>(
+      ImportWithProgressDialog,
+      {
+        width: '960px',
+        maxHeight: '80vh',
+      },
+    );
     ref.closed.subscribe((result) => {
       this.onRefresh();
       if (result?.created != null && result.created > 0) {
@@ -295,19 +309,19 @@ export default class StudentsPage {
         academicYearId: this.filterAcademicYearId() || undefined,
       })
       .subscribe((res) => {
-      const data = (res.data ?? []).map((s) => ({
-        firstName: s.firstName,
-        lastName: s.lastName,
-        email: s.email,
-        age: s.age,
-        grade: s.grade,
-        studentCode: s.studentCode,
-      }));
-      this.excel.downloadExport(EXCEL_COLUMNS, data, {
-        sheetName: 'Estudiantes',
-        fileName: `estudiantes_${new Date().toISOString().slice(0, 10)}.xlsx`,
+        const data = (res.data ?? []).map((s) => ({
+          firstName: s.firstName,
+          lastName: s.lastName,
+          email: s.email,
+          age: s.age,
+          grade: s.grade,
+          studentCode: s.studentCode,
+        }));
+        this.excel.downloadExport(EXCEL_COLUMNS, data, {
+          sheetName: 'Estudiantes',
+          fileName: `estudiantes_${new Date().toISOString().slice(0, 10)}.xlsx`,
+        });
       });
-    });
   }
 
   private loadMore() {

@@ -9,11 +9,15 @@ import { ZardAlertDialogService } from '@/shared/components/alert-dialog/alert-d
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { Institution, InstitutionStatus, INSTITUTION_STATUS_LABELS } from '../../types/institution-types';
+import {
+  Institution,
+  InstitutionStatus,
+  INSTITUTION_STATUS_LABELS,
+} from '../../types/institution-types';
 
 @Component({
   selector: 'sga-institution-card',
-  standalone: true,
+
   imports: [
     CommonModule,
     ZardCardComponent,
@@ -21,7 +25,7 @@ import { Institution, InstitutionStatus, INSTITUTION_STATUS_LABELS } from '../..
     ZardIconComponent,
     ZardPopoverDirective,
     ZardPopoverComponent,
-    RouterLink
+    RouterLink,
   ],
   templateUrl: './institution-card.html',
   styleUrls: ['./institution-card.css'],

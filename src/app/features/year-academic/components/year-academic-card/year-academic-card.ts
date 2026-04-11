@@ -12,7 +12,7 @@ import { YearAcademic, AcademicYearStatus, Modality } from '../../types/year-aca
 
 @Component({
   selector: 'sga-year-academic-card',
-  standalone: true,
+
   imports: [
     CommonModule,
     ZardCardComponent,

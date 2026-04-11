@@ -6,4 +6,5 @@ export const STUDENT_COLUMN: DataSourceColumn[] = [
   { key: 'lastName', label: 'Apellidos', sortable: true },
   { key: 'email', label: 'Email', sortable: true },
   { key: 'age', label: 'Edad', type: 'number' },
-  { key: 'grade', label: 'Grado' }];
+  { key: 'grade', label: 'Grado' },
+];

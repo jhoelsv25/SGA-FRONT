@@ -11,7 +11,6 @@ import { Router } from '@angular/router';
 import { AuthStore } from '@auth/services/store/auth.store';
 import { PermissionCheckStore } from '@core/stores/permission-check.store';
 
-
 @Component({
   selector: 'sga-reports',
   imports: [HeaderDetail, ReportCardComponent, ZardEmptyComponent, ZardSkeletonComponent],
@@ -55,7 +54,9 @@ export default class ReportsPage {
   data = computed(() => this.store.data());
   loading = computed(() => this.store.loading());
   headerActions = computed(() =>
-    this.permissionStore.filterActions(this.store.actions().filter((a) => a.typeAction === 'header')),
+    this.permissionStore.filterActions(
+      this.store.actions().filter((a) => a.typeAction === 'header'),
+    ),
   );
   academicCount = computed(() => this.data().filter((item) => item.type === 'academic').length);
   attendanceCount = computed(() => this.data().filter((item) => item.type === 'attendance').length);

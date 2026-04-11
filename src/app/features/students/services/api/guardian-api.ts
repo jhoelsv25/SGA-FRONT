@@ -36,19 +36,21 @@ export class GuardianApi {
   }
 
   getById(id: string): Observable<Guardian> {
-    return this.http.get<BackendResponse<Guardian>>(`${this.baseUrl}/${id}`).pipe(map((res) => res.data));
+    return this.http
+      .get<BackendResponse<Guardian>>(`${this.baseUrl}/${id}`)
+      .pipe(map((res) => res.data));
   }
 
   create(data: CreateGuardianDto): Observable<ApiEntityResponse<Guardian>> {
-    return this.http.post<BackendResponse<Guardian>>(this.baseUrl, data).pipe(
-      map((res) => ({ data: res.data })),
-    );
+    return this.http
+      .post<BackendResponse<Guardian>>(this.baseUrl, data)
+      .pipe(map((res) => ({ data: res.data })));
   }
 
   update(id: string, data: GuardianUpdateDto): Observable<ApiEntityResponse<Guardian>> {
-    return this.http.patch<BackendResponse<Guardian>>(`${this.baseUrl}/${id}`, data).pipe(
-      map((res) => ({ data: res.data })),
-    );
+    return this.http
+      .patch<BackendResponse<Guardian>>(`${this.baseUrl}/${id}`, data)
+      .pipe(map((res) => ({ data: res.data })));
   }
 
   delete(id: string): Observable<void> {
@@ -61,26 +63,33 @@ export class GuardianApi {
     Object.keys(params).forEach((key) => {
       if (params[key] != null) httpParams = httpParams.set(key, String(params[key]));
     });
-    return this.http.get<BackendResponse<StudentGuardian[]>>(this.studentGuardiansUrl, { params: httpParams }).pipe(
-      map((res) => ({
-        data: res.data ?? [],
-        page: 1,
-        size: (res.data ?? []).length,
-        total: (res.data ?? []).length,
-      })),
-    );
+    return this.http
+      .get<BackendResponse<StudentGuardian[]>>(this.studentGuardiansUrl, { params: httpParams })
+      .pipe(
+        map((res) => ({
+          data: res.data ?? [],
+          page: 1,
+          size: (res.data ?? []).length,
+          total: (res.data ?? []).length,
+        })),
+      );
   }
 
-  createStudentGuardian(data: CreateStudentGuardianDto): Observable<ApiEntityResponse<StudentGuardian>> {
-    return this.http.post<BackendResponse<StudentGuardian>>(this.studentGuardiansUrl, data).pipe(
-      map((res) => ({ data: res.data })),
-    );
+  createStudentGuardian(
+    data: CreateStudentGuardianDto,
+  ): Observable<ApiEntityResponse<StudentGuardian>> {
+    return this.http
+      .post<BackendResponse<StudentGuardian>>(this.studentGuardiansUrl, data)
+      .pipe(map((res) => ({ data: res.data })));
   }
 
-  updateStudentGuardian(id: string, data: StudentGuardianUpdateDto): Observable<ApiEntityResponse<StudentGuardian>> {
-    return this.http.patch<BackendResponse<StudentGuardian>>(`${this.studentGuardiansUrl}/${id}`, data).pipe(
-      map((res) => ({ data: res.data })),
-    );
+  updateStudentGuardian(
+    id: string,
+    data: StudentGuardianUpdateDto,
+  ): Observable<ApiEntityResponse<StudentGuardian>> {
+    return this.http
+      .patch<BackendResponse<StudentGuardian>>(`${this.studentGuardiansUrl}/${id}`, data)
+      .pipe(map((res) => ({ data: res.data })));
   }
 
   deleteStudentGuardian(id: string): Observable<void> {

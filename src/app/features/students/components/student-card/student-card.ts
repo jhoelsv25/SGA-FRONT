@@ -8,7 +8,7 @@ import { Student } from '../../types/student-types';
 
 @Component({
   selector: 'sga-student-card',
-  standalone: true,
+
   imports: [
     CommonModule,
     ZardButtonComponent,
@@ -32,7 +32,9 @@ export class StudentCardComponent {
   viewObservations = output<Student>();
 
   readonly fullName = computed(
-    () => `${this.student().firstName ?? ''} ${this.student().lastName ?? ''}`.trim() || this.student().studentCode,
+    () =>
+      `${this.student().firstName ?? ''} ${this.student().lastName ?? ''}`.trim() ||
+      this.student().studentCode,
   );
 
   readonly statusLabel = computed(() => (this.student().isActive ? 'Activo' : 'Inactivo'));

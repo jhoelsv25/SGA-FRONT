@@ -22,13 +22,24 @@ const LEVEL_OPTIONS = [
   { value: '', label: 'Todos' },
   { value: 'primary', label: 'Primaria' },
   { value: 'secondary', label: 'Secundaria' },
-  { value: 'higher', label: 'Superior' }];
-
+  { value: 'higher', label: 'Superior' },
+];
 
 @Component({
   selector: 'sga-grade-levels',
-  standalone: true,
-  imports: [CommonModule, HeaderDetail, GradeLevelCardComponent, ZardEmptyComponent, ZardSkeletonComponent, SelectOptionComponent, FormsModule, ZardInputDirective, ZardButtonComponent, ...ZardFormImports],
+
+  imports: [
+    CommonModule,
+    HeaderDetail,
+    GradeLevelCardComponent,
+    ZardEmptyComponent,
+    ZardSkeletonComponent,
+    SelectOptionComponent,
+    FormsModule,
+    ZardInputDirective,
+    ZardButtonComponent,
+    ...ZardFormImports,
+  ],
   templateUrl: './grade-levels.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -49,7 +60,9 @@ export default class GradeLevelsPage {
   headerConfig = computed(() => this.store.headerConfig());
 
   headerActions = computed(() =>
-    this.permissionStore.filterActions(this.store.actions().filter((a) => a.typeAction === 'header')),
+    this.permissionStore.filterActions(
+      this.store.actions().filter((a) => a.typeAction === 'header'),
+    ),
   );
 
   data = computed(() => this.store.data());
@@ -79,10 +92,25 @@ export default class GradeLevelsPage {
     }
 
     return [
-      { key: 'primary', label: 'Primaria', description: 'Grados base de educación primaria', items: groups.primary.sort((a, b) => a.gradeNumber - b.gradeNumber) },
-      { key: 'secondary', label: 'Secundaria', description: 'Grados de educación secundaria', items: groups.secondary.sort((a, b) => a.gradeNumber - b.gradeNumber) },
-      { key: 'higher', label: 'Superior', description: 'Grados o ciclos de educación superior', items: groups.higher.sort((a, b) => a.gradeNumber - b.gradeNumber) },
-    ].filter(group => group.items.length > 0);
+      {
+        key: 'primary',
+        label: 'Primaria',
+        description: 'Grados base de educación primaria',
+        items: groups.primary.sort((a, b) => a.gradeNumber - b.gradeNumber),
+      },
+      {
+        key: 'secondary',
+        label: 'Secundaria',
+        description: 'Grados de educación secundaria',
+        items: groups.secondary.sort((a, b) => a.gradeNumber - b.gradeNumber),
+      },
+      {
+        key: 'higher',
+        label: 'Superior',
+        description: 'Grados o ciclos de educación superior',
+        items: groups.higher.sort((a, b) => a.gradeNumber - b.gradeNumber),
+      },
+    ].filter((group) => group.items.length > 0);
   });
 
   onSearch(value: string) {

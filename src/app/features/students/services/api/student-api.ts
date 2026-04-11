@@ -39,7 +39,10 @@ export class StudentApi {
   }
 
   regenerateCredential(id: string): Observable<StudentCredentialResponse> {
-    return this.http.post<StudentCredentialResponse>(`${this.baseUrl}/${id}/credential/regenerate`, {});
+    return this.http.post<StudentCredentialResponse>(
+      `${this.baseUrl}/${id}/credential/regenerate`,
+      {},
+    );
   }
 
   delete(id: string): Observable<DataResponse<StudentResponse>> {
@@ -47,7 +50,9 @@ export class StudentApi {
   }
 
   /** Importación masiva (síncrona). Backend recibe JSON array. */
-  import(rows: StudentCreate[]): Observable<{ created: number; errors?: { row: number; message: string }[] }> {
+  import(
+    rows: StudentCreate[],
+  ): Observable<{ created: number; errors?: { row: number; message: string }[] }> {
     return this.http.post<{ created: number; errors?: { row: number; message: string }[] }>(
       `${this.baseUrl}/import`,
       { rows },
@@ -55,7 +60,9 @@ export class StudentApi {
   }
 
   /** Sube archivo Excel y obtiene encabezados para mapeo. */
-  uploadImportFile(file: File): Observable<{ uploadId: string; headers: string[]; rowCount: number }> {
+  uploadImportFile(
+    file: File,
+  ): Observable<{ uploadId: string; headers: string[]; rowCount: number }> {
     const form = new FormData();
     form.append('file', file);
     return this.http.post<{ uploadId: string; headers: string[]; rowCount: number }>(
@@ -65,7 +72,10 @@ export class StudentApi {
   }
 
   /** Inicia importación asíncrona por colas. Progreso vía WebSocket. */
-  startImport(uploadId: string, columnMapping: Record<string, string>): Observable<{ jobId: string }> {
+  startImport(
+    uploadId: string,
+    columnMapping: Record<string, string>,
+  ): Observable<{ jobId: string }> {
     return this.http.post<{ jobId: string }>(`${this.baseUrl}/import/start`, {
       uploadId,
       columnMapping,
@@ -74,7 +84,14 @@ export class StudentApi {
 
   private cleanParams(params: Params): Params {
     return Object.fromEntries(
-      Object.entries(params).filter(([, value]) => value !== undefined && value !== null && value !== '' && value !== 'undefined' && value !== 'null'),
+      Object.entries(params).filter(
+        ([, value]) =>
+          value !== undefined &&
+          value !== null &&
+          value !== '' &&
+          value !== 'undefined' &&
+          value !== 'null',
+      ),
     );
   }
 }

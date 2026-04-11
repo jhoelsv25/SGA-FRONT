@@ -28,6 +28,6 @@ export default [
   {
     path: '',
     redirectTo: 'announcements',
-    pathMatch: 'full'
-  }
+    pathMatch: 'full',
+  },
 ] as Routes;

@@ -66,7 +66,7 @@ export const PeriodStore = signalStore(
             patchState(store, { loading: false });
             toast.error('Error al crear período: ' + err.message);
           },
-        })
+        }),
       );
     },
     update(id: string, period: Partial<Period>) {
@@ -84,7 +84,7 @@ export const PeriodStore = signalStore(
             patchState(store, { loading: false });
             toast.error('Error al actualizar período: ' + err.message);
           },
-        })
+        }),
       );
     },
     delete(id: string) {
@@ -102,7 +102,7 @@ export const PeriodStore = signalStore(
             patchState(store, { loading: false });
             toast.error('Error al eliminar período: ' + err.message);
           },
-        })
+        }),
       );
     },
     setPagination(page: number, size: number) {
@@ -115,5 +115,5 @@ export const PeriodStore = signalStore(
     onInit(store) {
       store.loadAll();
     },
-  })
+  }),
 );

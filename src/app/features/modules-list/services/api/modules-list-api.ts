@@ -12,7 +12,9 @@ export class ModulesListApi {
   private readonly http = inject(HttpClient);
   private readonly basePath = 'modules';
 
-  getAll(params: ModulesListParams): Observable<ModulesListOffsetResponse | ModulesListCursorResponse> {
+  getAll(
+    params: ModulesListParams,
+  ): Observable<ModulesListOffsetResponse | ModulesListCursorResponse> {
     let httpParams = new HttpParams();
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined) httpParams = httpParams.set(key, String(value));

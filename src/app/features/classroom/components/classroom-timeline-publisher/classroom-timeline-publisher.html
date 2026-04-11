@@ -1,117 +1,151 @@
 @if (canPublish()) {
-<div class="card-premium p-8 bg-white dark:bg-zinc-900 overflow-hidden relative group">
-  <div
-    class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl group-hover:bg-primary/10 transition-colors">
-  </div>
-
-  <div class="relative flex items-start gap-6">
+  <div class="card-premium p-8 bg-white dark:bg-zinc-900 overflow-hidden relative group">
     <div
-      class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-primary/20 to-indigo-500/20 text-primary flex items-center justify-center font-black text-xl shadow-inner shrink-0 border border-primary/10">
-      @if (currentUser()?.person?.photoUrl) {
-      <img [src]="currentUser()?.person?.photoUrl" [alt]="currentUser()?.firstName || 'Usuario'" class="h-full w-full object-cover" />
-      } @else {
-      {{ initials((currentUser()?.firstName || '') + ' ' + (currentUser()?.lastName || '')) }}
-      }
-    </div>
-    <div class="flex-1 space-y-6">
-      <div class="relative">
-        <textarea [ngModel]="postContent()" (ngModelChange)="postContent.set($event)"
-          placeholder="¿Qué quieres compartir hoy con tu clase?"
-          class="w-full bg-base-200/30 dark:bg-zinc-800/50 rounded-[1.5rem] border-transparent focus:border-primary/30 focus:bg-white dark:focus:bg-zinc-800 p-5 text-base font-medium transition-all duration-300 outline-none min-h-[120px] resize-none"></textarea>
-      </div>
+      class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl group-hover:bg-primary/10 transition-colors"
+    ></div>
 
-      <div class="flex flex-wrap items-center gap-3">
-        <button
-          type="button"
-          (click)="resourceMode.set('file'); fileInput.click()"
-          class="rounded-[1.5rem] bg-base-200/40 px-5 py-3 text-sm font-black uppercase tracking-[0.12em] text-base-content transition-all hover:bg-base-200"
-        >
-          Subir archivo
-        </button>
-        <button
-          type="button"
-          (click)="resourceMode.set(resourceMode() === 'link' ? 'none' : 'link')"
-          class="rounded-[1.5rem] bg-base-200/40 px-5 py-3 text-sm font-black uppercase tracking-[0.12em] text-base-content transition-all hover:bg-base-200"
-        >
-          Agregar URL
-        </button>
-      </div>
-
-      @if (resourceMode() === 'link') {
-      <div class="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_auto]">
-        <input
-          type="url"
-          [ngModel]="externalResourceUrl()"
-          (ngModelChange)="externalResourceUrl.set($event)"
-          placeholder="Pega un recurso externo: YouTube, Google Docs, Sheets, Drive..."
-          class="w-full bg-base-200/30 dark:bg-zinc-800/50 rounded-[1.5rem] border-transparent focus:border-primary/30 focus:bg-white dark:focus:bg-zinc-800 px-5 py-3 text-sm font-medium transition-all duration-300 outline-none"
-        />
-        <button
-          type="button"
-          (click)="addExternalLink()"
-          [disabled]="!externalResourceUrl().trim()"
-          class="rounded-[1.5rem] bg-base-200/40 px-5 py-3 text-sm font-black uppercase tracking-[0.12em] text-base-content transition-all hover:bg-base-200 disabled:opacity-50"
-        >
-          Confirmar URL
-        </button>
-      </div>
-      }
-
-      @if (attachments().length > 0) {
-      <div class="flex flex-wrap gap-3">
-        @for (file of attachments(); track $index) {
-        <div
-          class="flex items-center gap-3 bg-primary/5 hover:bg-primary/10 px-4 py-2 rounded-xl border border-primary/20 text-xs font-bold text-primary transition-all animate-in zoom-in">
-          <i class="fa-solid fa-file-lines"></i>
-          <span class="max-w-[180px] truncate">{{ file.name }}</span>
-          <button (click)="removeAttachment($index)" class="hover:text-red-500 transition-colors">
-            <i class="fa-solid fa-circle-xmark"></i>
-          </button>
-        </div>
+    <div class="relative flex items-start gap-6">
+      <div
+        class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-primary/20 to-indigo-500/20 text-primary flex items-center justify-center font-black text-xl shadow-inner shrink-0 border border-primary/10"
+      >
+        @if (currentUser()?.person?.photoUrl) {
+          <img
+            [src]="currentUser()?.person?.photoUrl"
+            [alt]="currentUser()?.firstName || 'Usuario'"
+            class="h-full w-full object-cover"
+          />
+        } @else {
+          {{ initials((currentUser()?.firstName || '') + ' ' + (currentUser()?.lastName || '')) }}
         }
       </div>
-      }
+      <div class="flex-1 space-y-6">
+        <div class="relative">
+          <textarea
+            [ngModel]="postContent()"
+            (ngModelChange)="postContent.set($event)"
+            placeholder="¿Qué quieres compartir hoy con tu clase?"
+            class="w-full bg-base-200/30 dark:bg-zinc-800/50 rounded-[1.5rem] border-transparent focus:border-primary/30 focus:bg-white dark:focus:bg-zinc-800 p-5 text-base font-medium transition-all duration-300 outline-none min-h-[120px] resize-none"
+          ></textarea>
+        </div>
 
-      <div class="flex justify-between items-center bg-base-200/20 p-2 rounded-2xl border border-base-200/50">
-        <div class="flex items-center gap-1">
-          <input type="file" #fileInput class="hidden" (change)="onFileSelected($event)">
-          <button type="button" (click)="fileInput.click()"
-            class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white dark:hover:bg-zinc-800 text-base-content/50 hover:text-primary transition-all shadow-sm hover:shadow-md"
-            title="Adjuntar archivo">
-            <i class="fa-solid fa-paperclip"></i>
+        <div class="flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            (click)="resourceMode.set('file'); fileInput.click()"
+            class="rounded-[1.5rem] bg-base-200/40 px-5 py-3 text-sm font-black uppercase tracking-[0.12em] text-base-content transition-all hover:bg-base-200"
+          >
+            Subir archivo
           </button>
-
-          <div class="h-6 w-px bg-base-200 mx-2"></div>
-
-          <button type="button" (click)="isAssignment.set(!isAssignment())"
-            [class]="isAssignment() ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-base-content/50 hover:bg-white dark:hover:bg-zinc-800'"
-            class="px-4 py-2 flex items-center gap-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all">
-            <i class="fa-solid fa-list-check"></i>
-            <span class="hidden sm:inline">Tarea</span>
+          <button
+            type="button"
+            (click)="resourceMode.set(resourceMode() === 'link' ? 'none' : 'link')"
+            class="rounded-[1.5rem] bg-base-200/40 px-5 py-3 text-sm font-black uppercase tracking-[0.12em] text-base-content transition-all hover:bg-base-200"
+          >
+            Agregar URL
           </button>
         </div>
 
-        <button type="button" [disabled]="!postContent() && attachments().length === 0" (click)="publish()"
-          class="bg-primary hover:bg-primary/90 disabled:opacity-50 text-white px-8 py-2.5 rounded-xl text-sm font-black uppercase tracking-[0.1em] transition-all shadow-lg shadow-primary/20 hover:scale-105 active:scale-95">
-          Publicar
-        </button>
+        @if (resourceMode() === 'link') {
+          <div class="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_auto]">
+            <input
+              type="url"
+              [ngModel]="externalResourceUrl()"
+              (ngModelChange)="externalResourceUrl.set($event)"
+              placeholder="Pega un recurso externo: YouTube, Google Docs, Sheets, Drive..."
+              class="w-full bg-base-200/30 dark:bg-zinc-800/50 rounded-[1.5rem] border-transparent focus:border-primary/30 focus:bg-white dark:focus:bg-zinc-800 px-5 py-3 text-sm font-medium transition-all duration-300 outline-none"
+            />
+            <button
+              type="button"
+              (click)="addExternalLink()"
+              [disabled]="!externalResourceUrl().trim()"
+              class="rounded-[1.5rem] bg-base-200/40 px-5 py-3 text-sm font-black uppercase tracking-[0.12em] text-base-content transition-all hover:bg-base-200 disabled:opacity-50"
+            >
+              Confirmar URL
+            </button>
+          </div>
+        }
+
+        @if (attachments().length > 0) {
+          <div class="flex flex-wrap gap-3">
+            @for (file of attachments(); track $index) {
+              <div
+                class="flex items-center gap-3 bg-primary/5 hover:bg-primary/10 px-4 py-2 rounded-xl border border-primary/20 text-xs font-bold text-primary transition-all animate-in zoom-in"
+              >
+                <i class="fa-solid fa-file-lines"></i>
+                <span class="max-w-[180px] truncate">{{ file.name }}</span>
+                <button
+                  (click)="removeAttachment($index)"
+                  class="hover:text-red-500 transition-colors"
+                >
+                  <i class="fa-solid fa-circle-xmark"></i>
+                </button>
+              </div>
+            }
+          </div>
+        }
+
+        <div
+          class="flex justify-between items-center bg-base-200/20 p-2 rounded-2xl border border-base-200/50"
+        >
+          <div class="flex items-center gap-1">
+            <input type="file" #fileInput class="hidden" (change)="onFileSelected($event)" />
+            <button
+              type="button"
+              (click)="fileInput.click()"
+              class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white dark:hover:bg-zinc-800 text-base-content/50 hover:text-primary transition-all shadow-sm hover:shadow-md"
+              title="Adjuntar archivo"
+            >
+              <i class="fa-solid fa-paperclip"></i>
+            </button>
+
+            <div class="h-6 w-px bg-base-200 mx-2"></div>
+
+            <button
+              type="button"
+              (click)="isAssignment.set(!isAssignment())"
+              [class]="
+                isAssignment()
+                  ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                  : 'text-base-content/50 hover:bg-white dark:hover:bg-zinc-800'
+              "
+              class="px-4 py-2 flex items-center gap-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all"
+            >
+              <i class="fa-solid fa-list-check"></i>
+              <span class="hidden sm:inline">Tarea</span>
+            </button>
+          </div>
+
+          <button
+            type="button"
+            [disabled]="!postContent() && attachments().length === 0"
+            (click)="publish()"
+            class="bg-primary hover:bg-primary/90 disabled:opacity-50 text-white px-8 py-2.5 rounded-xl text-sm font-black uppercase tracking-[0.1em] transition-all shadow-lg shadow-primary/20 hover:scale-105 active:scale-95"
+          >
+            Publicar
+          </button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 } @else {
-<div
-  class="card-premium p-8 bg-gradient-to-br from-primary to-indigo-700 text-white border-none relative overflow-hidden">
-  <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl"></div>
-  <div class="relative flex items-center gap-6">
+  <div
+    class="card-premium p-8 bg-gradient-to-br from-primary to-indigo-700 text-white border-none relative overflow-hidden"
+  >
     <div
-      class="w-16 h-16 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center border border-white/30">
-      <i class="fa-solid fa-bullhorn text-2xl"></i>
-    </div>
-    <div>
-      <h2 class="text-2xl font-black tracking-tight">Muro del aula</h2>
-      <p class="mt-1 text-white/70 font-medium">Revisa avisos, materiales y tareas publicadas por tus docentes.</p>
+      class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl"
+    ></div>
+    <div class="relative flex items-center gap-6">
+      <div
+        class="w-16 h-16 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center border border-white/30"
+      >
+        <i class="fa-solid fa-bullhorn text-2xl"></i>
+      </div>
+      <div>
+        <h2 class="text-2xl font-black tracking-tight">Muro del aula</h2>
+        <p class="mt-1 text-white/70 font-medium">
+          Revisa avisos, materiales y tareas publicadas por tus docentes.
+        </p>
+      </div>
     </div>
   </div>
-</div>
 }

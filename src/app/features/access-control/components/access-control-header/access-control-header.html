@@ -1,0 +1,39 @@
+<div class="grid gap-6 xl:grid-cols-[minmax(0,1.45fr)_minmax(540px,0.85fr)] xl:items-start">
+  <div class="min-w-0 max-w-[52rem] pr-2">
+    <p class="text-[11px] font-black uppercase tracking-[0.32em] text-primary/70">
+      Control de Accesos
+    </p>
+    <h1 class="mt-3 text-4xl font-black tracking-tight text-base-content">
+      Ingreso y salida por DNI o código
+    </h1>
+    <p class="mt-3 max-w-2xl text-base font-medium leading-7 text-base-content/60">
+      Este panel registra movimientos de acceso para docentes y estudiantes. Escaneas el DNI o
+      código, el sistema busca a la persona y registra el ingreso o salida.
+    </p>
+  </div>
+
+  <div
+    class="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-[minmax(0,220px)_minmax(0,1fr)_minmax(0,1fr)] xl:pl-2"
+  >
+    <article class="rounded-[1.5rem] border border-base-200 bg-base-100/80 px-4 py-4">
+      <p class="text-[10px] font-black uppercase tracking-[0.22em] text-base-content/45">Fecha</p>
+      <div class="mt-3 max-w-[210px]">
+        <z-date-picker
+          [ngModel]="date()"
+          valueFormat="yyyy-MM-dd"
+          displayFormat="dd/MM/yyyy"
+          placeholder="Seleccione fecha"
+          (ngModelChange)="dateChange.emit($event)"
+        />
+      </div>
+    </article>
+    <article class="rounded-[1.5rem] border border-success/20 bg-success/5 px-5 py-4">
+      <p class="text-[10px] font-black uppercase tracking-[0.22em] text-success/80">Ingresos</p>
+      <p class="mt-3 text-4xl font-black tracking-tight text-success">{{ entryCount() }}</p>
+    </article>
+    <article class="rounded-[1.5rem] border border-warning/20 bg-warning/10 px-5 py-4">
+      <p class="text-[10px] font-black uppercase tracking-[0.22em] text-warning/80">Salidas</p>
+      <p class="mt-3 text-4xl font-black tracking-tight text-warning">{{ exitCount() }}</p>
+    </article>
+  </div>
+</div>

@@ -1,5 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { HeaderDetail } from '@shared/widgets/header-detail/header-detail';
@@ -54,7 +62,7 @@ type LastRegisteredEntry = QuickEntry & {
 
 @Component({
   selector: 'sga-attendance-quick-register',
-  standalone: true,
+
   imports: [CommonModule, FormsModule, HeaderDetail, ZardInputDirective, SectionCourseSelect],
   templateUrl: './attendance-quick-register.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -132,10 +140,18 @@ export default class AttendanceQuickRegisterPage implements OnInit, OnDestroy {
     );
   });
 
-  readonly presentCount = computed(() => this.entries().filter((entry) => entry.status === 'present').length);
-  readonly lateCount = computed(() => this.entries().filter((entry) => entry.status === 'late').length);
-  readonly absentCount = computed(() => this.entries().filter((entry) => entry.status === 'absent').length);
-  readonly excusedCount = computed(() => this.entries().filter((entry) => entry.status === 'excused').length);
+  readonly presentCount = computed(
+    () => this.entries().filter((entry) => entry.status === 'present').length,
+  );
+  readonly lateCount = computed(
+    () => this.entries().filter((entry) => entry.status === 'late').length,
+  );
+  readonly absentCount = computed(
+    () => this.entries().filter((entry) => entry.status === 'absent').length,
+  );
+  readonly excusedCount = computed(
+    () => this.entries().filter((entry) => entry.status === 'excused').length,
+  );
 
   readonly selectedSectionLabel = computed(() => {
     const sectionCourse = this.studentCatalogSectionCourse();
@@ -214,7 +230,9 @@ export default class AttendanceQuickRegisterPage implements OnInit, OnDestroy {
           (res.data ?? []).map((teacher) => ({
             teacherId: teacher.id,
             code: teacher.teacherCode,
-            name: [teacher.firstName, teacher.lastName].filter(Boolean).join(' ').trim() || teacher.teacherCode,
+            name:
+              [teacher.firstName, teacher.lastName].filter(Boolean).join(' ').trim() ||
+              teacher.teacherCode,
             specialization: teacher.specialization,
           })),
         );
@@ -281,7 +299,11 @@ export default class AttendanceQuickRegisterPage implements OnInit, OnDestroy {
     const resolvedCode = (payload.code ?? rawInput).trim();
     const nextSectionCourseId = payload.sectionCourseId ?? this.sectionCourseId();
 
-    if (resolvedMode === 'student' && payload.sectionCourseId && payload.sectionCourseId !== this.sectionCourseId()) {
+    if (
+      resolvedMode === 'student' &&
+      payload.sectionCourseId &&
+      payload.sectionCourseId !== this.sectionCourseId()
+    ) {
       this.scanCode.set(resolvedCode);
       this.onSectionCourseChange(payload.sectionCourseId, resolvedCode);
       return;
@@ -292,7 +314,9 @@ export default class AttendanceQuickRegisterPage implements OnInit, OnDestroy {
         this.toast.warning('Selecciona un curso antes de escanear alumnos');
         return;
       }
-      const match = this.studentCatalog().find((student) => student.code.toLowerCase() === resolvedCode.toLowerCase());
+      const match = this.studentCatalog().find(
+        (student) => student.code.toLowerCase() === resolvedCode.toLowerCase(),
+      );
       if (!match) {
         this.toast.error('No se encontró un estudiante con ese código en el curso seleccionado');
         return;
@@ -311,7 +335,9 @@ export default class AttendanceQuickRegisterPage implements OnInit, OnDestroy {
     }
 
     if (resolvedMode === 'general') {
-      const teacherMatch = this.teacherCatalog().find((teacher) => teacher.code.toLowerCase() === resolvedCode.toLowerCase());
+      const teacherMatch = this.teacherCatalog().find(
+        (teacher) => teacher.code.toLowerCase() === resolvedCode.toLowerCase(),
+      );
       if (teacherMatch) {
         this.registerGeneralEntry({
           id: `teacher-${teacherMatch.teacherId}`,
@@ -328,13 +354,19 @@ export default class AttendanceQuickRegisterPage implements OnInit, OnDestroy {
       }
 
       if (!nextSectionCourseId) {
-        this.toast.warning('Para asistencia general de alumnos, selecciona un curso antes de escanear.');
+        this.toast.warning(
+          'Para asistencia general de alumnos, selecciona un curso antes de escanear.',
+        );
         return;
       }
 
-      const studentMatch = this.studentCatalog().find((student) => student.code.toLowerCase() === resolvedCode.toLowerCase());
+      const studentMatch = this.studentCatalog().find(
+        (student) => student.code.toLowerCase() === resolvedCode.toLowerCase(),
+      );
       if (!studentMatch) {
-        this.toast.error('No se encontró coincidencia con docente o alumno para ese código o barcode.');
+        this.toast.error(
+          'No se encontró coincidencia con docente o alumno para ese código o barcode.',
+        );
         return;
       }
 
@@ -352,7 +384,9 @@ export default class AttendanceQuickRegisterPage implements OnInit, OnDestroy {
       return;
     }
 
-    const match = this.teacherCatalog().find((teacher) => teacher.code.toLowerCase() === resolvedCode.toLowerCase());
+    const match = this.teacherCatalog().find(
+      (teacher) => teacher.code.toLowerCase() === resolvedCode.toLowerCase(),
+    );
     if (!match) {
       this.toast.error('No se encontró un docente con ese código');
       return;
@@ -430,7 +464,10 @@ export default class AttendanceQuickRegisterPage implements OnInit, OnDestroy {
         return new URL(`/attendance/quick-register${raw}`, window.location.origin);
       }
       if (raw.includes('mode=') && raw.includes('code=')) {
-        return new URL(`/attendance/quick-register?${raw.replace(/^\?/, '')}`, window.location.origin);
+        return new URL(
+          `/attendance/quick-register?${raw.replace(/^\?/, '')}`,
+          window.location.origin,
+        );
       }
       return null;
     } catch {
@@ -471,7 +508,13 @@ export default class AttendanceQuickRegisterPage implements OnInit, OnDestroy {
     const pos = this.geoService.currentPosition();
     let isWithinGeofence = true;
 
-    if (inst && pos && inst.latitude !== undefined && inst.longitude !== undefined && inst.geofenceRadius !== undefined) {
+    if (
+      inst &&
+      pos &&
+      inst.latitude !== undefined &&
+      inst.longitude !== undefined &&
+      inst.geofenceRadius !== undefined
+    ) {
       const distance = this.geoService.calculateDistance(
         pos.coords.latitude,
         pos.coords.longitude,
@@ -564,13 +607,19 @@ export default class AttendanceQuickRegisterPage implements OnInit, OnDestroy {
     const inst = this.institutionStore.institution();
     const pos = this.geoService.currentPosition();
     let isWithinGeofence = true;
-    
-    if (inst && pos && inst.latitude !== undefined && inst.longitude !== undefined && inst.geofenceRadius !== undefined) {
+
+    if (
+      inst &&
+      pos &&
+      inst.latitude !== undefined &&
+      inst.longitude !== undefined &&
+      inst.geofenceRadius !== undefined
+    ) {
       const distance = this.geoService.calculateDistance(
         pos.coords.latitude,
         pos.coords.longitude,
         Number(inst.latitude),
-        Number(inst.longitude)
+        Number(inst.longitude),
       );
       isWithinGeofence = distance <= inst.geofenceRadius;
     }
@@ -704,7 +753,10 @@ export default class AttendanceQuickRegisterPage implements OnInit, OnDestroy {
     return 'bg-sky-500/10 text-sky-600 border-sky-500/15';
   }
 
-  statusButtonClass(currentStatus: AttendanceStatus | TeacherAttendanceStatus, targetStatus: AttendanceStatus | TeacherAttendanceStatus) {
+  statusButtonClass(
+    currentStatus: AttendanceStatus | TeacherAttendanceStatus,
+    targetStatus: AttendanceStatus | TeacherAttendanceStatus,
+  ) {
     if (currentStatus === targetStatus) {
       if (targetStatus === 'present') return 'bg-emerald-500 text-white border-emerald-500';
       if (targetStatus === 'late') return 'bg-amber-500 text-white border-amber-500';

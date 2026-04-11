@@ -1,5 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { ZardButtonComponent } from '@/shared/components/button';
@@ -19,7 +27,7 @@ import { ReportForm } from '../../components/report-form/report-form';
 
 @Component({
   selector: 'sga-report-detail',
-  standalone: true,
+
   imports: [
     CommonModule,
     ZardButtonComponent,
@@ -47,8 +55,14 @@ export default class ReportDetailPage implements OnInit {
   readonly academicRows = signal<PeriodCompetencyGrade[]>([]);
   readonly academicLoading = signal(false);
   readonly academicError = signal<string | null>(null);
-  readonly academicParameters = computed(() => (this.report()?.parameters ?? {}) as AcademicReportParameters);
-  readonly reportMeta = computed(() => (((this.report()?.parameters ?? {}) as Record<string, unknown>)['__meta'] ?? {}) as ReportMeta);
+  readonly academicParameters = computed(
+    () => (this.report()?.parameters ?? {}) as AcademicReportParameters,
+  );
+  readonly reportMeta = computed(
+    () =>
+      (((this.report()?.parameters ?? {}) as Record<string, unknown>)['__meta'] ??
+        {}) as ReportMeta,
+  );
   readonly isAcademicReport = computed(() => this.report()?.type === 'academic');
 
   readonly typeLabel = computed(() => {
@@ -80,14 +94,12 @@ export default class ReportDetailPage implements OnInit {
 
   ngOnInit(): void {
     this.reportSocket.connect();
-    this.reportSocket.report$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((incoming) => {
-        if (incoming.id === this.report()?.id) {
-          this.report.set(incoming);
-          this.loadAcademicPreview();
-        }
-      });
+    this.reportSocket.report$.pipe(takeUntil(this.destroy$)).subscribe((incoming) => {
+      if (incoming.id === this.report()?.id) {
+        this.report.set(incoming);
+        this.loadAcademicPreview();
+      }
+    });
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) {
       this.router.navigate(['/reports/academic']);
@@ -103,11 +115,13 @@ export default class ReportDetailPage implements OnInit {
   openEdit(): void {
     const current = this.report();
     if (!current) return;
-    this.dialog.open(ReportForm, {
-      data: { current },
-      width: '520px',
-      maxHeight: '80vh',
-    }).closed.subscribe(() => this.reload());
+    this.dialog
+      .open(ReportForm, {
+        data: { current },
+        width: '520px',
+        maxHeight: '80vh',
+      })
+      .closed.subscribe(() => this.reload());
   }
 
   downloadCurrent(): void {
@@ -163,7 +177,9 @@ export default class ReportDetailPage implements OnInit {
     const params = this.academicParameters();
     if (!params.sectionCourse && !params.period && !params.competency && !params.student) {
       this.academicRows.set([]);
-      this.academicError.set('Este reporte académico no tiene parámetros suficientes para calcular el consolidado.');
+      this.academicError.set(
+        'Este reporte académico no tiene parámetros suficientes para calcular el consolidado.',
+      );
       this.academicLoading.set(false);
       return;
     }

@@ -97,7 +97,11 @@ export class ClassroomSocketService implements OnDestroy {
     });
 
     this.socket.on('connect_error', () => {
-      this.notification$.next({ type: 'error', title: 'Conexion perdida', body: 'No se pudo conectar al canal realtime.' });
+      this.notification$.next({
+        type: 'error',
+        title: 'Conexion perdida',
+        body: 'No se pudo conectar al canal realtime.',
+      });
     });
   }
 
@@ -120,23 +124,30 @@ export class ClassroomSocketService implements OnDestroy {
     });
   }
 
-  publishPost(room: string, post: { content: string; attachments?: { url: string; name: string }[] }): Observable<FeedPost> {
+  publishPost(
+    room: string,
+    post: { content: string; attachments?: { url: string; name: string }[] },
+  ): Observable<FeedPost> {
     return new Observable<FeedPost>((subscriber) => {
       if (!this.socket) {
         subscriber.error(new Error('Socket no conectado'));
         return;
       }
 
-      this.socket.emit('newPost', {
-        room,
-        post: {
-          content: post.content,
-          attachmentUrl: post.attachments?.[0]?.url,
+      this.socket.emit(
+        'newPost',
+        {
+          room,
+          post: {
+            content: post.content,
+            attachmentUrl: post.attachments?.[0]?.url,
+          },
         },
-      }, (response: FeedPost) => {
-        subscriber.next(response);
-        subscriber.complete();
-      });
+        (response: FeedPost) => {
+          subscriber.next(response);
+          subscriber.complete();
+        },
+      );
     });
   }
 

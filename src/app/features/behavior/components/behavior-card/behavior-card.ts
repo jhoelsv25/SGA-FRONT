@@ -8,7 +8,7 @@ import type { Behavior } from '../../types/behavior-types';
 
 @Component({
   selector: 'sga-behavior-card',
-  standalone: true,
+
   imports: [
     CommonModule,
     ZardButtonComponent,
@@ -52,6 +52,8 @@ export class BehaviorCardComponent {
       high: 'border-orange-500/30 bg-orange-500/10 text-orange-700 dark:text-orange-300',
       critical: 'border-danger/30 bg-danger/10 text-danger-700 dark:text-danger',
     };
-    return map[this.behavior().severity ?? ''] ?? 'border-base-300 bg-base-200 text-base-content/70';
+    return (
+      map[this.behavior().severity ?? ''] ?? 'border-base-300 bg-base-200 text-base-content/70'
+    );
   });
 }

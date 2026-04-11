@@ -14,8 +14,15 @@ import { PaymentGroup } from '../../types/payment-types';
 
 @Component({
   selector: 'sga-payment-group-detail',
-  standalone: true,
-  imports: [CommonModule, ZardButtonComponent, ZardIconComponent, ZardEmptyComponent, ZardSkeletonComponent, PaymentCardComponent],
+
+  imports: [
+    CommonModule,
+    ZardButtonComponent,
+    ZardIconComponent,
+    ZardEmptyComponent,
+    ZardSkeletonComponent,
+    PaymentCardComponent,
+  ],
   templateUrl: './payment-group-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -35,7 +42,12 @@ export default class PaymentGroupDetailPage {
 
   goBack() {
     const mode = this.mode();
-    const path = mode === 'pending' ? '/payments/pending' : mode === 'history' ? '/payments/history' : '/payments/register';
+    const path =
+      mode === 'pending'
+        ? '/payments/pending'
+        : mode === 'history'
+          ? '/payments/history'
+          : '/payments/register';
     this.router.navigate([path]);
   }
 
@@ -46,31 +58,35 @@ export default class PaymentGroupDetailPage {
   openRegisterPayment() {
     const current = this.group();
     if (!current) return;
-    this.dialog.open(PaymentForm, {
-      data: {
-        current: null,
-        group: current,
-      },
-      width: '720px',
-      maxHeight: '88vh',
-    }).closed.subscribe(() => this.loadGroup());
+    this.dialog
+      .open(PaymentForm, {
+        data: {
+          current: null,
+          group: current,
+        },
+        width: '720px',
+        maxHeight: '88vh',
+      })
+      .closed.subscribe(() => this.loadGroup());
   }
 
   openEditGroup() {
     const current = this.group();
     if (!current) return;
-    this.dialog.open(PaymentGroupForm, {
-      data: { group: current },
-      width: '680px',
-      maxHeight: '88vh',
-    }).closed.subscribe((result: unknown) => {
-      const updated = result as PaymentGroup | undefined;
-      if (updated?.id) {
-        this.group.set(updated);
-      } else {
-        this.loadGroup();
-      }
-    });
+    this.dialog
+      .open(PaymentGroupForm, {
+        data: { group: current },
+        width: '680px',
+        maxHeight: '88vh',
+      })
+      .closed.subscribe((result: unknown) => {
+        const updated = result as PaymentGroup | undefined;
+        if (updated?.id) {
+          this.group.set(updated);
+        } else {
+          this.loadGroup();
+        }
+      });
   }
 
   statusLabel(status: PaymentGroup['status']) {

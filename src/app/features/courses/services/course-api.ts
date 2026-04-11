@@ -27,9 +27,9 @@ export class CourseApi {
   }
 
   getById(id: string): Observable<Course> {
-    return this.http.get<GetOneRes>(`${this.baseUrl}/${id}`).pipe(
-      map((res) => ('data' in res && res.data ? res.data : (res as Course))),
-    );
+    return this.http
+      .get<GetOneRes>(`${this.baseUrl}/${id}`)
+      .pipe(map((res) => ('data' in res && res.data ? res.data : (res as Course))));
   }
 
   create(course: Partial<Course>): Observable<ApiEntityResponse<Course>> {

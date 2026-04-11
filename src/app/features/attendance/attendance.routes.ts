@@ -22,6 +22,6 @@ export default [
   {
     path: '',
     redirectTo: 'register',
-    pathMatch: 'full'
-  }
+    pathMatch: 'full',
+  },
 ] as Routes;

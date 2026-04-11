@@ -1,6 +1,14 @@
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardEmptyComponent } from '@/shared/components/empty';
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal, effect, computed } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+  signal,
+  effect,
+  computed,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -15,18 +23,29 @@ interface PermissionGroup {
   permissions: Permission[];
 }
 
-
 @Component({
   selector: 'sga-role-permissions',
-  standalone: true,
-  imports: [CommonModule, ZardButtonComponent, RouterModule, FormsModule, ZardEmptyComponent, PermissionGroupCardComponent],
+
+  imports: [
+    CommonModule,
+    ZardButtonComponent,
+    RouterModule,
+    FormsModule,
+    ZardEmptyComponent,
+    PermissionGroupCardComponent,
+  ],
   templateUrl: './role-permissions.html',
-  styles: [`
-    :host { display: block; padding: 1.5rem; }
-    .module-card {
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-  `],
+  styles: [
+    `
+      :host {
+        display: block;
+        padding: 1.5rem;
+      }
+      .module-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class RolePermissionsComponent implements OnInit {
@@ -34,7 +53,7 @@ export default class RolePermissionsComponent implements OnInit {
   private router = inject(Router);
   public store = inject(RoleStore);
   private permissionApi = inject(PermissionApi);
-  
+
   public roleId = signal<string | null>(null);
   public searchTerm = signal('');
   public allPermissions = signal<Permission[]>([]);
@@ -42,48 +61,55 @@ export default class RolePermissionsComponent implements OnInit {
 
   public groupedByModule = computed(() => {
     const search = this.searchTerm().toLowerCase().trim();
-    const perms = this.allPermissions().filter(p => 
-      p.name.toLowerCase().includes(search) || 
-      p.slug.toLowerCase().includes(search) ||
-      p.module?.toLowerCase().includes(search)
+    const perms = this.allPermissions().filter(
+      (p) =>
+        p.name.toLowerCase().includes(search) ||
+        p.slug.toLowerCase().includes(search) ||
+        p.module?.toLowerCase().includes(search),
     );
 
     const groups: Record<string, Permission[]> = {};
-    perms.forEach(p => {
+    perms.forEach((p) => {
       let moduleName = p.module || 'General';
       // If module is empty but name has "Module - Action", use that
       if (!p.module && p.name.includes(' - ')) {
         moduleName = p.name.split(' - ')[0];
       }
-      
+
       if (!groups[moduleName]) groups[moduleName] = [];
       groups[moduleName].push(p);
     });
 
-    return Object.keys(groups).sort().map(name => ({
-      module: name,
-      icon: getModuleIcon(name),
-      permissions: groups[name].sort((a, b) => a.name.localeCompare(b.name))
-    }));
+    return Object.keys(groups)
+      .sort()
+      .map((name) => ({
+        module: name,
+        icon: getModuleIcon(name),
+        permissions: groups[name].sort((a, b) => a.name.localeCompare(b.name)),
+      }));
   });
 
   constructor() {
-    effect(() => {
-      const selectedRole = this.store.selectedRole();
-      if (selectedRole && selectedRole.permissions) {
-        const perms = new Set<string>();
-        const rolePermissions = (selectedRole as { permissions?: (string | { id: string })[] }).permissions || [];
-        rolePermissions.forEach((p: string | { id: string }) => {
-          if (typeof p === 'string') perms.add(p);
-          else if (p.id) perms.add(p.id);
-        });
-        this.checkedPermissions.set(perms);
-      }
-    }, { allowSignalWrites: true });
+    effect(
+      () => {
+        const selectedRole = this.store.selectedRole();
+        if (selectedRole && selectedRole.permissions) {
+          const perms = new Set<string>();
+          const rolePermissions =
+            (selectedRole as { permissions?: (string | { id: string })[] }).permissions || [];
+          rolePermissions.forEach((p: string | { id: string }) => {
+            if (typeof p === 'string') perms.add(p);
+            else if (p.id) perms.add(p.id);
+          });
+          this.checkedPermissions.set(perms);
+        }
+      },
+      { allowSignalWrites: true },
+    );
   }
 
   ngOnInit() {
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe((params) => {
       const id = params['id'];
       if (id) {
         this.roleId.set(id);
@@ -91,7 +117,7 @@ export default class RolePermissionsComponent implements OnInit {
       }
     });
 
-    this.permissionApi.getAll({ size: 1000 }).subscribe(res => {
+    this.permissionApi.getAll({ size: 1000 }).subscribe((res) => {
       this.allPermissions.set(res.data);
     });
   }
@@ -105,7 +131,7 @@ export default class RolePermissionsComponent implements OnInit {
 
   toggleModule(group: PermissionGroup, checked: boolean) {
     const set = new Set(this.checkedPermissions());
-    group.permissions.forEach(p => {
+    group.permissions.forEach((p) => {
       if (checked) set.add(p.id);
       else set.delete(p.id);
     });
@@ -119,10 +145,10 @@ export default class RolePermissionsComponent implements OnInit {
   savePermissions() {
     const id = this.roleId();
     if (!id) return;
-    
+
     const permissionIds = Array.from(this.checkedPermissions());
     this.store.updatePermissions(id, permissionIds).subscribe(() => {
-        this.goBack();
+      this.goBack();
     });
   }
 

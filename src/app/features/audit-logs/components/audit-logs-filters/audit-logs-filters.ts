@@ -16,7 +16,7 @@ import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs'
 
 @Component({
   selector: 'sga-audit-logs-filters',
-  standalone: true,
+
   imports: [CommonModule, FormsModule, ZardIconComponent, ZardInputDirective, ...ZardSelectImports],
   templateUrl: './audit-logs-filters.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

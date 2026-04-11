@@ -13,7 +13,7 @@ import { ZardIconComponent } from '@/shared/components/icon';
 
 @Component({
   selector: 'sga-audit-logs',
-  standalone: true,
+
   imports: [
     CommonModule,
     FormsModule,

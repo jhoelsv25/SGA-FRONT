@@ -1,19 +1,30 @@
 <div class="flex flex-col md:flex-row gap-5 relative z-20">
   <div class="relative flex-1 group">
     <div class="absolute inset-y-0 left-6 flex items-center pointer-events-none z-10">
-      <z-icon zType="search"
-        class="h-5 w-5 text-muted-foreground/30 group-focus-within:text-primary transition-colors" />
+      <z-icon
+        zType="search"
+        class="h-5 w-5 text-muted-foreground/30 group-focus-within:text-primary transition-colors"
+      />
     </div>
-    <input z-input type="text" [ngModel]="search()" (ngModelChange)="onSearchChange($event)"
+    <input
+      z-input
+      type="text"
+      [ngModel]="search()"
+      (ngModelChange)="onSearchChange($event)"
       placeholder="Filtrar logs por descripción, usuario, IP o entidad..."
-      class="w-full pl-14 pr-6 py-4 rounded-[1.5rem] bg-card border-border/10 shadow-xl focus:ring-4 focus:ring-primary/10 transition-all text-sm font-medium placeholder:text-muted-foreground/30 backdrop-blur-xl" />
+      class="w-full pl-14 pr-6 py-4 rounded-[1.5rem] bg-card border-border/10 shadow-xl focus:ring-4 focus:ring-primary/10 transition-all text-sm font-medium placeholder:text-muted-foreground/30 backdrop-blur-xl"
+    />
   </div>
 
   <div class="min-w-[240px]">
-    <z-select [ngModel]="action() || ''" (ngModelChange)="actionChanged.emit($event || null)"
-      zPlaceholder="Todas las Acciones" class="w-full">
+    <z-select
+      [ngModel]="action() || ''"
+      (ngModelChange)="actionChanged.emit($event || null)"
+      zPlaceholder="Todas las Acciones"
+      class="w-full"
+    >
       @for (option of actionOptions(); track option.value) {
-      <z-select-item [zValue]="option.value">{{ option.label }}</z-select-item>
+        <z-select-item [zValue]="option.value">{{ option.label }}</z-select-item>
       }
     </z-select>
   </div>

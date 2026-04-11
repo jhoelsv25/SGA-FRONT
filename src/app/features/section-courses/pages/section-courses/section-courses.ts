@@ -19,11 +19,20 @@ import { ZardFormImports } from '@/shared/components/form';
 import { ScheduleForm } from '../../../schedules/components/schedule-form/schedule-form';
 import { AuthStore } from '@auth/services/store/auth.store';
 
-
 @Component({
   selector: 'sga-section-courses',
-  standalone: true,
-  imports: [CommonModule, HeaderDetail, SectionCourseCardComponent, ZardEmptyComponent, ZardSkeletonComponent, FormsModule, ZardInputDirective, ZardButtonComponent, ...ZardFormImports],
+
+  imports: [
+    CommonModule,
+    HeaderDetail,
+    SectionCourseCardComponent,
+    ZardEmptyComponent,
+    ZardSkeletonComponent,
+    FormsModule,
+    ZardInputDirective,
+    ZardButtonComponent,
+    ...ZardFormImports,
+  ],
   templateUrl: './section-courses.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -93,12 +102,15 @@ export default class SectionCoursesPage {
     const roleType = this.roleType();
     if (roleType === 'teacher') return 'Aún no tienes cursos o secciones asignadas para trabajar.';
     if (roleType === 'student') return 'Todavía no tienes cursos visibles en tu panel.';
-    if (roleType === 'guardian') return 'Todavía no hay cursos disponibles para tus estudiantes vinculados.';
+    if (roleType === 'guardian')
+      return 'Todavía no hay cursos disponibles para tus estudiantes vinculados.';
     return 'Aún no hay cursos asignados a secciones. Crea la primera asignación.';
   });
 
   headerActions = computed(() =>
-    this.permissionStore.filterActions(this.store.actions().filter((a) => a.typeAction === 'header')),
+    this.permissionStore.filterActions(
+      this.store.actions().filter((a) => a.typeAction === 'header'),
+    ),
   );
 
   data = computed(() => this.store.data());
@@ -114,11 +126,17 @@ export default class SectionCoursesPage {
       const courseName = sc.course?.name?.toLowerCase() ?? '';
       const sectionName = sc.section?.name?.toLowerCase() ?? '';
       const teacherLabel =
-        [sc.teacher?.person?.firstName, sc.teacher?.person?.lastName].filter(Boolean).join(' ').toLowerCase() ||
+        [sc.teacher?.person?.firstName, sc.teacher?.person?.lastName]
+          .filter(Boolean)
+          .join(' ')
+          .toLowerCase() ||
         sc.teacher?.teacherCode?.toLowerCase() ||
         '';
       const matchSearch =
-        !search || courseName.includes(search) || sectionName.includes(search) || teacherLabel.includes(search);
+        !search ||
+        courseName.includes(search) ||
+        sectionName.includes(search) ||
+        teacherLabel.includes(search);
       const matchCourse = !courseId || sc.course?.id === courseId;
       const matchSection = !sectionId || sc.section?.id === sectionId;
       const matchTeacher = !teacherId || sc.teacher?.id === teacherId;
@@ -203,7 +221,8 @@ export default class SectionCoursesPage {
   }
 
   deleteSectionCourse(sc: SectionCourse) {
-    const label = sc.course?.name && sc.section?.name ? `${sc.course.name} - ${sc.section.name}` : sc.id;
+    const label =
+      sc.course?.name && sc.section?.name ? `${sc.course.name} - ${sc.section.name}` : sc.id;
     this.confirmDialog
       .open({
         type: 'danger',

@@ -1,11 +1,24 @@
-import { ChangeDetectionStrategy, Component, computed, HostListener, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  HostListener,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { AuthFacade } from '@auth/services/store/auth.acede';
 import { Toast } from '@core/services/toast';
 import { DialogConfirmService } from '@shared/widgets/dialog-confirm';
 import { ClassroomStore } from '../../services/store/classroom.store';
-import { ClassroomApi, type ClassroomTask, type ClassroomTaskEditorPayload } from '../../services/classroom-api';
+import {
+  ClassroomApi,
+  type ClassroomTask,
+  type ClassroomTaskEditorPayload,
+} from '../../services/classroom-api';
 import { ClassroomSocketService } from '../../services/classroom-socket';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { TaskCreateForm } from '../../components/task-create-form/task-create-form';
@@ -16,13 +29,8 @@ import { ClassroomTaskItem } from '../../components/classroom-task-item/classroo
 
 @Component({
   selector: 'sga-classroom-tasks',
-  standalone: true,
-  imports: [
-    ClassroomTasksStats,
-    ClassroomTasksHeader,
-    ClassroomTasksFilters,
-    ClassroomTaskItem
-  ],
+
+  imports: [ClassroomTasksStats, ClassroomTasksHeader, ClassroomTasksFilters, ClassroomTaskItem],
   templateUrl: './tasks.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -78,10 +86,18 @@ export default class Tasks implements OnInit, OnDestroy {
     return this.tasks();
   });
 
-  readonly pendingCount = computed(() => this.filteredTasks().filter((task) => task.status === 'pending').length);
-  readonly deliveredCount = computed(() => this.filteredTasks().filter((task) => task.status === 'delivered').length);
-  readonly gradedCount = computed(() => this.filteredTasks().filter((task) => task.status === 'graded').length);
-  readonly lateCount = computed(() => this.filteredTasks().filter((task) => task.status === 'late').length);
+  readonly pendingCount = computed(
+    () => this.filteredTasks().filter((task) => task.status === 'pending').length,
+  );
+  readonly deliveredCount = computed(
+    () => this.filteredTasks().filter((task) => task.status === 'delivered').length,
+  );
+  readonly gradedCount = computed(
+    () => this.filteredTasks().filter((task) => task.status === 'graded').length,
+  );
+  readonly lateCount = computed(
+    () => this.filteredTasks().filter((task) => task.status === 'late').length,
+  );
 
   statusLabel(status: ClassroomTask['status']) {
     if (status === 'graded') return 'Calificado';
@@ -91,51 +107,52 @@ export default class Tasks implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const id = this.store.selectedSectionId() ?? (this.route.parent?.snapshot?.paramMap?.get('id') ?? '');
+    const id =
+      this.store.selectedSectionId() ?? this.route.parent?.snapshot?.paramMap?.get('id') ?? '';
     if (id) {
       this.sectionCourseId.set(id);
       this.loadTasks(id);
-      this.socket.taskEvent$
-        .pipe(takeUntil(this.destroy$))
-        .subscribe((event) => {
-          if (event.action === 'deleted' && event.id) {
-            this.tasks.update((items) => items.filter((task) => task.id !== event.id));
-            return;
-          }
+      this.socket.taskEvent$.pipe(takeUntil(this.destroy$)).subscribe((event) => {
+        if (event.action === 'deleted' && event.id) {
+          this.tasks.update((items) => items.filter((task) => task.id !== event.id));
+          return;
+        }
 
-          if (event.action === 'updated' && event.task) {
-            this.tasks.update((items) => {
-              const index = items.findIndex((task) => task.id === event.task!.id);
-              if (index >= 0) {
-                return items.map((task) => (task.id === event.task!.id ? event.task! : task));
-              }
-              return [event.task!, ...items];
-            });
-          }
-        });
+        if (event.action === 'updated' && event.task) {
+          this.tasks.update((items) => {
+            const index = items.findIndex((task) => task.id === event.task!.id);
+            if (index >= 0) {
+              return items.map((task) => (task.id === event.task!.id ? event.task! : task));
+            }
+            return [event.task!, ...items];
+          });
+        }
+      });
     }
   }
 
   loadTasks(sectionCourseId = this.sectionCourseId()) {
     if (!sectionCourseId) return;
     this.loading.set(true);
-    this.api.getTasksCursor(sectionCourseId, {
-      limit: 12,
-      search: this.search().trim() || undefined,
-    }).subscribe({
-      next: (response) => {
-        this.tasks.set(Array.isArray(response.data) ? response.data : []);
-        this.tasksNextCursor.set(response.nextCursor);
-        this.tasksHasNext.set(response.hasNext);
-        this.loading.set(false);
-      },
-      error: () => {
-        this.tasks.set([]);
-        this.tasksNextCursor.set(null);
-        this.tasksHasNext.set(false);
-        this.loading.set(false);
-      },
-    });
+    this.api
+      .getTasksCursor(sectionCourseId, {
+        limit: 12,
+        search: this.search().trim() || undefined,
+      })
+      .subscribe({
+        next: (response) => {
+          this.tasks.set(Array.isArray(response.data) ? response.data : []);
+          this.tasksNextCursor.set(response.nextCursor);
+          this.tasksHasNext.set(response.hasNext);
+          this.loading.set(false);
+        },
+        error: () => {
+          this.tasks.set([]);
+          this.tasksNextCursor.set(null);
+          this.tasksHasNext.set(false);
+          this.loading.set(false);
+        },
+      });
   }
 
   loadMoreTasks() {
@@ -144,26 +161,28 @@ export default class Tasks implements OnInit, OnDestroy {
     if (!sectionCourseId || !cursor || this.loadingMore() || !this.tasksHasNext()) return;
 
     this.loadingMore.set(true);
-    this.api.getTasksCursor(sectionCourseId, {
-      cursorDate: cursor.date,
-      cursorId: cursor.id,
-      limit: 12,
-      search: this.search().trim() || undefined,
-    }).subscribe({
-      next: (response) => {
-        const existingIds = new Set(this.tasks().map((task) => task.id));
-        this.tasks.update((items) => [
-          ...items,
-          ...(response.data ?? []).filter((task) => !existingIds.has(task.id)),
-        ]);
-        this.tasksNextCursor.set(response.nextCursor);
-        this.tasksHasNext.set(response.hasNext);
-        this.loadingMore.set(false);
-      },
-      error: () => {
-        this.loadingMore.set(false);
-      },
-    });
+    this.api
+      .getTasksCursor(sectionCourseId, {
+        cursorDate: cursor.date,
+        cursorId: cursor.id,
+        limit: 12,
+        search: this.search().trim() || undefined,
+      })
+      .subscribe({
+        next: (response) => {
+          const existingIds = new Set(this.tasks().map((task) => task.id));
+          this.tasks.update((items) => [
+            ...items,
+            ...(response.data ?? []).filter((task) => !existingIds.has(task.id)),
+          ]);
+          this.tasksNextCursor.set(response.nextCursor);
+          this.tasksHasNext.set(response.hasNext);
+          this.loadingMore.set(false);
+        },
+        error: () => {
+          this.loadingMore.set(false);
+        },
+      });
   }
 
   clearSearch() {

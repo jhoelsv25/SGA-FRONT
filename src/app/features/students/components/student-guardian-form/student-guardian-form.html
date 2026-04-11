@@ -1,7 +1,14 @@
 <form [formGroup]="form" class="grid gap-4" (ngSubmit)="submit()">
   <header class="flex items-center justify-between mb-4">
     <h2 class="text-lg font-semibold">{{ current ? 'Editar vínculo' : 'Vincular apoderado' }}</h2>
-    <button type="button" z-button zColor="secondary" zType="ghost" zShape="circle" (click)="close()">
+    <button
+      type="button"
+      z-button
+      zColor="secondary"
+      zType="ghost"
+      zShape="circle"
+      (click)="close()"
+    >
       <i class="fas fa-times"></i>
     </button>
   </header>
@@ -11,11 +18,16 @@
       <sga-student-select
         id="student"
         formControlName="student"
-        placeholder="Seleccionar estudiante"></sga-student-select>
+        placeholder="Seleccionar estudiante"
+      ></sga-student-select>
     </div>
     <div>
       <label class="label-form" for="guardian">Apoderado</label>
-      <sga-guardian-select id="guardian" formControlName="guardian" placeholder="Seleccionar apoderado"></sga-guardian-select>
+      <sga-guardian-select
+        id="guardian"
+        formControlName="guardian"
+        placeholder="Seleccionar apoderado"
+      ></sga-guardian-select>
     </div>
     <div class="grid gap-3 rounded-2xl border border-base-200 bg-base-100/40 p-4">
       <z-checkbox formControlName="isPrimary">Principal</z-checkbox>
@@ -30,11 +42,13 @@
         formControlName="receivesNotifications"
         placeholder="ej. email, teléfono"
         class="input input-bordered w-full"
-       />
+      />
     </div>
   </div>
   <footer class="flex justify-end gap-2 mt-4">
-    <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">Cancelar</button>
+    <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">
+      Cancelar
+    </button>
     <button type="submit" z-button zColor="primary" [disabled]="form.invalid">Guardar</button>
   </footer>
 </form>

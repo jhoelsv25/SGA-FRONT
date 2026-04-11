@@ -11,7 +11,7 @@ import { Period, PeriodStatus } from '../../types/period-types';
 
 @Component({
   selector: 'sga-period-card',
-  standalone: true,
+
   imports: [
     CommonModule,
     ZardCardComponent,

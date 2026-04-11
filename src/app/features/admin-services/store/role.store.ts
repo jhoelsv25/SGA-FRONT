@@ -60,7 +60,7 @@ export const RoleStore = signalStore(
         error: () => {
           patchState(store, { loading: false });
           toast.error('Error loading role permissions');
-        }
+        },
       });
     },
     selectRoleById: (id: string) => {
@@ -75,13 +75,13 @@ export const RoleStore = signalStore(
             error: () => {
               patchState(store, { loading: false });
               toast.error('Error loading role permissions');
-            }
+            },
           });
         },
         error: () => {
           patchState(store, { loading: false });
           toast.error('Error loading role');
-        }
+        },
       });
     },
     updatePermissions: (id: string, permissionIds: string[]) => {
@@ -95,8 +95,8 @@ export const RoleStore = signalStore(
           error: (err) => {
             patchState(store, { loading: false });
             toast.error(err.message || 'Error updating permissions');
-          }
-        })
+          },
+        }),
       );
     },
     create: (role: Partial<Role>) => {
@@ -111,38 +111,38 @@ export const RoleStore = signalStore(
           error: (err) => {
             patchState(store, { loading: false });
             toast.error(err.message);
-          }
-        })
+          },
+        }),
       );
     },
     update: (id: string, role: Partial<Role>) => {
-        patchState(store, { loading: true });
-        return api.update(id, role).pipe(
-          tap({
-            next: () => {
-              toast.success('Role updated');
-            },
-            error: (err) => {
-              patchState(store, { loading: false });
-              toast.error(err.message);
-            }
-          })
-        );
-      },
+      patchState(store, { loading: true });
+      return api.update(id, role).pipe(
+        tap({
+          next: () => {
+            toast.success('Role updated');
+          },
+          error: (err) => {
+            patchState(store, { loading: false });
+            toast.error(err.message);
+          },
+        }),
+      );
+    },
     delete: (id: string) => {
       patchState(store, { loading: true });
       return api.delete(id).pipe(
         tap({
           next: () => {
             const currentRoles = store.roles();
-            patchState(store, { roles: currentRoles.filter(r => r.id !== id), loading: false });
+            patchState(store, { roles: currentRoles.filter((r) => r.id !== id), loading: false });
             toast.success('Role deleted successfully');
           },
           error: (err) => {
             patchState(store, { loading: false });
             toast.error(err.message);
-          }
-        })
+          },
+        }),
       );
     },
   })),

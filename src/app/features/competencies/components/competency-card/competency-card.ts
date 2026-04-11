@@ -11,7 +11,7 @@ import type { Competency } from '../../types/competency-types';
 
 @Component({
   selector: 'sga-competency-card',
-  standalone: true,
+
   imports: [
     CommonModule,
     ZardCardComponent,

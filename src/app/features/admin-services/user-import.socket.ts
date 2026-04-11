@@ -30,8 +30,12 @@ export class UserImportSocketService implements OnDestroy {
       auth: this.tokenManager.getToken() ? { token: this.tokenManager.getToken() } : undefined,
     });
 
-    this.socket.on('import:progress', (payload: UserImportProgressPayload) => this.progress$.next(payload));
-    this.socket.on('import:complete', (payload: UserImportProgressPayload) => this.complete$.next(payload));
+    this.socket.on('import:progress', (payload: UserImportProgressPayload) =>
+      this.progress$.next(payload),
+    );
+    this.socket.on('import:complete', (payload: UserImportProgressPayload) =>
+      this.complete$.next(payload),
+    );
   }
 
   disconnect(): void {

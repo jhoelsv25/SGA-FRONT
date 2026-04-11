@@ -14,7 +14,6 @@ import { ZardSkeletonComponent } from '@/shared/components/skeleton';
 import { Router } from '@angular/router';
 import { AuthStore } from '@auth/services/store/auth.store';
 
-
 @Component({
   selector: 'sga-behaviors',
   imports: [
@@ -51,7 +50,8 @@ export default class BehaviorsPage {
       return {
         ...base,
         title: 'Mi conducta',
-        subtitle: 'Consulta observaciones, reconocimientos e incidencias asociadas a tu seguimiento.',
+        subtitle:
+          'Consulta observaciones, reconocimientos e incidencias asociadas a tu seguimiento.',
       };
     }
     if (roleType === 'guardian') {
@@ -82,26 +82,37 @@ export default class BehaviorsPage {
   loading = computed(() => this.store.loading());
   headerActions = computed(() => this.store.actions().filter((a) => a.typeAction === 'header'));
   hasActiveFilters = computed(() => this.activeFiltersCount() > 0);
-  activeFiltersCount = computed(() =>
-    [this.filters.behaviorSearch(), this.filters.behaviorType(), this.filters.behaviorSeverity()].filter(Boolean)
-      .length
+  activeFiltersCount = computed(
+    () =>
+      [
+        this.filters.behaviorSearch(),
+        this.filters.behaviorType(),
+        this.filters.behaviorSeverity(),
+      ].filter(Boolean).length,
   );
   incidentCount = computed(() => this.data().filter((item) => item.type === 'negative').length);
   achievementCount = computed(() => this.data().filter((item) => item.type === 'positive').length);
-  criticalCount = computed(() => this.data().filter((item) => item.severity === 'critical' || item.severity === 'high').length);
-  observedCount = computed(() => this.data().filter((item) => item.type === 'negative' && item.severity === 'low').length);
+  criticalCount = computed(
+    () =>
+      this.data().filter((item) => item.severity === 'critical' || item.severity === 'high').length,
+  );
+  observedCount = computed(
+    () => this.data().filter((item) => item.type === 'negative' && item.severity === 'low').length,
+  );
 
   typeOptions = computed<SelectOption[]>(() => [
     { value: '', label: 'Todos' },
     { value: 'negative', label: 'Incidencia' },
-    { value: 'positive', label: 'Logro' }]);
+    { value: 'positive', label: 'Logro' },
+  ]);
 
   severityOptions = computed<SelectOption[]>(() => [
     { value: '', label: 'Todas' },
     { value: 'low', label: 'Baja' },
     { value: 'medium', label: 'Media' },
     { value: 'high', label: 'Alta' },
-    { value: 'critical', label: 'Crítica' }]);
+    { value: 'critical', label: 'Crítica' },
+  ]);
 
   onSearch(value: string): void {
     this.filters.setBehaviorSearch(value);

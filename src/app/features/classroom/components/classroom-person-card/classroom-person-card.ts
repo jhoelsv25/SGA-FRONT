@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'sga-classroom-person-card',
-  standalone: true,
+
   imports: [CommonModule],
   templateUrl: './classroom-person-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,11 +20,13 @@ export class ClassroomPersonCard {
 
   readonly initials = computed(() => {
     const name = this.displayName();
-    return name
-      .split(' ')
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((part: string) => part[0]?.toUpperCase() ?? '')
-      .join('') || '?';
+    return (
+      name
+        .split(' ')
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((part: string) => part[0]?.toUpperCase() ?? '')
+        .join('') || '?'
+    );
   });
 }

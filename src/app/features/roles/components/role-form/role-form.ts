@@ -13,11 +13,17 @@ interface RoleFormData {
   title?: string;
 }
 
-
 @Component({
   selector: 'sga-role-form',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ZardButtonComponent, ZardInputDirective, ZardInputGroupComponent, ZardSwitchComponent],
+
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    ZardButtonComponent,
+    ZardInputDirective,
+    ZardInputGroupComponent,
+    ZardSwitchComponent,
+  ],
   templateUrl: './role-form.html',
   styleUrls: ['./role-form.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -11,10 +11,15 @@ import { Communication, CommunicationCreate } from '../../types/communication-ty
 import { SectionApi } from '@features/sections/services/api/section-api';
 import { Section } from '@features/sections/types/section-types';
 
-
 @Component({
   selector: 'sga-communication-form',
-  imports: [ReactiveFormsModule, ZardButtonComponent, ZardInputDirective, SelectOptionComponent, SectionSelect],
+  imports: [
+    ReactiveFormsModule,
+    ZardButtonComponent,
+    ZardInputDirective,
+    SelectOptionComponent,
+    SectionSelect,
+  ],
   templateUrl: './communication-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -33,9 +38,7 @@ export class CommunicationForm implements OnInit {
     { value: 'scheduled', label: 'Programar envío' },
   ];
 
-  typeOptions: LocalSelectOption[] = [
-    { value: 'announcement', label: 'Anuncio' },
-  ];
+  typeOptions: LocalSelectOption[] = [{ value: 'announcement', label: 'Anuncio' }];
 
   audienceOptions: LocalSelectOption[] = [
     { value: 'students', label: 'Estudiantes' },
@@ -57,8 +60,11 @@ export class CommunicationForm implements OnInit {
 
   ngOnInit() {
     this.current = this.data?.current ?? null;
-    const initialScheduledAt = this.current?.sentAt ? this.toDateTimeLocal(this.current.sentAt) : '';
-    const initialSendMode = this.current?.status === 'scheduled' || initialScheduledAt ? 'scheduled' : 'now';
+    const initialScheduledAt = this.current?.sentAt
+      ? this.toDateTimeLocal(this.current.sentAt)
+      : '';
+    const initialSendMode =
+      this.current?.status === 'scheduled' || initialScheduledAt ? 'scheduled' : 'now';
     this.form = this.fb.group({
       subject: [this.current?.subject ?? '', [Validators.required]],
       body: [this.current?.body ?? ''],
@@ -72,7 +78,7 @@ export class CommunicationForm implements OnInit {
       attachmentUrl: [''],
     });
 
-    this.form.get('sendMode')?.valueChanges.subscribe(mode => {
+    this.form.get('sendMode')?.valueChanges.subscribe((mode) => {
       const statusControl = this.form.get('status');
       const scheduledAtControl = this.form.get('scheduledAt');
       if (mode === 'scheduled') {

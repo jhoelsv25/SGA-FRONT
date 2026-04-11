@@ -21,30 +21,37 @@ export class ObservationApi {
     Object.keys(params).forEach((key) => {
       if (params[key] != null) httpParams = httpParams.set(key, String(params[key]));
     });
-    return this.http.get<BackendResponse<StudentObservation[]>>(this.baseUrl, { params: httpParams }).pipe(
-      map((res) => ({
-        data: res.data ?? [],
-        page: 1,
-        size: (res.data ?? []).length,
-        total: (res.data ?? []).length,
-      })),
-    );
+    return this.http
+      .get<BackendResponse<StudentObservation[]>>(this.baseUrl, { params: httpParams })
+      .pipe(
+        map((res) => ({
+          data: res.data ?? [],
+          page: 1,
+          size: (res.data ?? []).length,
+          total: (res.data ?? []).length,
+        })),
+      );
   }
 
   getById(id: string): Observable<StudentObservation> {
-    return this.http.get<BackendResponse<StudentObservation>>(`${this.baseUrl}/${id}`).pipe(map((res) => res.data));
+    return this.http
+      .get<BackendResponse<StudentObservation>>(`${this.baseUrl}/${id}`)
+      .pipe(map((res) => res.data));
   }
 
   create(data: CreateStudentObservationDto): Observable<ApiEntityResponse<StudentObservation>> {
-    return this.http.post<BackendResponse<StudentObservation>>(this.baseUrl, data).pipe(
-      map((res) => ({ data: res.data })),
-    );
+    return this.http
+      .post<BackendResponse<StudentObservation>>(this.baseUrl, data)
+      .pipe(map((res) => ({ data: res.data })));
   }
 
-  update(id: string, data: StudentObservationUpdateDto): Observable<ApiEntityResponse<StudentObservation>> {
-    return this.http.patch<BackendResponse<StudentObservation>>(`${this.baseUrl}/${id}`, data).pipe(
-      map((res) => ({ data: res.data })),
-    );
+  update(
+    id: string,
+    data: StudentObservationUpdateDto,
+  ): Observable<ApiEntityResponse<StudentObservation>> {
+    return this.http
+      .patch<BackendResponse<StudentObservation>>(`${this.baseUrl}/${id}`, data)
+      .pipe(map((res) => ({ data: res.data })));
   }
 
   delete(id: string): Observable<void> {

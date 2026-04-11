@@ -15,24 +15,26 @@ export type Teacher = {
   teachingLevel: string;
   employmentStatus: TeacherEmploymentStatus;
   institution: string | { id: string; name?: string };
-  person: string | {
-    id: string;
-    firstName?: string;
-    lastName?: string;
-    documentType?: string;
-    documentNumber?: string;
-    birthDate?: string;
-    gender?: string;
-    address?: string;
-    district?: string;
-    province?: string;
-    department?: string;
-    nationality?: string;
-    email?: string;
-    phone?: string;
-    mobile?: string;
-    photoUrl?: string;
-  };
+  person:
+    | string
+    | {
+        id: string;
+        firstName?: string;
+        lastName?: string;
+        documentType?: string;
+        documentNumber?: string;
+        birthDate?: string;
+        gender?: string;
+        address?: string;
+        district?: string;
+        province?: string;
+        department?: string;
+        nationality?: string;
+        email?: string;
+        phone?: string;
+        mobile?: string;
+        photoUrl?: string;
+      };
   credential?: TeacherCredential;
 };
 

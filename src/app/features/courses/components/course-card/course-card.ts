@@ -13,7 +13,7 @@ import type { Course } from '../../types/course-types';
 
 @Component({
   selector: 'sga-course-card',
-  standalone: true,
+
   imports: [
     CommonModule,
     ZardCardComponent,

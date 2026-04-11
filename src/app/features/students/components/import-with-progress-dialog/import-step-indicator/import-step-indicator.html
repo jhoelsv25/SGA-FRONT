@@ -23,11 +23,7 @@
         @if (isPast) {
           <i class="fas fa-check text-success text-xs"></i>
         } @else {
-          <i
-            class="fas"
-            [class.fa-spin]="s.id === 'importing' && isActive"
-            [ngClass]="s.icon"
-          ></i>
+          <i class="fas" [class.fa-spin]="s.id === 'importing' && isActive" [ngClass]="s.icon"></i>
         }
       </div>
       <span class="text-xs font-medium truncate hidden sm:inline">{{ s.label }}</span>

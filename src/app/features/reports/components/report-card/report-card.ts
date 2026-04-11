@@ -10,7 +10,7 @@ import type { Report, ReportMeta } from '../../types/report-types';
 
 @Component({
   selector: 'sga-report-card',
-  standalone: true,
+
   imports: [
     CommonModule,
     ZardButtonComponent,
@@ -54,5 +54,7 @@ export class ReportCardComponent {
     return map[this.report().format ?? ''] ?? (this.report().format || 'Sin formato');
   });
 
-  readonly statusMeta = computed(() => ((this.report().parameters ?? {})['__meta'] ?? {}) as ReportMeta);
+  readonly statusMeta = computed(
+    () => ((this.report().parameters ?? {})['__meta'] ?? {}) as ReportMeta,
+  );
 }

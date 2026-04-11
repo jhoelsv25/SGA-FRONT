@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 @Component({
   selector: 'sga-classroom-people-stats',
-  standalone: true,
+
   templateUrl: './classroom-people-stats.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

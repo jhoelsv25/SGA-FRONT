@@ -1,38 +1,61 @@
 <form [formGroup]="form" class="grid gap-4" (ngSubmit)="submit()">
   <header class="flex items-center justify-between mb-4">
     <h2 class="text-lg font-semibold">{{ current ? 'Editar nivel' : 'Nuevo nivel de grado' }}</h2>
-    <button type="button" z-button zColor="secondary" zType="ghost" zShape="circle" (click)="close()">
+    <button
+      type="button"
+      z-button
+      zColor="secondary"
+      zType="ghost"
+      zShape="circle"
+      (click)="close()"
+    >
       <i class="fas fa-times"></i>
     </button>
   </header>
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <div>
       <label class="label-form" for="name">Nombre</label>
-      <input z-input w-full id="name" formControlName="name" placeholder="Ej: Primer Grado"  />
+      <input z-input w-full id="name" formControlName="name" placeholder="Ej: Primer Grado" />
     </div>
     <div>
       <label class="label-form" for="level">Nivel</label>
-      <z-select-option id="level" [options]="levelOptions" formControlName="level"></z-select-option>
+      <z-select-option
+        id="level"
+        [options]="levelOptions"
+        formControlName="level"
+      ></z-select-option>
     </div>
     <div>
       <label class="label-form" for="gradeNumber">Número de grado</label>
-      <input z-input w-full id="gradeNumber" type="number" formControlName="gradeNumber"  />
+      <input z-input w-full id="gradeNumber" type="number" formControlName="gradeNumber" />
     </div>
     <div>
       <label class="label-form" for="maxCapacity">Capacidad máxima</label>
-      <input z-input w-full id="maxCapacity" type="number" formControlName="maxCapacity"  />
+      <input z-input w-full id="maxCapacity" type="number" formControlName="maxCapacity" />
     </div>
     <div class="md:col-span-2">
       <label class="label-form" for="institution">Institución</label>
-      <sga-institution-select id="institution" formControlName="institution" placeholder="Seleccionar institución"></sga-institution-select>
+      <sga-institution-select
+        id="institution"
+        formControlName="institution"
+        placeholder="Seleccionar institución"
+      ></sga-institution-select>
     </div>
     <div class="md:col-span-2">
       <label class="label-form" for="description">Descripción</label>
-      <input z-input w-full id="description" formControlName="description" placeholder="Descripción del nivel"  />
+      <input
+        z-input
+        w-full
+        id="description"
+        formControlName="description"
+        placeholder="Descripción del nivel"
+      />
     </div>
   </div>
   <footer class="flex justify-end gap-2 mt-4">
-    <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">Cancelar</button>
+    <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">
+      Cancelar
+    </button>
     <button type="submit" z-button zColor="primary" [disabled]="form.invalid || saving()">
       {{ saving() ? 'Guardando...' : 'Guardar' }}
     </button>

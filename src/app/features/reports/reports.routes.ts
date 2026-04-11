@@ -34,6 +34,6 @@ export default [
   {
     path: '',
     redirectTo: 'academic',
-    pathMatch: 'full'
-  }
+    pathMatch: 'full',
+  },
 ] as Routes;

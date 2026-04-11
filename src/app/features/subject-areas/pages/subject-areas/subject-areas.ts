@@ -22,13 +22,24 @@ const TYPE_OPTIONS = [
   { value: '', label: 'Todos' },
   { value: 'core', label: 'Troncal' },
   { value: 'elective', label: 'Electiva' },
-  { value: 'optional', label: 'Opcional' }];
-
+  { value: 'optional', label: 'Opcional' },
+];
 
 @Component({
   selector: 'sga-subject-areas',
-  standalone: true,
-  imports: [CommonModule, HeaderDetail, SubjectAreaCardComponent, ZardEmptyComponent, ZardSkeletonComponent, SelectOptionComponent, FormsModule, ZardInputDirective, ZardButtonComponent, ...ZardFormImports],
+
+  imports: [
+    CommonModule,
+    HeaderDetail,
+    SubjectAreaCardComponent,
+    ZardEmptyComponent,
+    ZardSkeletonComponent,
+    SelectOptionComponent,
+    FormsModule,
+    ZardInputDirective,
+    ZardButtonComponent,
+    ...ZardFormImports,
+  ],
   templateUrl: './subject-areas.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -44,12 +55,18 @@ export default class SubjectAreasPage {
   searchTerm = signal('');
   filterType = signal<string>('');
   readonly canManageSubjectAreas = computed(() =>
-    this.permissionStore.hasAny('subject_area:create', 'subject_area:update', 'subject_area:delete'),
+    this.permissionStore.hasAny(
+      'subject_area:create',
+      'subject_area:update',
+      'subject_area:delete',
+    ),
   );
   headerConfig = computed(() => this.store.headerConfig());
 
   headerActions = computed(() =>
-    this.permissionStore.filterActions(this.store.actions().filter((a) => a.typeAction === 'header')),
+    this.permissionStore.filterActions(
+      this.store.actions().filter((a) => a.typeAction === 'header'),
+    ),
   );
 
   data = computed(() => this.store.data());
@@ -84,10 +101,25 @@ export default class SubjectAreasPage {
     }
 
     return [
-      { key: 'core', label: 'Troncales', description: 'Áreas base y obligatorias del plan curricular', items: groups.core.sort((a, b) => a.name.localeCompare(b.name)) },
-      { key: 'elective', label: 'Electivas', description: 'Áreas opcionales orientadas a profundización', items: groups.elective.sort((a, b) => a.name.localeCompare(b.name)) },
-      { key: 'optional', label: 'Opcionales', description: 'Áreas complementarias o flexibles', items: groups.optional.sort((a, b) => a.name.localeCompare(b.name)) },
-    ].filter(group => group.items.length > 0);
+      {
+        key: 'core',
+        label: 'Troncales',
+        description: 'Áreas base y obligatorias del plan curricular',
+        items: groups.core.sort((a, b) => a.name.localeCompare(b.name)),
+      },
+      {
+        key: 'elective',
+        label: 'Electivas',
+        description: 'Áreas opcionales orientadas a profundización',
+        items: groups.elective.sort((a, b) => a.name.localeCompare(b.name)),
+      },
+      {
+        key: 'optional',
+        label: 'Opcionales',
+        description: 'Áreas complementarias o flexibles',
+        items: groups.optional.sort((a, b) => a.name.localeCompare(b.name)),
+      },
+    ].filter((group) => group.items.length > 0);
   });
 
   onSearch(value: string) {

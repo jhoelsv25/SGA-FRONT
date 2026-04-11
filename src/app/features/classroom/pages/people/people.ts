@@ -1,8 +1,19 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AuthFacade } from '@auth/services/store/auth.acede';
 import { ClassroomStore } from '../../services/store/classroom.store';
-import { ClassroomApi, type ClassroomStudentRow, type ClassroomTeacherRow } from '../../services/classroom-api';
+import {
+  ClassroomApi,
+  type ClassroomStudentRow,
+  type ClassroomTeacherRow,
+} from '../../services/classroom-api';
 import { ClassroomPeopleStats } from '../../components/classroom-people-stats/classroom-people-stats';
 import { ClassroomPeopleHeader } from '../../components/classroom-people-header/classroom-people-header';
 import { ClassroomPeopleFilters } from '../../components/classroom-people-filters/classroom-people-filters';
@@ -10,12 +21,12 @@ import { ClassroomPersonCard } from '../../components/classroom-person-card/clas
 
 @Component({
   selector: 'sga-classroom-people',
-  standalone: true,
+
   imports: [
     ClassroomPeopleStats,
     ClassroomPeopleHeader,
     ClassroomPeopleFilters,
-    ClassroomPersonCard
+    ClassroomPersonCard,
   ],
   templateUrl: './people.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,9 +48,10 @@ export default class People implements OnInit {
     const term = this.search().trim().toLowerCase();
     const list = this.teachers();
     if (!term) return list;
-    return list.filter((t) =>
-      `${t.firstName} ${t.lastName}`.toLowerCase().includes(term) ||
-      (t.email ?? '').toLowerCase().includes(term)
+    return list.filter(
+      (t) =>
+        `${t.firstName} ${t.lastName}`.toLowerCase().includes(term) ||
+        (t.email ?? '').toLowerCase().includes(term),
     );
   });
 
@@ -47,21 +59,21 @@ export default class People implements OnInit {
     const term = this.search().trim().toLowerCase();
     const list = this.students();
     if (!term) return list;
-    return list.filter((s) =>
-      s.name.toLowerCase().includes(term) ||
-      (s.code ?? '').toLowerCase().includes(term)
+    return list.filter(
+      (s) => s.name.toLowerCase().includes(term) || (s.code ?? '').toLowerCase().includes(term),
     );
   });
 
-  teachersWithEmailCount = computed(() => this.filteredTeachers().filter(t => !!t.email).length);
-  studentsWithCodeCount = computed(() => this.filteredStudents().filter(s => !!s.code).length);
+  teachersWithEmailCount = computed(() => this.filteredTeachers().filter((t) => !!t.email).length);
+  studentsWithCodeCount = computed(() => this.filteredStudents().filter((s) => !!s.code).length);
 
   clearSearch(): void {
     this.search.set('');
   }
 
   ngOnInit(): void {
-    const id = this.store.selectedSectionId() ?? (this.route.parent?.snapshot?.paramMap?.get('id') ?? '');
+    const id =
+      this.store.selectedSectionId() ?? this.route.parent?.snapshot?.paramMap?.get('id') ?? '';
     if (id) this.loadPeople(id);
   }
 

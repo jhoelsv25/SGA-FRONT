@@ -9,7 +9,7 @@ import { Toast } from '@core/services/toast';
 
 @Component({
   selector: 'sga-classroom-timeline-feed-item',
-  standalone: true,
+
   host: {
     class: 'block pb-5 last:pb-0',
   },
@@ -19,7 +19,7 @@ import { Toast } from '@core/services/toast';
 })
 export class ClassroomTimelineFeedItem {
   public item = input.required<ClassroomFeedItem>();
-  
+
   public readonly store = inject(ClassroomStore);
   private readonly authFacade = inject(AuthFacade);
   private readonly api = inject(ClassroomApi);
@@ -46,12 +46,14 @@ export class ClassroomTimelineFeedItem {
   });
 
   initials(name?: string) {
-    return (name ?? '')
-      .split(' ')
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((part) => part[0]?.toUpperCase() ?? '')
-      .join('') || 'CL';
+    return (
+      (name ?? '')
+        .split(' ')
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((part) => part[0]?.toUpperCase() ?? '')
+        .join('') || 'CL'
+    );
   }
 
   isExpanded() {

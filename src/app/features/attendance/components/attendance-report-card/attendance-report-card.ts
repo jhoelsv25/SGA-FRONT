@@ -6,7 +6,7 @@ import type { Attendance } from '../../../attendances/types/attendance-types';
 
 @Component({
   selector: 'sga-attendance-report-card',
-  standalone: true,
+
   imports: [CommonModule, ZardCardComponent, ZardIconComponent],
   templateUrl: './attendance-report-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

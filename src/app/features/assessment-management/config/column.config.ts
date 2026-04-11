@@ -35,4 +35,5 @@ export const ASSESSMENT_COLUMNS: DataSourceColumn[] = [
     key: 'status',
     label: 'Estado',
     width: '120px',
-  }];
+  },
+];

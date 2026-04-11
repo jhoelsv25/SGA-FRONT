@@ -1,7 +1,14 @@
 <form [formGroup]="form" class="grid gap-4" (ngSubmit)="submit()">
   <header class="mb-4 flex items-center justify-between">
     <h2 class="text-lg font-semibold">{{ current ? 'Editar docente' : 'Nuevo docente' }}</h2>
-    <button type="button" z-button zColor="secondary" zType="ghost" zShape="circle" (click)="close()">
+    <button
+      type="button"
+      z-button
+      zColor="secondary"
+      zType="ghost"
+      zShape="circle"
+      (click)="close()"
+    >
       <i class="fas fa-times"></i>
     </button>
   </header>
@@ -9,7 +16,8 @@
   <div class="grid max-h-[65vh] gap-4 overflow-y-auto pr-1">
     <div class="rounded-4xl border border-primary/20 bg-primary/5 p-4 text-[11px] text-primary/80">
       <i class="fas fa-info-circle mr-2"></i>
-      Si el docente no tiene cuenta, el sistema creará una automáticamente usando su <b>Código</b> como usuario y el <b>DNI</b> de la persona vinculada como contraseña.
+      Si el docente no tiene cuenta, el sistema creará una automáticamente usando su
+      <b>Código</b> como usuario y el <b>DNI</b> de la persona vinculada como contraseña.
     </div>
 
     <div class="rounded-4xl border border-base-200 bg-base-100/60 p-4">
@@ -18,85 +26,158 @@
           @if (personPhotoUrl) {
             <img [src]="personPhotoUrl" alt="Foto docente" class="h-full w-full object-cover" />
           } @else {
-            <div class="flex h-full w-full items-center justify-center text-sm font-black text-base-content/40">
+            <div
+              class="flex h-full w-full items-center justify-center text-sm font-black text-base-content/40"
+            >
               FOTO
             </div>
           }
         </div>
         <div class="space-y-2">
-          <input #photoInput type="file" accept="image/*" class="hidden" (change)="onPersonPhotoSelected($event)" />
-          <button type="button" z-button zType="outline" zColor="secondary" (click)="photoInput.click()" [disabled]="photoUploading">
+          <input
+            #photoInput
+            type="file"
+            accept="image/*"
+            class="hidden"
+            (change)="onPersonPhotoSelected($event)"
+          />
+          <button
+            type="button"
+            z-button
+            zType="outline"
+            zColor="secondary"
+            (click)="photoInput.click()"
+            [disabled]="photoUploading"
+          >
             <i class="fas fa-upload mr-2"></i>
             {{ photoUploading ? 'Subiendo...' : 'Subir foto' }}
           </button>
-          <p class="text-xs text-base-content/55">La foto se guardará en la persona vinculada al docente.</p>
+          <p class="text-xs text-base-content/55">
+            La foto se guardará en la persona vinculada al docente.
+          </p>
         </div>
       </div>
     </div>
 
     <div>
       <label class="label-form" for="teacherCode">Código docente</label>
-      <input z-input w-full id="teacherCode" formControlName="teacherCode" placeholder="T20250001"  />
+      <input
+        z-input
+        w-full
+        id="teacherCode"
+        formControlName="teacherCode"
+        placeholder="T20250001"
+      />
     </div>
     <div>
       <label class="label-form" for="specialization">Especialidad</label>
-      <input z-input w-full id="specialization" formControlName="specialization" placeholder="Matemáticas"  />
+      <input
+        z-input
+        w-full
+        id="specialization"
+        formControlName="specialization"
+        placeholder="Matemáticas"
+      />
     </div>
     <div>
       <label class="label-form" for="professionalTitle">Título profesional</label>
-      <input z-input w-full id="professionalTitle" formControlName="professionalTitle" placeholder="Lic. en Educación"  />
+      <input
+        z-input
+        w-full
+        id="professionalTitle"
+        formControlName="professionalTitle"
+        placeholder="Lic. en Educación"
+      />
     </div>
     <div>
       <label class="label-form" for="university">Universidad</label>
-      <input z-input w-full id="university" formControlName="university" placeholder="Universidad Nacional"  />
+      <input
+        z-input
+        w-full
+        id="university"
+        formControlName="university"
+        placeholder="Universidad Nacional"
+      />
     </div>
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
       <div>
         <label class="label-form" for="graduationYear">Año de graduación</label>
-        <input z-input w-full id="graduationYear" type="number" formControlName="graduationYear"  />
+        <input z-input w-full id="graduationYear" type="number" formControlName="graduationYear" />
       </div>
       <div>
         <label class="label-form" for="professionalLicense">Licencia profesional</label>
-        <input z-input w-full id="professionalLicense" formControlName="professionalLicense" placeholder="123456"  />
+        <input
+          z-input
+          w-full
+          id="professionalLicense"
+          formControlName="professionalLicense"
+          placeholder="123456"
+        />
       </div>
     </div>
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
       <div>
         <label class="label-form" for="contractType">Tipo de contrato</label>
-        <z-select-option id="contractType" [options]="contractTypeOptions" formControlName="contractType" [searchable]="false"></z-select-option>
+        <z-select-option
+          id="contractType"
+          [options]="contractTypeOptions"
+          formControlName="contractType"
+          [searchable]="false"
+        ></z-select-option>
       </div>
       <div>
         <label class="label-form" for="laborRegime">Régimen laboral</label>
-        <z-select-option id="laborRegime" [options]="laborRegimeOptions" formControlName="laborRegime" [searchable]="false"></z-select-option>
+        <z-select-option
+          id="laborRegime"
+          [options]="laborRegimeOptions"
+          formControlName="laborRegime"
+          [searchable]="false"
+        ></z-select-option>
       </div>
     </div>
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
       <div>
         <label class="label-form" for="hireDate">Fecha de contratación</label>
-        <input z-input w-full id="hireDate" type="date" formControlName="hireDate"  />
+        <input z-input w-full id="hireDate" type="date" formControlName="hireDate" />
       </div>
       <div>
         <label class="label-form" for="terminationDate">Fecha de término (opcional)</label>
-        <input z-input w-full id="terminationDate" type="date" formControlName="terminationDate"  />
+        <input z-input w-full id="terminationDate" type="date" formControlName="terminationDate" />
       </div>
     </div>
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
       <div>
         <label class="label-form" for="workloadType">Carga laboral</label>
-        <z-select-option id="workloadType" [options]="workloadTypeOptions" formControlName="workloadType" [searchable]="false"></z-select-option>
+        <z-select-option
+          id="workloadType"
+          [options]="workloadTypeOptions"
+          formControlName="workloadType"
+          [searchable]="false"
+        ></z-select-option>
       </div>
       <div>
         <label class="label-form" for="weeklyHours">Horas semanales</label>
-        <input z-input w-full id="weeklyHours" type="number" formControlName="weeklyHours"  />
+        <input z-input w-full id="weeklyHours" type="number" formControlName="weeklyHours" />
       </div>
     </div>
     <div>
       <label class="label-form" for="teachingLevel">Nivel de enseñanza</label>
-      <input z-input w-full id="teachingLevel" formControlName="teachingLevel" placeholder="Secundaria"  />
+      <input
+        z-input
+        w-full
+        id="teachingLevel"
+        formControlName="teachingLevel"
+        placeholder="Secundaria"
+      />
     </div>
     <div>
       <label class="label-form" for="employmentStatus">Estado laboral</label>
-      <z-select-option id="employmentStatus" [options]="employmentStatusOptions" formControlName="employmentStatus" [searchable]="false"></z-select-option>
+      <z-select-option
+        id="employmentStatus"
+        [options]="employmentStatusOptions"
+        formControlName="employmentStatus"
+        [searchable]="false"
+      ></z-select-option>
     </div>
     <div>
       <label class="label-form" for="institution">Institución</label>
@@ -117,7 +198,9 @@
   </div>
 
   <footer class="mt-4 flex justify-end gap-2">
-    <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">Cancelar</button>
+    <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">
+      Cancelar
+    </button>
     <button type="submit" z-button zColor="primary" [disabled]="form.invalid">Guardar</button>
   </footer>
 </form>

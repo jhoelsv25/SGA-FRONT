@@ -1,19 +1,24 @@
 <z-card
-  class="group rounded-4xl border border-base-300/60 bg-card/85 p-6 shadow-sm transition-all hover:border-primary/20 hover:shadow-lg dark:border-base-200/60 dark:bg-base-100/90">
+  class="group rounded-4xl border border-base-300/60 bg-card/85 p-6 shadow-sm transition-all hover:border-primary/20 hover:shadow-lg dark:border-base-200/60 dark:bg-base-100/90"
+>
   <div class="flex flex-col gap-6">
     <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
       <div class="flex min-w-0 flex-1 items-start gap-4">
         <div
-          class="flex size-14 shrink-0 items-center justify-center rounded-[var(--radius-xl)] border border-primary/15 bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+          class="flex size-14 shrink-0 items-center justify-center rounded-xl border border-primary/15 bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground"
+        >
           <z-icon zType="file-text" class="h-6 w-6" />
         </div>
 
         <div class="min-w-0 space-y-1.5">
           <div class="flex flex-wrap items-center gap-2.5">
-            <h3 class="truncate text-lg font-black uppercase tracking-tight">{{ assessment().name }}</h3>
+            <h3 class="truncate text-lg font-black uppercase tracking-tight">
+              {{ assessment().name }}
+            </h3>
             <span
               class="rounded-full border px-3 py-1 text-[9px] font-black uppercase tracking-widest"
-              [class]="statusClass()">
+              [class]="statusClass()"
+            >
               {{ statusLabel() }}
             </span>
           </div>
@@ -28,7 +33,7 @@
             @if (assessment().competency?.name) {
               <span>Competencia: {{ assessment().competency?.name }}</span>
             }
-            <span>Fecha: {{ assessment().assessmentDate | date:'dd/MM/yyyy' }}</span>
+            <span>Fecha: {{ assessment().assessmentDate | date: 'dd/MM/yyyy' }}</span>
           </div>
 
           @if (assessment().description) {
@@ -42,17 +47,28 @@
       <div class="flex items-center justify-between gap-6 lg:justify-end">
         <div class="flex items-center gap-6 text-center">
           <div>
-            <p class="text-xs font-black uppercase text-primary">{{ assessment().weightPercentage }}%</p>
-            <span class="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60">Peso</span>
+            <p class="text-xs font-black uppercase text-primary">
+              {{ assessment().weightPercentage }}%
+            </p>
+            <span class="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60"
+              >Peso</span
+            >
           </div>
           <div>
             <p class="text-xs font-black uppercase">{{ assessment().period.name }}</p>
-            <span class="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60">Período</span>
+            <span class="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60"
+              >Período</span
+            >
           </div>
           @if (assessment().competency?.name) {
             <div>
-              <p class="text-xs font-black uppercase">{{ assessment().competency?.code || 'COMP' }}</p>
-              <span class="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60">{{ assessment().competency?.name }}</span>
+              <p class="text-xs font-black uppercase">
+                {{ assessment().competency?.code || 'COMP' }}
+              </p>
+              <span
+                class="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60"
+                >{{ assessment().competency?.name }}</span
+              >
             </div>
           }
         </div>
@@ -71,7 +87,7 @@
         </button>
 
         <ng-template #actionsMenu>
-          <z-popover class="min-w-[190px] p-1.5 flex flex-col gap-1">
+          <z-popover class="min-w-48 p-1.5 flex flex-col gap-1">
             <button
               z-button
               zType="ghost"
@@ -113,8 +129,12 @@
       </div>
     </div>
 
-    <div class="flex flex-wrap items-center justify-between gap-4 border-t border-base-300/60 pt-5 dark:border-base-200/60">
-      <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+    <div
+      class="flex flex-wrap items-center justify-between gap-4 border-t border-base-300/60 pt-5 dark:border-base-200/60"
+    >
+      <div
+        class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground"
+      >
         <z-icon zType="sparkles" class="h-3.5 w-3.5 text-primary" />
         Evaluación operativa
       </div>
@@ -124,7 +144,7 @@
           z-button
           zType="default"
           type="button"
-          class="h-9 rounded-[var(--radius-xl)] px-4 text-[10px] font-black uppercase tracking-[0.18em]"
+          class="h-9 rounded-xl px-4 text-[10px] font-black uppercase tracking-[0.18em]"
           (click)="viewDetail.emit(assessment())"
         >
           Detalle
@@ -133,7 +153,7 @@
           z-button
           zType="outline"
           type="button"
-          class="h-9 rounded-[var(--radius-xl)] px-4 text-[10px] font-black uppercase tracking-[0.18em]"
+          class="h-9 rounded-xl px-4 text-[10px] font-black uppercase tracking-[0.18em]"
           (click)="edit.emit(assessment())"
         >
           Editar
@@ -142,7 +162,7 @@
           z-button
           zType="outline"
           type="button"
-          class="h-9 rounded-[var(--radius-xl)] px-4 text-[10px] font-black uppercase tracking-[0.18em]"
+          class="h-9 rounded-xl px-4 text-[10px] font-black uppercase tracking-[0.18em]"
           (click)="viewScores.emit(assessment())"
         >
           Calificaciones

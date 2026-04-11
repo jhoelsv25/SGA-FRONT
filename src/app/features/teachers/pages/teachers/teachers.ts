@@ -70,7 +70,7 @@ function normalizeQueryValue(value: string | null): string {
 
 @Component({
   selector: 'sga-teachers',
-  standalone: true,
+
   imports: [
     CommonModule,
     FormsModule,
@@ -256,7 +256,8 @@ export default class TeachersPage {
       contractType: (this.filterContractType() || undefined) as TeacherParams['contractType'],
       laborRegime: (this.filterLaborRegime() || undefined) as TeacherParams['laborRegime'],
       workloadType: (this.filterWorkloadType() || undefined) as TeacherParams['workloadType'],
-      employmentStatus: (this.filterEmploymentStatus() || undefined) as TeacherParams['employmentStatus'],
+      employmentStatus: (this.filterEmploymentStatus() ||
+        undefined) as TeacherParams['employmentStatus'],
     });
   }
 
@@ -266,7 +267,8 @@ export default class TeachersPage {
 
   goToTeacherAttendances(teacher: Teacher) {
     const person = typeof teacher.person === 'object' ? teacher.person : null;
-    const teacherName = [person?.firstName, person?.lastName].filter(Boolean).join(' ').trim() || teacher.teacherCode;
+    const teacherName =
+      [person?.firstName, person?.lastName].filter(Boolean).join(' ').trim() || teacher.teacherCode;
     this.router.navigate(['/teachers/attendances'], {
       queryParams: { teacherId: teacher.id, teacherName },
     });
@@ -284,7 +286,8 @@ export default class TeachersPage {
 
   deleteTeacher(teacher: Teacher) {
     const person = typeof teacher.person === 'object' ? teacher.person : null;
-    const label = [person?.firstName, person?.lastName].filter(Boolean).join(' ').trim() || teacher.teacherCode;
+    const label =
+      [person?.firstName, person?.lastName].filter(Boolean).join(' ').trim() || teacher.teacherCode;
     this.confirmDialog
       .open({
         type: 'danger',
@@ -303,7 +306,8 @@ export default class TeachersPage {
 
   goToAssignments(teacher: Teacher) {
     const person = typeof teacher.person === 'object' ? teacher.person : null;
-    const teacherName = [person?.firstName, person?.lastName].filter(Boolean).join(' ').trim() || teacher.teacherCode;
+    const teacherName =
+      [person?.firstName, person?.lastName].filter(Boolean).join(' ').trim() || teacher.teacherCode;
     this.router.navigate(['/organization/section-courses'], {
       queryParams: { teacherId: teacher.id, teacherName },
     });
@@ -311,7 +315,8 @@ export default class TeachersPage {
 
   goToSchedules(teacher: Teacher) {
     const person = typeof teacher.person === 'object' ? teacher.person : null;
-    const teacherName = [person?.firstName, person?.lastName].filter(Boolean).join(' ').trim() || teacher.teacherCode;
+    const teacherName =
+      [person?.firstName, person?.lastName].filter(Boolean).join(' ').trim() || teacher.teacherCode;
     this.router.navigate(['/organization/schedules'], {
       queryParams: { teacherId: teacher.id, teacherName },
     });
@@ -406,25 +411,26 @@ export default class TeachersPage {
         },
         importRows: (rows: Record<string, unknown>[]) =>
           this.teacherApi.import(
-            rows.map((r) =>
-              ({
-                teacherCode: String(r['teacherCode'] ?? '').trim(),
-                specialization: String(r['specialization'] ?? '').trim(),
-                professionalTitle: String(r['professionalTitle'] ?? '').trim(),
-                university: String(r['university'] ?? '').trim(),
-                graduationYear: parseNumber(r['graduationYear'], new Date().getFullYear()),
-                professionalLicense: String(r['professionalLicense'] ?? '').trim(),
-                contractType: String(r['contractType'] ?? 'full_time').trim(),
-                laborRegime: String(r['laborRegime'] ?? 'public').trim(),
-                hireDate: parseDate(r['hireDate']) ?? new Date().toISOString().slice(0, 10),
-                terminationDate: parseDate(r['terminationDate']),
-                workloadType: String(r['workloadType'] ?? '40_hours').trim(),
-                weeklyHours: parseNumber(r['weeklyHours'], 40),
-                teachingLevel: String(r['teachingLevel'] ?? '').trim(),
-                employmentStatus: String(r['employmentStatus'] ?? 'active').trim(),
-                institution: String(r['institution'] ?? '').trim(),
-                person: String(r['person'] ?? '').trim(),
-              }) as Partial<TeacherCreate>,
+            rows.map(
+              (r) =>
+                ({
+                  teacherCode: String(r['teacherCode'] ?? '').trim(),
+                  specialization: String(r['specialization'] ?? '').trim(),
+                  professionalTitle: String(r['professionalTitle'] ?? '').trim(),
+                  university: String(r['university'] ?? '').trim(),
+                  graduationYear: parseNumber(r['graduationYear'], new Date().getFullYear()),
+                  professionalLicense: String(r['professionalLicense'] ?? '').trim(),
+                  contractType: String(r['contractType'] ?? 'full_time').trim(),
+                  laborRegime: String(r['laborRegime'] ?? 'public').trim(),
+                  hireDate: parseDate(r['hireDate']) ?? new Date().toISOString().slice(0, 10),
+                  terminationDate: parseDate(r['terminationDate']),
+                  workloadType: String(r['workloadType'] ?? '40_hours').trim(),
+                  weeklyHours: parseNumber(r['weeklyHours'], 40),
+                  teachingLevel: String(r['teachingLevel'] ?? '').trim(),
+                  employmentStatus: String(r['employmentStatus'] ?? 'active').trim(),
+                  institution: String(r['institution'] ?? '').trim(),
+                  person: String(r['person'] ?? '').trim(),
+                }) as Partial<TeacherCreate>,
             ),
           ),
       },

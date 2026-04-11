@@ -8,7 +8,7 @@ import { Session } from '@features/admin-services/api/session-api';
 
 @Component({
   selector: 'sga-session-card',
-  standalone: true,
+
   imports: [CommonModule, ZardCardComponent, ZardButtonComponent, ZardIconComponent],
   templateUrl: './session-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

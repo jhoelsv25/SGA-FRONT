@@ -24,7 +24,9 @@ export class AuditApi {
   private http = inject(HttpClient);
   private baseUrl = `audit`;
 
-  getAll(params: Record<string, string | number | boolean> = {}): Observable<{ data: AuditLog[]; nextCursor: string | null }> {
+  getAll(
+    params: Record<string, string | number | boolean> = {},
+  ): Observable<{ data: AuditLog[]; nextCursor: string | null }> {
     return this.http.get<{ data: AuditLog[]; nextCursor: string | null }>(this.baseUrl, { params });
   }
 

@@ -1,44 +1,81 @@
 <form [formGroup]="form" class="grid gap-4" (ngSubmit)="submit()">
   <header class="flex items-center justify-between mb-4">
-    <h2 class="text-lg font-semibold">{{ current ? 'Editar inscripción' : 'Nueva inscripción' }}</h2>
-    <button type="button" z-button zColor="secondary" zType="ghost" zShape="circle" (click)="close()">
+    <h2 class="text-lg font-semibold">
+      {{ current ? 'Editar inscripción' : 'Nueva inscripción' }}
+    </h2>
+    <button
+      type="button"
+      z-button
+      zColor="secondary"
+      zType="ghost"
+      zShape="circle"
+      (click)="close()"
+    >
       <i class="fas fa-times"></i>
     </button>
   </header>
   <div class="grid grid-cols-1 gap-4">
     <div>
       <label class="label-form" for="student">Estudiante</label>
-      <sga-student-select id="student" formControlName="student" placeholder="Seleccionar estudiante"></sga-student-select>
+      <sga-student-select
+        id="student"
+        formControlName="student"
+        placeholder="Seleccionar estudiante"
+      ></sga-student-select>
     </div>
     <div>
       <label class="label-form" for="section">Sección</label>
-      <sga-section-select id="section" formControlName="section" placeholder="Seleccionar sección"></sga-section-select>
+      <sga-section-select
+        id="section"
+        formControlName="section"
+        placeholder="Seleccionar sección"
+      ></sga-section-select>
     </div>
     <div>
       <label class="label-form" for="academicYear">Año académico</label>
-      <sga-year-academic-select id="academicYear" formControlName="academicYear" placeholder="Seleccionar año"></sga-year-academic-select>
+      <sga-year-academic-select
+        id="academicYear"
+        formControlName="academicYear"
+        placeholder="Seleccionar año"
+      ></sga-year-academic-select>
     </div>
     <div class="grid grid-cols-2 gap-4">
       <div>
         <label class="label-form" for="enrollmentType">Tipo</label>
-        <z-select-option id="enrollmentType" [options]="typeOptions" formControlName="enrollmentType"></z-select-option>
+        <z-select-option
+          id="enrollmentType"
+          [options]="typeOptions"
+          formControlName="enrollmentType"
+        ></z-select-option>
       </div>
       <div>
         <label class="label-form" for="status">Estado</label>
-        <z-select-option id="status" [options]="statusOptions" formControlName="status"></z-select-option>
+        <z-select-option
+          id="status"
+          [options]="statusOptions"
+          formControlName="status"
+        ></z-select-option>
       </div>
     </div>
     <div>
       <label class="label-form" for="enrollmentDate">Fecha de inscripción</label>
-      <input z-input w-full id="enrollmentDate" type="date" formControlName="enrollmentDate"  />
+      <input z-input w-full id="enrollmentDate" type="date" formControlName="enrollmentDate" />
     </div>
     <div>
       <label class="label-form" for="observations">Observaciones</label>
-      <input z-input w-full id="observations" formControlName="observations" placeholder="Opcional"  />
+      <input
+        z-input
+        w-full
+        id="observations"
+        formControlName="observations"
+        placeholder="Opcional"
+      />
     </div>
   </div>
   <footer class="flex justify-end gap-2 mt-4">
-    <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">Cancelar</button>
+    <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">
+      Cancelar
+    </button>
     <button type="submit" z-button zColor="primary" [disabled]="form.invalid">Guardar</button>
   </footer>
 </form>

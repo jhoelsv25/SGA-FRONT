@@ -1,13 +1,27 @@
-<form [formGroup]="form" class="flex max-h-[calc(86vh-2rem)] flex-col overflow-hidden" (ngSubmit)="submit()">
+<form
+  [formGroup]="form"
+  class="flex max-h-[calc(86vh-2rem)] flex-col overflow-hidden"
+  (ngSubmit)="submit()"
+>
   <header class="mb-5 flex items-start justify-between gap-4 border-b border-base-200 pb-4">
     <div class="min-w-0">
-      <p class="text-[10px] font-black uppercase tracking-[0.28em] text-primary/70">Seguimiento docente</p>
+      <p class="text-[10px] font-black uppercase tracking-[0.28em] text-primary/70">
+        Seguimiento docente
+      </p>
       <h2 class="mt-2 text-2xl font-black tracking-tight">Registrar seguimiento</h2>
       <p class="mt-2 text-sm text-base-content/65">
-        {{ row.courseName }} · {{ row.sectionName || 'Sección' }} · {{ row.plannedStartTime?.slice(0, 5) }} - {{ row.plannedEndTime?.slice(0, 5) }}
+        {{ row.courseName }} · {{ row.sectionName || 'Sección' }} ·
+        {{ row.plannedStartTime?.slice(0, 5) }} - {{ row.plannedEndTime?.slice(0, 5) }}
       </p>
     </div>
-    <button type="button" z-button zColor="secondary" zType="ghost" zShape="circle" (click)="close()">
+    <button
+      type="button"
+      z-button
+      zColor="secondary"
+      zType="ghost"
+      zShape="circle"
+      (click)="close()"
+    >
       <i class="fas fa-times"></i>
     </button>
   </header>
@@ -15,36 +29,56 @@
   <div class="flex-1 overflow-y-auto pr-2">
     <div class="grid grid-cols-1 gap-5">
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div class="rounded-[var(--radius-2xl)] border border-base-200 bg-base-100/80 px-5 py-4 xl:col-span-2">
-          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-base-content/50">Bloque</p>
+        <div
+          class="rounded-[var(--radius-2xl)] border border-base-200 bg-base-100/80 px-5 py-4 xl:col-span-2"
+        >
+          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-base-content/50">
+            Bloque
+          </p>
           <p class="mt-2 text-2xl font-black leading-tight text-base-content">{{ row.title }}</p>
           <div class="mt-3 flex flex-wrap items-center gap-2 text-sm text-base-content/60">
             <span class="rounded-full border border-base-200 px-3 py-1">{{ row.teacherName }}</span>
-            <span class="rounded-full border border-base-200 px-3 py-1">{{ row.classroom || 'Sin aula' }}</span>
+            <span class="rounded-full border border-base-200 px-3 py-1">{{
+              row.classroom || 'Sin aula'
+            }}</span>
           </div>
         </div>
 
         <div class="rounded-[var(--radius-2xl)] border border-base-200 bg-base-100/80 px-5 py-4">
-          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-base-content/50">Estado general</p>
+          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-base-content/50">
+            Estado general
+          </p>
           <div class="mt-3">
-            <z-select-option [options]="statusOptions" formControlName="complianceStatus" [searchable]="false"></z-select-option>
+            <z-select-option
+              [options]="statusOptions"
+              formControlName="complianceStatus"
+              [searchable]="false"
+            ></z-select-option>
           </div>
-          <p class="mt-2 text-xs text-base-content/50">Actualiza solo si el bloque terminó parcial, incumplido o reprogramado.</p>
+          <p class="mt-2 text-xs text-base-content/50">
+            Actualiza solo si el bloque terminó parcial, incumplido o reprogramado.
+          </p>
         </div>
 
         <div class="rounded-[var(--radius-2xl)] border border-primary/15 bg-primary/8 px-5 py-4">
-          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Cumplimiento</p>
+          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">
+            Cumplimiento
+          </p>
           <p class="mt-2 text-4xl font-black text-primary">{{ percentage() }}</p>
         </div>
 
         <div class="rounded-[var(--radius-2xl)] border border-base-200 bg-base-100/80 px-5 py-4">
-          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-base-content/50">Tiempo real</p>
+          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-base-content/50">
+            Tiempo real
+          </p>
           <p class="mt-2 text-3xl font-black text-base-content">{{ actualMinutes() }} min</p>
           <p class="mt-1 text-xs text-base-content/50">Tiempo acumulado registrado</p>
         </div>
 
         <div class="rounded-[var(--radius-2xl)] border border-base-200 bg-base-100/80 px-5 py-4">
-          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-base-content/50">Tiempo muerto</p>
+          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-base-content/50">
+            Tiempo muerto
+          </p>
           <p class="mt-2 text-3xl font-black text-base-content">{{ downTimeMinutes() }} min</p>
           <p class="mt-1 text-xs text-base-content/50">Espacios entre tramos</p>
         </div>
@@ -53,8 +87,12 @@
       <div class="rounded-[var(--radius-2xl)] border border-base-200 bg-base-100/80 p-5">
         <div class="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-base-content/50">Tramos reales</p>
-            <p class="mt-1 text-sm text-base-content/65">Registra cada entrada y salida del docente dentro del bloque.</p>
+            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-base-content/50">
+              Tramos reales
+            </p>
+            <p class="mt-1 text-sm text-base-content/65">
+              Registra cada entrada y salida del docente dentro del bloque.
+            </p>
           </div>
           <button type="button" z-button zColor="secondary" zType="outline" (click)="addInterval()">
             <i class="fas fa-plus text-xs"></i>
@@ -64,14 +102,21 @@
 
         <div formArrayName="intervals" class="mt-4 space-y-3">
           @for (interval of intervals.controls; track $index) {
-            <div [formGroupName]="$index" class="rounded-[var(--radius-xl)] border border-base-200 bg-base-100 px-4 py-4">
+            <div
+              [formGroupName]="$index"
+              class="rounded-[var(--radius-xl)] border border-base-200 bg-base-100 px-4 py-4"
+            >
               <div class="mb-4 flex items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
-                  <div class="flex h-9 w-9 items-center justify-center rounded-2xl bg-primary/10 text-sm font-black text-primary">
+                  <div
+                    class="flex h-9 w-9 items-center justify-center rounded-2xl bg-primary/10 text-sm font-black text-primary"
+                  >
                     {{ $index + 1 }}
                   </div>
                   <div>
-                    <p class="text-xs font-black uppercase tracking-[0.18em] text-base-content/45">Tramo {{ $index + 1 }}</p>
+                    <p class="text-xs font-black uppercase tracking-[0.18em] text-base-content/45">
+                      Tramo {{ $index + 1 }}
+                    </p>
                     <p class="text-sm text-base-content/55">Entrada y salida registrada</p>
                   </div>
                 </div>
@@ -101,7 +146,12 @@
 
                 <div>
                   <p class="mb-1 text-xs font-medium text-slate-600">Observación del tramo</p>
-                  <input z-input w-full formControlName="reason" placeholder="Ej: Salió por coordinación" />
+                  <input
+                    z-input
+                    w-full
+                    formControlName="reason"
+                    placeholder="Ej: Salió por coordinación"
+                  />
                 </div>
               </div>
             </div>
@@ -150,7 +200,9 @@
   </div>
 
   <footer class="mt-5 flex shrink-0 justify-end gap-2 border-t border-base-200 pt-4">
-    <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">Cancelar</button>
+    <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">
+      Cancelar
+    </button>
     <button type="submit" z-button zColor="primary" [disabled]="form.invalid || loading()">
       Guardar registro
     </button>

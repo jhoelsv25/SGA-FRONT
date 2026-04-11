@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardEmptyComponent } from '@/shared/components/empty';
@@ -15,7 +22,7 @@ import { PaymentForm } from '../../components/payment-form/payment-form';
 
 @Component({
   selector: 'sga-payment-detail',
-  standalone: true,
+
   imports: [
     CommonModule,
     ZardButtonComponent,
@@ -35,7 +42,9 @@ export default class PaymentDetailPage implements OnInit {
   private readonly dialog = inject(DialogModalService);
   private readonly toast = inject(Toast);
 
-  readonly payment = signal<Payment | null>((history.state?.payment as Payment | undefined) ?? null);
+  readonly payment = signal<Payment | null>(
+    (history.state?.payment as Payment | undefined) ?? null,
+  );
   readonly loading = signal(true);
 
   readonly statusLabel = computed(() => {
@@ -71,11 +80,13 @@ export default class PaymentDetailPage implements OnInit {
   openEdit(): void {
     const current = this.payment();
     if (!current) return;
-    this.dialog.open(PaymentForm, {
-      data: { current },
-      width: '720px',
-      maxHeight: '88vh',
-    }).closed.subscribe(() => this.reload());
+    this.dialog
+      .open(PaymentForm, {
+        data: { current },
+        width: '720px',
+        maxHeight: '88vh',
+      })
+      .closed.subscribe(() => this.reload());
   }
 
   goToStudent(): void {

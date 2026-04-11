@@ -4,7 +4,7 @@ import { ClassroomGradeRecord } from '../../services/classroom-api';
 
 @Component({
   selector: 'sga-classroom-grade-detail',
-  standalone: true,
+
   imports: [CommonModule],
   templateUrl: './classroom-grade-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -14,7 +14,7 @@ export class ClassroomGradeDetail {
   public studentOptions = input<any[]>([]);
   public selectedStudentId = input<string | null>(null);
   public canViewStudentDetail = input<boolean>(false);
-  
+
   public onSelectStudent = output<string>();
 
   statusTone(value: number, total: number) {

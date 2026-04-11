@@ -9,7 +9,8 @@ export default [
   },
   {
     path: 'years/:id',
-    loadComponent: () => import('@features/year-academic/pages/year-academic-detail/year-academic-detail'),
+    loadComponent: () =>
+      import('@features/year-academic/pages/year-academic-detail/year-academic-detail'),
     title: 'Detalle del año académico',
     data: { permissions: ['academic_year:view'] },
   },
@@ -41,4 +42,5 @@ export default [
     path: '',
     redirectTo: 'years',
     pathMatch: 'full',
-  }] as Routes;
+  },
+] as Routes;

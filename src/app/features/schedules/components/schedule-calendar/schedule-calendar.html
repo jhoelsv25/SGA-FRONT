@@ -1,17 +1,24 @@
 <div
   class="schedule-calendar overflow-hidden rounded-[2rem] border border-base-200/80 bg-base-100 shadow-sm"
 >
-  <div class="border-b border-base-200/60 bg-linear-to-r from-base-100 via-base-100 to-base-200/20 px-5 py-4">
+  <div
+    class="border-b border-base-200/60 bg-linear-to-r from-base-100 via-base-100 to-base-200/20 px-5 py-4"
+  >
     <header class="flex flex-wrap items-center justify-between gap-4">
       <div>
-        <p class="text-[10px] font-black uppercase tracking-[0.18em] text-primary/70">Vista semanal</p>
+        <p class="text-[10px] font-black uppercase tracking-[0.18em] text-primary/70">
+          Vista semanal
+        </p>
         <h3 class="mt-2 text-lg font-semibold text-base-content">Cobertura completa de 24 horas</h3>
         <p class="mt-1 text-sm text-base-content/60">
-          El calendario muestra la jornada operativa desde las 07:00 hasta las 24:00 para clases, recesos y bloques especiales.
+          El calendario muestra la jornada operativa desde las 07:00 hasta las 24:00 para clases,
+          recesos y bloques especiales.
         </p>
       </div>
       <div class="rounded-[1.15rem] border border-base-200/70 bg-base-100 px-4 py-3 text-right">
-        <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">Rango visible</p>
+        <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">
+          Rango visible
+        </p>
         <p class="mt-1 text-sm font-semibold text-base-content">07:00 - 24:00</p>
       </div>
     </header>
@@ -23,13 +30,16 @@
     </div>
   } @else if (schedules().length === 0) {
     <div class="flex min-h-[460px] flex-col items-center justify-center gap-4 px-6 text-center">
-      <div class="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
+      <div
+        class="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary"
+      >
         <i class="fas fa-calendar-days text-2xl"></i>
       </div>
       <div class="space-y-2">
         <p class="text-lg font-semibold text-base-content">Todavía no hay bloques cargados</p>
         <p class="max-w-xl text-sm leading-6 text-base-content/60">
-          Registra clases, recesos o usa el panel administrativo para distribuir horarios por docente y sección.
+          Registra clases, recesos o usa el panel administrativo para distribuir horarios por
+          docente y sección.
         </p>
       </div>
       <button
@@ -48,144 +58,199 @@
         <div class="p-3"></div>
         @for (day of dayColumns; track day) {
           <div class="border-l border-base-200/50 px-3 py-3 text-center">
-            <span class="text-sm font-black uppercase tracking-[0.16em] text-base-content">{{ dayLabels[day] }}</span>
+            <span class="text-sm font-black uppercase tracking-[0.16em] text-base-content">{{
+              dayLabels[day]
+            }}</span>
           </div>
         }
       </div>
 
       <div class="grid min-w-[1180px] grid-cols-[72px_repeat(7,minmax(180px,1fr))] min-h-[480px]">
-      <div class="flex flex-col border-r border-base-200/40 py-1" [style.min-height.px]="gridHeightPx()">
-        @for (slot of timeSlots(); track slot) {
-          @if (isHourLabel(slot)) {
-            <div
-              class="flex items-start justify-end pr-2 pt-1 text-[11px] font-semibold text-base-content/45"
-              [style.height.px]="40"
-            >
-              {{ slot }}
-            </div>
-          } @else {
-            <div [style.height.px]="40"></div>
-          }
-        }
-      </div>
-      @for (day of dayColumns; track day) {
-        <div class="schedule-day-column relative border-l border-base-200/30" [style.min-height.px]="gridHeightPx()">
-          @for (block of blocksByDay()[day]; track block.id) {
-            <div
-              class="schedule-block group/block absolute left-2 right-2 cursor-pointer overflow-hidden rounded-[1.55rem] border border-white/18 bg-linear-to-br px-4 py-3.5 shadow-2xl shadow-black/30 transition-all duration-200 hover:z-20 hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(15,23,42,0.35)]"
-              [ngClass]="getBlockColor(block)"
-              [style.top.%]="block.top"
-              [style.height.%]="block.height"
-              zPopover
-              [zContent]="blockMenuPopover"
-              zPlacement="right"
-            >
-              <div class="absolute inset-x-0 top-0 h-10 bg-linear-to-b from-white/18 to-transparent pointer-events-none"></div>
-              <div class="absolute -right-6 -top-6 h-16 w-16 rounded-full bg-white/12 blur-2xl pointer-events-none"></div>
-              <div class="flex flex-col h-full text-white relative">
-                <div class="min-w-0 flex-1 text-left">
-                  <p class="mt-1 line-clamp-2 font-black text-[13px] uppercase tracking-[0.08em] text-white/98">
-                    {{ getCourseLabel(block) }}
-                  </p>
-
-                  @if (getTeacherLabel(block); as teacher) {
-                    <div class="flex items-center gap-1.5 text-[11px] font-medium text-white/85">
-                      <i class="fas fa-user-tie text-[10px] opacity-60"></i>
-                      <span class="truncate">{{ teacher }}</span>
-                    </div>
-                  }
-                </div>
+        <div
+          class="flex flex-col border-r border-base-200/40 py-1"
+          [style.min-height.px]="gridHeightPx()"
+        >
+          @for (slot of timeSlots(); track slot) {
+            @if (isHourLabel(slot)) {
+              <div
+                class="flex items-start justify-end pr-2 pt-1 text-[11px] font-semibold text-base-content/45"
+                [style.height.px]="40"
+              >
+                {{ slot }}
               </div>
+            } @else {
+              <div [style.height.px]="40"></div>
+            }
+          }
+        </div>
+        @for (day of dayColumns; track day) {
+          <div
+            class="schedule-day-column relative border-l border-base-200/30"
+            [style.min-height.px]="gridHeightPx()"
+          >
+            @for (block of blocksByDay()[day]; track block.id) {
+              <div
+                class="schedule-block group/block absolute left-2 right-2 cursor-pointer overflow-hidden rounded-[1.55rem] border border-white/18 bg-linear-to-br px-4 py-3.5 shadow-2xl shadow-black/30 transition-all duration-200 hover:z-20 hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(15,23,42,0.35)]"
+                [ngClass]="getBlockColor(block)"
+                [style.top.%]="block.top"
+                [style.height.%]="block.height"
+                zPopover
+                [zContent]="blockMenuPopover"
+                zPlacement="right"
+              >
+                <div
+                  class="absolute inset-x-0 top-0 h-10 bg-linear-to-b from-white/18 to-transparent pointer-events-none"
+                ></div>
+                <div
+                  class="absolute -right-6 -top-6 h-16 w-16 rounded-full bg-white/12 blur-2xl pointer-events-none"
+                ></div>
+                <div class="flex flex-col h-full text-white relative">
+                  <div class="min-w-0 flex-1 text-left">
+                    <p
+                      class="mt-1 line-clamp-2 font-black text-[13px] uppercase tracking-[0.08em] text-white/98"
+                    >
+                      {{ getCourseLabel(block) }}
+                    </p>
 
-              <ng-template #blockMenuPopover>
-                <z-popover class="w-85 overflow-hidden rounded-[2.2rem] border border-base-200/80 bg-base-100 p-0 shadow-2xl">
-                  <!-- Header -->
-                  <div class="relative bg-linear-to-br from-base-200/50 to-base-100 p-6 pb-4 text-left">
-                    <div class="flex items-start justify-between gap-4">
-                      <div class="space-y-1">
-                        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/80">Detalle del Bloque</p>
-                        <h4 class="text-lg font-bold leading-tight text-base-content">{{ getCourseLabel(block) }}</h4>
+                    @if (getTeacherLabel(block); as teacher) {
+                      <div class="flex items-center gap-1.5 text-[11px] font-medium text-white/85">
+                        <i class="fas fa-user-tie text-[10px] opacity-60"></i>
+                        <span class="truncate">{{ teacher }}</span>
                       </div>
-                      <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-base-100 shadow-sm border border-base-200/60">
-                        <i class="fas fa-calendar-day text-primary/60"></i>
-                      </div>
-                    </div>
-
-                    <div class="mt-5 flex items-center gap-2">
-                       <span class="rounded-full bg-primary/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-primary">
-                        {{ dayLabels[block.dayOfWeek] }}
-                      </span>
-                      <span class="rounded-full bg-base-200 px-3 py-1 text-[10px] font-bold text-base-content/70">
-                        {{ formatTime(block.startAt) }} — {{ formatTime(block.endAt) }}
-                      </span>
-                    </div>
+                    }
                   </div>
+                </div>
 
-                  <div class="px-6 py-5 space-y-5 text-left">
-                    <!-- Info Grid -->
-                    <div class="grid grid-cols-1 gap-4">
-                      @if (getTeacherLabel(block); as teacher) {
-                        <div class="flex items-center gap-3">
-                          <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-orange-500/10 text-orange-600">
-                            <i class="fas fa-user-tie text-[12px]"></i>
-                          </div>
-                          <div>
-                            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/40">Docente</p>
-                            <p class="text-sm font-semibold text-base-content/90">{{ teacher }}</p>
-                          </div>
+                <ng-template #blockMenuPopover>
+                  <z-popover
+                    class="w-85 overflow-hidden rounded-[2.2rem] border border-base-200/80 bg-base-100 p-0 shadow-2xl"
+                  >
+                    <!-- Header -->
+                    <div
+                      class="relative bg-linear-to-br from-base-200/50 to-base-100 p-6 pb-4 text-left"
+                    >
+                      <div class="flex items-start justify-between gap-4">
+                        <div class="space-y-1">
+                          <p
+                            class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/80"
+                          >
+                            Detalle del Bloque
+                          </p>
+                          <h4 class="text-lg font-bold leading-tight text-base-content">
+                            {{ getCourseLabel(block) }}
+                          </h4>
                         </div>
-                      }
-
-                      <div class="flex items-center gap-3">
-                        <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600">
-                          <i class="fas fa-location-dot text-[12px]"></i>
-                        </div>
-                        <div>
-                          <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/40">Aula / Ubicación</p>
-                          <p class="text-sm font-semibold text-base-content/90">{{ block.classroom }}</p>
+                        <div
+                          class="flex h-10 w-10 items-center justify-center rounded-2xl bg-base-100 shadow-sm border border-base-200/60"
+                        >
+                          <i class="fas fa-calendar-day text-primary/60"></i>
                         </div>
                       </div>
 
-                      @if (block.blockType !== 'break') {
+                      <div class="mt-5 flex items-center gap-2">
+                        <span
+                          class="rounded-full bg-primary/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-primary"
+                        >
+                          {{ dayLabels[block.dayOfWeek] }}
+                        </span>
+                        <span
+                          class="rounded-full bg-base-200 px-3 py-1 text-[10px] font-bold text-base-content/70"
+                        >
+                          {{ formatTime(block.startAt) }} — {{ formatTime(block.endAt) }}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div class="px-6 py-5 space-y-5 text-left">
+                      <!-- Info Grid -->
+                      <div class="grid grid-cols-1 gap-4">
+                        @if (getTeacherLabel(block); as teacher) {
+                          <div class="flex items-center gap-3">
+                            <div
+                              class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-orange-500/10 text-orange-600"
+                            >
+                              <i class="fas fa-user-tie text-[12px]"></i>
+                            </div>
+                            <div>
+                              <p
+                                class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/40"
+                              >
+                                Docente
+                              </p>
+                              <p class="text-sm font-semibold text-base-content/90">
+                                {{ teacher }}
+                              </p>
+                            </div>
+                          </div>
+                        }
+
                         <div class="flex items-center gap-3">
-                          <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600">
-                            <i class="fas fa-users text-[12px]"></i>
+                          <div
+                            class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600"
+                          >
+                            <i class="fas fa-location-dot text-[12px]"></i>
                           </div>
                           <div>
-                            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/40">Grado y Sección</p>
+                            <p
+                              class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/40"
+                            >
+                              Aula / Ubicación
+                            </p>
                             <p class="text-sm font-semibold text-base-content/90">
-                              {{ getGradeLabel(block) }} @if (getSectionLabel(block)) { · {{ getSectionLabel(block) }} }
+                              {{ block.classroom }}
                             </p>
                           </div>
                         </div>
-                      }
-                    </div>
 
-                    <!-- Actions -->
-                    <div class="flex gap-3 pt-2">
-                      <button
-                        type="button"
-                        class="flex-1 flex items-center justify-center gap-2 rounded-2xl bg-base-200/80 px-4 py-2.5 text-xs font-black uppercase tracking-[0.16em] text-base-content transition hover:bg-base-200"
-                        (click)="openDetail(block, $event)"
-                      >
-                        <i class="fas fa-edit text-[10px] opacity-60"></i>
-                        Editar
-                      </button>
-                      <button
-                        type="button"
-                        class="flex h-11 w-11 items-center justify-center rounded-2xl bg-destructive/10 text-destructive transition hover:bg-destructive/20"
-                        (click)="delete.emit(block); $event.stopPropagation()"
-                      >
-                        <i class="fas fa-trash-can text-sm"></i>
-                      </button>
+                        @if (block.blockType !== 'break') {
+                          <div class="flex items-center gap-3">
+                            <div
+                              class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600"
+                            >
+                              <i class="fas fa-users text-[12px]"></i>
+                            </div>
+                            <div>
+                              <p
+                                class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/40"
+                              >
+                                Grado y Sección
+                              </p>
+                              <p class="text-sm font-semibold text-base-content/90">
+                                {{ getGradeLabel(block) }}
+                                @if (getSectionLabel(block)) {
+                                  · {{ getSectionLabel(block) }}
+                                }
+                              </p>
+                            </div>
+                          </div>
+                        }
+                      </div>
+
+                      <!-- Actions -->
+                      <div class="flex gap-3 pt-2">
+                        <button
+                          type="button"
+                          class="flex-1 flex items-center justify-center gap-2 rounded-2xl bg-base-200/80 px-4 py-2.5 text-xs font-black uppercase tracking-[0.16em] text-base-content transition hover:bg-base-200"
+                          (click)="openDetail(block, $event)"
+                        >
+                          <i class="fas fa-edit text-[10px] opacity-60"></i>
+                          Editar
+                        </button>
+                        <button
+                          type="button"
+                          class="flex h-11 w-11 items-center justify-center rounded-2xl bg-destructive/10 text-destructive transition hover:bg-destructive/20"
+                          (click)="delete.emit(block); $event.stopPropagation()"
+                        >
+                          <i class="fas fa-trash-can text-sm"></i>
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                </z-popover>
-              </ng-template>
-            </div>
-          }
-        </div>
-      }
+                  </z-popover>
+                </ng-template>
+              </div>
+            }
+          </div>
+        }
       </div>
     </div>
   }

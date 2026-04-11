@@ -1,6 +1,9 @@
 import { ListToolbarComponent } from '@/shared/widgets/list-toolbar/list-toolbar';
 import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
-import { DropdownOptionComponent, DropdownItem } from '@/shared/widgets/dropdown-option/dropdown-option';
+import {
+  DropdownOptionComponent,
+  DropdownItem,
+} from '@/shared/widgets/dropdown-option/dropdown-option';
 import { ZardSkeletonComponent } from '@/shared/components/skeleton';
 import { ZardEmptyComponent } from '@/shared/components/empty';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
@@ -21,13 +24,20 @@ const STATUS_OPTIONS = [
   { value: 'planned', label: 'Planificado' },
   { value: 'in_progress', label: 'En curso' },
   { value: 'completed', label: 'Completado' },
-  { value: 'cancelled', label: 'Cancelado' }];
-
+  { value: 'cancelled', label: 'Cancelado' },
+];
 
 @Component({
   selector: 'sga-periods',
-  standalone: true,
-  imports: [CommonModule, PeriodCardComponent, ZardEmptyComponent, ZardSkeletonComponent, DropdownOptionComponent, SelectOptionComponent, ListToolbarComponent],
+  imports: [
+    CommonModule,
+    PeriodCardComponent,
+    ZardEmptyComponent,
+    ZardSkeletonComponent,
+    DropdownOptionComponent,
+    SelectOptionComponent,
+    ListToolbarComponent,
+  ],
   templateUrl: './periods.html',
   styleUrls: ['./periods.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -39,7 +49,9 @@ export default class PeriodsComponent {
   private permissionStore = inject(PermissionCheckStore);
 
   headerActions = computed(() =>
-    this.permissionStore.filterActions(this.store.actions().filter((a) => a.typeAction === 'header')),
+    this.permissionStore.filterActions(
+      this.store.actions().filter((a) => a.typeAction === 'header'),
+    ),
   );
 
   readonly statusOptions = STATUS_OPTIONS;

@@ -9,20 +9,30 @@
         <div
           class="w-16 h-16 shrink-0 flex items-center justify-center rounded-[1.4rem] bg-gradient-to-br from-base-100 to-base-200 dark:from-zinc-800 dark:to-zinc-900 text-base-content/20 group-hover:from-primary group-hover:to-indigo-600 group-hover:text-white transition-all duration-500 shadow-inner border border-base-200/50 dark:border-zinc-700/50 group-hover:shadow-lg group-hover:shadow-primary/30"
         >
-          <i class="fa-solid fa-clipboard-list text-2xl group-hover:scale-110 transition-transform"></i>
+          <i
+            class="fa-solid fa-clipboard-list text-2xl group-hover:scale-110 transition-transform"
+          ></i>
         </div>
 
         <div class="min-w-0 space-y-3">
           <div class="flex flex-wrap items-center gap-2">
             @if (task().type) {
-              <span class="px-3 py-1 bg-primary/5 text-primary text-[9px] font-black uppercase tracking-[0.2em] rounded-lg border border-primary/10">{{ task().type }}</span>
+              <span
+                class="px-3 py-1 bg-primary/5 text-primary text-[9px] font-black uppercase tracking-[0.2em] rounded-lg border border-primary/10"
+                >{{ task().type }}</span
+              >
             }
             @if (task().publicationStatus === 'scheduled') {
-              <span class="px-3 py-1 bg-amber-500/5 text-amber-600 text-[9px] font-black uppercase tracking-[0.2em] rounded-lg border border-amber-500/10">
+              <span
+                class="px-3 py-1 bg-amber-500/5 text-amber-600 text-[9px] font-black uppercase tracking-[0.2em] rounded-lg border border-amber-500/10"
+              >
                 {{ publicationLabel(task().publicationStatus) }}
               </span>
             }
-            <span class="text-[9px] font-black text-rose-500 uppercase tracking-[0.2em] bg-rose-500/5 px-3 py-1 rounded-lg border border-rose-500/10">Vence: {{ task().date | date: 'dd MMM' }}</span>
+            <span
+              class="text-[9px] font-black text-rose-500 uppercase tracking-[0.2em] bg-rose-500/5 px-3 py-1 rounded-lg border border-rose-500/10"
+              >Vence: {{ task().date | date: 'dd MMM' }}</span
+            >
           </div>
 
           <h3
@@ -31,20 +41,28 @@
             {{ task().title }}
           </h3>
 
-          <div class="flex items-center gap-4 text-[11px] font-bold text-base-content/40 uppercase tracking-widest">
-            <span class="flex items-center gap-1.5"><i class="fa-solid fa-star text-amber-500"></i> {{ task().points }} Puntos</span>
+          <div
+            class="flex items-center gap-4 text-[11px] font-bold text-base-content/40 uppercase tracking-widest"
+          >
+            <span class="flex items-center gap-1.5"
+              ><i class="fa-solid fa-star text-amber-500"></i> {{ task().points }} Puntos</span
+            >
             <span class="w-1 h-1 rounded-full bg-base-300"></span>
-            <span class="flex items-center gap-1.5"><i class="fa-solid fa-message"></i> {{ task().commentsCount || 0 }} Comentarios</span>
+            <span class="flex items-center gap-1.5"
+              ><i class="fa-solid fa-message"></i> {{ task().commentsCount || 0 }} Comentarios</span
+            >
           </div>
 
           @if (task().description) {
-            <p class="max-w-2xl text-sm font-medium leading-relaxed text-base-content/45 line-clamp-1 italic">
+            <p
+              class="max-w-2xl text-sm font-medium leading-relaxed text-base-content/45 line-clamp-1 italic"
+            >
               "{{ task().description }}"
             </p>
           }
           @if (task().publicationStatus === 'scheduled' && task().publishAt) {
             <p class="text-xs font-bold uppercase tracking-[0.18em] text-amber-600/80">
-              Se publicará el {{ task().publishAt | date:'dd/MM/yyyy HH:mm' }}
+              Se publicará el {{ task().publishAt | date: 'dd/MM/yyyy HH:mm' }}
             </p>
           }
         </div>
@@ -55,27 +73,42 @@
         <!-- Status Indicator -->
         <div class="flex flex-col items-end gap-1.5">
           @if (task().status === 'pending') {
-            <div class="flex items-center gap-2 px-4 py-2 rounded-2xl bg-amber-500/5 border border-amber-500/10 text-amber-600">
-               <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-               <span class="text-[10px] font-black uppercase tracking-widest">Pendiente</span>
+            <div
+              class="flex items-center gap-2 px-4 py-2 rounded-2xl bg-amber-500/5 border border-amber-500/10 text-amber-600"
+            >
+              <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+              <span class="text-[10px] font-black uppercase tracking-widest">Pendiente</span>
             </div>
           } @else if (task().status === 'delivered') {
-            <div class="flex items-center gap-2 px-4 py-2 rounded-2xl bg-blue-500/5 border border-blue-500/10 text-blue-600">
-               <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-               <span class="text-[10px] font-black uppercase tracking-widest">Entregado</span>
+            <div
+              class="flex items-center gap-2 px-4 py-2 rounded-2xl bg-blue-500/5 border border-blue-500/10 text-blue-600"
+            >
+              <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+              <span class="text-[10px] font-black uppercase tracking-widest">Entregado</span>
             </div>
           } @else if (task().status === 'late') {
-            <div class="flex items-center gap-2 px-4 py-2 rounded-2xl bg-rose-500/5 border border-rose-500/10 text-rose-600">
-               <span class="w-2 h-2 rounded-full bg-rose-500"></span>
-               <span class="text-[10px] font-black uppercase tracking-widest">Fuera de plazo</span>
+            <div
+              class="flex items-center gap-2 px-4 py-2 rounded-2xl bg-rose-500/5 border border-rose-500/10 text-rose-600"
+            >
+              <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+              <span class="text-[10px] font-black uppercase tracking-widest">Fuera de plazo</span>
             </div>
           } @else if (task().status === 'graded') {
             <div class="flex items-center gap-4">
               <div class="text-right">
-                <p class="text-[9px] font-black uppercase tracking-widest text-emerald-600/50 mb-0.5">Nota Final</p>
-                <p class="text-3xl font-black text-emerald-600 leading-none">{{ task().grade || 0 }}<span class="text-xs text-base-content/20 ml-1">/{{ task().points }}</span></p>
+                <p
+                  class="text-[9px] font-black uppercase tracking-widest text-emerald-600/50 mb-0.5"
+                >
+                  Nota Final
+                </p>
+                <p class="text-3xl font-black text-emerald-600 leading-none">
+                  {{ task().grade || 0
+                  }}<span class="text-xs text-base-content/20 ml-1">/{{ task().points }}</span>
+                </p>
               </div>
-              <div class="w-10 h-10 rounded-full flex items-center justify-center bg-emerald-500 text-white shadow-lg shadow-emerald-500/20">
+              <div
+                class="w-10 h-10 rounded-full flex items-center justify-center bg-emerald-500 text-white shadow-lg shadow-emerald-500/20"
+              >
                 <i class="fa-solid fa-check text-base"></i>
               </div>
             </div>
@@ -85,20 +118,34 @@
         <!-- Dropdown Actions -->
         @if (canCreateTask()) {
           <div class="dropdown dropdown-end dropdown-bottom">
-            <label tabindex="0" class="btn btn-ghost h-12 w-12 rounded-2xl bg-base-100 dark:bg-zinc-800 border-base-200 dark:border-zinc-700 hover:bg-primary/5 hover:text-primary transition-all p-0">
+            <label
+              tabindex="0"
+              class="btn btn-ghost h-12 w-12 rounded-2xl bg-base-100 dark:bg-zinc-800 border-base-200 dark:border-zinc-700 hover:bg-primary/5 hover:text-primary transition-all p-0"
+            >
               <i class="fa-solid fa-ellipsis-vertical text-lg"></i>
             </label>
-            <ul tabindex="0" class="dropdown-content z-[100] menu p-3 shadow-2xl bg-white dark:bg-zinc-900 rounded-[1.5rem] border border-base-200/50 dark:border-zinc-800 w-52 mt-4 animate-in fade-in slide-in-from-top-2">
+            <ul
+              tabindex="0"
+              class="dropdown-content z-[100] menu p-3 shadow-2xl bg-white dark:bg-zinc-900 rounded-[1.5rem] border border-base-200/50 dark:border-zinc-800 w-52 mt-4 animate-in fade-in slide-in-from-top-2"
+            >
               <li class="mb-1">
-                <button (click)="onEdit.emit(task().id)" class="flex items-center gap-3 p-4 rounded-xl hover:bg-primary/10 hover:text-primary transition-colors">
+                <button
+                  (click)="onEdit.emit(task().id)"
+                  class="flex items-center gap-3 p-4 rounded-xl hover:bg-primary/10 hover:text-primary transition-colors"
+                >
                   <i class="fa-solid fa-pen-to-square text-sm"></i>
                   <span class="text-xs font-black uppercase tracking-widest">Editar Tarea</span>
                 </button>
               </li>
               <li>
-                <button (click)="onDelete.emit(task())" class="flex items-center gap-3 p-4 rounded-xl hover:bg-rose-500/10 text-rose-600 transition-colors">
+                <button
+                  (click)="onDelete.emit(task())"
+                  class="flex items-center gap-3 p-4 rounded-xl hover:bg-rose-500/10 text-rose-600 transition-colors"
+                >
                   <i class="fa-solid fa-trash-can text-sm"></i>
-                  <span class="text-xs font-black uppercase tracking-widest">Eliminar Actividad</span>
+                  <span class="text-xs font-black uppercase tracking-widest"
+                    >Eliminar Actividad</span
+                  >
                 </button>
               </li>
             </ul>
@@ -108,37 +155,51 @@
     </div>
 
     <!-- Bottom Metadata Stats -->
-    <div class="mt-8 pt-8 border-t border-base-100 dark:border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+    <div
+      class="mt-8 pt-8 border-t border-base-100 dark:border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-6"
+    >
       <div class="flex items-center gap-8">
         @if (task().submissionSummary) {
           <div class="flex items-center gap-3 group/stat">
-            <div class="w-10 h-10 rounded-xl bg-blue-500/5 flex items-center justify-center text-blue-500 border border-blue-500/10 group-hover/stat:bg-blue-500 group-hover/stat:text-white transition-all">
+            <div
+              class="w-10 h-10 rounded-xl bg-blue-500/5 flex items-center justify-center text-blue-500 border border-blue-500/10 group-hover/stat:bg-blue-500 group-hover/stat:text-white transition-all"
+            >
               <i class="fa-solid fa-users-viewfinder text-sm"></i>
             </div>
             <div>
-              <p class="text-[9px] font-black uppercase tracking-widest text-base-content/20">Recepción</p>
-              <p class="text-xs font-black text-base-content">{{ task().submissionSummary?.deliveredCount }} Entregas</p>
+              <p class="text-[9px] font-black uppercase tracking-widest text-base-content/20">
+                Recepción
+              </p>
+              <p class="text-xs font-black text-base-content">
+                {{ task().submissionSummary?.deliveredCount }} Entregas
+              </p>
             </div>
           </div>
         }
-        
+
         <div class="flex items-center gap-3 group/stat">
-          <div class="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center text-primary border border-primary/10 group-hover/stat:bg-primary group-hover/stat:text-white transition-all">
+          <div
+            class="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center text-primary border border-primary/10 group-hover/stat:bg-primary group-hover/stat:text-white transition-all"
+          >
             <i class="fa-solid fa-clock-rotate-left text-sm"></i>
           </div>
           <div>
-            <p class="text-[9px] font-black uppercase tracking-widest text-base-content/20">Tipo de Control</p>
+            <p class="text-[9px] font-black uppercase tracking-widest text-base-content/20">
+              Tipo de Control
+            </p>
             <p class="text-xs font-black text-base-content">{{ task().type || 'Normal' }}</p>
           </div>
         </div>
       </div>
-      
+
       <a
         [routerLink]="[task().id]"
         class="group/btn h-12 pl-6 pr-4 rounded-2xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-none flex items-center gap-3 hover:scale-[1.05] active:scale-95 transition-all shadow-xl shadow-base-content/10"
       >
         <span class="text-[10px] font-black uppercase tracking-[0.2em]">Acceder al Detalle</span>
-        <div class="w-6 h-6 rounded-lg bg-white/20 dark:bg-zinc-900/10 flex items-center justify-center group-hover/btn:translate-x-1 transition-transform">
+        <div
+          class="w-6 h-6 rounded-lg bg-white/20 dark:bg-zinc-900/10 flex items-center justify-center group-hover/btn:translate-x-1 transition-transform"
+        >
           <i class="fa-solid fa-arrow-right text-[10px]"></i>
         </div>
       </a>

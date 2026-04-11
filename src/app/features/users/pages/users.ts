@@ -1,6 +1,13 @@
 import { DialogModalService } from '@shared/widgets/dialog-modal';
 import { DialogConfirmService } from '@shared/widgets/dialog-confirm';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 import { PermissionCheckStore } from '@core/stores/permission-check.store';
@@ -9,7 +16,10 @@ import { UserStore } from '@features/admin-services/store/user.store';
 import { User } from '../types/user-types';
 import { UserForm } from '../components/user-form/user-form';
 import { UserExportModal } from '../components/user-export-modal/user-export-modal';
-import { UserDatePreset, UserDateRangeFilterComponent } from '../components/user-date-range-filter/user-date-range-filter';
+import {
+  UserDatePreset,
+  UserDateRangeFilterComponent,
+} from '../components/user-date-range-filter/user-date-range-filter';
 import { UsersTableComponent } from '../components/users-table/users-table';
 import { USER_HEADER_CONFIG } from '../config/header.config';
 import { USER_ACTIONS } from '../config/action.config';
@@ -27,7 +37,16 @@ import { ZardFormImports } from '@/shared/components/form';
 
 @Component({
   selector: 'sga-users',
-  imports: [HeaderDetail, UsersTableComponent, FormsModule, ZardInputDirective, ZardButtonComponent, SelectOptionComponent, UserDateRangeFilterComponent, ...ZardFormImports],
+  imports: [
+    HeaderDetail,
+    UsersTableComponent,
+    FormsModule,
+    ZardInputDirective,
+    ZardButtonComponent,
+    SelectOptionComponent,
+    UserDateRangeFilterComponent,
+    ...ZardFormImports,
+  ],
   templateUrl: './users.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -64,7 +83,7 @@ export default class UsersPage implements OnInit {
   ];
 
   constructor() {
-    this.route.queryParams.pipe(takeUntilDestroyed()).subscribe(params => {
+    this.route.queryParams.pipe(takeUntilDestroyed()).subscribe((params) => {
       this.filterSearch.set(params['search'] || '');
       this.filterRole.set(params['roleName'] || '');
       this.filterDatePreset.set((params['datePreset'] || '') as UserDatePreset);
@@ -72,7 +91,7 @@ export default class UsersPage implements OnInit {
       this.filterCreatedTo.set(this.parseDateParam(params['createdTo']));
       this.store.loadAll({
         limit: this.store.pagination().limit,
-        ...params
+        ...params,
       });
     });
   }
@@ -99,7 +118,8 @@ export default class UsersPage implements OnInit {
 
   async onRowAction(e: { action: ActionConfig; context: ActionContext<unknown> }) {
     const row = e.context.row as User;
-    if (e.action.key === 'sessions') this.router.navigate(['/administration/users', row.id, 'sessions']);
+    if (e.action.key === 'sessions')
+      this.router.navigate(['/administration/users', row.id, 'sessions']);
     if (e.action.key === 'toggle-active') {
       this.store.update(row.id, { isActive: !row.isActive }).subscribe();
     }
@@ -111,7 +131,7 @@ export default class UsersPage implements OnInit {
         title: 'Eliminar usuario',
         message: `¿Estás seguro de eliminar al usuario ${row.firstName} ${row.lastName}? Esta acción no se puede deshacer.`,
         acceptButtonProps: { label: 'Eliminar', color: 'danger' },
-        rejectButtonProps: { label: 'Cancelar', color: 'secondary' }
+        rejectButtonProps: { label: 'Cancelar', color: 'secondary' },
       });
 
       if (confirmed) {
@@ -126,7 +146,11 @@ export default class UsersPage implements OnInit {
   }
 
   onLoadMore(cursor: string) {
-    this.store.loadAll({ cursor, limit: this.pagination().limit, ...this.urlParams.getAllParams() });
+    this.store.loadAll({
+      cursor,
+      limit: this.pagination().limit,
+      ...this.urlParams.getAllParams(),
+    });
   }
 
   ngOnInit() {
@@ -173,7 +197,7 @@ export default class UsersPage implements OnInit {
     this.dialog.open(UserExportModal, {
       data: {
         filterSearch: this.filterSearch(),
-        filterRole: this.filterRole()
+        filterRole: this.filterRole(),
       },
       panelClass: 'dialog-top',
       width: '600px',

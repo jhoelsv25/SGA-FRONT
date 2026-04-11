@@ -1,5 +1,4 @@
 <div class="space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-
   <sga-classroom-people-stats
     [teachersCount]="filteredTeachers().length"
     [studentsCount]="filteredStudents().length"
@@ -13,16 +12,15 @@
     [studentsCount]="filteredStudents().length"
   />
 
-  <sga-classroom-people-filters
-    [(search)]="search"
-    (onClear)="clearSearch()"
-  />
+  <sga-classroom-people-filters [(search)]="search" (onClear)="clearSearch()" />
 
   <div class="space-y-12">
     <!-- Docentes Section -->
     <div class="space-y-6">
       <div class="flex items-center gap-4 px-2">
-        <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-sm">
+        <div
+          class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-sm"
+        >
           <i class="fas fa-chalkboard-teacher text-sm"></i>
         </div>
         <h3 class="text-xl font-black text-base-content tracking-tight">Cuerpo Docente</h3>
@@ -30,12 +28,16 @@
 
       <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         @if (loadingTeachers()) {
-          @for (i of [1,2]; track i) {
+          @for (i of [1, 2]; track i) {
             <div class="h-24 bg-base-100/50 rounded-2xl animate-pulse"></div>
           }
         } @else if (filteredTeachers().length === 0) {
-          <div class="col-span-full py-12 px-8 rounded-3xl bg-base-100/50 border border-dashed border-base-200 text-center">
-            <p class="text-sm font-bold text-base-content/30 uppercase tracking-widest">Sin docentes asignados</p>
+          <div
+            class="col-span-full py-12 px-8 rounded-3xl bg-base-100/50 border border-dashed border-base-200 text-center"
+          >
+            <p class="text-sm font-bold text-base-content/30 uppercase tracking-widest">
+              Sin docentes asignados
+            </p>
           </div>
         } @else {
           @for (t of filteredTeachers(); track t.id) {
@@ -48,7 +50,9 @@
     <!-- Estudiantes Section -->
     <div class="space-y-6">
       <div class="flex items-center gap-4 px-2">
-        <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-sm">
+        <div
+          class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-sm"
+        >
           <i class="fas fa-user-graduate text-sm"></i>
         </div>
         <h3 class="text-xl font-black text-base-content tracking-tight">Compañeros de Clase</h3>
@@ -56,12 +60,16 @@
 
       <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         @if (loadingStudents()) {
-          @for (i of [1,2,3,4]; track i) {
+          @for (i of [1, 2, 3, 4]; track i) {
             <div class="h-24 bg-base-100/50 rounded-2xl animate-pulse"></div>
           }
         } @else if (filteredStudents().length === 0) {
-          <div class="col-span-full py-12 px-8 rounded-3xl bg-base-100/50 border border-dashed border-base-200 text-center">
-            <p class="text-sm font-bold text-base-content/30 uppercase tracking-widest">Sin alumnos registrados</p>
+          <div
+            class="col-span-full py-12 px-8 rounded-3xl bg-base-100/50 border border-dashed border-base-200 text-center"
+          >
+            <p class="text-sm font-bold text-base-content/30 uppercase tracking-widest">
+              Sin alumnos registrados
+            </p>
           </div>
         } @else {
           @for (s of filteredStudents(); track s.id) {

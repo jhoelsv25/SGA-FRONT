@@ -18,11 +18,19 @@ import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardFormImports } from '@/shared/components/form';
 import { AuthStore } from '@auth/services/store/auth.store';
 
-
 @Component({
   selector: 'sga-schedules',
-  standalone: true,
-  imports: [CommonModule, HeaderDetail, ScheduleCalendarComponent, FormsModule, SelectOptionComponent, ZardInputDirective, ZardButtonComponent, ...ZardFormImports],
+
+  imports: [
+    CommonModule,
+    HeaderDetail,
+    ScheduleCalendarComponent,
+    FormsModule,
+    SelectOptionComponent,
+    ZardInputDirective,
+    ZardButtonComponent,
+    ...ZardFormImports,
+  ],
   templateUrl: './schedules.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -86,7 +94,13 @@ export default class SchedulesPage {
   });
   readonly showTeacherFilter = computed(() => {
     const roleType = this.roleType();
-    return roleType === 'admin' || roleType === 'superadmin' || roleType === 'director' || roleType === 'subdirector' || roleType === 'ugel';
+    return (
+      roleType === 'admin' ||
+      roleType === 'superadmin' ||
+      roleType === 'director' ||
+      roleType === 'subdirector' ||
+      roleType === 'ugel'
+    );
   });
   readonly showAcademicFilters = computed(() => {
     const roleType = this.roleType();
@@ -94,7 +108,13 @@ export default class SchedulesPage {
   });
   readonly canManagePlanning = computed(() => {
     const roleType = this.roleType();
-    return roleType === 'admin' || roleType === 'superadmin' || roleType === 'director' || roleType === 'subdirector' || roleType === 'ugel';
+    return (
+      roleType === 'admin' ||
+      roleType === 'superadmin' ||
+      roleType === 'director' ||
+      roleType === 'subdirector' ||
+      roleType === 'ugel'
+    );
   });
   readonly summaryCards = computed(() => {
     const list = this.filteredData();
@@ -102,12 +122,16 @@ export default class SchedulesPage {
     const breaks = list.filter((item) => item.blockType === 'break').length;
     const teachers = new Set(
       list
-        .map((item) => typeof item.sectionCourse === 'object' ? item.sectionCourse?.teacher?.id : null)
+        .map((item) =>
+          typeof item.sectionCourse === 'object' ? item.sectionCourse?.teacher?.id : null,
+        )
         .filter((value): value is string => Boolean(value)),
     ).size;
     const sections = new Set(
       list
-        .map((item) => typeof item.sectionCourse === 'object' ? item.sectionCourse?.section?.id : null)
+        .map((item) =>
+          typeof item.sectionCourse === 'object' ? item.sectionCourse?.section?.id : null,
+        )
         .filter((value): value is string => Boolean(value)),
     ).size;
 
@@ -121,7 +145,9 @@ export default class SchedulesPage {
   });
 
   headerActions = computed(() =>
-    this.permissionStore.filterActions(this.store.actions().filter((a) => a.typeAction === 'header')),
+    this.permissionStore.filterActions(
+      this.store.actions().filter((a) => a.typeAction === 'header'),
+    ),
   );
 
   data = computed(() => this.store.data());
@@ -134,43 +160,56 @@ export default class SchedulesPage {
     const courseId = this.courseContextId();
     const teacherId = this.teacherFilterId() || this.teacherContextId();
     const gradeId = this.gradeFilterId();
-    return list.filter((s) => {
-      const teacherLabel =
-        typeof s.sectionCourse === 'object'
-          ? [s.sectionCourse?.teacher?.person?.firstName, s.sectionCourse?.teacher?.person?.lastName]
-              .filter(Boolean)
-              .join(' ')
-              .toLowerCase()
-          : '';
-      const matchSearch =
-        !search ||
-        s.title?.toLowerCase().includes(search) ||
-        s.classroom?.toLowerCase().includes(search) ||
-        s.description?.toLowerCase().includes(search) ||
-        teacherLabel.includes(search) ||
-        (typeof s.sectionCourse === 'object' && s.sectionCourse?.course?.name?.toLowerCase().includes(search)) ||
-        (typeof s.sectionCourse === 'object' && s.sectionCourse?.section?.name?.toLowerCase().includes(search));
-      const matchSection =
-        !sectionId ||
-        (typeof s.sectionCourse === 'object' && s.sectionCourse?.section?.id === sectionId);
-      const matchCourse =
-        !courseId ||
-        (typeof s.sectionCourse === 'object' && s.sectionCourse?.course?.id === courseId);
-      const matchTeacher =
-        !teacherId ||
-        (typeof s.sectionCourse === 'object' && s.sectionCourse?.teacher?.id === teacherId);
-      const matchGrade =
-        !gradeId ||
-        (typeof s.sectionCourse === 'object' && s.sectionCourse?.section?.grade?.id === gradeId);
-      return matchSearch && matchSection && matchCourse && matchTeacher;
-    }).filter((s) => {
-      return !gradeId || (typeof s.sectionCourse === 'object' && s.sectionCourse?.section?.grade?.id === gradeId);
-    });
+    return list
+      .filter((s) => {
+        const teacherLabel =
+          typeof s.sectionCourse === 'object'
+            ? [
+                s.sectionCourse?.teacher?.person?.firstName,
+                s.sectionCourse?.teacher?.person?.lastName,
+              ]
+                .filter(Boolean)
+                .join(' ')
+                .toLowerCase()
+            : '';
+        const matchSearch =
+          !search ||
+          s.title?.toLowerCase().includes(search) ||
+          s.classroom?.toLowerCase().includes(search) ||
+          s.description?.toLowerCase().includes(search) ||
+          teacherLabel.includes(search) ||
+          (typeof s.sectionCourse === 'object' &&
+            s.sectionCourse?.course?.name?.toLowerCase().includes(search)) ||
+          (typeof s.sectionCourse === 'object' &&
+            s.sectionCourse?.section?.name?.toLowerCase().includes(search));
+        const matchSection =
+          !sectionId ||
+          (typeof s.sectionCourse === 'object' && s.sectionCourse?.section?.id === sectionId);
+        const matchCourse =
+          !courseId ||
+          (typeof s.sectionCourse === 'object' && s.sectionCourse?.course?.id === courseId);
+        const matchTeacher =
+          !teacherId ||
+          (typeof s.sectionCourse === 'object' && s.sectionCourse?.teacher?.id === teacherId);
+        const matchGrade =
+          !gradeId ||
+          (typeof s.sectionCourse === 'object' && s.sectionCourse?.section?.grade?.id === gradeId);
+        return matchSearch && matchSection && matchCourse && matchTeacher;
+      })
+      .filter((s) => {
+        return (
+          !gradeId ||
+          (typeof s.sectionCourse === 'object' && s.sectionCourse?.section?.grade?.id === gradeId)
+        );
+      });
   });
 
   loading = computed(() => this.store.loading());
   readonly sectionGroups = computed(() => {
-    const groups = new Map<string, { id: string; gradeName: string; sectionName: string; total: number }>();
+    const groups = new Map<
+      string,
+      { id: string; gradeName: string; sectionName: string; total: number }
+    >();
 
     for (const item of this.data()) {
       const sectionCourse = typeof item.sectionCourse === 'object' ? item.sectionCourse : null;
@@ -216,7 +255,10 @@ export default class SchedulesPage {
       const sectionCourse = typeof item.sectionCourse === 'object' ? item.sectionCourse : null;
       const teacher = sectionCourse?.teacher;
       if (teacher?.id) {
-        const name = [teacher.person?.firstName, teacher.person?.lastName].filter(Boolean).join(' ').trim() || teacher.teacherCode || 'Docente';
+        const name =
+          [teacher.person?.firstName, teacher.person?.lastName].filter(Boolean).join(' ').trim() ||
+          teacher.teacherCode ||
+          'Docente';
         seen.set(teacher.id, name);
       }
     }
@@ -234,7 +276,10 @@ export default class SchedulesPage {
       if (!currentGradeId) return true;
       const match = this.data().find((item) => {
         const sectionCourse = typeof item.sectionCourse === 'object' ? item.sectionCourse : null;
-        return sectionCourse?.section?.id === group.id && sectionCourse?.section?.grade?.id === currentGradeId;
+        return (
+          sectionCourse?.section?.id === group.id &&
+          sectionCourse?.section?.grade?.id === currentGradeId
+        );
       });
       return Boolean(match);
     });
@@ -247,7 +292,9 @@ export default class SchedulesPage {
       })),
     ];
   });
-  readonly activeSectionGroupId = computed(() => this.sectionQuickFilterId() || this.sectionContextId());
+  readonly activeSectionGroupId = computed(
+    () => this.sectionQuickFilterId() || this.sectionContextId(),
+  );
 
   constructor() {
     this.route.queryParamMap.subscribe((params) => {
@@ -353,7 +400,10 @@ export default class SchedulesPage {
       return;
     }
     const option = this.sectionGroups().find((item) => item.id === next);
-    this.selectSectionGroup(next, option ? `${option.gradeName} · Sección ${option.sectionName}` : 'Sección');
+    this.selectSectionGroup(
+      next,
+      option ? `${option.gradeName} · Sección ${option.sectionName}` : 'Sección',
+    );
   }
 
   openForm(current?: Schedule | null) {

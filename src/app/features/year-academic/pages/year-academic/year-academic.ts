@@ -25,13 +25,24 @@ const STATUS_OPTIONS = [
   { value: 'planned', label: 'Planificado' },
   { value: 'ongoing', label: 'En curso' },
   { value: 'completed', label: 'Cerrado' },
-  { value: 'cancelled', label: 'Cancelado' }];
-
+  { value: 'cancelled', label: 'Cancelado' },
+];
 
 @Component({
   selector: 'sga-year-academic',
-  standalone: true,
-  imports: [CommonModule, HeaderDetail, YearAcademicCardComponent, ZardEmptyComponent, ZardSkeletonComponent, SelectOptionComponent, FormsModule, ZardInputDirective, ZardButtonComponent, ...ZardFormImports],
+
+  imports: [
+    CommonModule,
+    HeaderDetail,
+    YearAcademicCardComponent,
+    ZardEmptyComponent,
+    ZardSkeletonComponent,
+    SelectOptionComponent,
+    FormsModule,
+    ZardInputDirective,
+    ZardButtonComponent,
+    ...ZardFormImports,
+  ],
   templateUrl: './year-academic.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -58,9 +69,7 @@ export default class YearAcademicComponent {
     const status = this.filterStatus();
     return list.filter((y) => {
       const matchSearch =
-        !search ||
-        y.name.toLowerCase().includes(search) ||
-        String(y.year).includes(search);
+        !search || y.name.toLowerCase().includes(search) || String(y.year).includes(search);
       const matchStatus = !status || y.status === status;
       return matchSearch && matchStatus;
     });
@@ -74,10 +83,18 @@ export default class YearAcademicComponent {
 
   readonly statusOptions = STATUS_OPTIONS;
   readonly canManageAcademicYears = computed(() =>
-    this.permissionStore.hasAny('academic_year:create', 'academic_year:update', 'academic_year:delete'),
+    this.permissionStore.hasAny(
+      'academic_year:create',
+      'academic_year:update',
+      'academic_year:delete',
+    ),
   );
   readonly canManageAcademicPeriods = computed(() =>
-    this.permissionStore.hasAny('academic_period:create', 'academic_period:update', 'academic_period:delete'),
+    this.permissionStore.hasAny(
+      'academic_period:create',
+      'academic_period:update',
+      'academic_period:delete',
+    ),
   );
   readonly hasActiveFilters = computed(() => !!this.searchTerm().trim() || !!this.filterStatus());
 
@@ -86,7 +103,9 @@ export default class YearAcademicComponent {
   }
 
   headerActions = computed(() =>
-    this.permissionStore.filterActions(this.store.actions().filter((a) => a.typeAction === 'header')),
+    this.permissionStore.filterActions(
+      this.store.actions().filter((a) => a.typeAction === 'header'),
+    ),
   );
 
   rowActions = computed(() =>
@@ -187,7 +206,7 @@ export default class YearAcademicComponent {
         current: this.store.current(),
       },
       width: '800px',
-      maxHeight: '80vh'
+      maxHeight: '80vh',
     });
     ref.closed.subscribe(() => this.onRefresh());
   }

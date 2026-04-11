@@ -1,7 +1,14 @@
 <form [formGroup]="form" class="grid gap-4" (ngSubmit)="submit()">
   <header class="mb-2 flex items-center justify-between">
     <h2 class="text-lg font-semibold">Registro manual de asistencia</h2>
-    <button type="button" z-button zColor="secondary" zType="ghost" zShape="circle" (click)="close()">
+    <button
+      type="button"
+      z-button
+      zColor="secondary"
+      zType="ghost"
+      zShape="circle"
+      (click)="close()"
+    >
       <i class="fas fa-times"></i>
     </button>
   </header>
@@ -9,37 +16,37 @@
   <div class="grid gap-4">
     <div>
       <p class="mb-1 text-xs font-medium text-slate-600">Docente</p>
-      <sga-teacher-select formControlName="teacherId" placeholder="Seleccionar docente"></sga-teacher-select>
+      <sga-teacher-select
+        formControlName="teacherId"
+        placeholder="Seleccionar docente"
+      ></sga-teacher-select>
     </div>
 
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
       <div>
         <p class="mb-1 text-xs font-medium text-slate-600">Estado</p>
-      <z-select-option
-        [options]="statusOptions"
-        formControlName="status"
-        [searchable]="false"></z-select-option>
+        <z-select-option
+          [options]="statusOptions"
+          formControlName="status"
+          [searchable]="false"
+        ></z-select-option>
       </div>
       <div>
         <p class="mb-1 text-xs font-medium text-slate-600">Hora entrada</p>
-        <input z-input w-full
-          type="time"
-          formControlName="checkInTime"
-         />
+        <input z-input w-full type="time" formControlName="checkInTime" />
       </div>
     </div>
 
     <div>
       <p class="mb-1 text-xs font-medium text-slate-600">Observaciones</p>
-      <input z-input w-full
-        formControlName="observations"
-        placeholder="Opcional"
-       />
+      <input z-input w-full formControlName="observations" placeholder="Opcional" />
     </div>
   </div>
 
   <footer class="mt-2 flex justify-end gap-2">
-    <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">Cancelar</button>
+    <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">
+      Cancelar
+    </button>
     <button type="submit" z-button zColor="success" [disabled]="form.invalid || loading">
       @if (loading) {
         <i class="fas fa-spinner fa-spin mr-2"></i>

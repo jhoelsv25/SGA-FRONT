@@ -3,28 +3,34 @@
   <div class="space-y-12">
     @if (loading() && !groupedPermissions().length) {
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        @for (i of [1,2,3,4,5,6]; track i) {
-          <div class="h-32 w-full rounded-[2rem] bg-base-200/50 animate-pulse border border-base-200 shadow-inner"></div>
+        @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+          <div
+            class="h-32 w-full rounded-[2rem] bg-base-200/50 animate-pulse border border-base-200 shadow-inner"
+          ></div>
         }
       </div>
-    } @else { 
+    } @else {
       @for (group of groupedPermissions(); track group.name) {
         <section class="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div class="flex items-center gap-5 px-4">
-            <h2 class="text-xl font-black text-base-content tracking-tighter uppercase italic flex items-center gap-3">
+            <h2
+              class="text-xl font-black text-base-content tracking-tighter uppercase italic flex items-center gap-3"
+            >
               <span class="text-primary opacity-50 font-serif">#</span>
               {{ group.name }}
             </h2>
             <div class="flex-1 h-0.5 bg-gradient-to-r from-base-content/5 to-transparent"></div>
-            <div class="px-4 py-1 bg-base-100 border border-base-200 text-base-content/50 rounded-full text-[10px] font-black tracking-widest shadow-sm">
+            <div
+              class="px-4 py-1 bg-base-100 border border-base-200 text-base-content/50 rounded-full text-[10px] font-black tracking-widest shadow-sm"
+            >
               {{ group.permissions.length }} CAPACIDADES
             </div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
             @for (permission of group.permissions; track permission.id) {
-              <sga-permission-card 
-                [permission]="permission" 
+              <sga-permission-card
+                [permission]="permission"
                 (edit)="editPermission($event)"
                 (delete)="deletePermission($event)"
               >
@@ -33,22 +39,22 @@
           </div>
         </section>
       } @empty {
-    <z-empty 
-      zIcon="search" 
-      zTitle="SIN RESULTADOS"
-      zDescription="La búsqueda no coincide con ninguna capacidad técnica del sistema."
-      class="bg-base-100 border-2 border-dashed border-base-200 rounded-[3rem] p-16 animate-in zoom-in-95 duration-500"
-    >
-      <button 
-        z-button 
-        zType="outline" 
-        (click)="openCreateDialog()"
-        class="mt-8 px-12 h-14 rounded-full border-2 border-primary/20 hover:bg-primary/5 hover:border-primary transition-all font-black tracking-widest uppercase text-xs"
-      >
-        CREAR NUEVA CAPACIDAD
-      </button>
-    </z-empty>
-      } 
+        <z-empty
+          zIcon="search"
+          zTitle="SIN RESULTADOS"
+          zDescription="La búsqueda no coincide con ninguna capacidad técnica del sistema."
+          class="bg-base-100 border-2 border-dashed border-base-200 rounded-[3rem] p-16 animate-in zoom-in-95 duration-500"
+        >
+          <button
+            z-button
+            zType="outline"
+            (click)="openCreateDialog()"
+            class="mt-8 px-12 h-14 rounded-full border-2 border-primary/20 hover:bg-primary/5 hover:border-primary transition-all font-black tracking-widest uppercase text-xs"
+          >
+            CREAR NUEVA CAPACIDAD
+          </button>
+        </z-empty>
+      }
     }
   </div>
 </div>

@@ -22,6 +22,6 @@ export default [
   {
     path: '',
     redirectTo: 'records',
-    pathMatch: 'full'
-  }
+    pathMatch: 'full',
+  },
 ] as Routes;

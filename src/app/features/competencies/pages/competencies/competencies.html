@@ -4,14 +4,25 @@
       <div class="flex items-center justify-between border-b border-base-200 pb-3">
         <h3 class="text-xs font-bold uppercase tracking-widest text-base-content/50">Filtros</h3>
         @if (hasActiveFilters()) {
-          <button type="button" class="text-xs font-semibold uppercase tracking-widest text-primary transition hover:opacity-80" (click)="clearFilters()">Limpiar</button>
+          <button
+            type="button"
+            class="text-xs font-semibold uppercase tracking-widest text-primary transition hover:opacity-80"
+            (click)="clearFilters()"
+          >
+            Limpiar
+          </button>
         }
       </div>
 
       <z-form-field>
         <label z-form-label>Buscar</label>
         <z-form-control>
-          <input z-input placeholder="Buscar competencias por nombre o código..." [ngModel]="searchTerm()" (ngModelChange)="onSearch($event)" />
+          <input
+            z-input
+            placeholder="Buscar competencias por nombre o código..."
+            [ngModel]="searchTerm()"
+            (ngModelChange)="onSearch($event)"
+          />
         </z-form-control>
       </z-form-field>
     </div>
@@ -27,10 +38,14 @@
   />
 
   @if (courseContextId()) {
-    <div class="rounded-4xl border border-primary/15 bg-primary/8 px-5 py-4 text-sm text-primary dark:bg-primary/10">
+    <div
+      class="rounded-4xl border border-primary/15 bg-primary/8 px-5 py-4 text-sm text-primary dark:bg-primary/10"
+    >
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div class="space-y-1">
-          <p class="text-[10px] font-black uppercase tracking-[0.24em] text-primary/70">Contexto de curso</p>
+          <p class="text-[10px] font-black uppercase tracking-[0.24em] text-primary/70">
+            Contexto de curso
+          </p>
           <p class="font-semibold">
             Mostrando competencias del curso
             <span class="font-black">{{ courseContextName() || 'seleccionado' }}</span>
@@ -51,29 +66,35 @@
 
   <div class="grid grid-cols-1 mt-6 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
     @if (loading() && !data().length) {
-    @for (i of skeletonItems; track i) {
-    <z-skeleton [class]="'h-[220px] w-full rounded-4xl border border-base-200'"></z-skeleton>
-    }
+      @for (i of skeletonItems; track i) {
+        <z-skeleton [class]="'h-[220px] w-full rounded-4xl border border-base-200'"></z-skeleton>
+      }
     } @else {
-    @for (group of groupedData(); track group.key) {
-
-
+      @for (group of groupedData(); track group.key) {
         <div class="grid grid-cols-1 gap-6">
           @for (competency of group.items; track competency.id) {
-            <sga-competency-card [competency]="competency" (edit)="editCompetency(competency)"
-              (delete)="deleteCompetency(competency)" />
+            <sga-competency-card
+              [competency]="competency"
+              (edit)="editCompetency(competency)"
+              (delete)="deleteCompetency(competency)"
+            />
           }
         </div>
-    } @empty {
-    <div class="col-span-full">
-      <z-empty zIcon="target" zTitle="Sin competencias"
-        zDescription="Aún no hay competencias. Crea la primera y asígnala a un curso.">
-        @if (canManageCompetencies()) {
-          <button z-button type="button" class="mt-4" (click)="createFromEmpty()">Crear competencia</button>
-        }
-      </z-empty>
-    </div>
-    }
+      } @empty {
+        <div class="col-span-full">
+          <z-empty
+            zIcon="target"
+            zTitle="Sin competencias"
+            zDescription="Aún no hay competencias. Crea la primera y asígnala a un curso."
+          >
+            @if (canManageCompetencies()) {
+              <button z-button type="button" class="mt-4" (click)="createFromEmpty()">
+                Crear competencia
+              </button>
+            }
+          </z-empty>
+        </div>
+      }
     }
   </div>
 </div>

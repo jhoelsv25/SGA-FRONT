@@ -1,4 +1,8 @@
-<form [formGroup]="form" class="flex max-h-[calc(80vh-3rem)] flex-col overflow-hidden" (ngSubmit)="onSubmit()">
+<form
+  [formGroup]="form"
+  class="flex max-h-[calc(80vh-3rem)] flex-col overflow-hidden"
+  (ngSubmit)="onSubmit()"
+>
   <header class="flex items-center justify-between mb-4">
     <h2 class="text-lg font-semibold">{{ title() }}</h2>
     <button
@@ -13,48 +17,72 @@
     </button>
   </header>
   <div class="flex-1 overflow-y-auto pr-1">
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div>
-      <label class="label-form" for="section">Sección</label>
-      <sga-section-select id="section" formControlName="section" placeholder="Seleccionar sección"></sga-section-select>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label class="label-form" for="section">Sección</label>
+        <sga-section-select
+          id="section"
+          formControlName="section"
+          placeholder="Seleccionar sección"
+        ></sga-section-select>
+      </div>
+      <div>
+        <label class="label-form" for="course">Curso</label>
+        <sga-course-select
+          id="course"
+          formControlName="course"
+          placeholder="Seleccionar curso"
+        ></sga-course-select>
+      </div>
+      <div>
+        <label class="label-form" for="academicYear">Año académico</label>
+        <sga-year-academic-select
+          id="academicYear"
+          formControlName="academicYear"
+          placeholder="Seleccionar año"
+        ></sga-year-academic-select>
+      </div>
+      <div>
+        <label class="label-form" for="teacher">Docente</label>
+        <sga-teacher-select
+          id="teacher"
+          formControlName="teacher"
+          placeholder="Seleccionar docente"
+        ></sga-teacher-select>
+      </div>
+      <div>
+        <label class="label-form" for="modality">Modalidad</label>
+        <z-select-option
+          id="modality"
+          [options]="modalityOptions"
+          formControlName="modality"
+          [searchable]="false"
+        ></z-select-option>
+      </div>
+      <div>
+        <label class="label-form" for="maxStudents">Máx. estudiantes</label>
+        <input z-input w-full id="maxStudents" type="number" formControlName="maxStudents" />
+      </div>
+      <div>
+        <label class="label-form" for="enrolledStudents">Matriculados</label>
+        <input
+          z-input
+          w-full
+          id="enrolledStudents"
+          type="number"
+          formControlName="enrolledStudents"
+        />
+      </div>
+      <div class="md:col-span-2">
+        <label class="label-form" for="status">Estado</label>
+        <z-select-option
+          id="status"
+          [options]="statusOptions"
+          formControlName="status"
+          [searchable]="false"
+        ></z-select-option>
+      </div>
     </div>
-    <div>
-      <label class="label-form" for="course">Curso</label>
-      <sga-course-select id="course" formControlName="course" placeholder="Seleccionar curso"></sga-course-select>
-    </div>
-    <div>
-      <label class="label-form" for="academicYear">Año académico</label>
-      <sga-year-academic-select id="academicYear" formControlName="academicYear" placeholder="Seleccionar año"></sga-year-academic-select>
-    </div>
-    <div>
-      <label class="label-form" for="teacher">Docente</label>
-      <sga-teacher-select id="teacher" formControlName="teacher" placeholder="Seleccionar docente"></sga-teacher-select>
-    </div>
-    <div>
-      <label class="label-form" for="modality">Modalidad</label>
-      <z-select-option
-        id="modality"
-        [options]="modalityOptions"
-        formControlName="modality"
-        [searchable]="false"></z-select-option>
-    </div>
-    <div>
-      <label class="label-form" for="maxStudents">Máx. estudiantes</label>
-      <input z-input w-full id="maxStudents" type="number" formControlName="maxStudents"  />
-    </div>
-    <div>
-      <label class="label-form" for="enrolledStudents">Matriculados</label>
-      <input z-input w-full id="enrolledStudents" type="number" formControlName="enrolledStudents"  />
-    </div>
-    <div class="md:col-span-2">
-      <label class="label-form" for="status">Estado</label>
-      <z-select-option
-        id="status"
-        [options]="statusOptions"
-        formControlName="status"
-        [searchable]="false"></z-select-option>
-    </div>
-  </div>
   </div>
   <footer class="flex shrink-0 justify-end gap-2 mt-4 border-t border-base-200 pt-4">
     <button type="button" z-button zColor="secondary" zType="outline" (click)="onClose()">

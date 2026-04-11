@@ -2,16 +2,29 @@
   <ng-template #filters>
     <div class="p-5 flex flex-col gap-4 min-w-80 bg-card rounded-2xl relative">
       <div class="flex items-center justify-between pb-2 border-b border-base-200">
-        <h3 class="text-xs font-bold text-base-content/50 uppercase tracking-widest">Filtros Activos</h3>
+        <h3 class="text-xs font-bold text-base-content/50 uppercase tracking-widest">
+          Filtros Activos
+        </h3>
         @if (filterSearch() || filterStatus()) {
-          <button type="button" class="text-xs text-primary font-medium hover:underline" (click)="clearFilters()">Limpiar</button>
+          <button
+            type="button"
+            class="text-xs text-primary font-medium hover:underline"
+            (click)="clearFilters()"
+          >
+            Limpiar
+          </button>
         }
       </div>
 
       <z-form-field>
         <label z-form-label>Buscar</label>
         <z-form-control>
-          <input z-input placeholder="Nombre Estudiante / Codigo..." [ngModel]="filterSearch()" (ngModelChange)="filterSearch.set($event)" />
+          <input
+            z-input
+            placeholder="Nombre Estudiante / Codigo..."
+            [ngModel]="filterSearch()"
+            (ngModelChange)="filterSearch.set($event)"
+          />
         </z-form-control>
       </z-form-field>
 
@@ -39,12 +52,16 @@
     (action)="onHeaderAction($event)"
     [filterTemplate]="filters"
     [hasActiveFilters]="hasActiveFilters()"
-   />
+  />
   @if (studentContextId()) {
-    <div class="mb-6 rounded-4xl border border-primary/15 bg-primary/8 px-5 py-4 text-sm text-primary dark:bg-primary/10">
+    <div
+      class="mb-6 rounded-4xl border border-primary/15 bg-primary/8 px-5 py-4 text-sm text-primary dark:bg-primary/10"
+    >
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div class="space-y-1">
-          <p class="text-[10px] font-black uppercase tracking-[0.24em] text-primary/70">Contexto de estudiante</p>
+          <p class="text-[10px] font-black uppercase tracking-[0.24em] text-primary/70">
+            Contexto de estudiante
+          </p>
           <p class="font-semibold">
             Mostrando matrículas de
             <span class="font-black">{{ studentContextName() || 'estudiante seleccionado' }}</span>
@@ -64,13 +81,21 @@
   }
 
   @if (sectionCourseContextId()) {
-    <div class="mb-6 rounded-4xl border border-secondary/15 bg-secondary/8 px-5 py-4 text-sm text-secondary-foreground">
+    <div
+      class="mb-6 rounded-4xl border border-secondary/15 bg-secondary/8 px-5 py-4 text-sm text-secondary-foreground"
+    >
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div class="space-y-1">
-          <p class="text-[10px] font-black uppercase tracking-[0.24em] text-secondary-foreground/70">Contexto de curso-sección</p>
+          <p
+            class="text-[10px] font-black uppercase tracking-[0.24em] text-secondary-foreground/70"
+          >
+            Contexto de curso-sección
+          </p>
           <p class="font-semibold">
             Mostrando matrículas para
-            <span class="font-black">{{ sectionCourseContextLabel() || 'la asignación seleccionada' }}</span>
+            <span class="font-black">{{
+              sectionCourseContextLabel() || 'la asignación seleccionada'
+            }}</span>
           </p>
         </div>
         <button
@@ -88,21 +113,32 @@
     <section class="mb-6 rounded-4xl border border-base-200 bg-card p-5">
       <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div class="space-y-2">
-          <p class="text-[10px] font-black uppercase tracking-[0.24em] text-primary/70">Asignación masiva</p>
+          <p class="text-[10px] font-black uppercase tracking-[0.24em] text-primary/70">
+            Asignación masiva
+          </p>
           <h3 class="text-xl font-black tracking-tight">Agregar estudiantes a esta asignación</h3>
           <p class="text-sm text-base-content/60">
             Busca estudiantes, selecciónalos y regístralos en lote para
-            <span class="font-semibold">{{ sectionCourseContextLabel() || 'el curso-sección actual' }}</span>.
+            <span class="font-semibold">{{
+              sectionCourseContextLabel() || 'el curso-sección actual'
+            }}</span
+            >.
           </p>
         </div>
         <div class="flex items-center gap-3">
-          <span class="rounded-full bg-base-200 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-base-content/70">
+          <span
+            class="rounded-full bg-base-200 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-base-content/70"
+          >
             {{ occupiedSlots() }}/{{ maxSlots() || '∞' }} ocupados
           </span>
-          <span class="rounded-full bg-success/10 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-success">
+          <span
+            class="rounded-full bg-success/10 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-success"
+          >
             {{ remainingSlots() }} cupos libres
           </span>
-          <span class="rounded-full bg-primary/10 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-primary">
+          <span
+            class="rounded-full bg-primary/10 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-primary"
+          >
             {{ selectedStudentsCount() }} seleccionado(s)
           </span>
           <button
@@ -131,11 +167,15 @@
         </z-form-field>
 
         @if (!hasCapacity()) {
-          <div class="mt-4 rounded-3xl border border-warning/20 bg-warning/10 px-4 py-3 text-sm font-semibold text-warning">
+          <div
+            class="mt-4 rounded-3xl border border-warning/20 bg-warning/10 px-4 py-3 text-sm font-semibold text-warning"
+          >
             Esta asignación ya alcanzó su capacidad máxima. No se pueden agregar más estudiantes.
           </div>
         } @else if (selectedStudentsCount() > remainingSlots() && maxSlots() > 0) {
-          <div class="mt-4 rounded-3xl border border-warning/20 bg-warning/10 px-4 py-3 text-sm font-semibold text-warning">
+          <div
+            class="mt-4 rounded-3xl border border-warning/20 bg-warning/10 px-4 py-3 text-sm font-semibold text-warning"
+          >
             La selección supera los cupos disponibles. Reduce la selección para continuar.
           </div>
         }
@@ -167,7 +207,8 @@
                 <p class="text-xs text-primary/80">{{ student.grade || 'Sin grado' }}</p>
                 @if (occupiedEnrollmentMap()[student.id]; as existingEnrollment) {
                   <p class="text-[11px] font-bold text-warning">
-                    Ya está matriculado en Sección {{ existingEnrollment.section.name || '-' }} para el mismo año.
+                    Ya está matriculado en Sección {{ existingEnrollment.section.name || '-' }} para
+                    el mismo año.
                   </p>
                 } @else if (!canSelectStudent(student.id) && maxSlots() > 0) {
                   <p class="text-[11px] font-bold text-warning">
@@ -177,7 +218,9 @@
               </div>
             </label>
           } @empty {
-            <div class="col-span-full rounded-3xl border border-dashed border-base-300 bg-background/60 p-6">
+            <div
+              class="col-span-full rounded-3xl border border-dashed border-base-300 bg-background/60 p-6"
+            >
               <z-empty
                 zIcon="users"
                 zTitle="Sin estudiantes disponibles"
@@ -245,11 +288,17 @@
       }
     </section>
   } @else {
-    <div class="rounded-[var(--radius-xl)] border border-dashed border-base-300 bg-background/60 p-8">
+    <div
+      class="rounded-[var(--radius-xl)] border border-dashed border-base-300 bg-background/60 p-8"
+    >
       <z-empty
         zIcon="file-text"
         zTitle="Sin matrículas"
-        [zDescription]="studentContextId() ? 'Este estudiante todavía no tiene matrículas registradas.' : 'No se encontraron matrículas con los filtros actuales.'"
+        [zDescription]="
+          studentContextId()
+            ? 'Este estudiante todavía no tiene matrículas registradas.'
+            : 'No se encontraron matrículas con los filtros actuales.'
+        "
       ></z-empty>
     </div>
   }

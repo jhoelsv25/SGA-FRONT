@@ -4,22 +4,38 @@
       <div class="flex items-center justify-between border-b border-base-200 pb-3">
         <h3 class="text-xs font-bold uppercase tracking-widest text-base-content/50">Filtros</h3>
         @if (hasActiveFilters()) {
-          <button type="button" class="text-xs font-semibold uppercase tracking-widest text-primary transition hover:opacity-80" (click)="clearFilters()">Limpiar</button>
+          <button
+            type="button"
+            class="text-xs font-semibold uppercase tracking-widest text-primary transition hover:opacity-80"
+            (click)="clearFilters()"
+          >
+            Limpiar
+          </button>
         }
       </div>
 
       <z-form-field>
         <label z-form-label>Buscar</label>
         <z-form-control>
-          <input z-input placeholder="Buscar cursos por nombre o código..." [ngModel]="searchTerm()" (ngModelChange)="onSearch($event)" />
+          <input
+            z-input
+            placeholder="Buscar cursos por nombre o código..."
+            [ngModel]="searchTerm()"
+            (ngModelChange)="onSearch($event)"
+          />
         </z-form-control>
       </z-form-field>
 
       <z-form-field>
         <label z-form-label>Tipo</label>
         <z-form-control>
-          <z-select-option [options]="typeOptions" [ngModel]="filterType()" [placeholder]="'Todos'"
-            [searchable]="false" (ngModelChange)="onFilterType($event)"></z-select-option>
+          <z-select-option
+            [options]="typeOptions"
+            [ngModel]="filterType()"
+            [placeholder]="'Todos'"
+            [searchable]="false"
+            (ngModelChange)="onFilterType($event)"
+          ></z-select-option>
         </z-form-control>
       </z-form-field>
     </div>
@@ -35,10 +51,14 @@
   />
 
   @if (gradeContextId()) {
-    <div class="rounded-4xl border border-primary/15 bg-primary/8 px-5 py-4 text-sm text-primary dark:bg-primary/10">
+    <div
+      class="rounded-4xl border border-primary/15 bg-primary/8 px-5 py-4 text-sm text-primary dark:bg-primary/10"
+    >
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div class="space-y-1">
-          <p class="text-[10px] font-black uppercase tracking-[0.24em] text-primary/70">Contexto de grado</p>
+          <p class="text-[10px] font-black uppercase tracking-[0.24em] text-primary/70">
+            Contexto de grado
+          </p>
           <p class="font-semibold">
             Mostrando cursos del grado
             <span class="font-black">{{ gradeContextName() || 'seleccionado' }}</span>
@@ -58,10 +78,14 @@
   }
 
   @if (subjectAreaContextId()) {
-    <div class="rounded-4xl border border-primary/15 bg-primary/8 px-5 py-4 text-sm text-primary dark:bg-primary/10">
+    <div
+      class="rounded-4xl border border-primary/15 bg-primary/8 px-5 py-4 text-sm text-primary dark:bg-primary/10"
+    >
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div class="space-y-1">
-          <p class="text-[10px] font-black uppercase tracking-[0.24em] text-primary/70">Contexto de área</p>
+          <p class="text-[10px] font-black uppercase tracking-[0.24em] text-primary/70">
+            Contexto de área
+          </p>
           <p class="font-semibold">
             Mostrando cursos del área
             <span class="font-black">{{ subjectAreaContextName() || 'seleccionada' }}</span>
@@ -109,10 +133,15 @@
         </section>
       } @empty {
         <div class="col-span-full">
-          <z-empty zIcon="book" zTitle="Sin cursos"
-            zDescription="Aún no hay cursos configurados. Crea el primero para asignarlo a un área curricular y nivel.">
+          <z-empty
+            zIcon="book"
+            zTitle="Sin cursos"
+            zDescription="Aún no hay cursos configurados. Crea el primero para asignarlo a un área curricular y nivel."
+          >
             @if (canManageCourses()) {
-              <button z-button type="button" class="mt-4" (click)="createFromEmpty()">Crear curso</button>
+              <button z-button type="button" class="mt-4" (click)="createFromEmpty()">
+                Crear curso
+              </button>
             }
           </z-empty>
         </div>

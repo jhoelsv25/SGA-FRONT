@@ -2,7 +2,11 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { ApiParams, ApiEntityResponse, DataResponse } from '@core/types/pagination-types';
-import type { SectionCourse, SectionCourseCreate, SectionCourseUpdate } from '../types/section-course-types';
+import type {
+  SectionCourse,
+  SectionCourseCreate,
+  SectionCourseUpdate,
+} from '../types/section-course-types';
 
 export type { SectionCourse };
 
@@ -30,9 +34,9 @@ export class SectionCourseApi {
   }
 
   getById(id: string): Observable<SectionCourse> {
-    return this.http.get<GetOneRes>(`${this.baseUrl}/${id}`).pipe(
-      map((res) => ('data' in res && res.data ? res.data : (res as SectionCourse))),
-    );
+    return this.http
+      .get<GetOneRes>(`${this.baseUrl}/${id}`)
+      .pipe(map((res) => ('data' in res && res.data ? res.data : (res as SectionCourse))));
   }
 
   create(payload: SectionCourseCreate): Observable<ApiEntityResponse<SectionCourse>> {

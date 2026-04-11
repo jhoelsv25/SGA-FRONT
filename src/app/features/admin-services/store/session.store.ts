@@ -74,16 +74,16 @@ export const SessionStore = signalStore(
       api.delete(id).subscribe({
         next: () => {
           const currentSessions = store.sessions();
-          patchState(store, { 
-            sessions: currentSessions.filter(s => s.id !== id), 
-            loading: false 
+          patchState(store, {
+            sessions: currentSessions.filter((s) => s.id !== id),
+            loading: false,
           });
           toast.success('Sesión revocada exitosamente');
         },
         error: (err) => {
           patchState(store, { loading: false });
           toast.error(err.message || 'Error al revocar la sesión');
-        }
+        },
       });
     },
   })),

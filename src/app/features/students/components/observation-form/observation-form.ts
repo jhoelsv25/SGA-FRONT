@@ -10,11 +10,18 @@ import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardCheckboxComponent } from '@/shared/components/checkbox';
 import { ZardInputDirective } from '@/shared/components/input';
 
-
 @Component({
   selector: 'sga-observation-form',
-  standalone: true,
-  imports: [ReactiveFormsModule, ZardButtonComponent, ZardCheckboxComponent, SelectOptionComponent, ZardInputDirective, StudentSelect, TeacherSelect],
+
+  imports: [
+    ReactiveFormsModule,
+    ZardButtonComponent,
+    ZardCheckboxComponent,
+    SelectOptionComponent,
+    ZardInputDirective,
+    StudentSelect,
+    TeacherSelect,
+  ],
   templateUrl: './observation-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -39,15 +46,16 @@ export class ObservationForm implements OnInit {
   typeOptions: LocalSelectOption[] = [
     { value: 'behavioral', label: 'Conducta' },
     { value: 'academic', label: 'Académico' },
-    { value: 'social', label: 'Social' }];
+    { value: 'social', label: 'Social' },
+  ];
 
   ngOnInit(): void {
     this.current = this.data?.current ?? null;
     if (this.current) {
       const o = this.current;
       this.form.patchValue({
-        student: (o.student as {  id?: string  })?.id ?? null,
-        teacher: (o.teacher as {  id?: string  })?.id ?? null,
+        student: (o.student as { id?: string })?.id ?? null,
+        teacher: (o.teacher as { id?: string })?.id ?? null,
         date: o.date?.slice(0, 10) ?? new Date().toISOString().slice(0, 10),
         type: o.type,
         observation: o.observation,

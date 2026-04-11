@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'sga-classroom-grades-header',
-  standalone: true,
+
   imports: [CommonModule],
   templateUrl: './classroom-grades-header.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

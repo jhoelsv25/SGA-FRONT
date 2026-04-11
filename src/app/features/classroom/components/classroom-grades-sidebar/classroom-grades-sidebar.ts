@@ -4,7 +4,7 @@ import { ClassroomGradeRecord } from '../../services/classroom-api';
 
 @Component({
   selector: 'sga-classroom-grades-sidebar',
-  standalone: true,
+
   imports: [CommonModule],
   templateUrl: './classroom-grades-sidebar.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

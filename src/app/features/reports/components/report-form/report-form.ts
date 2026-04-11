@@ -2,13 +2,24 @@ export type LocalSelectOption = { value: string | number; label: string; [key: s
 import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-option/select-option';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardInputDirective } from '@/shared/components/input';
-import { CompetencySelect, PeriodSelect, SectionCourseSelect, StudentSelect } from '@/shared/widgets/selects';
+import {
+  CompetencySelect,
+  PeriodSelect,
+  SectionCourseSelect,
+  StudentSelect,
+} from '@/shared/widgets/selects';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ReportStore } from '../../services/store/report.store';
 import { Report, ReportCreate } from '../../types/report-types';
-
 
 @Component({
   selector: 'sga-report-form',
@@ -43,12 +54,14 @@ export class ReportForm implements OnInit {
     { value: 'behavior', label: 'Conducta' },
     { value: 'enrollment', label: 'Matrículas' },
     { value: 'custom', label: 'Personalizado' },
-    { value: 'other', label: 'Otro' }];
+    { value: 'other', label: 'Otro' },
+  ];
 
   formatOptions: LocalSelectOption[] = [
     { value: 'pdf', label: 'PDF' },
     { value: 'xlsx', label: 'Excel (.xlsx)' },
-    { value: 'csv', label: 'CSV' }];
+    { value: 'csv', label: 'CSV' },
+  ];
 
   ngOnInit() {
     this.current = this.data?.current ?? null;
@@ -57,10 +70,22 @@ export class ReportForm implements OnInit {
       name: [this.current?.name ?? '', [Validators.required]],
       type: [this.current?.type ?? 'academic', [Validators.required]],
       format: [this.current?.format ?? 'pdf'],
-      sectionCourse: [typeof currentParameters['sectionCourse'] === 'string' ? currentParameters['sectionCourse'] : null],
-      period: [typeof currentParameters['period'] === 'string' ? currentParameters['period'] : null],
-      competency: [typeof currentParameters['competency'] === 'string' ? currentParameters['competency'] : null],
-      student: [typeof currentParameters['student'] === 'string' ? currentParameters['student'] : null],
+      sectionCourse: [
+        typeof currentParameters['sectionCourse'] === 'string'
+          ? currentParameters['sectionCourse']
+          : null,
+      ],
+      period: [
+        typeof currentParameters['period'] === 'string' ? currentParameters['period'] : null,
+      ],
+      competency: [
+        typeof currentParameters['competency'] === 'string'
+          ? currentParameters['competency']
+          : null,
+      ],
+      student: [
+        typeof currentParameters['student'] === 'string' ? currentParameters['student'] : null,
+      ],
     });
     this.selectedSectionCourseId.set(this.form.get('sectionCourse')?.value ?? null);
 

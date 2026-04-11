@@ -1,0 +1,53 @@
+<z-card>
+  <div class="border-border/70 border-b p-6">
+    <h2 class="text-xl font-semibold text-foreground">Correo</h2>
+    <p class="mt-1 text-sm text-muted-foreground">Contacto y ultimos envios.</p>
+  </div>
+
+  <div class="grid gap-4 p-6 lg:grid-cols-[1.1fr_0.9fr]">
+    <div class="space-y-3">
+      @for (item of emailRows(); track item.label) {
+        <div class="rounded-xl border border-border bg-background/80 p-4">
+          <p class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+            {{ item.label }}
+          </p>
+          <p class="mt-2 text-sm font-medium text-foreground">{{ item.value }}</p>
+          <p class="mt-1 text-xs text-muted-foreground">{{ item.helper }}</p>
+        </div>
+      }
+    </div>
+
+    <div class="rounded-xl border border-border bg-background/80 p-4">
+      <div class="flex items-center justify-between">
+        <p class="text-sm font-semibold text-foreground">Ultimos correos</p>
+        <span class="text-xs text-muted-foreground">{{ userEmailLogs().length }}</span>
+      </div>
+      @if (loadingEmailLogs()) {
+        <p class="mt-3 text-xs text-muted-foreground">Cargando historial...</p>
+      } @else if (userEmailLogs().length === 0) {
+        <p class="mt-3 text-xs text-muted-foreground">No hay correos registrados.</p>
+      } @else {
+        <div class="mt-3 space-y-2">
+          @for (log of userEmailLogs(); track log.id) {
+            <div class="rounded-lg border border-border bg-card px-3 py-2">
+              <div class="flex items-center justify-between gap-2">
+                <p class="text-sm font-semibold text-foreground">{{ log.subject }}</p>
+                <span
+                  class="rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]"
+                  [class.bg-emerald-500/10]="log.status === 'sent'"
+                  [class.text-emerald-600]="log.status === 'sent'"
+                  [class.bg-destructive/10]="log.status !== 'sent'"
+                  [class.text-destructive]="log.status !== 'sent'"
+                >
+                  {{ log.status === 'sent' ? 'enviado' : 'fallido' }}
+                </span>
+              </div>
+              <p class="mt-1 text-xs text-muted-foreground">{{ log.recipient }}</p>
+              <p class="mt-1 text-xs text-muted-foreground">{{ formatDate()(log.createdAt) }}</p>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</z-card>

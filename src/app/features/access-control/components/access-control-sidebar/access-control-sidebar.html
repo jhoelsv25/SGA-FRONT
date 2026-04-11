@@ -1,0 +1,100 @@
+<aside class="grid gap-5">
+  @if (lastRegistered(); as last) {
+    <article class="rounded-[1.75rem] border border-success/20 bg-success/5 p-5">
+      <p class="text-[10px] font-black uppercase tracking-[0.22em] text-success/80">
+        Último movimiento
+      </p>
+      <h3 class="mt-3 text-2xl font-black tracking-tight text-base-content">
+        {{ last.personName }}
+      </h3>
+      <div class="mt-3 flex flex-wrap gap-2">
+        <span
+          class="rounded-full border border-base-300 bg-base-100 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em]"
+          >{{ personTypeLabel(last.personType) }}</span
+        >
+        <span
+          class="rounded-full border border-base-300 bg-base-100 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em]"
+          >{{ eventTypeLabel(last.eventType) }}</span
+        >
+      </div>
+      <div class="mt-4 space-y-3 text-sm font-medium text-base-content/60">
+        <p>
+          <span class="font-black text-base-content">Código:</span>
+          {{ last.entityCode || 'Sin código' }}
+        </p>
+        <p>
+          <span class="font-black text-base-content">DNI:</span>
+          {{ last.documentNumber || 'Sin documento' }}
+        </p>
+        <p>
+          <span class="font-black text-base-content">Hora:</span>
+          {{ last.eventAt | date: 'HH:mm:ss' }}
+        </p>
+      </div>
+    </article>
+  } @else {
+    <article class="rounded-[1.75rem] border border-base-200 bg-base-100 p-5">
+      <p class="text-[10px] font-black uppercase tracking-[0.22em] text-base-content/45">
+        Último movimiento
+      </p>
+      <p class="mt-4 text-sm font-medium leading-6 text-base-content/50">
+        Todavía no se ha registrado ningún ingreso o salida en esta fecha.
+      </p>
+    </article>
+  }
+
+  <article class="rounded-[1.75rem] border border-base-200 bg-base-100 p-5">
+    <p class="text-[10px] font-black uppercase tracking-[0.22em] text-primary/70">Cómo funciona</p>
+    <ul class="mt-4 space-y-3 text-sm font-medium leading-6 text-base-content/55">
+      <li>1. Selecciona si registrarás un ingreso o una salida.</li>
+      <li>2. Escanea DNI, código o barcode.</li>
+      <li>3. El sistema busca a la persona y registra el movimiento.</li>
+    </ul>
+  </article>
+
+  <article
+    class="rounded-[1.75rem] border p-5"
+    [ngClass]="{
+      'border-success/20 bg-success/5':
+        locationReady() && (!geofenceStatus() || geofenceStatus()!.within),
+      'border-warning/20 bg-warning/10': needsLocationValidation() && !locationReady(),
+      'border-danger/20 bg-danger/10': geofenceStatus() && !geofenceStatus()!.within,
+    }"
+  >
+    <p
+      class="text-[10px] font-black uppercase tracking-[0.22em]"
+      [ngClass]="{
+        'text-success/80': locationReady() && (!geofenceStatus() || geofenceStatus()!.within),
+        'text-warning': needsLocationValidation() && !locationReady(),
+        'text-danger': geofenceStatus() && !geofenceStatus()!.within,
+      }"
+    >
+      Validación de ubicación
+    </p>
+
+    @if (needsLocationValidation() && !locationReady()) {
+      <p class="mt-4 text-sm font-medium leading-6 text-base-content/65">
+        {{ geoError() || locationHelpText() }}
+      </p>
+      <p class="mt-3 text-xs font-medium leading-5 text-base-content/50">
+        {{ locationHelpText() }}
+      </p>
+      <button
+        type="button"
+        class="mt-4 rounded-full border border-base-300 bg-base-100 px-4 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-base-content/70 transition hover:bg-base-200"
+        (click)="retryLocation.emit()"
+      >
+        Reintentar ubicación
+      </button>
+    } @else if (geofenceStatus() && !geofenceStatus()!.within) {
+      <p class="mt-4 text-sm font-medium leading-6 text-base-content/65">
+        Estás fuera de la zona permitida. Distancia actual: {{ geofenceStatus()!.distance }} m.
+        Radio permitido: {{ geofenceStatus()!.radius }} m.
+      </p>
+    } @else {
+      <p class="mt-4 text-sm font-medium leading-6 text-base-content/65">
+        Ubicación validada correctamente para registrar movimientos.
+      </p>
+    }
+  </article>
+</aside>

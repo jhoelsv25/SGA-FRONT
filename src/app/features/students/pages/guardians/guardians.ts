@@ -1,19 +1,29 @@
 import { DialogModalService } from '@shared/widgets/dialog-modal';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 import { DataSource } from '@shared/widgets/data-source/data-source';
 import { HeaderDetail } from '@shared/widgets/header-detail/header-detail';
 import { GuardianApi } from '../../services/api/guardian-api';
 import { StudentGuardian } from '../../types/guardian-types';
-import { GUARDIAN_HEADER_CONFIG, GUARDIAN_COLUMN, GUARDIAN_ACTIONS } from '../../config/guardian.config';
+import {
+  GUARDIAN_HEADER_CONFIG,
+  GUARDIAN_COLUMN,
+  GUARDIAN_ACTIONS,
+} from '../../config/guardian.config';
 import { StudentGuardianForm } from '../../components/student-guardian-form/student-guardian-form';
 import { Toast } from '@core/services/toast';
 import { ActivatedRoute, Router } from '@angular/router';
 
-
 @Component({
   selector: 'sga-guardians',
-  standalone: true,
+
   imports: [HeaderDetail, DataSource],
   templateUrl: './guardians.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -60,7 +70,9 @@ export default class GuardiansPage implements OnInit {
               (g.student as { studentCode?: string }).studentCode ||
               '-'
             : '-';
-          const guardian = g.guardian as { person?: { firstName?: string; lastName?: string }; relationship?: string } | undefined;
+          const guardian = g.guardian as
+            | { person?: { firstName?: string; lastName?: string }; relationship?: string }
+            | undefined;
           const guardianName = guardian?.person
             ? `${guardian.person.firstName ?? ''} ${guardian.person.lastName ?? ''}`.trim() || '-'
             : '-';
@@ -75,7 +87,11 @@ export default class GuardiansPage implements OnInit {
           };
         });
         this.rowsSignal.set(
-          list.filter((item) => !this.studentContextId() || (item.studentGuardian as StudentGuardian)?.student?.id === this.studentContextId()),
+          list.filter(
+            (item) =>
+              !this.studentContextId() ||
+              (item.studentGuardian as StudentGuardian)?.student?.id === this.studentContextId(),
+          ),
         );
         this.loadingSignal.set(false);
       },

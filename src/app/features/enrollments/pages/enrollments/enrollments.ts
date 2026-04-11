@@ -29,8 +29,18 @@ import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'sga-enrollments',
-  standalone: true,
-  imports: [HeaderDetail, FormsModule, ZardInputDirective, ZardButtonComponent, SelectOptionComponent, EnrollmentCardComponent, ZardEmptyComponent, ZardSkeletonComponent, ...ZardFormImports],
+
+  imports: [
+    HeaderDetail,
+    FormsModule,
+    ZardInputDirective,
+    ZardButtonComponent,
+    SelectOptionComponent,
+    EnrollmentCardComponent,
+    ZardEmptyComponent,
+    ZardSkeletonComponent,
+    ...ZardFormImports,
+  ],
   templateUrl: './enrollments.html',
   styleUrl: './enrollments.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -63,17 +73,17 @@ export default class Enrollments {
   public filterSearch = signal('');
   public filterStatus = signal('');
   public hasActiveFilters = computed(() => !!this.filterSearch() || !!this.filterStatus());
-  
+
   public statuses = [
     { value: '', label: 'Todos' },
     { value: 'enrolled', label: 'Matriculado' },
     { value: 'completed', label: 'Completado' },
     { value: 'dropped', label: 'Retirado' },
-    { value: 'graduated', label: 'Egresado' }
+    { value: 'graduated', label: 'Egresado' },
   ];
 
   constructor() {
-    this.route.queryParams.pipe(takeUntilDestroyed()).subscribe(params => {
+    this.route.queryParams.pipe(takeUntilDestroyed()).subscribe((params) => {
       this.filterSearch.set(params['search'] || '');
       this.filterStatus.set(params['status'] || '');
       this.studentContextId.set(params['studentId'] || '');
@@ -85,7 +95,7 @@ export default class Enrollments {
           .join(' · '),
       );
       this.store.loadAll({
-        ...params
+        ...params,
       });
 
       if (params['sectionCourse']) {
@@ -100,7 +110,8 @@ export default class Enrollments {
   }
   headerConfig = computed(() => this.store.headerConfig());
   readonly enrollmentCards = computed(() =>
-    this.store.enrollments()
+    this.store
+      .enrollments()
       .filter((e) => !this.studentContextId() || e.student?.id === this.studentContextId())
       .filter((e) => {
         const search = this.filterSearch().trim().toLowerCase();
@@ -121,11 +132,26 @@ export default class Enrollments {
   );
   loading = computed(() => this.store.loading());
   headerActions = computed(() => this.store.actions().filter((a) => a.typeAction === 'header'));
-  readonly enrolledCount = computed(() => this.enrollmentCards().filter((item) => item.status === 'enrolled').length);
-  readonly completedCount = computed(() => this.enrollmentCards().filter((item) => item.status === 'completed').length);
-  readonly droppedCount = computed(() => this.enrollmentCards().filter((item) => item.status === 'dropped').length);
-  readonly graduatedCount = computed(() => this.enrollmentCards().filter((item) => item.status === 'graduated').length);
-  readonly enrolledStudentIds = computed(() => new Set(this.enrollmentCards().map((item) => item.student?.id).filter(Boolean)));
+  readonly enrolledCount = computed(
+    () => this.enrollmentCards().filter((item) => item.status === 'enrolled').length,
+  );
+  readonly completedCount = computed(
+    () => this.enrollmentCards().filter((item) => item.status === 'completed').length,
+  );
+  readonly droppedCount = computed(
+    () => this.enrollmentCards().filter((item) => item.status === 'dropped').length,
+  );
+  readonly graduatedCount = computed(
+    () => this.enrollmentCards().filter((item) => item.status === 'graduated').length,
+  );
+  readonly enrolledStudentIds = computed(
+    () =>
+      new Set(
+        this.enrollmentCards()
+          .map((item) => item.student?.id)
+          .filter(Boolean),
+      ),
+  );
   readonly filteredAvailableStudents = computed(() => {
     const search = this.studentSearch().trim().toLowerCase();
     const enrolledIds = this.enrolledStudentIds();
@@ -147,7 +173,9 @@ export default class Enrollments {
   });
   readonly selectedStudentsCount = computed(() => this.selectedStudentIds().length);
   readonly maxSlots = computed(() => this.sectionCourseContext()?.maxStudents ?? 0);
-  readonly occupiedSlots = computed(() => this.sectionCourseContext()?.enrolledStudents ?? this.enrolledCount());
+  readonly occupiedSlots = computed(
+    () => this.sectionCourseContext()?.enrolledStudents ?? this.enrolledCount(),
+  );
   readonly remainingSlots = computed(() => Math.max(this.maxSlots() - this.occupiedSlots(), 0));
   readonly hasCapacity = computed(() => this.remainingSlots() > 0 || this.maxSlots() === 0);
   readonly canAssignSelected = computed(() => {
@@ -177,7 +205,7 @@ export default class Enrollments {
   applyFilters() {
     this.urlParams.setParams({
       search: this.filterSearch(),
-      status: this.filterStatus()
+      status: this.filterStatus(),
     });
   }
 
@@ -234,7 +262,13 @@ export default class Enrollments {
   assignSelectedStudents() {
     const sectionCourse = this.sectionCourseContext();
     const studentIds = this.selectedStudentIds();
-    if (!sectionCourse?.section?.id || !sectionCourse?.academicYear?.id || !studentIds.length || !this.canAssignSelected()) return;
+    if (
+      !sectionCourse?.section?.id ||
+      !sectionCourse?.academicYear?.id ||
+      !studentIds.length ||
+      !this.canAssignSelected()
+    )
+      return;
 
     this.assigningStudents.set(true);
     const baseOrder = this.enrollmentCards().length;
@@ -305,7 +339,10 @@ export default class Enrollments {
         this.sectionCourseContext.set(sectionCourse);
         if (!this.sectionCourseContextLabel()) {
           this.sectionCourseContextLabel.set(
-            [sectionCourse.course?.name, sectionCourse.section?.name ? `Sección ${sectionCourse.section.name}` : '']
+            [
+              sectionCourse.course?.name,
+              sectionCourse.section?.name ? `Sección ${sectionCourse.section.name}` : '',
+            ]
               .filter(Boolean)
               .join(' · '),
           );
@@ -354,24 +391,34 @@ export default class Enrollments {
   private loadAvailableStudents() {
     if (this.loadingStudents() || !this.studentHasMore()) return;
     this.loadingStudents.set(true);
-    this.studentApi.getAll({
-      page: this.studentPage(),
-      size: this.studentPageSize,
-      ...(this.studentSearch().trim() ? { search: this.studentSearch().trim() } : {}),
-    }).subscribe({
-      next: (response) => {
-        const incoming = response.data ?? [];
-        this.availableStudents.update((current) =>
-          this.studentPage() === 1 ? incoming : [...current, ...incoming.filter((item) => !current.some((existing) => existing.id === item.id))],
-        );
-        const loadedCount = this.studentPage() === 1 ? incoming.length : this.availableStudents().length;
-        this.studentHasMore.set(loadedCount < (response.total ?? loadedCount));
-        this.studentPage.update((page) => page + 1);
-        this.loadingStudents.set(false);
-      },
-      error: () => {
-        this.loadingStudents.set(false);
-      },
-    });
+    this.studentApi
+      .getAll({
+        page: this.studentPage(),
+        size: this.studentPageSize,
+        ...(this.studentSearch().trim() ? { search: this.studentSearch().trim() } : {}),
+      })
+      .subscribe({
+        next: (response) => {
+          const incoming = response.data ?? [];
+          this.availableStudents.update((current) =>
+            this.studentPage() === 1
+              ? incoming
+              : [
+                  ...current,
+                  ...incoming.filter(
+                    (item) => !current.some((existing) => existing.id === item.id),
+                  ),
+                ],
+          );
+          const loadedCount =
+            this.studentPage() === 1 ? incoming.length : this.availableStudents().length;
+          this.studentHasMore.set(loadedCount < (response.total ?? loadedCount));
+          this.studentPage.update((page) => page + 1);
+          this.loadingStudents.set(false);
+        },
+        error: () => {
+          this.loadingStudents.set(false);
+        },
+      });
   }
 }

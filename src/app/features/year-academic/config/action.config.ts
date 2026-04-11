@@ -24,4 +24,5 @@ export const YEAR_ACADEMIC_ACTIONS: ActionConfig[] = [
     typeAction: 'row',
     color: 'danger',
     permissions: ['academic_year:delete'],
-  }];
+  },
+];

@@ -1,0 +1,34 @@
+<div class="mx-auto max-w-7xl space-y-6">
+  <sga-profile-hero
+    [photoUrl]="photoUrl()"
+    [displayName]="displayName()"
+    [initials]="initials()"
+    [roleBadge]="roleBadge()"
+    [roleName]="user()?.role?.name || null"
+    [institutionName]="user()?.profile?.institutionName || user()?.profile?.institution || null"
+    [heroDescription]="heroDescription()"
+    [heroPills]="heroPills()"
+    [editing]="editing()"
+    [saving]="saving()"
+    [saveDisabled]="saving() || profileForm.invalid"
+    [photoUploading]="photoUploading()"
+    (editRequested)="startEdit()"
+    (cancelRequested)="cancelEdit()"
+    (saveRequested)="saveProfile()"
+    (photoSelected)="onPhotoSelected($event)"
+  />
+
+  <sga-profile-main-panel
+    [editing]="editing()"
+    [profileRows]="profileRows()"
+    [summaryRows]="summaryRows()"
+    [roleRows]="roleRows()"
+    [profileForm]="profileForm"
+    [documentTypeOptions]="documentTypeOptions"
+    [genderOptions]="genderOptions"
+    [roleSectionTitle]="roleSectionTitle()"
+    [roleSectionDescription]="roleSectionDescription()"
+    [roleBadge]="roleBadge()"
+    [roleEditGroups]="roleEditGroups()"
+  />
+</div>

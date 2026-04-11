@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HeaderDetail } from '@shared/widgets/header-detail/header-detail';
 import { ZardInputDirective } from '@/shared/components/input';
@@ -11,11 +18,17 @@ import { VirtualClassroomApi } from '../../services/virtual-classroom-api';
 import type { VirtualClassroomItem } from '../../types/virtual-classroom-types';
 import { AuthStore } from '@auth/services/store/auth.store';
 
-
 @Component({
   selector: 'sga-classroom-list',
-  standalone: true,
-  imports: [CommonModule, HeaderDetail, ZardInputDirective, ZardEmptyComponent, ZardSkeletonComponent, ClassroomCourseCardComponent],
+
+  imports: [
+    CommonModule,
+    HeaderDetail,
+    ZardInputDirective,
+    ZardEmptyComponent,
+    ZardSkeletonComponent,
+    ClassroomCourseCardComponent,
+  ],
   template: `
     <div class="mx-auto w-full max-w-7xl space-y-6 p-6">
       <sga-header-detail
@@ -36,7 +49,9 @@ import { AuthStore } from '@auth/services/store/auth.store';
           <p class="mt-1 text-sm text-base-content/55">Aulas con responsable</p>
         </article>
         <article class="rounded-4xl border border-base-200 bg-card p-5">
-          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Estudiantes</p>
+          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">
+            Estudiantes
+          </p>
           <p class="mt-3 text-3xl font-black tracking-tight">{{ enrolledCount() }}</p>
           <p class="mt-1 text-sm text-base-content/55">Inscritos acumulados</p>
         </article>
@@ -50,7 +65,9 @@ import { AuthStore } from '@auth/services/store/auth.store';
       <section class="rounded-4xl border border-base-200 bg-card p-5">
         <div class="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
           <div class="space-y-2">
-            <label class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">{{ roleSummaryTitle() }}</label>
+            <label class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">{{
+              roleSummaryTitle()
+            }}</label>
             <input
               z-input
               type="text"
@@ -60,7 +77,13 @@ import { AuthStore } from '@auth/services/store/auth.store';
             />
           </div>
           <div class="flex items-center gap-3 lg:justify-end">
-            <button z-button zType="outline" class="rounded-4xl" [disabled]="!search().trim()" (click)="search.set('')">
+            <button
+              z-button
+              zType="outline"
+              class="rounded-4xl"
+              [disabled]="!search().trim()"
+              (click)="search.set('')"
+            >
               Limpiar
             </button>
           </div>
@@ -70,11 +93,15 @@ import { AuthStore } from '@auth/services/store/auth.store';
       @if (loading()) {
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           @for (item of [1, 2, 3, 4, 5, 6]; track item) {
-            <z-skeleton [class]="'h-[250px] w-full rounded-4xl border border-base-200'"></z-skeleton>
+            <z-skeleton
+              [class]="'h-[250px] w-full rounded-4xl border border-base-200'"
+            ></z-skeleton>
           }
         </div>
       } @else if (filteredCourses().length === 0) {
-        <div class="rounded-[var(--radius-xl)] border border-dashed border-base-300 bg-background/60 p-8">
+        <div
+          class="rounded-[var(--radius-xl)] border border-dashed border-base-300 bg-background/60 p-8"
+        >
           <z-empty
             zIcon="chalkboard-teacher"
             zTitle="Sin aulas disponibles"
@@ -103,7 +130,13 @@ export default class ClassroomList implements OnInit {
     showFilters: false,
   });
   readonly headerActions = signal<ActionConfig[]>([
-    { key: 'refresh', label: 'Actualizar', icon: 'fas fa-sync-alt', typeAction: 'header', color: 'primary' },
+    {
+      key: 'refresh',
+      label: 'Actualizar',
+      icon: 'fas fa-sync-alt',
+      typeAction: 'header',
+      color: 'primary',
+    },
   ]);
 
   public courses = signal<VirtualClassroomItem[]>([]);
@@ -116,15 +149,29 @@ export default class ClassroomList implements OnInit {
       const teacher = [
         course.sectionCourse?.teacher?.person?.firstName,
         course.sectionCourse?.teacher?.person?.lastName,
-      ].filter(Boolean).join(' ').toLowerCase();
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
       const courseName = course.sectionCourse?.course?.name?.toLowerCase() ?? '';
       const sectionName = course.sectionCourse?.section?.name?.toLowerCase() ?? '';
       return courseName.includes(term) || sectionName.includes(term) || teacher.includes(term);
     });
   });
-  readonly teacherCount = computed(() => this.filteredCourses().filter((course) => !!course.sectionCourse?.teacher?.id).length);
-  readonly enrolledCount = computed(() => this.filteredCourses().reduce((sum, course) => sum + (course.sectionCourse?.enrolledStudents || 0), 0));
-  readonly activeCount = computed(() => this.filteredCourses().filter((course) => (course.status || '').toLowerCase() !== 'inactive').length);
+  readonly teacherCount = computed(
+    () => this.filteredCourses().filter((course) => !!course.sectionCourse?.teacher?.id).length,
+  );
+  readonly enrolledCount = computed(() =>
+    this.filteredCourses().reduce(
+      (sum, course) => sum + (course.sectionCourse?.enrolledStudents || 0),
+      0,
+    ),
+  );
+  readonly activeCount = computed(
+    () =>
+      this.filteredCourses().filter((course) => (course.status || '').toLowerCase() !== 'inactive')
+        .length,
+  );
   readonly roleSummaryTitle = computed(() => {
     const roleType = this.roleType();
     if (roleType === 'teacher') return 'Tus espacios de trabajo';
@@ -136,7 +183,8 @@ export default class ClassroomList implements OnInit {
     const roleType = this.roleType();
     if (roleType === 'teacher') return 'Accede rápido a tus cursos, publicaciones y tareas.';
     if (roleType === 'student') return 'Entra a clases, revisa tareas y sigue tus notas.';
-    if (roleType === 'guardian') return 'Consulta el entorno académico relacionado con tus estudiantes.';
+    if (roleType === 'guardian')
+      return 'Consulta el entorno académico relacionado con tus estudiantes.';
     return 'Acceso a cursos, secciones y entornos académicos en línea.';
   });
   readonly searchPlaceholder = computed(() => {
@@ -193,7 +241,7 @@ export default class ClassroomList implements OnInit {
       error: () => {
         this.courses.set([]);
         this.loading.set(false);
-      }
+      },
     });
   }
 }

@@ -14,12 +14,12 @@ interface ImportData {
 const STEPS = [
   { id: 'upload', label: 'Archivo', icon: 'fa-cloud-upload-alt' },
   { id: 'mapping', label: 'Mapeo', icon: 'fa-columns' },
-  { id: 'done', label: 'Listo', icon: 'fa-check-circle' }] as const;
-
+  { id: 'done', label: 'Listo', icon: 'fa-check-circle' },
+] as const;
 
 @Component({
   selector: 'sga-attendance-import-dialog',
-  standalone: true,
+
   imports: [CommonModule, FormsModule, ZardButtonComponent],
   templateUrl: './attendance-import-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,20 +35,22 @@ export class AttendanceImportDialog {
   headers = signal<string[]>([]);
   jsonRows = signal<Record<string, unknown>[]>([]);
   mapping = signal<Record<string, string>>({});
-  
+
   fieldOptions = [
     { key: 'code', label: 'Código / DNI', required: true, example: '20230001' },
     { key: 'status', label: 'Estado (P, T, F, J)', required: true, example: 'P' },
     { key: 'time', label: 'Hora de Ingreso', required: false, example: '08:15' },
-    { key: 'remarks', label: 'Observaciones', required: false, example: 'Justificado médico' }];
+    { key: 'remarks', label: 'Observaciones', required: false, example: 'Justificado médico' },
+  ];
 
   downloadTemplate(): void {
     const data = [
-      { 'Código': '20230001', 'Estudiante': 'Juan Perez', 'Asistencia': 'P' },
-      { 'Código': '20230002', 'Estudiante': 'Maria Lopez', 'Asistencia': 'T' },
-      { 'Código': '20230003', 'Estudiante': 'Pedro Sanchez', 'Asistencia': 'F' },
-      { 'Código': '20230004', 'Estudiante': 'Ana Gomez', 'Asistencia': 'J' }];
-    
+      { Código: '20230001', Estudiante: 'Juan Perez', Asistencia: 'P' },
+      { Código: '20230002', Estudiante: 'Maria Lopez', Asistencia: 'T' },
+      { Código: '20230003', Estudiante: 'Pedro Sanchez', Asistencia: 'F' },
+      { Código: '20230004', Estudiante: 'Ana Gomez', Asistencia: 'J' },
+    ];
+
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Plantilla Asistencia');
@@ -91,14 +93,20 @@ export class AttendanceImportDialog {
 
   private autoMap(headers: string[]): void {
     const map: Record<string, string> = {};
-    const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
-    
-    headers.forEach(h => {
+    const norm = (s: string) =>
+      s
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]/g, '');
+
+    headers.forEach((h) => {
       const hNorm = norm(h);
       if (['codigo', 'dni', 'code', 'identificacion', 'cod'].includes(hNorm)) map['code'] = h;
       if (['estado', 'status', 'asistencia', 'asist', 'marcar'].includes(hNorm)) map['status'] = h;
       if (['hora', 'ingreso', 'entrada', 'time', 'checkin'].includes(hNorm)) map['time'] = h;
-      if (['observaciones', 'notas', 'comentarios', 'remarks', 'obs'].includes(hNorm)) map['remarks'] = h;
+      if (['observaciones', 'notas', 'comentarios', 'remarks', 'obs'].includes(hNorm))
+        map['remarks'] = h;
     });
     this.mapping.set(map);
   }
@@ -108,24 +116,32 @@ export class AttendanceImportDialog {
   startImport(): void {
     if (!this.canStartImport()) return;
 
-    const mappedData = this.jsonRows().map(row => {
-      const rawCode = String(row[this.mapping()['code']] || '').trim();
-      const rawStatus = String(row[this.mapping()['status']] || '').toLowerCase().trim();
-      const rawTime = this.mapping()['time'] ? String(row[this.mapping()['time']] || '').trim() : null;
-      const rawRemarks = this.mapping()['remarks'] ? String(row[this.mapping()['remarks']] || '').trim() : null;
-      
-      let status: AttendanceStatus = 'present';
-      if (['f', 'falta', 'absent', 'f'].includes(rawStatus)) status = 'absent';
-      else if (['t', 'tardanza', 'late', 't'].includes(rawStatus)) status = 'late';
-      else if (['j', 'justificado', 'excused', 'j'].includes(rawStatus)) status = 'excused';
-      
-      return { 
-        studentCode: rawCode, 
-        status, 
-        checkInTime: rawTime || undefined,
-        observations: rawRemarks || undefined 
-      };
-    }).filter(d => d.studentCode);
+    const mappedData = this.jsonRows()
+      .map((row) => {
+        const rawCode = String(row[this.mapping()['code']] || '').trim();
+        const rawStatus = String(row[this.mapping()['status']] || '')
+          .toLowerCase()
+          .trim();
+        const rawTime = this.mapping()['time']
+          ? String(row[this.mapping()['time']] || '').trim()
+          : null;
+        const rawRemarks = this.mapping()['remarks']
+          ? String(row[this.mapping()['remarks']] || '').trim()
+          : null;
+
+        let status: AttendanceStatus = 'present';
+        if (['f', 'falta', 'absent', 'f'].includes(rawStatus)) status = 'absent';
+        else if (['t', 'tardanza', 'late', 't'].includes(rawStatus)) status = 'late';
+        else if (['j', 'justificado', 'excused', 'j'].includes(rawStatus)) status = 'excused';
+
+        return {
+          studentCode: rawCode,
+          status,
+          checkInTime: rawTime || undefined,
+          observations: rawRemarks || undefined,
+        };
+      })
+      .filter((d) => d.studentCode);
 
     this.data.onImport(mappedData);
     this.step.set('done');

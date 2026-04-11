@@ -6,56 +6,95 @@
 
   <div class="space-y-4">
     @for (record of records(); track record.id) {
-    <div (click)="onSelect.emit(record.id)"
-      class="group card-premium p-6 cursor-pointer border-transparent transition-all duration-300 relative overflow-hidden"
-      [ngClass]="selectedRecordId() === record.id ? 'bg-primary text-white shadow-xl shadow-primary/20 scale-[1.02]' : 'bg-white dark:bg-zinc-900 hover:border-primary/20 hover:shadow-lg'">
-      @if (selectedRecordId() === record.id) {
-      <div class="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12 blur-2xl"></div>
-      }
+      <div
+        (click)="onSelect.emit(record.id)"
+        class="group card-premium p-6 cursor-pointer border-transparent transition-all duration-300 relative overflow-hidden"
+        [ngClass]="
+          selectedRecordId() === record.id
+            ? 'bg-primary text-white shadow-xl shadow-primary/20 scale-[1.02]'
+            : 'bg-white dark:bg-zinc-900 hover:border-primary/20 hover:shadow-lg'
+        "
+      >
+        @if (selectedRecordId() === record.id) {
+          <div
+            class="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12 blur-2xl"
+          ></div>
+        }
 
-      <div class="relative flex flex-col gap-4">
-        <div class="flex items-start justify-between">
-          <div class="min-w-0">
-            <h4 class="font-black text-base truncate pr-2" [class.text-white]="selectedRecordId() === record.id">{{
-              record.name }}</h4>
-            <p class="text-[10px] font-bold uppercase tracking-widest mt-1"
-              [ngClass]="selectedRecordId() === record.id ? 'text-white/60' : 'text-base-content/40'">
-              {{ record.date | date:'mediumDate' }}
-            </p>
-            @if (record.type) {
-              <p class="mt-2 text-[10px] font-black uppercase tracking-widest" [ngClass]="selectedRecordId() === record.id ? 'text-white/50' : 'text-primary/60'">
-                {{ record.type }}
+        <div class="relative flex flex-col gap-4">
+          <div class="flex items-start justify-between">
+            <div class="min-w-0">
+              <h4
+                class="font-black text-base truncate pr-2"
+                [class.text-white]="selectedRecordId() === record.id"
+              >
+                {{ record.name }}
+              </h4>
+              <p
+                class="text-[10px] font-bold uppercase tracking-widest mt-1"
+                [ngClass]="
+                  selectedRecordId() === record.id ? 'text-white/60' : 'text-base-content/40'
+                "
+              >
+                {{ record.date | date: 'mediumDate' }}
               </p>
-            }
-            @if (record.period?.name || record.competency?.name) {
-              <p class="mt-2 text-[10px] font-bold"
-                [ngClass]="selectedRecordId() === record.id ? 'text-white/55' : 'text-base-content/45'">
-                {{ record.period?.name || 'Sin período' }} · {{ record.competency?.name || 'Sin competencia' }}
-              </p>
-            }
+              @if (record.type) {
+                <p
+                  class="mt-2 text-[10px] font-black uppercase tracking-widest"
+                  [ngClass]="selectedRecordId() === record.id ? 'text-white/50' : 'text-primary/60'"
+                >
+                  {{ record.type }}
+                </p>
+              }
+              @if (record.period?.name || record.competency?.name) {
+                <p
+                  class="mt-2 text-[10px] font-bold"
+                  [ngClass]="
+                    selectedRecordId() === record.id ? 'text-white/55' : 'text-base-content/45'
+                  "
+                >
+                  {{ record.period?.name || 'Sin período' }} ·
+                  {{ record.competency?.name || 'Sin competencia' }}
+                </p>
+              }
+            </div>
+            <div
+              class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-xs font-black"
+              [ngClass]="
+                selectedRecordId() === record.id
+                  ? 'bg-white/20 text-white'
+                  : 'bg-base-200 text-base-content/40'
+              "
+            >
+              {{ record.studentsCount }}
+            </div>
           </div>
-          <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-xs font-black"
-            [ngClass]="selectedRecordId() === record.id ? 'bg-white/20 text-white' : 'bg-base-200 text-base-content/40'">
-            {{ record.studentsCount }}
-          </div>
-        </div>
 
-        <div class="flex items-end justify-between">
-          <div class="space-y-0.5">
-            <p class="text-[9px] font-black uppercase tracking-widest opacity-50">Promedio</p>
-            <p class="text-xl font-black">{{ record.average | number:'1.1-1' }}<span
-                class="text-xs opacity-50 ml-1">/ {{ record.total }}</span></p>
-            @if (record.averageLabel) {
-            <p class="text-[10px] font-black uppercase tracking-[0.16em]" [ngClass]="selectedRecordId() === record.id ? 'text-emerald-100' : 'text-emerald-600/70'">
-              {{ record.averageLabel }}
-            </p>
-            }
+          <div class="flex items-end justify-between">
+            <div class="space-y-0.5">
+              <p class="text-[9px] font-black uppercase tracking-widest opacity-50">Promedio</p>
+              <p class="text-xl font-black">
+                {{ record.average | number: '1.1-1'
+                }}<span class="text-xs opacity-50 ml-1">/ {{ record.total }}</span>
+              </p>
+              @if (record.averageLabel) {
+                <p
+                  class="text-[10px] font-black uppercase tracking-[0.16em]"
+                  [ngClass]="
+                    selectedRecordId() === record.id ? 'text-emerald-100' : 'text-emerald-600/70'
+                  "
+                >
+                  {{ record.averageLabel }}
+                </p>
+              }
+            </div>
+            <i
+              class="fa-solid fa-chevron-right text-xs transition-transform group-hover:translate-x-1"
+              [class.text-white]="selectedRecordId() === record.id"
+            ></i>
           </div>
-          <i class="fa-solid fa-chevron-right text-xs transition-transform group-hover:translate-x-1"
-            [class.text-white]="selectedRecordId() === record.id"></i>
         </div>
       </div>
-    </div>
     }
   </div>
 </aside>

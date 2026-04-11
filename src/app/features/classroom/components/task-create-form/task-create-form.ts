@@ -22,7 +22,7 @@ type QuizQuestionDraft = {
 
 @Component({
   selector: 'sga-task-create-form',
-  standalone: true,
+
   imports: [
     CommonModule,
     FormsModule,
@@ -108,7 +108,11 @@ export class TaskCreateForm {
         scheduleEnabled: !!this.data.task.publishAt,
         publishDate: this.data.task.publishAt ? new Date(this.data.task.publishAt) : null,
         publishTime: this.data.task.publishAt
-          ? new Date(this.data.task.publishAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })
+          ? new Date(this.data.task.publishAt).toLocaleTimeString('en-GB', {
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false,
+            })
           : '08:00',
         maxScore: Number(this.data.task.maxScore ?? 20),
         maxAttempts: Number(this.data.task.maxAttempts ?? 1),
@@ -221,8 +225,8 @@ export class TaskCreateForm {
             nextType === 'short_answer'
               ? []
               : question.options.length
-              ? question.options
-              : [this.createOption('Opción 1'), this.createOption('Opción 2')],
+                ? question.options
+                : [this.createOption('Opción 1'), this.createOption('Opción 2')],
         };
       }),
     );
@@ -232,18 +236,30 @@ export class TaskCreateForm {
     this.questions.update((current) =>
       current.map((question) =>
         question.id === questionId
-          ? { ...question, options: [...question.options, this.createOption(`Opción ${question.options.length + 1}`)] }
+          ? {
+              ...question,
+              options: [
+                ...question.options,
+                this.createOption(`Opción ${question.options.length + 1}`),
+              ],
+            }
           : question,
       ),
     );
   }
 
-  updateOption(questionId: string, optionId: string, patch: Partial<{ label: string; isCorrect: boolean }>) {
+  updateOption(
+    questionId: string,
+    optionId: string,
+    patch: Partial<{ label: string; isCorrect: boolean }>,
+  ) {
     this.questions.update((current) =>
       current.map((question) => {
         if (question.id !== questionId) return question;
 
-        let options = question.options.map((option) => (option.id === optionId ? { ...option, ...patch } : option));
+        let options = question.options.map((option) =>
+          option.id === optionId ? { ...option, ...patch } : option,
+        );
 
         if (patch.isCorrect && question.type === 'single_choice') {
           options = options.map((option) => ({ ...option, isCorrect: option.id === optionId }));
@@ -293,16 +309,30 @@ export class TaskCreateForm {
     if (this.form.invalid) return;
 
     const value = this.form.getRawValue();
-    const dueDate = value.dueDate instanceof Date ? value.dueDate : value.dueDate ? new Date(value.dueDate) : null;
+    const dueDate =
+      value.dueDate instanceof Date
+        ? value.dueDate
+        : value.dueDate
+          ? new Date(value.dueDate)
+          : null;
     const publishDate =
-      value.publishDate instanceof Date ? value.publishDate : value.publishDate ? new Date(value.publishDate) : null;
+      value.publishDate instanceof Date
+        ? value.publishDate
+        : value.publishDate
+          ? new Date(value.publishDate)
+          : null;
     let publishAt: string | undefined;
 
     if (value.scheduleEnabled && publishDate) {
       const [hours, minutes] = String(value.publishTime || '08:00')
         .split(':')
         .map((part) => Number(part));
-      publishDate.setHours(Number.isFinite(hours) ? hours : 8, Number.isFinite(minutes) ? minutes : 0, 0, 0);
+      publishDate.setHours(
+        Number.isFinite(hours) ? hours : 8,
+        Number.isFinite(minutes) ? minutes : 0,
+        0,
+        0,
+      );
       publishAt = publishDate.toISOString();
     }
 

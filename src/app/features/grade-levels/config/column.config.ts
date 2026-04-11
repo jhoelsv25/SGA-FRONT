@@ -5,4 +5,5 @@ export const GRADE_LEVEL_COLUMN: DataSourceColumn[] = [
   { key: 'level', label: 'Nivel', sortable: true },
   { key: 'gradeNumber', label: 'Número', type: 'number' },
   { key: 'maxCapacity', label: 'Capacidad máx.', type: 'number' },
-  { key: 'description', label: 'Descripción', truncate: true, truncateLength: 40 }];
+  { key: 'description', label: 'Descripción', truncate: true, truncateLength: 40 },
+];

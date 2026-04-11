@@ -22,6 +22,6 @@ export default [
   {
     path: '',
     redirectTo: 'sections',
-    pathMatch: 'full'
-  }
+    pathMatch: 'full',
+  },
 ] as Routes;

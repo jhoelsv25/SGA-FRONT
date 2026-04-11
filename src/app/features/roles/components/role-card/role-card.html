@@ -1,11 +1,15 @@
 <z-card
   class="group p-6 rounded-[2.5rem] bg-card/40 border-border/10 backdrop-blur-2xl hover:bg-card/60 hover:border-primary/20 transition-all shadow-sm hover:shadow-2xl hover:shadow-primary/5 cursor-pointer"
-  [class.ring-2]="selected()" [class.ring-primary/40]="selected()" (click)="roleSelected.emit(role())">
+  [class.ring-2]="selected()"
+  [class.ring-primary/40]="selected()"
+  (click)="roleSelected.emit(role())"
+>
   <div class="flex flex-col lg:flex-row lg:items-center gap-8">
     <!-- Left Section: Icon & Main Info -->
     <div class="flex items-start gap-4 flex-1">
       <div
-        class="size-14 rounded-2xl flex items-center justify-center shrink-0 shadow-lg border border-border/10 bg-primary/10 text-primary overflow-hidden transition-all duration-500 group-hover:bg-primary group-hover:text-primary-content">
+        class="size-14 rounded-2xl flex items-center justify-center shrink-0 shadow-lg border border-border/10 bg-primary/10 text-primary overflow-hidden transition-all duration-500 group-hover:bg-primary group-hover:text-primary-content"
+      >
         <z-icon zType="shield" class="h-6 w-6" />
       </div>
 
@@ -16,14 +20,20 @@
           </h3>
           <div class="flex gap-1.5 flex-wrap">
             @if (role().isSystem) {
-            <span
-              class="rounded-full px-3 py-1 text-[9px] font-black uppercase tracking-widest border bg-secondary/10 text-secondary border-secondary/20">
-              Sistema
-            </span>
+              <span
+                class="rounded-full px-3 py-1 text-[9px] font-black uppercase tracking-widest border bg-secondary/10 text-secondary border-secondary/20"
+              >
+                Sistema
+              </span>
             }
-            <span class="rounded-full px-3 py-1 text-[9px] font-black uppercase tracking-widest border" [ngClass]="isActive() 
-                  ? 'bg-green-500/10 text-green-500 border-green-500/20' 
-                  : 'bg-muted text-muted-foreground border-border'">
+            <span
+              class="rounded-full px-3 py-1 text-[9px] font-black uppercase tracking-widest border"
+              [ngClass]="
+                isActive()
+                  ? 'bg-green-500/10 text-green-500 border-green-500/20'
+                  : 'bg-muted text-muted-foreground border-border'
+              "
+            >
               {{ isActive() ? 'Activo' : 'Inactivo' }}
             </span>
           </div>
@@ -37,7 +47,9 @@
     <!-- Middle Section: Stats (XL only) -->
     <div class="hidden xl:flex items-center gap-3 px-8 border-x border-border/10">
       <div class="flex flex-col items-center gap-1">
-        <div class="size-8 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center shadow-sm">
+        <div
+          class="size-8 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center shadow-sm"
+        >
           <z-icon zType="users" class="h-4 w-4" />
         </div>
         <div class="flex flex-col items-center leading-none">
@@ -47,7 +59,9 @@
       </div>
       <z-icon zType="chevron-right" class="h-4 w-4 text-muted-foreground/20" />
       <div class="flex flex-col items-center gap-1">
-        <div class="size-8 rounded-xl bg-warning/10 text-warning flex items-center justify-center shadow-sm">
+        <div
+          class="size-8 rounded-xl bg-warning/10 text-warning flex items-center justify-center shadow-sm"
+        >
           <z-icon zType="badge-check" class="h-4 w-4" />
         </div>
         <div class="flex flex-col items-center leading-none">
@@ -59,35 +73,56 @@
 
     <!-- Right Section: Actions -->
     <div class="flex items-center justify-end gap-2 shrink-0" (click)="$event.stopPropagation()">
-      <button *sgaHasPermission="'role:update'" z-button zType="ghost" zSize="icon-sm"
-        class="rounded-xl hover:bg-primary/10 hover:text-primary transition-all" title="Configurar Rol"
-        (click)="editClicked.emit(role())">
+      <button
+        *sgaHasPermission="'role:update'"
+        z-button
+        zType="ghost"
+        zSize="icon-sm"
+        class="rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
+        title="Configurar Rol"
+        (click)="editClicked.emit(role())"
+      >
         <z-icon zType="settings" class="h-5 w-5" />
       </button>
 
-      <button z-button zType="ghost" zSize="icon-sm"
-        class="rounded-xl hover:bg-primary/10 hover:text-primary transition-all" title="Más acciones" zPopover
-        [zContent]="roleActionsMenu" [zPlacement]="'bottom'">
+      <button
+        z-button
+        zType="ghost"
+        zSize="icon-sm"
+        class="rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
+        title="Más acciones"
+        zPopover
+        [zContent]="roleActionsMenu"
+        [zPlacement]="'bottom'"
+      >
         <z-icon zType="ellipsis" class="h-5 w-5" />
       </button>
 
       <ng-template #roleActionsMenu>
         <z-popover class="min-w-[160px] p-1.5 flex flex-col gap-1">
-          <button *sgaHasPermission="'role:update'" z-button zType="ghost"
+          <button
+            *sgaHasPermission="'role:update'"
+            z-button
+            zType="ghost"
             class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
-            (click)="editClicked.emit(role())">
+            (click)="editClicked.emit(role())"
+          >
             <z-icon zType="settings" class="h-4 w-4" />
             Configurar
           </button>
 
           @if (!role().isSystem) {
-          <div class="h-px bg-border/10 my-1 mx-2"></div>
-          <button *sgaHasPermission="'role:delete'" z-button zType="ghost"
-            class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-destructive/10 hover:text-destructive transition-all"
-            (click)="confirmDelete()">
-            <z-icon zType="trash" class="h-4 w-4" />
-            Eliminar
-          </button>
+            <div class="h-px bg-border/10 my-1 mx-2"></div>
+            <button
+              *sgaHasPermission="'role:delete'"
+              z-button
+              zType="ghost"
+              class="w-full justify-start gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-tight rounded-xl hover:bg-destructive/10 hover:text-destructive transition-all"
+              (click)="confirmDelete()"
+            >
+              <z-icon zType="trash" class="h-4 w-4" />
+              Eliminar
+            </button>
           }
         </z-popover>
       </ng-template>
@@ -97,15 +132,18 @@
   <!-- Footer -->
   <footer class="mt-6 pt-6 border-t border-border/10 flex items-center justify-between">
     <div
-      class="flex items-center gap-1 text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest leading-none">
+      class="flex items-center gap-1 text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest leading-none"
+    >
       <z-icon zType="code" class="h-3 w-3" />
       ID: <span class="text-foreground font-mono">{{ role().id.split('-')[0] }}</span>
     </div>
     @if (role().isSystem) {
-    <div class="text-[10px] font-bold text-secondary/60 uppercase tracking-widest flex items-center gap-1">
-      <z-icon zType="shield" class="h-3 w-3" />
-      Protegido por el sistema
-    </div>
+      <div
+        class="text-[10px] font-bold text-secondary/60 uppercase tracking-widest flex items-center gap-1"
+      >
+        <z-icon zType="shield" class="h-3 w-3" />
+        Protegido por el sistema
+      </div>
     }
   </footer>
 </z-card>

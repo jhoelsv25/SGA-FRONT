@@ -1,0 +1,58 @@
+<z-card>
+  <div class="border-border/70 border-b p-6">
+    <h2 class="text-xl font-semibold text-foreground">Sesiones</h2>
+    <p class="mt-1 text-sm text-muted-foreground">Estado operativo y accesos recientes.</p>
+  </div>
+
+  <div class="grid gap-4 p-6 lg:grid-cols-[1fr_1fr]">
+    @for (item of sessionRows(); track item.label) {
+      <div class="rounded-xl border border-border bg-background/80 p-4">
+        <p class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+          {{ item.label }}
+        </p>
+        <p class="mt-2 text-sm font-medium leading-6 text-foreground">{{ item.value }}</p>
+      </div>
+    }
+  </div>
+
+  <div class="border-border/70 border-t p-6">
+    @if (loadingSessions()) {
+      <p class="text-xs text-muted-foreground">Cargando sesiones...</p>
+    } @else if (userSessions().length === 0) {
+      <p class="text-xs text-muted-foreground">No hay sesiones registradas.</p>
+    } @else {
+      <div class="mt-2 grid gap-3 lg:grid-cols-2">
+        @for (session of userSessions(); track session.id) {
+          <div class="rounded-xl border border-border bg-background/80 p-4">
+            <div class="flex items-center justify-between gap-2">
+              <p class="text-sm font-semibold text-foreground">Sesion</p>
+              <div class="flex items-center gap-2">
+                <span
+                  class="rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]"
+                  [class.bg-emerald-500/10]="isSessionActive()(session)"
+                  [class.text-emerald-600]="isSessionActive()(session)"
+                  [class.bg-muted]="!isSessionActive()(session)"
+                  [class.text-muted-foreground]="!isSessionActive()(session)"
+                >
+                  {{ isSessionActive()(session) ? 'activa' : 'expirada' }}
+                </span>
+                <button
+                  type="button"
+                  class="rounded-xl border border-destructive/20 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-destructive transition hover:bg-destructive/10"
+                  (click)="revokeSession.emit(session.id)"
+                >
+                  Revocar
+                </button>
+              </div>
+            </div>
+            <p class="mt-2 text-xs text-muted-foreground">{{ session.userAgent }}</p>
+            <p class="mt-1 text-xs text-muted-foreground">IP {{ session.ipAddress }}</p>
+            <p class="mt-1 text-xs text-muted-foreground">
+              Ultima actividad: {{ formatDate()(session.lastActive) }}
+            </p>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</z-card>

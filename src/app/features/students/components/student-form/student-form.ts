@@ -10,11 +10,16 @@ import { SelectOptionComponent } from '@/shared/widgets/select-option/select-opt
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardInputDirective } from '@/shared/components/input';
 
-
 @Component({
   selector: 'sga-student-form',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ZardButtonComponent, ZardInputDirective, SelectOptionComponent],
+
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    ZardButtonComponent,
+    ZardInputDirective,
+    SelectOptionComponent,
+  ],
   templateUrl: './student-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -35,12 +40,14 @@ export class StudentForm implements OnInit {
   docTypeOptions: LocalSelectOption[] = [
     { value: 'DNI', label: 'DNI' },
     { value: 'CE', label: 'C.E.' },
-    { value: 'PASSPORT', label: 'Pasaporte' }];
+    { value: 'PASSPORT', label: 'Pasaporte' },
+  ];
 
   genderOptions: LocalSelectOption[] = [
     { value: 'M', label: 'Masculino' },
     { value: 'F', label: 'Femenino' },
-    { value: 'O', label: 'Otro' }];
+    { value: 'O', label: 'Otro' },
+  ];
 
   get fullName() {
     return `${this.form?.get('firstName')?.value ?? this.current?.firstName ?? ''} ${this.form?.get('lastName')?.value ?? this.current?.lastName ?? ''}`.trim();
@@ -105,10 +112,10 @@ export class StudentForm implements OnInit {
   private highlightFirstErrorTab() {
     const personalFields = ['firstName', 'lastName', 'docType', 'docNumber', 'gender', 'birthDate'];
     const userFields = ['email', 'username', 'password'];
-    
-    if (personalFields.some(f => this.form.get(f)?.invalid)) {
+
+    if (personalFields.some((f) => this.form.get(f)?.invalid)) {
       this.setTab('personal');
-    } else if (userFields.some(f => this.form.get(f)?.invalid)) {
+    } else if (userFields.some((f) => this.form.get(f)?.invalid)) {
       this.setTab('user');
     } else {
       this.setTab('academic');
@@ -145,21 +152,23 @@ export class StudentForm implements OnInit {
     if (!file) return;
 
     this.photoUploading = true;
-    this.uploadApi.upload(file, {
-      category: 'persons',
-      entityCode: this.form.get('studentCode')?.value || this.current?.studentCode || undefined,
-      preserveName: false,
-    }).subscribe({
-      next: (res) => {
-        this.photoUrl = res.url;
-        this.photoUploading = false;
-        input.value = '';
-      },
-      error: () => {
-        this.photoUploading = false;
-        input.value = '';
-      },
-    });
+    this.uploadApi
+      .upload(file, {
+        category: 'persons',
+        entityCode: this.form.get('studentCode')?.value || this.current?.studentCode || undefined,
+        preserveName: false,
+      })
+      .subscribe({
+        next: (res) => {
+          this.photoUrl = res.url;
+          this.photoUploading = false;
+          input.value = '';
+        },
+        error: () => {
+          this.photoUploading = false;
+          input.value = '';
+        },
+      });
   }
 
   close() {

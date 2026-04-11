@@ -30,6 +30,6 @@ export default [
   {
     path: '',
     redirectTo: 'list',
-    pathMatch: 'full'
-  }
+    pathMatch: 'full',
+  },
 ] as Routes;

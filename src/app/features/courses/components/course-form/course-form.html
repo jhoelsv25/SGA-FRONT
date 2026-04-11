@@ -1,61 +1,101 @@
 <form [formGroup]="form" class="grid gap-4" (ngSubmit)="submit()">
   <header class="flex items-center justify-between mb-4">
     <h2 class="text-lg font-semibold">{{ current ? 'Editar curso' : 'Nuevo curso' }}</h2>
-    <button type="button" z-button zColor="secondary" zType="ghost" zShape="circle" (click)="close()">
+    <button
+      type="button"
+      z-button
+      zColor="secondary"
+      zType="ghost"
+      zShape="circle"
+      (click)="close()"
+    >
       <i class="fas fa-times"></i>
     </button>
   </header>
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <div>
       <label class="label-form" for="code">Código</label>
-      <input z-input w-full id="code" formControlName="code" placeholder="Ej: MAT-101"  />
+      <input z-input w-full id="code" formControlName="code" placeholder="Ej: MAT-101" />
     </div>
     <div>
       <label class="label-form" for="name">Nombre</label>
-      <input z-input w-full id="name" formControlName="name" placeholder="Nombre del curso"  />
+      <input z-input w-full id="name" formControlName="name" placeholder="Nombre del curso" />
     </div>
     <div class="md:col-span-2">
       <label class="label-form" for="description">Descripción</label>
-      <input z-input w-full id="description" formControlName="description" placeholder="Descripción opcional"  />
+      <input
+        z-input
+        w-full
+        id="description"
+        formControlName="description"
+        placeholder="Descripción opcional"
+      />
     </div>
     <div>
       <label class="label-form" for="weeklyHours">Horas semanales</label>
-      <input z-input w-full id="weeklyHours" type="number" formControlName="weeklyHours"  />
+      <input z-input w-full id="weeklyHours" type="number" formControlName="weeklyHours" />
     </div>
     <div>
       <label class="label-form" for="totalHours">Horas totales</label>
-      <input z-input w-full id="totalHours" type="number" formControlName="totalHours"  />
+      <input z-input w-full id="totalHours" type="number" formControlName="totalHours" />
     </div>
     <div>
       <label class="label-form" for="credits">Créditos</label>
-      <input z-input w-full id="credits" type="number" formControlName="credits"  />
+      <input z-input w-full id="credits" type="number" formControlName="credits" />
     </div>
     <div class="md:col-span-2">
       <label class="label-form" for="competencies">Competencias</label>
-      <input z-input w-full id="competencies" formControlName="competencies" placeholder="Ej: Trabajo en equipo, Pensamiento crítico"  />
+      <input
+        z-input
+        w-full
+        id="competencies"
+        formControlName="competencies"
+        placeholder="Ej: Trabajo en equipo, Pensamiento crítico"
+      />
     </div>
     <div>
       <label class="label-form" for="isMandatory">Obligatorio</label>
-      <z-select-option id="isMandatory" [options]="mandatoryOptions" formControlName="isMandatory" [searchable]="false"></z-select-option>
+      <z-select-option
+        id="isMandatory"
+        [options]="mandatoryOptions"
+        formControlName="isMandatory"
+        [searchable]="false"
+      ></z-select-option>
     </div>
     <div class="md:col-span-2">
       <label class="label-form" for="syllabusUrl">URL del sílabo</label>
-      <input z-input w-full id="syllabusUrl" formControlName="syllabusUrl" placeholder="https://..."  />
+      <input
+        z-input
+        w-full
+        id="syllabusUrl"
+        formControlName="syllabusUrl"
+        placeholder="https://..."
+      />
     </div>
     <div>
       <label class="label-form" for="subjectArea">Área curricular</label>
-      <sga-subject-area-select id="subjectArea" formControlName="subjectArea" placeholder="Seleccionar área"></sga-subject-area-select>
+      <sga-subject-area-select
+        id="subjectArea"
+        formControlName="subjectArea"
+        placeholder="Seleccionar área"
+      ></sga-subject-area-select>
     </div>
     <div>
       <label class="label-form" for="grade">Grado / Nivel</label>
-      <sga-grade-level-select id="grade" formControlName="grade" placeholder="Seleccionar grado"></sga-grade-level-select>
+      <sga-grade-level-select
+        id="grade"
+        formControlName="grade"
+        placeholder="Seleccionar grado"
+      ></sga-grade-level-select>
     </div>
     <div class="md:col-span-2 flex items-center gap-2">
-      <input z-checkbox type="checkbox" formControlName="active" label="Activo"  />
+      <input z-checkbox type="checkbox" formControlName="active" label="Activo" />
     </div>
   </div>
   <footer class="flex justify-end gap-2 mt-4">
-    <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">Cancelar</button>
+    <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">
+      Cancelar
+    </button>
     <button type="submit" z-button zColor="primary" [disabled]="form.invalid || saving()">
       {{ saving() ? 'Guardando...' : 'Guardar' }}
     </button>

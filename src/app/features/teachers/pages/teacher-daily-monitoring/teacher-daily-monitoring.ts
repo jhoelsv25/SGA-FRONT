@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Toast } from '@core/services/toast';
 import { TeacherAttendanceApi } from '@features/teachers/services/api/teacher-attendance-api';
@@ -11,14 +18,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'sga-teacher-daily-monitoring',
-  standalone: true,
+
   imports: [
     CommonModule,
     FormsModule,
     ZardDatePickerComponent,
     ZardButtonComponent,
     ZardEmptyComponent,
-    ZardIconComponent
+    ZardIconComponent,
   ],
   templateUrl: './teacher-daily-monitoring.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,8 +41,10 @@ export default class TeacherDailyMonitoringPage implements OnInit {
   readonly rows = signal<any[]>([]);
   readonly loading = signal(false);
 
-  readonly presentCount = computed(() => this.rows().filter(r => r.clockInTime).length);
-  readonly outOfRangeCount = computed(() => this.rows().filter(r => r.clockInTime && !r.isWithinGeofence).length);
+  readonly presentCount = computed(() => this.rows().filter((r) => r.clockInTime).length);
+  readonly outOfRangeCount = computed(
+    () => this.rows().filter((r) => r.clockInTime && !r.isWithinGeofence).length,
+  );
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe((params) => {
@@ -60,12 +69,13 @@ export default class TeacherDailyMonitoringPage implements OnInit {
       error: (err) => {
         this.loading.set(false);
         this.toast.error('Error al cargar asistencia diaria', { description: err.message });
-      }
+      },
     });
   }
 
   onDateChange(value: unknown): void {
-    const normalized = value instanceof Date ? this.formatDateInput(value) : String(value ?? '').slice(0, 10);
+    const normalized =
+      value instanceof Date ? this.formatDateInput(value) : String(value ?? '').slice(0, 10);
     this.syncDateParam(normalized);
   }
 

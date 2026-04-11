@@ -1,71 +1,99 @@
 <z-card
-    class="w-full h-full bg-card/40 rounded-[3rem] border-border/10 overflow-hidden backdrop-blur-3xl shadow-2xl relative border-dashed border-2 hover:border-primary/20 transition-all cursor-pointer group"
-    (click)="fileInput.click()" (dragover)="$event.preventDefault(); isDragging.set(true)"
-    (dragleave)="$event.preventDefault(); isDragging.set(false)" (drop)="onFileDropped($event)"
-    [class.border-primary]="isDragging()" [class.bg-primary/5]="isDragging()">
-    <div
-        class="w-full h-full min-h-[400px] p-12 flex flex-col items-center justify-center text-center gap-8 relative z-10">
-        <input type="file" #fileInput (change)="onFileSelected($event)" hidden accept=".csv, .xlsx, .xls" />
+  class="w-full h-full bg-card/40 rounded-[3rem] border-border/10 overflow-hidden backdrop-blur-3xl shadow-2xl relative border-dashed border-2 hover:border-primary/20 transition-all cursor-pointer group"
+  (click)="fileInput.click()"
+  (dragover)="$event.preventDefault(); isDragging.set(true)"
+  (dragleave)="$event.preventDefault(); isDragging.set(false)"
+  (drop)="onFileDropped($event)"
+  [class.border-primary]="isDragging()"
+  [class.bg-primary/5]="isDragging()"
+>
+  <div
+    class="w-full h-full min-h-[400px] p-12 flex flex-col items-center justify-center text-center gap-8 relative z-10"
+  >
+    <input
+      type="file"
+      #fileInput
+      (change)="onFileSelected($event)"
+      hidden
+      accept=".csv, .xlsx, .xls"
+    />
 
-        @if (!fileName()) {
+    @if (!fileName()) {
+      <div
+        class="size-32 rounded-[2.5rem] bg-primary/10 text-primary flex items-center justify-center shadow-2xl shadow-primary/20 group-hover:scale-110 transition-all duration-500 relative overflow-hidden shrink-0"
+      >
         <div
-            class="size-32 rounded-[2.5rem] bg-primary/10 text-primary flex items-center justify-center shadow-2xl shadow-primary/20 group-hover:scale-110 transition-all duration-500 relative overflow-hidden shrink-0">
-            <div
-                class="absolute inset-0 bg-primary/20 animate-pulse group-hover:animate-none opacity-0 group-hover:opacity-100">
-            </div>
-            <z-icon zType="upload" class="h-12 w-12" />
-        </div>
+          class="absolute inset-0 bg-primary/20 animate-pulse group-hover:animate-none opacity-0 group-hover:opacity-100"
+        ></div>
+        <z-icon zType="upload" class="h-12 w-12" />
+      </div>
 
-        <div class="space-y-3 max-w-sm mx-auto">
-            <h3 class="text-2xl font-black text-foreground uppercase tracking-tight inter">
-                Selecciona o arrastra el archivo
-            </h3>
-            <p class="text-muted-foreground text-[13px] font-medium leading-relaxed">
-                Sube tu archivo .csv o .xlsx con el formato establecido para procesar las cuentas.
-            </p>
-        </div>
+      <div class="space-y-3 max-w-sm mx-auto">
+        <h3 class="text-2xl font-black text-foreground uppercase tracking-tight inter">
+          Selecciona o arrastra el archivo
+        </h3>
+        <p class="text-muted-foreground text-[13px] font-medium leading-relaxed">
+          Sube tu archivo .csv o .xlsx con el formato establecido para procesar las cuentas.
+        </p>
+      </div>
 
-        <button z-button zType="outline" zSize="lg"
-            class="rounded-2xl px-12 font-black uppercase tracking-widest text-[10px]">
-            Explorar mis archivos
+      <button
+        z-button
+        zType="outline"
+        zSize="lg"
+        class="rounded-2xl px-12 font-black uppercase tracking-widest text-[10px]"
+      >
+        Explorar mis archivos
+      </button>
+    } @else {
+      <!-- File Selected State -->
+      <div
+        class="size-32 rounded-[2.5rem] bg-green-500/10 text-green-500 flex items-center justify-center shadow-2xl shadow-green-500/20 animate-in zoom-in-95 duration-500 shrink-0"
+      >
+        <z-icon zType="file-text" class="h-12 w-12" />
+      </div>
+
+      <div class="space-y-3 w-full px-4">
+        <h3 class="text-2xl font-black text-foreground uppercase tracking-tight inter break-all">
+          {{ fileName() }}
+        </h3>
+        <div class="flex items-center justify-center gap-4">
+          <span
+            class="px-4 py-1.5 bg-green-500/10 text-green-500 rounded-full text-[10px] font-black uppercase tracking-widest border border-green-500/20 shadow-sm"
+          >
+            Archivo Preparado
+          </span>
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row items-center gap-4 mt-4">
+        <button
+          z-button
+          zType="default"
+          zSize="lg"
+          class="rounded-3xl px-14 font-black uppercase tracking-[0.2em] text-[10px] shadow-2xl shadow-primary/30 active:scale-95 transition-all"
+          (click)="$event.stopPropagation(); onImport()"
+          [disabled]="isUploading()"
+        >
+          @if (isUploading()) {
+            <z-icon zType="loader-circle" class="h-4 w-4 animate-spin mr-2" />
+            Procesando...
+          } @else {
+            <z-icon zType="check" class="h-4 w-4 mr-2" />
+            Iniciar Importación
+          }
         </button>
-        } @else {
-        <!-- File Selected State -->
-        <div
-            class="size-32 rounded-[2.5rem] bg-green-500/10 text-green-500 flex items-center justify-center shadow-2xl shadow-green-500/20 animate-in zoom-in-95 duration-500 shrink-0">
-            <z-icon zType="file-text" class="h-12 w-12" />
-        </div>
-
-        <div class="space-y-3 w-full px-4">
-            <h3 class="text-2xl font-black text-foreground uppercase tracking-tight inter break-all">
-                {{ fileName() }}
-            </h3>
-            <div class="flex items-center justify-center gap-4">
-                <span
-                    class="px-4 py-1.5 bg-green-500/10 text-green-500 rounded-full text-[10px] font-black uppercase tracking-widest border border-green-500/20 shadow-sm">
-                    Archivo Preparado
-                </span>
-            </div>
-        </div>
-
-        <div class="flex flex-col sm:flex-row items-center gap-4 mt-4">
-            <button z-button zType="default" zSize="lg"
-                class="rounded-3xl px-14 font-black uppercase tracking-[0.2em] text-[10px] shadow-2xl shadow-primary/30 active:scale-95 transition-all"
-                (click)="$event.stopPropagation(); onImport()" [disabled]="isUploading()">
-                @if (isUploading()) {
-                <z-icon zType="loader-circle" class="h-4 w-4 animate-spin mr-2" />
-                Procesando...
-                } @else {
-                <z-icon zType="check" class="h-4 w-4 mr-2" />
-                Iniciar Importación
-                }
-            </button>
-            <button z-button zType="ghost" zType="secondary"
-                class="rounded-2xl font-black uppercase tracking-widest text-[10px]"
-                (click)="$event.stopPropagation(); onCancel()" [disabled]="isUploading()">
-                Cambiar Archivo
-            </button>
-        </div>
-        }
-    </div>
+        <button
+          z-button
+          zType="ghost"
+          zType="secondary"
+          class="rounded-2xl font-black uppercase tracking-widest text-[10px]"
+          (click)="$event.stopPropagation(); onCancel()"
+          [disabled]="isUploading()"
+        >
+          Cambiar Archivo
+        </button>
+      </div>
+    }
+  </div>
 </z-card>

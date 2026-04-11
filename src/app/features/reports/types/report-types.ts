@@ -1,4 +1,11 @@
-export type ReportType = 'academic' | 'attendance' | 'payments' | 'behavior' | 'enrollment' | 'custom' | 'other';
+export type ReportType =
+  | 'academic'
+  | 'attendance'
+  | 'payments'
+  | 'behavior'
+  | 'enrollment'
+  | 'custom'
+  | 'other';
 export type ReportFormat = 'pdf' | 'xlsx' | 'csv';
 
 export type ReportJobStatus = 'pending' | 'processing' | 'completed' | 'failed';

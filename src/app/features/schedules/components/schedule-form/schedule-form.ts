@@ -2,7 +2,14 @@ import { SelectOptionComponent, SelectOption } from '@/shared/widgets/select-opt
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardInputDirective } from '@/shared/components/input';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ScheduleStore } from '../../services/store/schedule.store';
 import { Schedule, ScheduleCreate, ScheduleBlockType } from '../../types/schedule-types';
@@ -10,11 +17,17 @@ import { SectionCourse } from '../../../section-courses/types/section-course-typ
 import { ZardFormImports } from '@/shared/components/form';
 import { SectionCourseSelect } from '@/shared/widgets/selects';
 
-
 @Component({
   selector: 'sga-schedule-form',
-  standalone: true,
-  imports: [ReactiveFormsModule, ZardButtonComponent, SelectOptionComponent, ZardInputDirective, SectionCourseSelect, ...ZardFormImports],
+
+  imports: [
+    ReactiveFormsModule,
+    ZardButtonComponent,
+    SelectOptionComponent,
+    ZardInputDirective,
+    SectionCourseSelect,
+    ...ZardFormImports,
+  ],
   templateUrl: './schedule-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -42,7 +55,8 @@ export class ScheduleForm implements OnInit {
     { value: 'thursday', label: 'Jueves' },
     { value: 'friday', label: 'Viernes' },
     { value: 'saturday', label: 'Sábado' },
-    { value: 'sunday', label: 'Domingo' }];
+    { value: 'sunday', label: 'Domingo' },
+  ];
   durationOptions: SelectOption[] = [
     { value: '15', label: '15 minutos' },
     { value: '30', label: '30 minutos' },
@@ -66,7 +80,7 @@ export class ScheduleForm implements OnInit {
       ? typeof this.current.sectionCourse === 'string'
         ? this.current.sectionCourse
         : this.current.sectionCourse?.id
-      : this.preselectedSectionCourse?.id ?? null;
+      : (this.preselectedSectionCourse?.id ?? null);
     this.blockType.set(currentBlockType);
 
     this.form = this.fb.group({
@@ -181,7 +195,7 @@ export class ScheduleForm implements OnInit {
     const v = this.form.value;
     const isBreak = v.blockType === 'break';
     const title = isBreak
-      ? (v.title?.trim() || 'Receso')
+      ? v.title?.trim() || 'Receso'
       : (this.selectedSectionCourseLabel() ?? this.current?.title ?? v.sectionCourse ?? '');
     const payload: ScheduleCreate = {
       title,

@@ -2,12 +2,16 @@
   <!-- Header -->
   <header class="flex items-center justify-between">
     <div class="flex items-center gap-4">
-      <div class="size-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-sm">
+      <div
+        class="size-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-sm"
+      >
         <z-icon zType="shield" class="h-6 w-6" />
       </div>
       <div>
         <h2 class="text-xl font-black uppercase tracking-tight inter">{{ title }}</h2>
-        <p class="text-xs text-muted-foreground font-medium">Configura los detalles técnicos de este permiso.</p>
+        <p class="text-xs text-muted-foreground font-medium">
+          Configura los detalles técnicos de este permiso.
+        </p>
       </div>
     </div>
     <button z-button zType="ghost" zShape="circle" (click)="close()" class="size-8 !p-0">
@@ -22,14 +26,26 @@
         <z-form-field>
           <label z-form-label for="permission-name" [zRequired]="true">Nombre Descriptivo</label>
           <z-form-control>
-            <input z-input w-full id="permission-name" formControlName="name" placeholder="Ej: Crear Usuarios" />
+            <input
+              z-input
+              w-full
+              id="permission-name"
+              formControlName="name"
+              placeholder="Ej: Crear Usuarios"
+            />
           </z-form-control>
         </z-form-field>
 
         <z-form-field>
           <label z-form-label for="permission-slug" [zRequired]="true">Slug (Identificador)</label>
           <z-form-control>
-            <input z-input w-full id="permission-slug" formControlName="slug" placeholder="Ej: users:create" />
+            <input
+              z-input
+              w-full
+              id="permission-slug"
+              formControlName="slug"
+              placeholder="Ej: users:create"
+            />
           </z-form-control>
         </z-form-field>
       </div>
@@ -38,14 +54,25 @@
         <z-form-field>
           <label z-form-label for="permission-module" [zRequired]="true">Módulo Asociado</label>
           <z-form-control>
-            <input z-input w-full id="permission-module" formControlName="module" placeholder="Ej: users" />
+            <input
+              z-input
+              w-full
+              id="permission-module"
+              formControlName="module"
+              placeholder="Ej: users"
+            />
           </z-form-control>
         </z-form-field>
 
         <z-form-field>
           <label z-form-label for="permission-scope" [zRequired]="true">Alcance (Scope)</label>
           <z-form-control>
-            <z-select id="permission-scope" formControlName="scope" zPlaceholder="Selecciona el alcance" class="w-full">
+            <z-select
+              id="permission-scope"
+              formControlName="scope"
+              zPlaceholder="Selecciona el alcance"
+              class="w-full"
+            >
               <z-select-item zValue="global">Global</z-select-item>
               <z-select-item zValue="institution">Institución</z-select-item>
               <z-select-item zValue="department">Departamento</z-select-item>
@@ -57,9 +84,14 @@
       <z-form-field>
         <label z-form-label for="permission-description">Descripción de Funcionalidad</label>
         <z-form-control>
-          <textarea z-input w-full id="permission-description" formControlName="description"
+          <textarea
+            z-input
+            w-full
+            id="permission-description"
+            formControlName="description"
             class="textarea textarea-bordered h-24 bg-card/50 border-border/10 border"
-            placeholder="Explica qué permite hacer este permiso..."></textarea>
+            placeholder="Explica qué permite hacer este permiso..."
+          ></textarea>
         </z-form-control>
       </z-form-field>
     </form>
@@ -67,11 +99,25 @@
 
   <!-- Footer -->
   <footer class="flex items-center justify-end gap-3 pt-5">
-    <button z-button zType="outline" zColor="secondary" (click)="close()" type="button" class="gap-2">
+    <button
+      z-button
+      zType="outline"
+      zColor="secondary"
+      (click)="close()"
+      type="button"
+      class="gap-2"
+    >
       <z-icon zType="x" class="h-4 w-4" />
       Cancelar
     </button>
-    <button z-button zColor="primary" type="submit" form="permission-form" [disabled]="form.invalid" class="gap-2">
+    <button
+      z-button
+      zColor="primary"
+      type="submit"
+      form="permission-form"
+      [disabled]="form.invalid"
+      class="gap-2"
+    >
       <z-icon zType="save" class="h-4 w-4" />
       {{ current ? 'Actualizar' : 'Crear' }} Permiso
     </button>

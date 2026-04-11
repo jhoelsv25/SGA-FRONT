@@ -2,7 +2,14 @@ import { HeaderDetail } from '@/shared/widgets/header-detail/header-detail';
 import { ZardSkeletonComponent } from '@/shared/components/skeleton';
 import { ZardEmptyComponent } from '@/shared/components/empty';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 import { DialogConfirmService } from '@shared/widgets/dialog-confirm';
@@ -17,11 +24,20 @@ import { ZardInputDirective } from '@/shared/components/input';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardFormImports } from '@/shared/components/form';
 
-
 @Component({
   selector: 'sga-competencies',
-  standalone: true,
-  imports: [CommonModule, HeaderDetail, CompetencyCardComponent, ZardEmptyComponent, ZardSkeletonComponent, FormsModule, ZardInputDirective, ZardButtonComponent, ...ZardFormImports],
+
+  imports: [
+    CommonModule,
+    HeaderDetail,
+    CompetencyCardComponent,
+    ZardEmptyComponent,
+    ZardSkeletonComponent,
+    FormsModule,
+    ZardInputDirective,
+    ZardButtonComponent,
+    ...ZardFormImports,
+  ],
   templateUrl: './competencies.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -45,7 +61,9 @@ export default class CompetenciesPage implements OnInit {
   data = computed(() => this.store.data());
 
   headerActions = computed(() =>
-    this.permissionStore.filterActions(this.store.actions().filter((a) => a.typeAction === 'header')),
+    this.permissionStore.filterActions(
+      this.store.actions().filter((a) => a.typeAction === 'header'),
+    ),
   );
 
   filteredData = computed(() => {
@@ -74,7 +92,10 @@ export default class CompetenciesPage implements OnInit {
       .map(([courseName, items]) => ({
         key: courseName,
         label: courseName,
-        description: courseName === 'Sin curso asignado' ? 'Competencias pendientes de vincular a un curso' : 'Competencias asociadas a este curso',
+        description:
+          courseName === 'Sin curso asignado'
+            ? 'Competencias pendientes de vincular a un curso'
+            : 'Competencias asociadas a este curso',
         items: items.sort((a, b) => a.name.localeCompare(b.name)),
       }))
       .sort((a, b) => a.label.localeCompare(b.label));

@@ -2,22 +2,50 @@ import { SelectOptionComponent } from '@/shared/widgets/select-option/select-opt
 import { ZardDatePickerComponent } from '@/shared/components/date-picker';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardInputDirective } from '@/shared/components/input';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal, input } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+  input,
+} from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthFacade } from '@auth/services/store/auth.acede';
 
-import { AcademicYearStatus, GradingSystem, Modality, YearAcademic, YearAcademicGradeScale } from '../../types/year-academi-types';
+import {
+  AcademicYearStatus,
+  GradingSystem,
+  Modality,
+  YearAcademic,
+  YearAcademicGradeScale,
+} from '../../types/year-academi-types';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
 import { InstitutionApi } from '@features/admin-services/api/institution-api';
 import { YearAcademicStore } from '../../services/store/year-academic.store';
 import { InstitutionSelect } from '@/shared/widgets/selects';
 
-
 @Component({
   selector: 'sga-year-academic-form',
-  standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, CommonModule, SelectOptionComponent, ZardButtonComponent, ZardDatePickerComponent, ZardInputDirective, InstitutionSelect],
+
+  imports: [
+    ReactiveFormsModule,
+    FormsModule,
+    CommonModule,
+    SelectOptionComponent,
+    ZardButtonComponent,
+    ZardDatePickerComponent,
+    ZardInputDirective,
+    InstitutionSelect,
+  ],
   templateUrl: './year-academic-form.html',
   styleUrls: ['./year-academic-form.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -51,16 +79,19 @@ export class YearAcademicForm implements OnInit {
   modalities = [
     { value: Modality.IN_PERSON, label: 'Presencial' },
     { value: Modality.ONLINE, label: 'Virtual' },
-    { value: Modality.HYBRID, label: 'Híbrido' }];
+    { value: Modality.HYBRID, label: 'Híbrido' },
+  ];
   gradingSystems = [
     { value: GradingSystem.PERCENTAGE, label: 'Porcentaje' },
     { value: GradingSystem.LETTER, label: 'Letra' },
-    { value: GradingSystem.GPA, label: 'GPA' }];
+    { value: GradingSystem.GPA, label: 'GPA' },
+  ];
   statuses = [
     { value: AcademicYearStatus.PLANNED, label: 'Planificado' },
     { value: AcademicYearStatus.ONGOING, label: 'En curso' },
     { value: AcademicYearStatus.COMPLETED, label: 'Cerrado' },
-    { value: AcademicYearStatus.CANCELLED, label: 'Cancelado' }];
+    { value: AcademicYearStatus.CANCELLED, label: 'Cancelado' },
+  ];
   gradeScales = signal<YearAcademicGradeScale[]>([]);
   passingGradeLabel = computed(() => {
     switch (this.form.get('gradingSystem')?.value) {
@@ -73,7 +104,9 @@ export class YearAcademicForm implements OnInit {
     }
   });
 
-  readonly showGradeScaleTable = computed(() => this.form.get('gradingSystem')?.value === GradingSystem.LETTER);
+  readonly showGradeScaleTable = computed(
+    () => this.form.get('gradingSystem')?.value === GradingSystem.LETTER,
+  );
   passingGradePlaceholder = computed(() => {
     switch (this.form.get('gradingSystem')?.value) {
       case GradingSystem.LETTER:
@@ -106,7 +139,9 @@ export class YearAcademicForm implements OnInit {
     }
 
     if (profileInstitutionId) {
-      const byExplicitId = options.find((option) => option.value.toLowerCase() === profileInstitutionId);
+      const byExplicitId = options.find(
+        (option) => option.value.toLowerCase() === profileInstitutionId,
+      );
       if (byExplicitId) return byExplicitId.value;
     }
 
@@ -115,7 +150,9 @@ export class YearAcademicForm implements OnInit {
     const byId = options.find((option) => option.value.toLowerCase() === profileInstitution);
     if (byId) return byId.value;
 
-    const byLabel = options.find((option) => option.label.trim().toLowerCase() === profileInstitution);
+    const byLabel = options.find(
+      (option) => option.label.trim().toLowerCase() === profileInstitution,
+    );
     if (byLabel) return byLabel.value;
 
     return options.length === 1 ? options[0].value : null;

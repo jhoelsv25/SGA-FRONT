@@ -2,15 +2,25 @@
   <!-- Header -->
   <header class="mb-8 flex items-center justify-between">
     <div class="flex items-center gap-4">
-      <div class="flex h-14 w-14 items-center justify-center rounded-3xl bg-primary/10 text-primary shadow-inner">
+      <div
+        class="flex h-14 w-14 items-center justify-center rounded-3xl bg-primary/10 text-primary shadow-inner"
+      >
         <i class="fas fa-file-import text-xl"></i>
       </div>
       <div>
-        <h2 class="text-2xl font-black uppercase tracking-tight text-base-content">Importar asistencia</h2>
-        <p class="text-sm text-base-content/50">Carga un Excel, vincula columnas y aplica el lote en segundos.</p>
+        <h2 class="text-2xl font-black uppercase tracking-tight text-base-content">
+          Importar asistencia
+        </h2>
+        <p class="text-sm text-base-content/50">
+          Carga un Excel, vincula columnas y aplica el lote en segundos.
+        </p>
       </div>
     </div>
-    <button type="button" class="flex h-11 w-11 items-center justify-center rounded-2xl border border-base-300 bg-base-100 text-base-content/50 transition hover:border-primary/15 hover:text-primary" (click)="close()">
+    <button
+      type="button"
+      class="flex h-11 w-11 items-center justify-center rounded-2xl border border-base-300 bg-base-100 text-base-content/50 transition hover:border-primary/15 hover:text-primary"
+      (click)="close()"
+    >
       <i class="fas fa-times text-sm"></i>
     </button>
   </header>
@@ -20,18 +30,22 @@
     <div class="flex w-full max-w-2xl items-center gap-0">
       @for (s of steps; track s.id; let first = $first; let last = $last) {
         <div class="flex items-center flex-1 relative">
-            <div 
-                class="relative z-10 flex h-12 w-12 items-center justify-center rounded-full border-2 transition-all"
-                [ngClass]="{
-                    'bg-primary border-primary text-white': step() === s.id || (step() === 'done' && s.id !== 'done'),
-                    'bg-base-100 border-base-300 text-base-content/40': step() !== s.id
-                }"
-            >
-                <i [class]="'fas ' + s.icon + ' text-sm'"></i>
-            </div>
-            @if (!last) {
-                <div class="flex-1 h-0.5" [class]="step() === s.id || step() === 'done' ? 'bg-primary' : 'bg-base-300'"></div>
-            }
+          <div
+            class="relative z-10 flex h-12 w-12 items-center justify-center rounded-full border-2 transition-all"
+            [ngClass]="{
+              'bg-primary border-primary text-white':
+                step() === s.id || (step() === 'done' && s.id !== 'done'),
+              'bg-base-100 border-base-300 text-base-content/40': step() !== s.id,
+            }"
+          >
+            <i [class]="'fas ' + s.icon + ' text-sm'"></i>
+          </div>
+          @if (!last) {
+            <div
+              class="flex-1 h-0.5"
+              [class]="step() === s.id || step() === 'done' ? 'bg-primary' : 'bg-base-300'"
+            ></div>
+          }
         </div>
       }
     </div>
@@ -40,33 +54,55 @@
   <!-- Step: Upload -->
   @if (step() === 'upload') {
     <div class="flex flex-col gap-6">
-      <div class="flex items-center justify-between rounded-3xl border border-base-300/50 bg-base-200/50 p-5">
+      <div
+        class="flex items-center justify-between rounded-3xl border border-base-300/50 bg-base-200/50 p-5"
+      >
         <div class="flex items-center gap-3">
-          <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-success/10 text-success">
+          <div
+            class="flex h-11 w-11 items-center justify-center rounded-2xl bg-success/10 text-success"
+          >
             <i class="fas fa-file-excel"></i>
           </div>
           <div>
             <h4 class="text-sm font-black">¿No tienes la plantilla?</h4>
-            <p class="text-xs text-base-content/50">Descarga el formato base y úsalo como referencia.</p>
+            <p class="text-xs text-base-content/50">
+              Descarga el formato base y úsalo como referencia.
+            </p>
           </div>
         </div>
-        <button z-button zType="outline" zColor="success" zSize="sm" class="rounded-2xl" (click)="downloadTemplate()">
+        <button
+          z-button
+          zType="outline"
+          zColor="success"
+          zSize="sm"
+          class="rounded-2xl"
+          (click)="downloadTemplate()"
+        >
           <i class="fas fa-download mr-2"></i>
           Descargar Plantilla
         </button>
       </div>
 
-      <div class="group flex flex-col items-center justify-center rounded-[2rem] border-2 border-dashed border-base-300 bg-base-100/50 p-14 transition-colors hover:bg-base-100">
-        <div class="mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-base-200 transition-transform group-hover:scale-110">
+      <div
+        class="group flex flex-col items-center justify-center rounded-[2rem] border-2 border-dashed border-base-300 bg-base-100/50 p-14 transition-colors hover:bg-base-100"
+      >
+        <div
+          class="mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-base-200 transition-transform group-hover:scale-110"
+        >
           <i class="fas fa-cloud-upload-alt text-4xl text-base-content/20"></i>
         </div>
         <h3 class="mb-2 text-xl font-black">Selecciona tu archivo Excel</h3>
-        <p class="mb-8 max-w-md text-center text-sm text-base-content/40">Arrastra el archivo aquí o haz clic para buscarlo. Se admiten formatos <span class="font-black">.xlsx</span> y <span class="font-black">.xls</span>.</p>
-        
-        <label class="inline-flex h-12 items-center justify-center rounded-full bg-primary px-8 text-sm font-black uppercase tracking-[0.18em] text-white shadow-lg shadow-primary/20 transition hover:bg-primary/90">
+        <p class="mb-8 max-w-md text-center text-sm text-base-content/40">
+          Arrastra el archivo aquí o haz clic para buscarlo. Se admiten formatos
+          <span class="font-black">.xlsx</span> y <span class="font-black">.xls</span>.
+        </p>
+
+        <label
+          class="inline-flex h-12 items-center justify-center rounded-full bg-primary px-8 text-sm font-black uppercase tracking-[0.18em] text-white shadow-lg shadow-primary/20 transition hover:bg-primary/90"
+        >
           <i class="fas fa-search mr-2"></i>
           Buscar Archivo
-          <input type="file" class="hidden" accept=".xlsx,.xls" (change)="onFileSelected($event)"  />
+          <input type="file" class="hidden" accept=".xlsx,.xls" (change)="onFileSelected($event)" />
         </label>
       </div>
     </div>
@@ -75,59 +111,73 @@
   <!-- Step: Mapping -->
   @if (step() === 'mapping') {
     <div class="overflow-hidden rounded-[2rem] border border-base-300 bg-base-100">
-        <div class="border-b border-base-200 bg-base-200/30 p-6">
-            <h3 class="flex items-center gap-2 font-black">
-                <i class="fas fa-link text-primary"></i>
-                Vincular Columnas
-            </h3>
-            <p class="text-xs text-base-content/50 mt-1">Asocie los campos del sistema con las columnas de su archivo</p>
-        </div>
-        <div class="p-6 flex flex-col gap-6">
-            @for (opt of fieldOptions; track opt.key) {
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div class="flex-1">
-                        <span class="text-sm font-bold flex items-center gap-2 uppercase tracking-wide">
-                            {{ opt.label }}
-                            @if (opt.required) { <span class="text-error">*</span> }
-                        </span>
-                    </div>
-                    <div class="flex-1">
-                        <select 
-                            class="h-12 w-full rounded-2xl border border-base-300 bg-base-200/50 px-4 text-sm font-medium outline-none transition focus:border-primary/20 focus:ring-4 focus:ring-primary/5"
-                            [(ngModel)]="mapping()[opt.key]"
-                        >
-                            <option value="">-- Ignorar --</option>
-                            @for (h of headers(); track h) {
-                                <option [value]="h">{{ h }}</option>
-                            }
-                        </select>
-                    </div>
-                </div>
-            }
-        </div>
-        <div class="flex justify-end gap-3 bg-base-200/30 p-6">
-            <button z-button zType="ghost" zColor="secondary" class="rounded-2xl" (click)="step.set('upload')">Atrás</button>
-            <button 
-                z-button 
-                zColor="primary" 
-                class="rounded-2xl" 
-                [disabled]="!canStartImport()"
-                (click)="startImport()"
-            >
-                Confirmar e Importar
-            </button>
-        </div>
+      <div class="border-b border-base-200 bg-base-200/30 p-6">
+        <h3 class="flex items-center gap-2 font-black">
+          <i class="fas fa-link text-primary"></i>
+          Vincular Columnas
+        </h3>
+        <p class="text-xs text-base-content/50 mt-1">
+          Asocie los campos del sistema con las columnas de su archivo
+        </p>
+      </div>
+      <div class="p-6 flex flex-col gap-6">
+        @for (opt of fieldOptions; track opt.key) {
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="flex-1">
+              <span class="text-sm font-bold flex items-center gap-2 uppercase tracking-wide">
+                {{ opt.label }}
+                @if (opt.required) {
+                  <span class="text-error">*</span>
+                }
+              </span>
+            </div>
+            <div class="flex-1">
+              <select
+                class="h-12 w-full rounded-2xl border border-base-300 bg-base-200/50 px-4 text-sm font-medium outline-none transition focus:border-primary/20 focus:ring-4 focus:ring-primary/5"
+                [(ngModel)]="mapping()[opt.key]"
+              >
+                <option value="">-- Ignorar --</option>
+                @for (h of headers(); track h) {
+                  <option [value]="h">{{ h }}</option>
+                }
+              </select>
+            </div>
+          </div>
+        }
+      </div>
+      <div class="flex justify-end gap-3 bg-base-200/30 p-6">
+        <button
+          z-button
+          zType="ghost"
+          zColor="secondary"
+          class="rounded-2xl"
+          (click)="step.set('upload')"
+        >
+          Atrás
+        </button>
+        <button
+          z-button
+          zColor="primary"
+          class="rounded-2xl"
+          [disabled]="!canStartImport()"
+          (click)="startImport()"
+        >
+          Confirmar e Importar
+        </button>
+      </div>
     </div>
   }
 
   <!-- Step: Done -->
   @if (step() === 'done') {
     <div class="flex flex-col items-center justify-center py-12">
-        <div class="mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-success/10 text-success animate-bounce">
-            <i class="fas fa-check-circle text-5xl"></i>
-        </div>
-        <h3 class="mb-2 text-2xl font-black uppercase">¡Importación Exitosa!</h3>
-        <p class="text-base-content/50">Se ha procesado el archivo y actualizado la lista.</p>
+      <div
+        class="mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-success/10 text-success animate-bounce"
+      >
+        <i class="fas fa-check-circle text-5xl"></i>
+      </div>
+      <h3 class="mb-2 text-2xl font-black uppercase">¡Importación Exitosa!</h3>
+      <p class="text-base-content/50">Se ha procesado el archivo y actualizado la lista.</p>
     </div>
   }
 </div>

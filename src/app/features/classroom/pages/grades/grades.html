@@ -1,9 +1,5 @@
 <div class="space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-
-  <sga-classroom-grades-filters
-    [(search)]="search"
-    (onClear)="clearSearch()"
-  />
+  <sga-classroom-grades-filters [(search)]="search" (onClear)="clearSearch()" />
 
   <sga-classroom-grades-header
     [pageTitle]="pageTitle()"
@@ -16,12 +12,20 @@
 
   @if (loading()) {
     <div class="py-24 flex flex-col items-center justify-center text-center">
-      <div class="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin mb-4"></div>
-      <p class="text-sm font-black text-base-content/40 uppercase tracking-widest">Sincronizando calificaciones...</p>
+      <div
+        class="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin mb-4"
+      ></div>
+      <p class="text-sm font-black text-base-content/40 uppercase tracking-widest">
+        Sincronizando calificaciones...
+      </p>
     </div>
   } @else if (filteredRecords().length === 0) {
-    <div class="py-24 card-premium bg-base-100/50 border-dashed flex flex-col items-center justify-center text-center">
-      <div class="w-20 h-20 bg-base-200/50 rounded-3xl flex items-center justify-center text-base-content/10 mb-6">
+    <div
+      class="py-24 card-premium bg-base-100/50 border-dashed flex flex-col items-center justify-center text-center"
+    >
+      <div
+        class="w-20 h-20 bg-base-200/50 rounded-3xl flex items-center justify-center text-base-content/10 mb-6"
+      >
         <i class="fa-solid fa-graduation-cap text-3xl"></i>
       </div>
       <h3 class="text-xl font-black text-base-content/60">No hay evaluaciones registradas</h3>
@@ -31,7 +35,6 @@
     </div>
   } @else {
     <div class="grid gap-8 lg:grid-cols-[380px_minmax(0,1fr)]">
-      
       <sga-classroom-grades-sidebar
         [records]="filteredRecords()"
         [selectedRecordId]="selectedRecordId()"

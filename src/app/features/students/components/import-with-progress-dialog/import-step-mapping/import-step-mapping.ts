@@ -8,10 +8,9 @@ export interface FieldOption {
   required: boolean;
 }
 
-
 @Component({
   selector: 'sga-import-step-mapping',
-  standalone: true,
+
   imports: [CommonModule, ZardButtonComponent],
   templateUrl: './import-step-mapping.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

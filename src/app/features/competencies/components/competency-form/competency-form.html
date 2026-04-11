@@ -20,33 +20,55 @@
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <div>
       <label class="label-form" for="code">Código</label>
-      <input z-input w-full id="code" type="text" formControlName="code" placeholder="Código de competencia"  />
+      <input
+        z-input
+        w-full
+        id="code"
+        type="text"
+        formControlName="code"
+        placeholder="Código de competencia"
+      />
     </div>
     <div>
       <label class="label-form" for="name">Nombre</label>
-      <input z-input w-full id="name" type="text" formControlName="name" placeholder="Nombre de competencia"  />
+      <input
+        z-input
+        w-full
+        id="name"
+        type="text"
+        formControlName="name"
+        placeholder="Nombre de competencia"
+      />
     </div>
     <div class="md:col-span-2">
       <label class="label-form" for="description">Descripción</label>
-      <input z-input w-full
+      <input
+        z-input
+        w-full
         id="description"
         type="text"
         formControlName="description"
         placeholder="Descripción"
-       />
+      />
     </div>
     <div class="md:col-span-2">
       <label class="label-form" for="expectedAchievement">Nivel esperado</label>
-      <input z-input w-full
+      <input
+        z-input
+        w-full
         id="expectedAchievement"
         type="text"
         formControlName="expectedAchievement"
         placeholder="Nivel esperado"
-       />
+      />
     </div>
     <div class="md:col-span-2">
       <label class="label-form" for="course">Curso</label>
-      <sga-course-select id="course" formControlName="course" placeholder="Seleccionar curso"></sga-course-select>
+      <sga-course-select
+        id="course"
+        formControlName="course"
+        placeholder="Seleccionar curso"
+      ></sga-course-select>
     </div>
   </div>
   <footer class="flex items-center justify-end gap-2 mt-6">

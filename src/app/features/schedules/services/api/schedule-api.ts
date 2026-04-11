@@ -9,7 +9,9 @@ export class ScheduleApi {
   private readonly baseUrl = 'schedules';
 
   getAll(params?: Record<string, string | number | boolean>): Observable<Schedule[]> {
-    const httpParams = params ? new HttpParams({ fromObject: params as Record<string, string> }) : undefined;
+    const httpParams = params
+      ? new HttpParams({ fromObject: params as Record<string, string> })
+      : undefined;
     return this.http.get<Schedule[]>(this.baseUrl, { params: httpParams });
   }
 

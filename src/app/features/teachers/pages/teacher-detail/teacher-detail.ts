@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthStore } from '@auth/services/store/auth.store';
 import { ZardButtonComponent } from '@/shared/components/button';
@@ -22,7 +29,7 @@ import type { TeacherAttendance } from '../../types/teacher-attendance-types';
 
 @Component({
   selector: 'sga-teacher-detail',
-  standalone: true,
+
   imports: [
     CommonModule,
     ZardButtonComponent,
@@ -46,7 +53,9 @@ export default class TeacherDetailPage implements OnInit {
   private readonly dialog = inject(DialogModalService);
   private readonly toast = inject(Toast);
 
-  readonly teacher = signal<Teacher | null>((history.state?.teacher as Teacher | undefined) ?? null);
+  readonly teacher = signal<Teacher | null>(
+    (history.state?.teacher as Teacher | undefined) ?? null,
+  );
   readonly loading = signal(true);
   readonly assignments = signal<SectionCourse[]>([]);
   readonly schedules = signal<Schedule[]>([]);
@@ -60,7 +69,11 @@ export default class TeacherDetailPage implements OnInit {
 
   readonly fullName = computed(() => {
     const person = this.person();
-    return [person?.firstName, person?.lastName].filter(Boolean).join(' ').trim() || this.teacher()?.teacherCode || '';
+    return (
+      [person?.firstName, person?.lastName].filter(Boolean).join(' ').trim() ||
+      this.teacher()?.teacherCode ||
+      ''
+    );
   });
 
   readonly latestAttendance = computed(() => this.attendances()[0] ?? null);
@@ -221,7 +234,10 @@ export default class TeacherDetailPage implements OnInit {
 
   locationLabel(): string {
     const person = this.person();
-    return [person?.district, person?.province, person?.department].filter(Boolean).join(' · ') || 'Sin ubicación';
+    return (
+      [person?.district, person?.province, person?.department].filter(Boolean).join(' · ') ||
+      'Sin ubicación'
+    );
   }
 
   teacherAddress(): string {
@@ -288,12 +304,21 @@ export default class TeacherDetailPage implements OnInit {
   }
 
   assignmentLabel(item: SectionCourse): string {
-    return [item.course?.name, item.section?.name].filter(Boolean).join(' · ') || 'Asignación sin detalle';
+    return (
+      [item.course?.name, item.section?.name].filter(Boolean).join(' · ') ||
+      'Asignación sin detalle'
+    );
   }
 
   scheduleLabel(item: Schedule): string {
-    const course = item.sectionCourse && typeof item.sectionCourse === 'object' ? item.sectionCourse.course?.name : '';
-    const section = item.sectionCourse && typeof item.sectionCourse === 'object' ? item.sectionCourse.section?.name : '';
+    const course =
+      item.sectionCourse && typeof item.sectionCourse === 'object'
+        ? item.sectionCourse.course?.name
+        : '';
+    const section =
+      item.sectionCourse && typeof item.sectionCourse === 'object'
+        ? item.sectionCourse.section?.name
+        : '';
     return [course, section].filter(Boolean).join(' · ') || item.title;
   }
 
@@ -334,7 +359,9 @@ export default class TeacherDetailPage implements OnInit {
 
     this.teacherAttendanceApi.getAll({ teacher: teacherId }).subscribe({
       next: (res) => {
-        const list = (res.data ?? []).slice().sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        const list = (res.data ?? [])
+          .slice()
+          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
         this.attendances.set(list);
       },
       error: () => {

@@ -1,7 +1,15 @@
 import { SelectOptionComponent } from '@/shared/widgets/select-option/select-option';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardInputDirective } from '@/shared/components/input';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+  input,
+} from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
@@ -9,13 +17,27 @@ import { SectionCourseStore } from '../../services/store/section-course.store';
 import type { SectionCourse, SectionCourseCreate } from '../../types/section-course-types';
 import { Observable } from 'rxjs';
 import { MODALITY_OPTIONS, STATUS_OPTIONS } from '../../config/form.constants';
-import { CourseSelect, SectionSelect, TeacherSelect, YearAcademicSelect } from '@/shared/widgets/selects';
-
+import {
+  CourseSelect,
+  SectionSelect,
+  TeacherSelect,
+  YearAcademicSelect,
+} from '@/shared/widgets/selects';
 
 @Component({
   selector: 'sga-section-course-form',
-  standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, ZardInputDirective, SelectOptionComponent, ZardButtonComponent, SectionSelect, CourseSelect, YearAcademicSelect, TeacherSelect],
+
+  imports: [
+    ReactiveFormsModule,
+    CommonModule,
+    ZardInputDirective,
+    SelectOptionComponent,
+    ZardButtonComponent,
+    SectionSelect,
+    CourseSelect,
+    YearAcademicSelect,
+    TeacherSelect,
+  ],
   templateUrl: './section-course-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -55,7 +77,11 @@ export class SectionCourseForm implements OnInit {
         academicYear: this.current.academicYear?.id ?? null,
         section: this.current.section?.id ?? null,
         course: this.current.course?.id ?? null,
-        teacher: this.current.teacher ? (typeof this.current.teacher === 'string' ? this.current.teacher : this.current.teacher?.id) : null,
+        teacher: this.current.teacher
+          ? typeof this.current.teacher === 'string'
+            ? this.current.teacher
+            : this.current.teacher?.id
+          : null,
       });
     }
   }

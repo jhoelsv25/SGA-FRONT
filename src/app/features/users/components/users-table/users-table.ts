@@ -3,12 +3,15 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 import { CursorPagination } from '@core/types/pagination-types';
 import { User } from '../../types/user-types';
-import { DropdownItem, DropdownOptionComponent } from '@/shared/widgets/dropdown-option/dropdown-option';
+import {
+  DropdownItem,
+  DropdownOptionComponent,
+} from '@/shared/widgets/dropdown-option/dropdown-option';
 import { ZardEmptyComponent } from '@/shared/components/empty';
 
 @Component({
   selector: 'sga-users-table',
-  standalone: true,
+
   imports: [CommonModule, DatePipe, DropdownOptionComponent, ZardEmptyComponent],
   templateUrl: './users-table.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

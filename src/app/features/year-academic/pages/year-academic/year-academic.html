@@ -4,22 +4,38 @@
       <div class="flex items-center justify-between border-b border-base-200 pb-3">
         <h3 class="text-xs font-bold uppercase tracking-widest text-base-content/50">Filtros</h3>
         @if (hasActiveFilters()) {
-          <button type="button" class="text-xs font-semibold uppercase tracking-widest text-primary transition hover:opacity-80" (click)="clearFilters()">Limpiar</button>
+          <button
+            type="button"
+            class="text-xs font-semibold uppercase tracking-widest text-primary transition hover:opacity-80"
+            (click)="clearFilters()"
+          >
+            Limpiar
+          </button>
         }
       </div>
 
       <z-form-field>
         <label z-form-label>Buscar</label>
         <z-form-control>
-          <input z-input placeholder="Buscar años académicos..." [ngModel]="searchTerm()" (ngModelChange)="onSearch($event)" />
+          <input
+            z-input
+            placeholder="Buscar años académicos..."
+            [ngModel]="searchTerm()"
+            (ngModelChange)="onSearch($event)"
+          />
         </z-form-control>
       </z-form-field>
 
       <z-form-field>
         <label z-form-label>Estado</label>
         <z-form-control>
-          <z-select-option [options]="statusOptions" [ngModel]="filterStatus()" [placeholder]="'Todos'"
-            [searchable]="false" (ngModelChange)="onFilterStatus($event)"></z-select-option>
+          <z-select-option
+            [options]="statusOptions"
+            [ngModel]="filterStatus()"
+            [placeholder]="'Todos'"
+            [searchable]="false"
+            (ngModelChange)="onFilterStatus($event)"
+          ></z-select-option>
         </z-form-control>
       </z-form-field>
     </div>
@@ -34,29 +50,37 @@
     (refresh)="onRefresh()"
   />
 
-  <div class="grid grid-cols-1  mt-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+  <div class="grid grid-cols-1 mt-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
     @if (loading() && !data().length) {
-    @for (i of skeletonItems; track i) {
-    <z-skeleton [class]="'h-[260px] w-full rounded-4xl border border-base-200'"></z-skeleton>
-    }
+      @for (i of skeletonItems; track i) {
+        <z-skeleton [class]="'h-[260px] w-full rounded-4xl border border-base-200'"></z-skeleton>
+      }
     } @else {
-    @for (academicYear of filteredData(); track academicYear.id) {
-    <sga-year-academic-card [year]="academicYear" (viewDetail)="goToDetail(academicYear)"
-      [canManage]="canManageAcademicYears()" [canCreatePeriod]="canManageAcademicPeriods()"
-      (edit)="editYear(academicYear)" (delete)="deleteYear(academicYear)"
-      (createPeriod)="openPeriodForm(academicYear)" />
-    } @empty {
-    <div class="col-span-full">
-      <z-empty zIcon="calendar" zTitle="Sin años académicos"
-        zDescription="Aún no hay años académicos configurados. Crea el primero para definir períodos y fechas del curso.">
-        @if (canManageAcademicYears()) {
-          <button z-button type="button" class="mt-4" (click)="createFromEmpty()">
-            Crear Año Académico
-          </button>
-        }
-      </z-empty>
-    </div>
-    }
+      @for (academicYear of filteredData(); track academicYear.id) {
+        <sga-year-academic-card
+          [year]="academicYear"
+          (viewDetail)="goToDetail(academicYear)"
+          [canManage]="canManageAcademicYears()"
+          [canCreatePeriod]="canManageAcademicPeriods()"
+          (edit)="editYear(academicYear)"
+          (delete)="deleteYear(academicYear)"
+          (createPeriod)="openPeriodForm(academicYear)"
+        />
+      } @empty {
+        <div class="col-span-full">
+          <z-empty
+            zIcon="calendar"
+            zTitle="Sin años académicos"
+            zDescription="Aún no hay años académicos configurados. Crea el primero para definir períodos y fechas del curso."
+          >
+            @if (canManageAcademicYears()) {
+              <button z-button type="button" class="mt-4" (click)="createFromEmpty()">
+                Crear Año Académico
+              </button>
+            }
+          </z-empty>
+        </div>
+      }
     }
   </div>
 </div>

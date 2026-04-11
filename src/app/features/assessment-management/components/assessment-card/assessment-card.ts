@@ -8,7 +8,7 @@ import type { Assessment } from '../../types/assessment-types';
 
 @Component({
   selector: 'sga-assessment-card',
-  standalone: true,
+
   imports: [
     CommonModule,
     ZardButtonComponent,

@@ -41,7 +41,8 @@ export const GUARDIAN_COLUMN: DataSourceColumn[] = [
     label: 'Emergencia',
     type: 'boolean',
     booleanLabels: { true: 'Sí', false: 'No' },
-  }];
+  },
+];
 
 export const GUARDIAN_ACTIONS: ActionConfig[] = [
   {
@@ -71,4 +72,5 @@ export const GUARDIAN_ACTIONS: ActionConfig[] = [
     icon: 'fas fa-trash',
     typeAction: 'row',
     color: 'danger',
-  }];
+  },
+];

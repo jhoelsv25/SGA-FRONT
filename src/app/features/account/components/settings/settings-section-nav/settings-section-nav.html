@@ -1,0 +1,32 @@
+<z-card class="h-fit overflow-hidden">
+  <div class="border-border/70 border-b px-4 py-3">
+    <p class="text-sm font-semibold text-foreground">Secciones</p>
+  </div>
+
+  <nav class="space-y-1 p-2">
+    @for (section of sections(); track section.id) {
+      <button
+        type="button"
+        class="flex w-full items-start gap-3 rounded-xl px-3 py-2.5 text-left transition"
+        [class.bg-primary]="activeSection() === section.id"
+        [class.text-primary-foreground]="activeSection() === section.id"
+        [class.bg-background]="activeSection() !== section.id"
+        [class.text-foreground]="activeSection() !== section.id"
+        [class.hover:bg-muted]="activeSection() !== section.id"
+        (click)="sectionChange.emit(section.id)"
+      >
+        <span
+          class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"
+        >
+          <i [class]="section.icon"></i>
+        </span>
+        <span class="min-w-0">
+          <span class="block text-sm font-semibold">{{ section.label }}</span>
+          <span class="mt-1 block text-xs leading-5 text-muted-foreground">{{
+            section.description
+          }}</span>
+        </span>
+      </button>
+    }
+  </nav>
+</z-card>

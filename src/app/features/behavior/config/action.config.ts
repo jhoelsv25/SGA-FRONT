@@ -28,4 +28,5 @@ export const BEHAVIOR_ACTIONS: ActionConfig[] = [
     icon: 'fas fa-trash',
     typeAction: 'row',
     color: 'danger',
-  }];
+  },
+];

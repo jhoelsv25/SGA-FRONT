@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, HostListener, inject, OnDestroy, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  HostListener,
+  inject,
+  OnDestroy,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ClassroomStore } from '../../services/store/classroom.store';
 import { ClassroomTimelineStats } from '../../components/classroom-timeline-stats/classroom-timeline-stats';
@@ -8,13 +15,13 @@ import { ClassroomTimelineSkeleton } from '../../components/classroom-timeline-s
 
 @Component({
   selector: 'sga-classroom-timeline',
-  standalone: true,
+
   imports: [
-    CommonModule, 
-    ClassroomTimelineStats, 
-    ClassroomTimelinePublisher, 
+    CommonModule,
+    ClassroomTimelineStats,
+    ClassroomTimelinePublisher,
     ClassroomTimelineFeedItem,
-    ClassroomTimelineSkeleton
+    ClassroomTimelineSkeleton,
   ],
   templateUrl: './timeline.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

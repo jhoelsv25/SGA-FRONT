@@ -1,46 +1,74 @@
 <form [formGroup]="form" class="grid gap-4" (ngSubmit)="submit()">
   <header class="flex items-center justify-between mb-4">
     <h2 class="text-lg font-semibold">{{ current ? 'Editar sección' : 'Nueva sección' }}</h2>
-    <button type="button" z-button zColor="secondary" zType="ghost" zShape="circle" (click)="close()">
+    <button
+      type="button"
+      z-button
+      zColor="secondary"
+      zType="ghost"
+      zShape="circle"
+      (click)="close()"
+    >
       <i class="fas fa-times"></i>
     </button>
   </header>
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <div>
       <label class="label-form" for="name">Nombre</label>
-      <input z-input w-full id="name" formControlName="name" placeholder="Ej: A, B, C"  />
+      <input z-input w-full id="name" formControlName="name" placeholder="Ej: A, B, C" />
     </div>
     <div>
       <label class="label-form" for="capacity">Capacidad</label>
-      <input z-input w-full id="capacity" type="number" formControlName="capacity" placeholder="Ej: 30"  />
+      <input
+        z-input
+        w-full
+        id="capacity"
+        type="number"
+        formControlName="capacity"
+        placeholder="Ej: 30"
+      />
     </div>
     <div>
       <label class="label-form" for="shift">Turno</label>
-      <z-select-option id="shift" [options]="shiftOptions" formControlName="shift"></z-select-option>
+      <z-select-option
+        id="shift"
+        [options]="shiftOptions"
+        formControlName="shift"
+      ></z-select-option>
     </div>
     <div>
       <label class="label-form" for="grade">Grado</label>
-      <sga-grade-level-select id="grade" formControlName="grade" placeholder="Seleccionar grado"></sga-grade-level-select>
+      <sga-grade-level-select
+        id="grade"
+        formControlName="grade"
+        placeholder="Seleccionar grado"
+      ></sga-grade-level-select>
     </div>
     <div>
       <label class="label-form" for="yearAcademic">Año académico</label>
-      <sga-year-academic-select id="yearAcademic" formControlName="yearAcademic" placeholder="Seleccionar año"></sga-year-academic-select>
+      <sga-year-academic-select
+        id="yearAcademic"
+        formControlName="yearAcademic"
+        placeholder="Seleccionar año"
+      ></sga-year-academic-select>
     </div>
     <div>
       <label class="label-form" for="tutor">Tutor</label>
-      <input z-input w-full id="tutor" formControlName="tutor" placeholder="Nombre del tutor"  />
+      <input z-input w-full id="tutor" formControlName="tutor" placeholder="Nombre del tutor" />
     </div>
     <div>
       <label class="label-form" for="classroom">Aula</label>
-      <input z-input w-full id="classroom" formControlName="classroom" placeholder="Ej: Aula 101"  />
+      <input z-input w-full id="classroom" formControlName="classroom" placeholder="Ej: Aula 101" />
     </div>
     <div>
       <label class="label-form" for="availableSlots">Cupos disponibles</label>
-      <input z-input w-full id="availableSlots" type="number" formControlName="availableSlots"  />
+      <input z-input w-full id="availableSlots" type="number" formControlName="availableSlots" />
     </div>
   </div>
   <footer class="flex justify-end gap-2 mt-4">
-    <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">Cancelar</button>
+    <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">
+      Cancelar
+    </button>
     <button type="submit" z-button zColor="primary" [disabled]="form.invalid">Guardar</button>
   </footer>
 </form>

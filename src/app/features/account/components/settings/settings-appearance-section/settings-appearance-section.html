@@ -1,0 +1,23 @@
+<z-card>
+  <div class="border-border/70 border-b p-6">
+    <h2 class="text-xl font-semibold text-foreground">Apariencia</h2>
+    <p class="mt-1 text-sm text-muted-foreground">Preferencias locales del entorno.</p>
+  </div>
+
+  <div class="grid gap-3 p-6 lg:grid-cols-3">
+    @for (option of themeOptions(); track option.value) {
+      <button
+        type="button"
+        class="rounded-xl border p-4 text-left transition"
+        [class.border-primary]="currentTheme() === option.value"
+        [class.bg-primary/5]="currentTheme() === option.value"
+        [class.border-border]="currentTheme() !== option.value"
+        [class.hover:border-primary/30]="currentTheme() !== option.value"
+        (click)="themeChange.emit(option.value)"
+      >
+        <p class="text-sm font-semibold text-foreground">{{ option.label }}</p>
+        <p class="mt-1 text-xs leading-5 text-muted-foreground">{{ option.description }}</p>
+      </button>
+    }
+  </div>
+</z-card>

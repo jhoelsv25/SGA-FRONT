@@ -20,7 +20,7 @@ const SHIFT_LABELS: Record<string, string> = {
 
 @Component({
   selector: 'sga-section-card',
-  standalone: true,
+
   imports: [
     CommonModule,
     ZardCardComponent,

@@ -40,10 +40,12 @@ export default class SessionsComponent {
   private router = inject(Router);
   public searchTerm = signal('');
   public userId = signal<string | null>(null);
-  public pageTitle = computed(() => this.userId() ? 'Sesiones del Usuario' : 'Sesiones Activas');
-  public pageSubtitle = computed(() => this.userId()
-    ? 'Historial y accesos del usuario seleccionado.'
-    : 'Supervisa y controla los accesos en tiempo real de todos los usuarios.');
+  public pageTitle = computed(() => (this.userId() ? 'Sesiones del Usuario' : 'Sesiones Activas'));
+  public pageSubtitle = computed(() =>
+    this.userId()
+      ? 'Historial y accesos del usuario seleccionado.'
+      : 'Supervisa y controla los accesos en tiempo real de todos los usuarios.',
+  );
 
   public filteredSessions = computed(() => {
     const search = this.searchTerm().toLowerCase().trim();

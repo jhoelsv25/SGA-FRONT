@@ -9,8 +9,14 @@ export type UserDatePreset = '7d' | '30d' | 'custom' | '';
 
 @Component({
   selector: 'sga-user-date-range-filter',
-  standalone: true,
-  imports: [CommonModule, FormsModule, ZardDatePickerComponent, SelectOptionComponent, ...ZardFormImports],
+
+  imports: [
+    CommonModule,
+    FormsModule,
+    ZardDatePickerComponent,
+    SelectOptionComponent,
+    ...ZardFormImports,
+  ],
   template: `
     <div class="flex flex-col gap-4">
       <z-form-field>

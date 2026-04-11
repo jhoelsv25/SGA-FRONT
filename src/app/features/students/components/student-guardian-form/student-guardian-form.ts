@@ -8,11 +8,16 @@ import { GuardianSelect, StudentSelect } from '@/shared/widgets/selects';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardCheckboxComponent } from '@/shared/components/checkbox';
 
-
 @Component({
   selector: 'sga-student-guardian-form',
-  standalone: true,
-  imports: [ReactiveFormsModule, ZardButtonComponent, ZardCheckboxComponent, StudentSelect, GuardianSelect],
+
+  imports: [
+    ReactiveFormsModule,
+    ZardButtonComponent,
+    ZardCheckboxComponent,
+    StudentSelect,
+    GuardianSelect,
+  ],
   templateUrl: './student-guardian-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -37,8 +42,8 @@ export class StudentGuardianForm implements OnInit {
     if (this.current) {
       const sg = this.current;
       this.form.patchValue({
-        student: (sg.student as {  id?: string  })?.id ?? null,
-        guardian: (sg.guardian as {  id?: string  })?.id ?? null,
+        student: (sg.student as { id?: string })?.id ?? null,
+        guardian: (sg.guardian as { id?: string })?.id ?? null,
         isPrimary: sg.isPrimary,
         pickupAuthorization: sg.pickupAuthorization,
         emergencyContact: sg.emergencyContact,

@@ -18,7 +18,7 @@ export class AssessmentApi {
 
   getAll(params: ApiParams = {}): Observable<DataResponse<Assessment>> {
     let httpParams = new HttpParams();
-    Object.keys(params).forEach(key => {
+    Object.keys(params).forEach((key) => {
       if (params[key]) httpParams = httpParams.set(key, params[key]);
     });
     return this.http.get<DataResponse<Assessment>>(this.baseUrl, { params: httpParams });
@@ -32,21 +32,32 @@ export class AssessmentApi {
     return this.http.post<{ data?: Assessment; message?: string }>(this.baseUrl, data);
   }
 
-  update(id: string, data: Partial<AssessmentUpsertPayload>): Observable<Assessment | { data?: Assessment; message?: string }> {
-    return this.http.patch<Assessment | { data?: Assessment; message?: string }>(`${this.baseUrl}/${id}`, data);
+  update(
+    id: string,
+    data: Partial<AssessmentUpsertPayload>,
+  ): Observable<Assessment | { data?: Assessment; message?: string }> {
+    return this.http.patch<Assessment | { data?: Assessment; message?: string }>(
+      `${this.baseUrl}/${id}`,
+      data,
+    );
   }
 
   delete(id: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 
-  saveScoresBulk(data: BulkScoreRequest): Observable<{ success?: boolean; message?: string; processed?: number }> {
-    return this.http.post<{ success?: boolean; message?: string; processed?: number }>(`${this.scoresUrl}/bulk`, data);
+  saveScoresBulk(
+    data: BulkScoreRequest,
+  ): Observable<{ success?: boolean; message?: string; processed?: number }> {
+    return this.http.post<{ success?: boolean; message?: string; processed?: number }>(
+      `${this.scoresUrl}/bulk`,
+      data,
+    );
   }
 
   getScoresByAssessment(assessmentId: string): Observable<DataResponse<AssessmentScore>> {
-    return this.http.get<DataResponse<AssessmentScore>>(this.scoresUrl, { 
-      params: new HttpParams().set('assessment', assessmentId) 
+    return this.http.get<DataResponse<AssessmentScore>>(this.scoresUrl, {
+      params: new HttpParams().set('assessment', assessmentId),
     });
   }
 

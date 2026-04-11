@@ -4,22 +4,38 @@
       <div class="flex items-center justify-between border-b border-base-200 pb-3">
         <h3 class="text-xs font-bold uppercase tracking-widest text-base-content/50">Filtros</h3>
         @if (hasActiveFilters()) {
-          <button type="button" class="text-xs font-semibold uppercase tracking-widest text-primary transition hover:opacity-80" (click)="clearFilters()">Limpiar</button>
+          <button
+            type="button"
+            class="text-xs font-semibold uppercase tracking-widest text-primary transition hover:opacity-80"
+            (click)="clearFilters()"
+          >
+            Limpiar
+          </button>
         }
       </div>
 
       <z-form-field>
         <label z-form-label>Buscar</label>
         <z-form-control>
-          <input z-input placeholder="Buscar grados por nombre..." [ngModel]="searchTerm()" (ngModelChange)="onSearch($event)" />
+          <input
+            z-input
+            placeholder="Buscar grados por nombre..."
+            [ngModel]="searchTerm()"
+            (ngModelChange)="onSearch($event)"
+          />
         </z-form-control>
       </z-form-field>
 
       <z-form-field>
         <label z-form-label>Nivel</label>
         <z-form-control>
-          <z-select-option [options]="levelOptions" [ngModel]="filterLevel()" [placeholder]="'Todos'"
-            [searchable]="false" (ngModelChange)="onFilterLevel($event)"></z-select-option>
+          <z-select-option
+            [options]="levelOptions"
+            [ngModel]="filterLevel()"
+            [placeholder]="'Todos'"
+            [searchable]="false"
+            (ngModelChange)="onFilterLevel($event)"
+          ></z-select-option>
         </z-form-control>
       </z-form-field>
     </div>
@@ -36,29 +52,37 @@
 
   <div class="grid grid-cols-1 mt-6 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
     @if (loading() && !data().length) {
-    @for (i of skeletonItems; track i) {
-    <z-skeleton [class]="'h-[220px] w-full rounded-4xl border border-base-200'"></z-skeleton>
-    }
+      @for (i of skeletonItems; track i) {
+        <z-skeleton [class]="'h-[220px] w-full rounded-4xl border border-base-200'"></z-skeleton>
+      }
     } @else {
-    @for (group of groupedData(); track group.key) {
-
+      @for (group of groupedData(); track group.key) {
         <div class="grid grid-cols-1 gap-6">
           @for (gradeLevel of group.items; track gradeLevel.id) {
-            <sga-grade-level-card [gradeLevel]="gradeLevel" (edit)="editGradeLevel(gradeLevel)"
-              (delete)="deleteGradeLevel(gradeLevel)" (viewSections)="goToSections(gradeLevel)"
-              (viewCourses)="goToCourses(gradeLevel)" />
+            <sga-grade-level-card
+              [gradeLevel]="gradeLevel"
+              (edit)="editGradeLevel(gradeLevel)"
+              (delete)="deleteGradeLevel(gradeLevel)"
+              (viewSections)="goToSections(gradeLevel)"
+              (viewCourses)="goToCourses(gradeLevel)"
+            />
           }
         </div>
-    } @empty {
-    <div class="col-span-full">
-      <z-empty zIcon="graduation-cap" zTitle="Sin niveles de grado"
-        zDescription="Aún no hay niveles de grado configurados. Crea el primero para organizar primaria, secundaria o superior.">
-        @if (canManageGradeLevels()) {
-          <button z-button type="button" class="mt-4" (click)="createFromEmpty()">Crear grado</button>
-        }
-      </z-empty>
-    </div>
-    }
+      } @empty {
+        <div class="col-span-full">
+          <z-empty
+            zIcon="graduation-cap"
+            zTitle="Sin niveles de grado"
+            zDescription="Aún no hay niveles de grado configurados. Crea el primero para organizar primaria, secundaria o superior."
+          >
+            @if (canManageGradeLevels()) {
+              <button z-button type="button" class="mt-4" (click)="createFromEmpty()">
+                Crear grado
+              </button>
+            }
+          </z-empty>
+        </div>
+      }
     }
   </div>
 </div>

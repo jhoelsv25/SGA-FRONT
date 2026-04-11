@@ -5,4 +5,5 @@ export const SUBJECT_AREAS_COLUMN: DataSourceColumn[] = [
   { key: 'name', label: 'Nombre', sortable: true },
   { key: 'description', label: 'Descripción', sortable: false },
   { key: 'type', label: 'Tipo', sortable: true },
-  { key: 'status', label: 'Estado', sortable: true }];
+  { key: 'status', label: 'Estado', sortable: true },
+];

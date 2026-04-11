@@ -34,21 +34,13 @@
 }
 
 .schedule-day-column {
-  background-image: linear-gradient(
-    to bottom,
-    rgb(15 23 42 / 0.03) 1px,
-    transparent 1px
-  );
+  background-image: linear-gradient(to bottom, rgb(15 23 42 / 0.03) 1px, transparent 1px);
   background-size: 100% 40px;
 }
 
 :host-context(.dark) .schedule-day-column,
 .dark .schedule-day-column {
-  background-image: linear-gradient(
-    to bottom,
-    rgb(255 255 255 / 0.06) 1px,
-    transparent 1px
-  );
+  background-image: linear-gradient(to bottom, rgb(255 255 255 / 0.06) 1px, transparent 1px);
 }
 
 .schedule-block::before {

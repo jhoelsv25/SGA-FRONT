@@ -8,11 +8,16 @@ import { GradeLevelStore } from '../../services/store/grade-level.store';
 import { GradeLevel, GradeLevelCreate } from '../../types/grade-level-types';
 import { InstitutionSelect } from '@/shared/widgets/selects';
 
-
 @Component({
   selector: 'sga-grade-level-form',
-  standalone: true,
-  imports: [ReactiveFormsModule, ZardButtonComponent, SelectOptionComponent, ZardInputDirective, InstitutionSelect],
+
+  imports: [
+    ReactiveFormsModule,
+    ZardButtonComponent,
+    SelectOptionComponent,
+    ZardInputDirective,
+    InstitutionSelect,
+  ],
   templateUrl: './grade-level-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -28,7 +33,8 @@ export class GradeLevelForm implements OnInit {
   levelOptions = [
     { value: 'primary', label: 'Primaria' },
     { value: 'secondary', label: 'Secundaria' },
-    { value: 'higher', label: 'Superior' }];
+    { value: 'higher', label: 'Superior' },
+  ];
 
   ngOnInit() {
     this.current = this.data?.current ?? null;

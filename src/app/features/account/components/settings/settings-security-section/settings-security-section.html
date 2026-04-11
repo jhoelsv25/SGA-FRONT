@@ -1,0 +1,24 @@
+<z-card>
+  <div class="border-border/70 border-b p-6">
+    <h2 class="text-xl font-semibold text-foreground">Seguridad</h2>
+    <p class="mt-1 text-sm text-muted-foreground">Estado de acceso y control.</p>
+  </div>
+
+  <div class="space-y-3 p-6">
+    @for (item of securityRows(); track item.label) {
+      <div class="rounded-xl border border-border bg-background/80 p-4">
+        <p class="text-sm font-semibold text-foreground">{{ item.label }}</p>
+        <p class="mt-1 text-sm leading-6 text-muted-foreground">{{ item.description }}</p>
+      </div>
+    }
+  </div>
+
+  <div class="border-border/70 border-t p-6">
+    <a
+      routerLink="/account/change-password"
+      class="inline-flex items-center gap-2 rounded-xl bg-foreground px-4 py-2.5 text-sm font-semibold text-background"
+    >
+      Ir a cambio de contrasena
+    </a>
+  </div>
+</z-card>

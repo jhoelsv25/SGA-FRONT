@@ -7,10 +7,9 @@ export interface ImportResult {
   errors: { row: number; message: string }[];
 }
 
-
 @Component({
   selector: 'sga-import-step-done',
-  standalone: true,
+
   imports: [CommonModule, ZardButtonComponent],
   templateUrl: './import-step-done.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

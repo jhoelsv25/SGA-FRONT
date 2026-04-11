@@ -11,7 +11,7 @@ import type { SubjectArea, SubjectAreaType, StatusType } from '../../types/subje
 
 @Component({
   selector: 'sga-subject-area-card',
-  standalone: true,
+
   imports: [
     CommonModule,
     ZardCardComponent,

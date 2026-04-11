@@ -1,5 +1,12 @@
 import { ZardEmptyComponent } from '@/shared/components/empty';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RoleStore } from '@features/admin-services/store/role.store';
 import { Role } from '@features/admin-services/api/role-api';
@@ -16,7 +23,7 @@ import { RolePermissionHeaderComponent } from '../../components/header/header';
 
 @Component({
   selector: 'sga-roles',
-  standalone: true,
+
   imports: [
     CommonModule,
     RoleCardComponent,
@@ -47,7 +54,7 @@ export default class RolesComponent implements OnInit {
   private router = inject(Router);
   public store = inject(RoleStore);
   public permissionStore = inject(PermissionStore);
-  
+
   public activeTab = signal<'roles' | 'permissions'>('roles');
   public searchTerm = signal('');
 
@@ -55,12 +62,11 @@ export default class RolesComponent implements OnInit {
     const list = this.store.roles();
     const search = this.searchTerm().toLowerCase();
     if (!search) return list;
-    return list.filter(r => 
-      r.name.toLowerCase().includes(search) || 
-      r.description?.toLowerCase().includes(search)
+    return list.filter(
+      (r) => r.name.toLowerCase().includes(search) || r.description?.toLowerCase().includes(search),
     );
   });
-  
+
   public loading = computed(() => this.store.loading());
 
   public headerInfo = computed(() => {
@@ -70,7 +76,7 @@ export default class RolesComponent implements OnInit {
         description: 'Gestión de Perfiles y Niveles',
         buttonText: 'NUEVO ROL',
         icon: 'fa-shield-halved',
-        placeholder: 'Filtrar roles activos...'
+        placeholder: 'Filtrar roles activos...',
       };
     }
     return {
@@ -78,10 +84,10 @@ export default class RolesComponent implements OnInit {
       description: 'Capacidades Granulares del Core',
       buttonText: 'NUEVO PERMISO',
       icon: 'fa-key',
-      placeholder: 'Buscar técnicos, módulos o slugs...'
+      placeholder: 'Buscar técnicos, módulos o slugs...',
     };
   });
-  
+
   // Tab Switch logic to clear search
   setTab(tab: 'roles' | 'permissions') {
     this.activeTab.set(tab);
@@ -135,9 +141,13 @@ export default class RolesComponent implements OnInit {
     ref.closed.subscribe((result: any) => {
       if (!result) return;
       if (current) {
-        this.permissionStore.update(current.id, result).subscribe(() => this.permissionStore.loadAll({ size: 100 }));
+        this.permissionStore
+          .update(current.id, result)
+          .subscribe(() => this.permissionStore.loadAll({ size: 100 }));
       } else {
-        this.permissionStore.create(result).subscribe(() => this.permissionStore.loadAll({ size: 100 }));
+        this.permissionStore
+          .create(result)
+          .subscribe(() => this.permissionStore.loadAll({ size: 100 }));
       }
     });
   }

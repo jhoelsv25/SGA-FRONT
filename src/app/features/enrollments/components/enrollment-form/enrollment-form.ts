@@ -8,12 +8,24 @@ import { ZardInputDirective } from '@/shared/components/input';
 import { EnrollmentStore } from '../../services/store/enrollment.store';
 import { Enrollment } from '../../types/enrollment-types';
 
-export type LocalSelectOption = { value: string | number | boolean; label: string; [key: string]: any };
+export type LocalSelectOption = {
+  value: string | number | boolean;
+  label: string;
+  [key: string]: any;
+};
 
 @Component({
   selector: 'sga-enrollment-form',
-  standalone: true,
-  imports: [ReactiveFormsModule, ZardButtonComponent, SelectOptionComponent, ZardInputDirective, StudentSelect, SectionSelect, YearAcademicSelect],
+
+  imports: [
+    ReactiveFormsModule,
+    ZardButtonComponent,
+    SelectOptionComponent,
+    ZardInputDirective,
+    StudentSelect,
+    SectionSelect,
+    YearAcademicSelect,
+  ],
   templateUrl: './enrollment-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -27,7 +39,10 @@ export class EnrollmentForm implements OnInit {
     section: [null as string | null, [Validators.required]],
     academicYear: [null as string | null, [Validators.required]],
     enrollmentType: ['new' as 'new' | 'returning' | 'transfer', [Validators.required]],
-    status: ['enrolled' as 'enrolled' | 'completed' | 'dropped' | 'graduated', [Validators.required]],
+    status: [
+      'enrolled' as 'enrolled' | 'completed' | 'dropped' | 'graduated',
+      [Validators.required],
+    ],
     enrollmentDate: [new Date().toISOString().slice(0, 10)],
     observations: [''],
   });
@@ -37,13 +52,15 @@ export class EnrollmentForm implements OnInit {
   typeOptions: LocalSelectOption[] = [
     { value: 'new', label: 'Nuevo' },
     { value: 'returning', label: 'Reinscripción' },
-    { value: 'transfer', label: 'Traslado' }];
+    { value: 'transfer', label: 'Traslado' },
+  ];
 
   statusOptions: LocalSelectOption[] = [
     { value: 'enrolled', label: 'Matriculado' },
     { value: 'completed', label: 'Completado' },
     { value: 'dropped', label: 'Retirado' },
-    { value: 'graduated', label: 'Egresado' }];
+    { value: 'graduated', label: 'Egresado' },
+  ];
 
   ngOnInit(): void {
     this.current = this.data?.current ?? null;
@@ -54,7 +71,8 @@ export class EnrollmentForm implements OnInit {
         academicYear: this.current.academicYear?.id ?? null,
         enrollmentType: this.current.enrollmentType ?? 'new',
         status: this.current.status ?? 'enrolled',
-        enrollmentDate: this.current.enrollmentDate?.slice(0, 10) ?? new Date().toISOString().slice(0, 10),
+        enrollmentDate:
+          this.current.enrollmentDate?.slice(0, 10) ?? new Date().toISOString().slice(0, 10),
         observations: this.current.observations ?? '',
       });
     }

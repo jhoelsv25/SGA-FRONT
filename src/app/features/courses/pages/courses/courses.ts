@@ -3,7 +3,14 @@ import { SelectOptionComponent } from '@/shared/widgets/select-option/select-opt
 import { ZardSkeletonComponent } from '@/shared/components/skeleton';
 import { ZardEmptyComponent } from '@/shared/components/empty';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 import { DialogConfirmService } from '@shared/widgets/dialog-confirm';
 import { CourseStore } from '../../services/store/course.store';
@@ -24,11 +31,21 @@ const TYPE_OPTIONS = [
   { value: 'elective', label: 'Electivos' },
 ];
 
-
 @Component({
   selector: 'sga-courses',
-  standalone: true,
-  imports: [CommonModule, HeaderDetail, CourseCardComponent, ZardEmptyComponent, ZardSkeletonComponent, SelectOptionComponent, FormsModule, ZardInputDirective, ZardButtonComponent, ...ZardFormImports],
+
+  imports: [
+    CommonModule,
+    HeaderDetail,
+    CourseCardComponent,
+    ZardEmptyComponent,
+    ZardSkeletonComponent,
+    SelectOptionComponent,
+    FormsModule,
+    ZardInputDirective,
+    ZardButtonComponent,
+    ...ZardFormImports,
+  ],
   templateUrl: './courses.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -54,7 +71,9 @@ export default class CoursesPage implements OnInit {
   readonly headerConfig = computed(() => this.store.headerConfig());
 
   headerActions = computed(() =>
-    this.permissionStore.filterActions(this.store.actions().filter((a) => a.typeAction === 'header')),
+    this.permissionStore.filterActions(
+      this.store.actions().filter((a) => a.typeAction === 'header'),
+    ),
   );
 
   data = computed(() => this.store.courses());
@@ -97,9 +116,10 @@ export default class CoursesPage implements OnInit {
       .map(([label, items]) => ({
         key: label,
         label,
-        description: label === 'Sin área curricular'
-          ? 'Cursos todavía no vinculados a un área'
-          : 'Cursos agrupados dentro de la misma área curricular',
+        description:
+          label === 'Sin área curricular'
+            ? 'Cursos todavía no vinculados a un área'
+            : 'Cursos agrupados dentro de la misma área curricular',
         items: items.sort((a, b) => a.name.localeCompare(b.name)),
       }))
       .sort((a, b) => a.label.localeCompare(b.label));

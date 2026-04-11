@@ -16,7 +16,9 @@ export class PermissionApi {
   private http = inject(HttpClient);
   private baseUrl = `permissions`;
 
-  getAll(params: Record<string, string | number | boolean> = {}): Observable<{ data: Permission[]; total: number }> {
+  getAll(
+    params: Record<string, string | number | boolean> = {},
+  ): Observable<{ data: Permission[]; total: number }> {
     return this.http.get<{ data: Permission[]; total: number }>(this.baseUrl, { params });
   }
 
@@ -36,4 +38,3 @@ export class PermissionApi {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 }
-

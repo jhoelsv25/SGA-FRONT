@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthStore } from '@auth/services/store/auth.store';
 import { ZardButtonComponent } from '@/shared/components/button';
@@ -23,7 +30,7 @@ import type { StudentCredential } from '../../types/student-types';
 
 @Component({
   selector: 'sga-student-detail',
-  standalone: true,
+
   imports: [
     CommonModule,
     ZardButtonComponent,
@@ -47,7 +54,9 @@ export default class StudentDetailPage implements OnInit {
   private readonly dialog = inject(DialogModalService);
   private readonly toast = inject(Toast);
 
-  readonly student = signal<Student | null>((history.state?.student as Student | undefined) ?? null);
+  readonly student = signal<Student | null>(
+    (history.state?.student as Student | undefined) ?? null,
+  );
   readonly loading = signal(true);
   readonly enrollments = signal<Enrollment[]>([]);
   readonly guardians = signal<StudentGuardian[]>([]);
@@ -186,7 +195,9 @@ export default class StudentDetailPage implements OnInit {
     if (!current) return '';
     return [
       current.grade ? `Grado ${current.grade}` : '',
-      this.currentSectionName() !== 'Sin sección asignada' ? `Sección ${this.currentSectionName()}` : '',
+      this.currentSectionName() !== 'Sin sección asignada'
+        ? `Sección ${this.currentSectionName()}`
+        : '',
       `${current.age} años`,
     ]
       .filter(Boolean)
@@ -242,7 +253,10 @@ export default class StudentDetailPage implements OnInit {
 
   guardianName(guardian: StudentGuardian | null): string {
     if (!guardian?.guardian?.person) return 'Sin apoderado';
-    return `${guardian.guardian.person.firstName ?? ''} ${guardian.guardian.person.lastName ?? ''}`.trim() || 'Sin apoderado';
+    return (
+      `${guardian.guardian.person.firstName ?? ''} ${guardian.guardian.person.lastName ?? ''}`.trim() ||
+      'Sin apoderado'
+    );
   }
 
   guardianEmail(guardian: StudentGuardian | null): string {

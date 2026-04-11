@@ -1,6 +1,14 @@
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardInputDirective } from '@/shared/components/input';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+  input,
+} from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Z_MODAL_DATA, ZardDialogRef } from '@shared/components/dialog';
@@ -9,11 +17,16 @@ import type { Competency } from '../../types/competency-types';
 import { Observable } from 'rxjs';
 import { CourseSelect } from '@/shared/widgets/selects';
 
-
 @Component({
   selector: 'sga-competency-form',
-  standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, ZardInputDirective, ZardButtonComponent, CourseSelect],
+
+  imports: [
+    ReactiveFormsModule,
+    CommonModule,
+    ZardInputDirective,
+    ZardButtonComponent,
+    CourseSelect,
+  ],
   templateUrl: './competency-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

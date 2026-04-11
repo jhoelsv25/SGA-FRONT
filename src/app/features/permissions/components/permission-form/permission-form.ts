@@ -16,7 +16,7 @@ interface PermissionFormData {
 
 @Component({
   selector: 'sga-permission-form',
-  standalone: true,
+
   imports: [
     CommonModule,
     ReactiveFormsModule,

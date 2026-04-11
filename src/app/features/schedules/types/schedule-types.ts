@@ -18,17 +18,20 @@ export type Schedule = {
   startAt: string | Date;
   endAt: string | Date;
   classroom: string;
-  sectionCourse?: string | null | {
-    id: string;
-    section?: { id: string; name?: string; grade?: { id?: string; name?: string } };
-    course?: { id: string; name?: string };
-    teacher?: {
-      id: string;
-      teacherCode?: string;
-      specialization?: string;
-      person?: { firstName?: string; lastName?: string };
-    };
-  };
+  sectionCourse?:
+    | string
+    | null
+    | {
+        id: string;
+        section?: { id: string; name?: string; grade?: { id?: string; name?: string } };
+        course?: { id: string; name?: string };
+        teacher?: {
+          id: string;
+          teacherCode?: string;
+          specialization?: string;
+          person?: { firstName?: string; lastName?: string };
+        };
+      };
 };
 
 export type ScheduleCreate = {

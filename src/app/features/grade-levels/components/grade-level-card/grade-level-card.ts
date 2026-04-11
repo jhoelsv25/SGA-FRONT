@@ -11,7 +11,7 @@ import { GradeLevel } from '../../types/grade-level-types';
 
 @Component({
   selector: 'sga-grade-level-card',
-  standalone: true,
+
   imports: [
     CommonModule,
     ZardCardComponent,

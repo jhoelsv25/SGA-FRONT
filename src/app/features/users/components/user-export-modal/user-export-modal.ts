@@ -10,7 +10,7 @@ import { ZardFormImports } from '@/shared/components/form';
 
 @Component({
   selector: 'sga-user-export-modal',
-  standalone: true,
+
   imports: [
     CommonModule,
     FormsModule,
@@ -38,7 +38,7 @@ export class UserExportModal implements OnInit {
     { value: '', label: 'Todos' },
     { value: 'admin', label: 'Admin' },
     { value: 'user', label: 'User' },
-    { value: 'student', label: 'Estudiante' }
+    { value: 'student', label: 'Estudiante' },
   ];
 
   // Paso 2: Columnas
@@ -75,21 +75,23 @@ export class UserExportModal implements OnInit {
   }
 
   toggleAll(checked: boolean) {
-    this.columns.set(this.columns().map(c => ({ ...c, selected: checked })));
+    this.columns.set(this.columns().map((c) => ({ ...c, selected: checked })));
   }
 
   get allSelected() {
-    return this.columns().every(c => c.selected);
+    return this.columns().every((c) => c.selected);
   }
 
   exportData() {
-    if (!this.columns().some(c => c.selected)) return;
+    if (!this.columns().some((c) => c.selected)) return;
     this.isExporting.set(true);
 
     const payload = {
       search: this.filterSearch(),
       role: this.filterRole(),
-      columns: this.columns().filter(c => c.selected).map(c => c.key),
+      columns: this.columns()
+        .filter((c) => c.selected)
+        .map((c) => c.key),
     };
 
     // Simulated download, frontend needs endpoint to return binary blob logic.

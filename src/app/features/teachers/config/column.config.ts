@@ -8,4 +8,5 @@ export const TEACHER_COLUMN: DataSourceColumn[] = [
   { key: 'laborRegime', label: 'Régimen' },
   { key: 'hireDate', label: 'F. contratación', type: 'date' },
   { key: 'weeklyHours', label: 'Horas/semana', type: 'number' },
-  { key: 'employmentStatus', label: 'Estado' }];
+  { key: 'employmentStatus', label: 'Estado' },
+];

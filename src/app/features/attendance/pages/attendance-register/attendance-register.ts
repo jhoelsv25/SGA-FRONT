@@ -1,5 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, OnDestroy, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  OnDestroy,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -33,8 +41,15 @@ type StudentRow = {
 
 @Component({
   selector: 'sga-attendance-register',
-  standalone: true,
-  imports: [CommonModule, FormsModule, HeaderDetail, ZardInputDirective, ZardDatePickerComponent, SectionCourseSelect],
+
+  imports: [
+    CommonModule,
+    FormsModule,
+    HeaderDetail,
+    ZardInputDirective,
+    ZardDatePickerComponent,
+    SectionCourseSelect,
+  ],
   templateUrl: './attendance-register.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -77,20 +92,36 @@ export default class AttendanceRegisterPage implements OnInit, OnDestroy {
   readonly filteredStudents = computed(() => {
     const term = this.search().trim().toLowerCase();
     if (!term) return this.students();
-    return this.students().filter((student) =>
-      student.name.toLowerCase().includes(term) || student.studentCode.toLowerCase().includes(term),
+    return this.students().filter(
+      (student) =>
+        student.name.toLowerCase().includes(term) ||
+        student.studentCode.toLowerCase().includes(term),
     );
   });
 
-  readonly canSave = computed(() => Boolean(this.selectedSectionCourse()) && this.students().length > 0);
+  readonly canSave = computed(
+    () => Boolean(this.selectedSectionCourse()) && this.students().length > 0,
+  );
   readonly hasActiveFilters = computed(() =>
-    Boolean(this.selectedSectionCourse() || this.filters.attendanceRegisterDate() || this.studentContextId()),
+    Boolean(
+      this.selectedSectionCourse() ||
+      this.filters.attendanceRegisterDate() ||
+      this.studentContextId(),
+    ),
   );
 
-  readonly presentCount = computed(() => this.students().filter((row) => row.status === 'present').length);
-  readonly lateCount = computed(() => this.students().filter((row) => row.status === 'late').length);
-  readonly absentCount = computed(() => this.students().filter((row) => row.status === 'absent').length);
-  readonly excusedCount = computed(() => this.students().filter((row) => row.status === 'excused').length);
+  readonly presentCount = computed(
+    () => this.students().filter((row) => row.status === 'present').length,
+  );
+  readonly lateCount = computed(
+    () => this.students().filter((row) => row.status === 'late').length,
+  );
+  readonly absentCount = computed(
+    () => this.students().filter((row) => row.status === 'absent').length,
+  );
+  readonly excusedCount = computed(
+    () => this.students().filter((row) => row.status === 'excused').length,
+  );
 
   readonly headerConfig = computed<HeaderConfig>(() => ({
     title: 'Registro de Asistencia',
@@ -187,7 +218,8 @@ export default class AttendanceRegisterPage implements OnInit, OnDestroy {
             this.allowedSectionIds.set(allowedSectionIds);
             const filteredSectionCourses = list.filter(
               (sectionCourse) =>
-                !allowedSectionIds.length || allowedSectionIds.includes(sectionCourse.section?.id ?? ''),
+                !allowedSectionIds.length ||
+                allowedSectionIds.includes(sectionCourse.section?.id ?? ''),
             );
             this.applySectionCourseOptions(filteredSectionCourses);
           },
@@ -215,7 +247,8 @@ export default class AttendanceRegisterPage implements OnInit, OnDestroy {
     const options = this.sectionCourseOptions();
     const saved = this.filters.attendanceRegisterSectionCourseId();
     const fallback = options[0]?.value?.toString() ?? '';
-    const nextSection = saved && options.some((option) => option.value?.toString() === saved) ? saved : fallback;
+    const nextSection =
+      saved && options.some((option) => option.value?.toString() === saved) ? saved : fallback;
 
     if (nextSection) {
       this.onSectionCourseChange(nextSection);
@@ -263,7 +296,10 @@ export default class AttendanceRegisterPage implements OnInit, OnDestroy {
     this.enrollmentApi.getAll({ sectionCourse: sectionCourseId }).subscribe({
       next: (enrollmentRes) => {
         const rows: StudentRow[] = enrollmentRes.data
-          .filter((enrollment) => !this.studentContextId() || enrollment.student?.id === this.studentContextId())
+          .filter(
+            (enrollment) =>
+              !this.studentContextId() || enrollment.student?.id === this.studentContextId(),
+          )
           .map((enrollment) => ({
             id: enrollment.id,
             studentCode: enrollment.student.studentCode,
@@ -280,7 +316,9 @@ export default class AttendanceRegisterPage implements OnInit, OnDestroy {
             if (attendanceRes.data.length > 0) {
               this.students.update((prev) =>
                 prev.map((student) => {
-                  const attendance = attendanceRes.data.find((row) => row.enrollmentId === student.id);
+                  const attendance = attendanceRes.data.find(
+                    (row) => row.enrollmentId === student.id,
+                  );
                   return attendance ? { ...student, status: attendance.status } : student;
                 }),
               );
@@ -293,7 +331,9 @@ export default class AttendanceRegisterPage implements OnInit, OnDestroy {
   }
 
   updateStatus(studentId: string, status: AttendanceStatus): void {
-    this.students.update((prev) => prev.map((student) => (student.id === studentId ? { ...student, status } : student)));
+    this.students.update((prev) =>
+      prev.map((student) => (student.id === studentId ? { ...student, status } : student)),
+    );
   }
 
   saveAttendances() {
@@ -302,13 +342,19 @@ export default class AttendanceRegisterPage implements OnInit, OnDestroy {
     const inst = this.institutionStore.institution();
     const pos = this.geoService.currentPosition();
     let isWithinGeofence = true;
-    
-    if (inst && pos && inst.latitude !== undefined && inst.longitude !== undefined && inst.geofenceRadius !== undefined) {
+
+    if (
+      inst &&
+      pos &&
+      inst.latitude !== undefined &&
+      inst.longitude !== undefined &&
+      inst.geofenceRadius !== undefined
+    ) {
       const distance = this.geoService.calculateDistance(
         pos.coords.latitude,
         pos.coords.longitude,
         Number(inst.latitude),
-        Number(inst.longitude)
+        Number(inst.longitude),
       );
       isWithinGeofence = distance <= inst.geofenceRadius;
     }
@@ -339,17 +385,26 @@ export default class AttendanceRegisterPage implements OnInit, OnDestroy {
 
     this.dialog.open(AttendanceImportDialog, {
       data: {
-        onImport: (mappedData: { studentCode: string; status: AttendanceStatus; checkInTime?: string; observations?: string }[]) => {
+        onImport: (
+          mappedData: {
+            studentCode: string;
+            status: AttendanceStatus;
+            checkInTime?: string;
+            observations?: string;
+          }[],
+        ) => {
           this.students.update((prev) => {
             const nextState = [...prev];
             mappedData.forEach((item) => {
-              const index = nextState.findIndex((student) => student.studentCode === item.studentCode);
+              const index = nextState.findIndex(
+                (student) => student.studentCode === item.studentCode,
+              );
               if (index !== -1) {
-                nextState[index] = { 
-                  ...nextState[index], 
+                nextState[index] = {
+                  ...nextState[index],
                   status: item.status,
                   checkInTime: item.checkInTime,
-                  observations: item.observations
+                  observations: item.observations,
                 };
               }
             });
@@ -409,15 +464,21 @@ export default class AttendanceRegisterPage implements OnInit, OnDestroy {
 
   statusButtonClass(currentStatus: AttendanceStatus, targetStatus: AttendanceStatus) {
     if (currentStatus === targetStatus) {
-      if (targetStatus === 'present') return 'bg-emerald-500 text-white border-emerald-500 shadow-lg shadow-emerald-500/15';
-      if (targetStatus === 'late') return 'bg-amber-500 text-white border-amber-500 shadow-lg shadow-amber-500/15';
-      if (targetStatus === 'absent') return 'bg-rose-500 text-white border-rose-500 shadow-lg shadow-rose-500/15';
+      if (targetStatus === 'present')
+        return 'bg-emerald-500 text-white border-emerald-500 shadow-lg shadow-emerald-500/15';
+      if (targetStatus === 'late')
+        return 'bg-amber-500 text-white border-amber-500 shadow-lg shadow-amber-500/15';
+      if (targetStatus === 'absent')
+        return 'bg-rose-500 text-white border-rose-500 shadow-lg shadow-rose-500/15';
       return 'bg-sky-500 text-white border-sky-500 shadow-lg shadow-sky-500/15';
     }
 
-    if (targetStatus === 'present') return 'bg-base-100 text-base-content/55 border-base-300 hover:border-emerald-500 hover:text-emerald-600';
-    if (targetStatus === 'late') return 'bg-base-100 text-base-content/55 border-base-300 hover:border-amber-500 hover:text-amber-600';
-    if (targetStatus === 'absent') return 'bg-base-100 text-base-content/55 border-base-300 hover:border-rose-500 hover:text-rose-600';
+    if (targetStatus === 'present')
+      return 'bg-base-100 text-base-content/55 border-base-300 hover:border-emerald-500 hover:text-emerald-600';
+    if (targetStatus === 'late')
+      return 'bg-base-100 text-base-content/55 border-base-300 hover:border-amber-500 hover:text-amber-600';
+    if (targetStatus === 'absent')
+      return 'bg-base-100 text-base-content/55 border-base-300 hover:border-rose-500 hover:text-rose-600';
     return 'bg-base-100 text-base-content/55 border-base-300 hover:border-sky-500 hover:text-sky-600';
   }
 }

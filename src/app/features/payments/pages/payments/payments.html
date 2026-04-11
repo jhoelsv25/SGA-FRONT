@@ -1,64 +1,122 @@
 <div class="mx-auto flex max-w-7xl flex-col gap-6 p-6">
-  <section class="overflow-hidden rounded-[2rem] border border-base-200 bg-[radial-gradient(circle_at_top_left,_rgba(154,52,18,0.14),_transparent_36%),linear-gradient(135deg,_rgba(255,247,237,0.98),_rgba(255,255,255,0.94))] px-6 py-7 shadow-sm">
+  <section
+    class="overflow-hidden rounded-[2rem] border border-base-200 bg-[radial-gradient(circle_at_top_left,_rgba(154,52,18,0.14),_transparent_36%),linear-gradient(135deg,_rgba(255,247,237,0.98),_rgba(255,255,255,0.94))] px-6 py-7 shadow-sm"
+  >
     <div class="grid gap-6 xl:grid-cols-[minmax(0,1.6fr)_340px] xl:items-start">
       <div class="space-y-5">
-        <div class="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-white/80 px-3 py-1 text-[10px] font-black uppercase tracking-[0.22em] text-primary/80">
+        <div
+          class="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-white/80 px-3 py-1 text-[10px] font-black uppercase tracking-[0.22em] text-primary/80"
+        >
           <span class="size-2 rounded-full bg-primary"></span>
           Panel de cobranza
         </div>
 
         <div class="space-y-3">
-          <h1 class="text-3xl font-black tracking-tight text-base-content md:text-4xl">{{ pageTitle() }}</h1>
+          <h1 class="text-3xl font-black tracking-tight text-base-content md:text-4xl">
+            {{ pageTitle() }}
+          </h1>
           <p class="max-w-3xl text-sm leading-6 text-base-content/70">
-            {{ pageDescription() }} Centraliza compromisos, detecta mora rápido y abre el registro de cobro sin perder contexto.
+            {{ pageDescription() }} Centraliza compromisos, detecta mora rápido y abre el registro
+            de cobro sin perder contexto.
           </p>
         </div>
 
         <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <article class="rounded-[1.6rem] border border-base-200/80 bg-white/85 p-4 shadow-sm">
-            <p class="text-[10px] font-black uppercase tracking-[0.22em] text-primary/70">Pendientes</p>
+            <p class="text-[10px] font-black uppercase tracking-[0.22em] text-primary/70">
+              Pendientes
+            </p>
             <p class="mt-3 text-3xl font-black tracking-tight">{{ pendingCount() }}</p>
-            <p class="mt-1 text-sm text-base-content/55">{{ roleType() === 'student' ? 'Pagos que aún debes atender' : roleType() === 'guardian' ? 'Pagos pendientes del hogar' : 'Compromisos por cobrar' }}</p>
+            <p class="mt-1 text-sm text-base-content/55">
+              {{
+                roleType() === 'student'
+                  ? 'Pagos que aún debes atender'
+                  : roleType() === 'guardian'
+                    ? 'Pagos pendientes del hogar'
+                    : 'Compromisos por cobrar'
+              }}
+            </p>
           </article>
           <article class="rounded-[1.6rem] border border-base-200/80 bg-white/85 p-4 shadow-sm">
-            <p class="text-[10px] font-black uppercase tracking-[0.22em] text-emerald-700">Pagados</p>
+            <p class="text-[10px] font-black uppercase tracking-[0.22em] text-emerald-700">
+              Pagados
+            </p>
             <p class="mt-3 text-3xl font-black tracking-tight">{{ paidCount() }}</p>
-            <p class="mt-1 text-sm text-base-content/55">{{ roleType() === 'student' || roleType() === 'guardian' ? 'Pagos ya regularizados' : 'Registros cerrados correctamente' }}</p>
+            <p class="mt-1 text-sm text-base-content/55">
+              {{
+                roleType() === 'student' || roleType() === 'guardian'
+                  ? 'Pagos ya regularizados'
+                  : 'Registros cerrados correctamente'
+              }}
+            </p>
           </article>
           <article class="rounded-[1.6rem] border border-amber-200/80 bg-white/85 p-4 shadow-sm">
-            <p class="text-[10px] font-black uppercase tracking-[0.22em] text-amber-700">Vencidos</p>
+            <p class="text-[10px] font-black uppercase tracking-[0.22em] text-amber-700">
+              Vencidos
+            </p>
             <p class="mt-3 text-3xl font-black tracking-tight">{{ overdueCount() }}</p>
-            <p class="mt-1 text-sm text-base-content/55">{{ roleType() === 'student' || roleType() === 'guardian' ? 'Compromisos fuera de fecha' : 'Casos que necesitan gestión inmediata' }}</p>
+            <p class="mt-1 text-sm text-base-content/55">
+              {{
+                roleType() === 'student' || roleType() === 'guardian'
+                  ? 'Compromisos fuera de fecha'
+                  : 'Casos que necesitan gestión inmediata'
+              }}
+            </p>
           </article>
           <article class="rounded-[1.6rem] border border-base-200/80 bg-white/85 p-4 shadow-sm">
-            <p class="text-[10px] font-black uppercase tracking-[0.22em] text-base-content/60">Saldo visible</p>
-            <p class="mt-3 text-3xl font-black tracking-tight">S/ {{ outstandingAmount() | number:'1.2-2' }}</p>
-            <p class="mt-1 text-sm text-base-content/55">Monto pendiente considerando lo ya abonado.</p>
+            <p class="text-[10px] font-black uppercase tracking-[0.22em] text-base-content/60">
+              Saldo visible
+            </p>
+            <p class="mt-3 text-3xl font-black tracking-tight">
+              S/ {{ outstandingAmount() | number: '1.2-2' }}
+            </p>
+            <p class="mt-1 text-sm text-base-content/55">
+              Monto pendiente considerando lo ya abonado.
+            </p>
           </article>
         </div>
       </div>
 
       <aside class="rounded-[1.8rem] border border-base-200/80 bg-white/90 p-5 shadow-sm">
-        <p class="text-[10px] font-black uppercase tracking-[0.22em] text-primary/70">Enfoque del día</p>
+        <p class="text-[10px] font-black uppercase tracking-[0.22em] text-primary/70">
+          Enfoque del día
+        </p>
         <p class="mt-3 text-lg font-black tracking-tight text-base-content">
           {{ collectionFocus() }}
         </p>
         <div class="mt-5 space-y-3">
-          <div class="flex items-center justify-between rounded-2xl border border-base-200 bg-background/70 px-4 py-3">
-            <span class="text-xs font-bold uppercase tracking-[0.18em] text-base-content/50">Monto total</span>
-            <span class="text-sm font-black">S/ {{ totalAmount() | number:'1.2-2' }}</span>
+          <div
+            class="flex items-center justify-between rounded-2xl border border-base-200 bg-background/70 px-4 py-3"
+          >
+            <span class="text-xs font-bold uppercase tracking-[0.18em] text-base-content/50"
+              >Monto total</span
+            >
+            <span class="text-sm font-black">S/ {{ totalAmount() | number: '1.2-2' }}</span>
           </div>
-          <div class="flex items-center justify-between rounded-2xl border border-base-200 bg-background/70 px-4 py-3">
-            <span class="text-xs font-bold uppercase tracking-[0.18em] text-base-content/50">Registros</span>
+          <div
+            class="flex items-center justify-between rounded-2xl border border-base-200 bg-background/70 px-4 py-3"
+          >
+            <span class="text-xs font-bold uppercase tracking-[0.18em] text-base-content/50"
+              >Registros</span
+            >
             <span class="text-sm font-black">{{ data().length }}</span>
           </div>
-          <div class="flex items-center justify-between rounded-2xl border border-base-200 bg-background/70 px-4 py-3">
-            <span class="text-xs font-bold uppercase tracking-[0.18em] text-base-content/50">Cobertura</span>
+          <div
+            class="flex items-center justify-between rounded-2xl border border-base-200 bg-background/70 px-4 py-3"
+          >
+            <span class="text-xs font-bold uppercase tracking-[0.18em] text-base-content/50"
+              >Cobertura</span
+            >
             <span class="text-sm font-black">{{ paidCount() }}/{{ data().length || 0 }}</span>
           </div>
         </div>
 
-        <button z-button zColor="primary" class="mt-5 h-11 w-full rounded-[1.2rem] text-[11px] font-black uppercase tracking-[0.2em]" (click)="openCreate()">
+        <button
+          z-button
+          zColor="primary"
+          class="mt-5 h-11 w-full rounded-[1.2rem] text-[11px] font-black uppercase tracking-[0.2em]"
+          (click)="openCreate()"
+        >
           <i class="fas fa-plus mr-2"></i>
           {{ createLabel() }}
         </button>
@@ -89,7 +147,10 @@
         <i class="fas fa-filter mr-2"></i>
         Filtros
         @if (activeFiltersCount() > 0) {
-          <span class="ml-1 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-black text-primary-foreground">{{ activeFiltersCount() }}</span>
+          <span
+            class="ml-1 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-black text-primary-foreground"
+            >{{ activeFiltersCount() }}</span
+          >
         }
       </button>
       <button z-button zColor="primary" zShape="circle" (click)="openCreate()">
@@ -100,20 +161,39 @@
   </z-list-toolbar>
 
   <ng-template #paymentsFilterTpl>
-    <z-popover class="w-[320px] rounded-[1.4rem] border border-base-200 bg-popover p-4 text-popover-foreground shadow-2xl shadow-black/10">
+    <z-popover
+      class="w-[320px] rounded-[1.4rem] border border-base-200 bg-popover p-4 text-popover-foreground shadow-2xl shadow-black/10"
+    >
       <div class="space-y-4">
         <div>
           <p class="text-[10px] font-black uppercase tracking-[0.22em] text-primary/70">Filtros</p>
-          <p class="mt-1 text-sm text-base-content/60">Se mantienen sincronizados con la URL para volver al mismo estado.</p>
+          <p class="mt-1 text-sm text-base-content/60">
+            Se mantienen sincronizados con la URL para volver al mismo estado.
+          </p>
         </div>
 
         <div class="space-y-1.5">
-          <label class="text-[11px] font-bold uppercase text-base-content/60">Estado del grupo</label>
-          <z-select-option [options]="statusOptions()" [value]="filters.paymentStatus()" (valueChange)="onStatusChange($event)"></z-select-option>
+          <label class="text-[11px] font-bold uppercase text-base-content/60"
+            >Estado del grupo</label
+          >
+          <z-select-option
+            [options]="statusOptions()"
+            [value]="filters.paymentStatus()"
+            (valueChange)="onStatusChange($event)"
+          ></z-select-option>
         </div>
 
         <div class="flex gap-2">
-          <button z-button zType="outline" zColor="secondary" class="flex-1" [disabled]="activeFiltersCount() === 0" (click)="clearFilters()">Limpiar</button>
+          <button
+            z-button
+            zType="outline"
+            zColor="secondary"
+            class="flex-1"
+            [disabled]="activeFiltersCount() === 0"
+            (click)="clearFilters()"
+          >
+            Limpiar
+          </button>
           <button z-button zColor="primary" class="flex-1" (click)="onRefresh()">Actualizar</button>
         </div>
       </div>
@@ -138,16 +218,36 @@
               <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
                 <div class="min-w-0 space-y-2">
                   <div class="flex flex-wrap items-center gap-2">
-                    <span class="rounded-full px-3 py-1 text-[9px] font-black uppercase tracking-[0.18em]"
-                      [class]="group.status === 'overdue' ? 'bg-danger/10 text-danger-700' : group.status === 'pending' ? 'bg-warning/10 text-warning-700' : group.status === 'partial' ? 'bg-primary/10 text-primary' : 'bg-emerald-100 text-emerald-700'">
+                    <span
+                      class="rounded-full px-3 py-1 text-[9px] font-black uppercase tracking-[0.18em]"
+                      [class]="
+                        group.status === 'overdue'
+                          ? 'bg-danger/10 text-danger-700'
+                          : group.status === 'pending'
+                            ? 'bg-warning/10 text-warning-700'
+                            : group.status === 'partial'
+                              ? 'bg-primary/10 text-primary'
+                              : 'bg-emerald-100 text-emerald-700'
+                      "
+                    >
                       {{ statusLabel(group.status) }}
                     </span>
-                    <span class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">Vence {{ group.dueDate | date:'MM/yyyy' }}</span>
+                    <span
+                      class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45"
+                      >Vence {{ group.dueDate | date: 'MM/yyyy' }}</span
+                    >
                   </div>
                   <h3 class="text-2xl font-black tracking-tight">{{ group.title }}</h3>
-                  <p class="text-sm text-base-content/60">{{ group.studentCount }} estudiantes · {{ group.paymentCount }} cobros dentro del grupo</p>
+                  <p class="text-sm text-base-content/60">
+                    {{ group.studentCount }} estudiantes · {{ group.paymentCount }} cobros dentro
+                    del grupo
+                  </p>
                   @if (group.targetLabel) {
-                    <p class="text-xs font-semibold uppercase tracking-[0.16em] text-base-content/45">{{ group.targetLabel }}</p>
+                    <p
+                      class="text-xs font-semibold uppercase tracking-[0.16em] text-base-content/45"
+                    >
+                      {{ group.targetLabel }}
+                    </p>
                   }
                   @if (group.internalReference || group.observations) {
                     <p class="line-clamp-2 text-xs text-base-content/50">
@@ -158,16 +258,34 @@
 
                 <div class="grid gap-3 sm:grid-cols-3 lg:min-w-[420px]">
                   <div class="rounded-[1.2rem] border border-base-200 bg-background/70 p-4">
-                    <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">Total</p>
-                    <p class="mt-2 text-xl font-black">S/ {{ group.totalAmount | number:'1.2-2' }}</p>
+                    <p
+                      class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45"
+                    >
+                      Total
+                    </p>
+                    <p class="mt-2 text-xl font-black">
+                      S/ {{ group.totalAmount | number: '1.2-2' }}
+                    </p>
                   </div>
                   <div class="rounded-[1.2rem] border border-base-200 bg-background/70 p-4">
-                    <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">Cobrado</p>
-                    <p class="mt-2 text-xl font-black">S/ {{ group.paidAmount | number:'1.2-2' }}</p>
+                    <p
+                      class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45"
+                    >
+                      Cobrado
+                    </p>
+                    <p class="mt-2 text-xl font-black">
+                      S/ {{ group.paidAmount | number: '1.2-2' }}
+                    </p>
                   </div>
                   <div class="rounded-[1.2rem] border border-base-200 bg-background/70 p-4">
-                    <p class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45">Pendiente</p>
-                    <p class="mt-2 text-xl font-black">S/ {{ group.outstandingAmount | number:'1.2-2' }}</p>
+                    <p
+                      class="text-[10px] font-black uppercase tracking-[0.18em] text-base-content/45"
+                    >
+                      Pendiente
+                    </p>
+                    <p class="mt-2 text-xl font-black">
+                      S/ {{ group.outstandingAmount | number: '1.2-2' }}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -175,7 +293,9 @@
           }
         </section>
       } @else {
-        <div class="rounded-[var(--radius-xl)] border border-dashed border-base-300 bg-background/60 p-8">
+        <div
+          class="rounded-[var(--radius-xl)] border border-dashed border-base-300 bg-background/60 p-8"
+        >
           <z-empty
             zIcon="file-text"
             zTitle="Sin pagos"
@@ -189,10 +309,14 @@
       <section class="rounded-[1.8rem] border border-base-200 bg-card p-5 shadow-sm">
         <div class="flex items-center justify-between gap-3">
           <div>
-            <p class="text-[10px] font-black uppercase tracking-[0.22em] text-primary/70">Radar de prioridad</p>
+            <p class="text-[10px] font-black uppercase tracking-[0.22em] text-primary/70">
+              Radar de prioridad
+            </p>
             <h3 class="mt-2 text-xl font-black tracking-tight">Grupos que piden acción</h3>
           </div>
-          <div class="rounded-full border border-base-200 bg-background px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-base-content/55">
+          <div
+            class="rounded-full border border-base-200 bg-background px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-base-content/55"
+          >
             {{ priorityGroups().length }} visibles
           </div>
         </div>
@@ -208,21 +332,42 @@
                 <div class="flex items-start justify-between gap-3">
                   <div class="min-w-0">
                     <p class="truncate text-sm font-black">{{ group.title }}</p>
-                    <p class="mt-1 truncate text-xs text-base-content/60">{{ group.targetLabel || 'Registro manual' }} · {{ group.paymentCount }} registros</p>
+                    <p class="mt-1 truncate text-xs text-base-content/60">
+                      {{ group.targetLabel || 'Registro manual' }} ·
+                      {{ group.paymentCount }} registros
+                    </p>
                   </div>
-                  <span class="rounded-full px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.18em]"
-                    [class]="group.status === 'overdue' ? 'bg-danger/10 text-danger-700' : group.status === 'pending' ? 'bg-warning/10 text-warning-700' : 'bg-primary/10 text-primary'">
-                    {{ group.status === 'overdue' ? 'Urgente' : group.status === 'pending' ? 'Pendiente' : 'Parcial' }}
+                  <span
+                    class="rounded-full px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.18em]"
+                    [class]="
+                      group.status === 'overdue'
+                        ? 'bg-danger/10 text-danger-700'
+                        : group.status === 'pending'
+                          ? 'bg-warning/10 text-warning-700'
+                          : 'bg-primary/10 text-primary'
+                    "
+                  >
+                    {{
+                      group.status === 'overdue'
+                        ? 'Urgente'
+                        : group.status === 'pending'
+                          ? 'Pendiente'
+                          : 'Parcial'
+                    }}
                   </span>
                 </div>
                 <div class="mt-3 flex items-center justify-between text-xs text-base-content/60">
-                  <span>Vence {{ group.dueDate | date:'dd/MM/yyyy' }}</span>
-                  <span class="font-black text-base-content">S/ {{ group.outstandingAmount | number:'1.2-2' }}</span>
+                  <span>Vence {{ group.dueDate | date: 'dd/MM/yyyy' }}</span>
+                  <span class="font-black text-base-content"
+                    >S/ {{ group.outstandingAmount | number: '1.2-2' }}</span
+                  >
                 </div>
               </button>
             }
           } @else {
-            <div class="rounded-[1.3rem] border border-dashed border-base-300 bg-background/60 p-4 text-sm text-base-content/60">
+            <div
+              class="rounded-[1.3rem] border border-dashed border-base-300 bg-background/60 p-4 text-sm text-base-content/60"
+            >
               No hay grupos críticos en la vista actual. Puedes crear uno nuevo o cambiar filtros.
             </div>
           }
@@ -233,10 +378,12 @@
         <p class="text-[10px] font-black uppercase tracking-[0.22em] text-primary/70">Operación</p>
         <div class="mt-4 space-y-3 text-sm text-base-content/65">
           <div class="rounded-[1.2rem] border border-base-200 bg-background/70 p-4">
-            Primero crea la cabecera del grupo con monto, mora, descuentos y referencia. Después entra al detalle para registrar pagos por estudiante.
+            Primero crea la cabecera del grupo con monto, mora, descuentos y referencia. Después
+            entra al detalle para registrar pagos por estudiante.
           </div>
           <div class="rounded-[1.2rem] border border-base-200 bg-background/70 p-4">
-            El panel superior resume la cartera visible; esta columna te ayuda a priorizar grupos con saldo pendiente sin recorrer toda la lista.
+            El panel superior resume la cartera visible; esta columna te ayuda a priorizar grupos
+            con saldo pendiente sin recorrer toda la lista.
           </div>
         </div>
       </section>

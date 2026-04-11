@@ -6,7 +6,7 @@ import { ClassroomStore } from '../../services/store/classroom.store';
 
 @Component({
   selector: 'sga-classroom-timeline-publisher',
-  standalone: true,
+
   imports: [CommonModule, FormsModule],
   templateUrl: './classroom-timeline-publisher.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -23,7 +23,7 @@ export class ClassroomTimelinePublisher {
 
   readonly profileType = computed(() => this.authFacade.getCurrentUser()?.profile?.type ?? 'user');
   readonly currentUser = computed(() => this.authFacade.getCurrentUser());
-  
+
   readonly canPublish = computed(() => {
     const type = this.profileType();
     return type === 'teacher' || type === 'admin' || type === 'director';
@@ -35,24 +35,27 @@ export class ClassroomTimelinePublisher {
     const file = input.files?.[0];
     if (file) {
       this.store.uploadFile(file, { category: 'classroom' }).subscribe({
-        next: (res: { url: string; name: string }) => this.attachments.update(prev => [...prev, res]),
-        error: (err) => console.error('Upload failed', err)
+        next: (res: { url: string; name: string }) =>
+          this.attachments.update((prev) => [...prev, res]),
+        error: (err) => console.error('Upload failed', err),
       });
       input.value = '';
     }
   }
 
   removeAttachment(idx: number) {
-    this.attachments.update(prev => prev.filter((_, i) => i !== idx));
+    this.attachments.update((prev) => prev.filter((_, i) => i !== idx));
   }
 
   initials(name?: string) {
-    return (name ?? '')
-      .split(' ')
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((part) => part[0]?.toUpperCase() ?? '')
-      .join('') || 'CL';
+    return (
+      (name ?? '')
+        .split(' ')
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((part) => part[0]?.toUpperCase() ?? '')
+        .join('') || 'CL'
+    );
   }
 
   addExternalLink() {
@@ -76,15 +79,17 @@ export class ClassroomTimelinePublisher {
     if (!sectionId) return;
 
     if (this.postContent() || this.attachments().length > 0) {
-      this.store.publishPost(this.postContent(), this.attachments().length ? this.attachments() : undefined)?.subscribe({
-        next: () => {
-          this.postContent.set('');
-          this.externalResourceUrl.set('');
-          this.attachments.set([]);
-          this.resourceMode.set('none');
-          this.isAssignment.set(false);
-        }
-      });
+      this.store
+        .publishPost(this.postContent(), this.attachments().length ? this.attachments() : undefined)
+        ?.subscribe({
+          next: () => {
+            this.postContent.set('');
+            this.externalResourceUrl.set('');
+            this.attachments.set([]);
+            this.resourceMode.set('none');
+            this.isAssignment.set(false);
+          },
+        });
     }
   }
 }

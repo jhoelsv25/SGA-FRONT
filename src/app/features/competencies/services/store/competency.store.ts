@@ -30,7 +30,13 @@ const initialState: StoreState = {
   actions: COMPETENCIES_ACTIONS,
 };
 
-type CreatePayload = { code: string; name: string; description?: string; expectedAchievement?: string; course: string };
+type CreatePayload = {
+  code: string;
+  name: string;
+  description?: string;
+  expectedAchievement?: string;
+  course: string;
+};
 type UpdatePayload = Partial<CreatePayload>;
 
 export const CompetencyStore = signalStore(
@@ -43,7 +49,8 @@ export const CompetencyStore = signalStore(
           patchState(store, { loading: true });
           return api.getAll(params || {}).pipe(
             tap({
-              next: (res) => patchState(store, { data: res.data ?? [], total: res.total, loading: false }),
+              next: (res) =>
+                patchState(store, { data: res.data ?? [], total: res.total, loading: false }),
               error: (err) => {
                 patchState(store, { loading: false });
                 toast.error('Error al cargar competencias: ' + (err?.message ?? ''));

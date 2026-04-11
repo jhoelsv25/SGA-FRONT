@@ -1,19 +1,24 @@
 <z-card
-  class="group rounded-4xl border border-base-300/60 bg-card/85 p-6 shadow-sm transition-all hover:border-primary/20 hover:shadow-lg dark:border-base-200/60 dark:bg-base-100/90">
+  class="group rounded-4xl border border-base-300/60 bg-card/85 p-6 shadow-sm transition-all hover:border-primary/20 hover:shadow-lg dark:border-base-200/60 dark:bg-base-100/90"
+>
   <div class="flex flex-col gap-6">
     <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
       <div class="flex min-w-0 flex-1 items-start gap-4">
         <div
-          class="flex size-14 shrink-0 items-center justify-center rounded-[var(--radius-xl)] border border-primary/15 bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+          class="flex size-14 shrink-0 items-center justify-center rounded-[var(--radius-xl)] border border-primary/15 bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground"
+        >
           <z-icon zType="shield-alt" class="h-6 w-6" />
         </div>
 
         <div class="min-w-0 space-y-1.5">
           <div class="flex flex-wrap items-center gap-2.5">
-            <h3 class="truncate text-lg font-black uppercase tracking-tight">{{ behavior().studentName || 'Estudiante' }}</h3>
+            <h3 class="truncate text-lg font-black uppercase tracking-tight">
+              {{ behavior().studentName || 'Estudiante' }}
+            </h3>
             <span
               class="rounded-full border px-3 py-1 text-[9px] font-black uppercase tracking-widest"
-              [class]="severityClass()">
+              [class]="severityClass()"
+            >
               {{ severityLabel() }}
             </span>
           </div>
@@ -23,7 +28,7 @@
           </p>
 
           <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
-            <span>Fecha: {{ behavior().recordDate | date:'dd/MM/yyyy' }}</span>
+            <span>Fecha: {{ behavior().recordDate | date: 'dd/MM/yyyy' }}</span>
             <span>Registrado por: {{ behavior().recordedBy || 'Sin responsable' }}</span>
           </div>
 
@@ -37,11 +42,15 @@
         <div class="flex items-center gap-6 text-center">
           <div>
             <p class="text-xs font-black uppercase text-primary">{{ typeLabel() }}</p>
-            <span class="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60">Tipo</span>
+            <span class="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60"
+              >Tipo</span
+            >
           </div>
           <div>
             <p class="text-xs font-black uppercase">{{ severityLabel() }}</p>
-            <span class="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60">Severidad</span>
+            <span class="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60"
+              >Severidad</span
+            >
           </div>
         </div>
 
@@ -84,8 +93,12 @@
       </div>
     </div>
 
-    <div class="flex flex-wrap items-center justify-between gap-4 border-t border-base-300/60 pt-5 dark:border-base-200/60">
-      <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+    <div
+      class="flex flex-wrap items-center justify-between gap-4 border-t border-base-300/60 pt-5 dark:border-base-200/60"
+    >
+      <div
+        class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground"
+      >
         <z-icon zType="sparkles" class="h-3.5 w-3.5 text-primary" />
         Seguimiento conductual
       </div>

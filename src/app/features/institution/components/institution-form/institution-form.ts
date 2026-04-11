@@ -9,10 +9,15 @@ import { InstitutionStore } from '@features/admin-services/store/institution.sto
 import { UploadApi } from '@core/services/api/upload-api';
 import { Institution } from '../../types/institution-types';
 
-
 @Component({
   selector: 'sga-institution-form',
-  imports: [ReactiveFormsModule, ZardButtonComponent, SelectOptionComponent, ZardInputDirective, ...ZardFormImports],
+  imports: [
+    ReactiveFormsModule,
+    ZardButtonComponent,
+    SelectOptionComponent,
+    ZardInputDirective,
+    ...ZardFormImports,
+  ],
   templateUrl: './institution-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -34,7 +39,8 @@ export class InstitutionForm implements OnInit {
   public managementTypes = [
     { value: 'publica', label: 'Pública' },
     { value: 'privada', label: 'Privada' },
-    { value: 'mixta', label: 'Mixta' }];
+    { value: 'mixta', label: 'Mixta' },
+  ];
 
   constructor() {
     this.institutionForm = this.fb.group({
@@ -111,20 +117,23 @@ export class InstitutionForm implements OnInit {
     if (!file) return;
 
     this.logoUploading = true;
-    this.uploadApi.upload(file, {
-      category: 'institutions',
-      entityCode: this.institutionForm.get('modularCode')?.value || this.current?.modularCode || undefined,
-      preserveName: false,
-    }).subscribe({
-      next: (res) => {
-        this.institutionForm.patchValue({ logoUrl: res.url });
-        this.logoUploading = false;
-        input.value = '';
-      },
-      error: () => {
-        this.logoUploading = false;
-        input.value = '';
-      },
-    });
+    this.uploadApi
+      .upload(file, {
+        category: 'institutions',
+        entityCode:
+          this.institutionForm.get('modularCode')?.value || this.current?.modularCode || undefined,
+        preserveName: false,
+      })
+      .subscribe({
+        next: (res) => {
+          this.institutionForm.patchValue({ logoUrl: res.url });
+          this.logoUploading = false;
+          input.value = '';
+        },
+        error: () => {
+          this.logoUploading = false;
+          input.value = '';
+        },
+      });
   }
 }

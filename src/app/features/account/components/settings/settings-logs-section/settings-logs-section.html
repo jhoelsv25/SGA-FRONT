@@ -1,0 +1,31 @@
+<z-card>
+  <div class="border-border/70 border-b p-6">
+    <h2 class="text-xl font-semibold text-foreground">Logs y auditoria</h2>
+    <p class="mt-1 text-sm text-muted-foreground">Eventos recientes del usuario.</p>
+  </div>
+
+  @if (loading()) {
+    <div class="p-6 text-sm text-muted-foreground">Cargando eventos...</div>
+  } @else if (auditRows().length === 0) {
+    <div class="p-6 text-sm text-muted-foreground">No hay eventos recientes.</div>
+  } @else {
+    <div class="space-y-3 p-6">
+      @for (item of auditRows(); track item.id) {
+        <div class="flex items-start gap-4 rounded-xl border border-border bg-background/80 p-4">
+          <span
+            class="mt-0.5 flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary"
+          >
+            <i [class]="item.icon"></i>
+          </span>
+          <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <p class="text-sm font-semibold text-foreground">{{ item.title }}</p>
+              <span class="text-xs font-medium text-muted-foreground">{{ item.time }}</span>
+            </div>
+            <p class="mt-1 text-sm leading-6 text-muted-foreground">{{ item.description }}</p>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</z-card>

@@ -35,14 +35,19 @@ export class AccessControlApi {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = 'access-control-events';
 
-  getAll(params: Record<string, string | number | boolean> = {}): Observable<{ message: string; data: AccessControlEvent[] }> {
+  getAll(
+    params: Record<string, string | number | boolean> = {},
+  ): Observable<{ message: string; data: AccessControlEvent[] }> {
     return this.http.get<{ message: string; data: AccessControlEvent[] }>(this.baseUrl, { params });
   }
 
   resolve(code: string): Observable<{ message: string; data: AccessControlResolvedPerson }> {
-    return this.http.get<{ message: string; data: AccessControlResolvedPerson }>(`${this.baseUrl}/resolve`, {
-      params: { code },
-    });
+    return this.http.get<{ message: string; data: AccessControlResolvedPerson }>(
+      `${this.baseUrl}/resolve`,
+      {
+        params: { code },
+      },
+    );
   }
 
   register(payload: {

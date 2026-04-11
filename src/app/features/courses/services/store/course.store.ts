@@ -40,10 +40,10 @@ export const CourseStore = signalStore(
           return api.getAll(params || {}).pipe(
             tap({
               next: (response) => {
-                patchState(store, { 
-                  courses: response.data, 
-                  total: response.total, 
-                  loading: false 
+                patchState(store, {
+                  courses: response.data,
+                  total: response.total,
+                  loading: false,
                 });
               },
               error: (error) => {
@@ -76,7 +76,7 @@ export const CourseStore = signalStore(
       return api.update(id, course).pipe(
         tap({
           next: (response) => {
-            const updated = store.courses().map(item => item.id === id ? response.data : item);
+            const updated = store.courses().map((item) => (item.id === id ? response.data : item));
             patchState(store, { courses: updated, loading: false });
             toast.success('Curso actualizado correctamente');
           },

@@ -19,7 +19,9 @@ export class RoleApi {
   private http = inject(HttpClient);
   private baseUrl = `roles`;
 
-  getAll(params: Record<string, string | number | boolean> = {}): Observable<{ data: Role[]; total: number }> {
+  getAll(
+    params: Record<string, string | number | boolean> = {},
+  ): Observable<{ data: Role[]; total: number }> {
     return this.http.get<{ data: Role[]; total: number }>(this.baseUrl, { params });
   }
 

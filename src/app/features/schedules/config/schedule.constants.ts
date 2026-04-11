@@ -7,7 +7,8 @@ export const DAY_ORDER: Schedule['dayOfWeek'][] = [
   'thursday',
   'friday',
   'saturday',
-  'sunday'];
+  'sunday',
+];
 
 export const DAY_LABELS: Record<Schedule['dayOfWeek'], string> = {
   monday: 'Lun',

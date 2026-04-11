@@ -10,7 +10,7 @@ import type { Payment } from '../../types/payment-types';
 
 @Component({
   selector: 'sga-payment-card',
-  standalone: true,
+
   imports: [
     CommonModule,
     ZardButtonComponent,

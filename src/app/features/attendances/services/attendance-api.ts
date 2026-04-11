@@ -11,7 +11,7 @@ export class AttendanceApi {
 
   getAll(params: ApiParams = {}): Observable<DataResponse<Attendance>> {
     let httpParams = new HttpParams();
-    Object.keys(params).forEach(key => {
+    Object.keys(params).forEach((key) => {
       if (params[key]) httpParams = httpParams.set(key, params[key]);
     });
     return this.http.get<DataResponse<Attendance>>(this.baseUrl, { params: httpParams });
@@ -26,9 +26,7 @@ export class AttendanceApi {
   }
 
   getBySectionCourse(sectionCourseId: string, date: string): Observable<DataResponse<Attendance>> {
-    const params = new HttpParams()
-      .set('sectionCourse', sectionCourseId)
-      .set('date', date);
+    const params = new HttpParams().set('sectionCourse', sectionCourseId).set('date', date);
     return this.http.get<DataResponse<Attendance>>(this.baseUrl, { params });
   }
 }

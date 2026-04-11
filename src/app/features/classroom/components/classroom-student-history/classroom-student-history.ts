@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'sga-classroom-student-history',
-  standalone: true,
+
   imports: [CommonModule],
   templateUrl: './classroom-student-history.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

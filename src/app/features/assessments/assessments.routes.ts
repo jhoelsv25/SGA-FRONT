@@ -21,13 +21,14 @@ export default [
   },
   {
     path: ':id',
-    loadComponent: () => import('../assessment-management/pages/assessment-detail/assessment-detail'),
+    loadComponent: () =>
+      import('../assessment-management/pages/assessment-detail/assessment-detail'),
     title: 'Detalle de Evaluación',
     data: { permissions: ['assessment:view'] },
   },
   {
     path: '',
     redirectTo: 'list',
-    pathMatch: 'full'
-  }
+    pathMatch: 'full',
+  },
 ] as Routes;

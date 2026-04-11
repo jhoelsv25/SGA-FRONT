@@ -30,20 +30,20 @@ export class UserApi {
   }
 
   getImportHistory(): Observable<
-      {
-        id: string;
-        jobId: string;
-        fileName: string;
-        totalRows: number;
-        processedRows: number;
-        createdRows: number;
-        failedRows: number;
-        status: 'QUEUED' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
-        startedAt?: string | null;
-        finishedAt?: string | null;
-        createdAt: string;
-        errorDetails?: { row: number; message: string; rowData?: Record<string, unknown> }[] | null;
-      }[]
+    {
+      id: string;
+      jobId: string;
+      fileName: string;
+      totalRows: number;
+      processedRows: number;
+      createdRows: number;
+      failedRows: number;
+      status: 'QUEUED' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
+      startedAt?: string | null;
+      finishedAt?: string | null;
+      createdAt: string;
+      errorDetails?: { row: number; message: string; rowData?: Record<string, unknown> }[] | null;
+    }[]
   > {
     return this.http.get<
       {
@@ -63,7 +63,9 @@ export class UserApi {
     >(`${this.baseUrl}/import/history`);
   }
 
-  uploadImportFile(file: File): Observable<{ uploadId: string; headers: string[]; rowCount: number }> {
+  uploadImportFile(
+    file: File,
+  ): Observable<{ uploadId: string; headers: string[]; rowCount: number }> {
     const form = new FormData();
     form.append('file', file);
     return this.http.post<{ uploadId: string; headers: string[]; rowCount: number }>(
@@ -72,7 +74,10 @@ export class UserApi {
     );
   }
 
-  startImport(uploadId: string, columnMapping: Record<string, string>): Observable<{ jobId: string }> {
+  startImport(
+    uploadId: string,
+    columnMapping: Record<string, string>,
+  ): Observable<{ jobId: string }> {
     return this.http.post<{ jobId: string }>(`${this.baseUrl}/import/start`, {
       uploadId,
       columnMapping,

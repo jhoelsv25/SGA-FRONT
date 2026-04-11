@@ -1,7 +1,18 @@
-<form [formGroup]="form" class="flex max-h-[calc(80vh-3rem)] flex-col overflow-hidden" (ngSubmit)="submit()">
+<form
+  [formGroup]="form"
+  class="flex max-h-[calc(80vh-3rem)] flex-col overflow-hidden"
+  (ngSubmit)="submit()"
+>
   <header class="flex items-center justify-between mb-4">
     <h2 class="text-lg font-semibold">{{ current ? 'Editar período' : 'Nuevo período' }}</h2>
-    <button type="button" z-button zColor="secondary" zType="ghost" zShape="circle" (click)="close()">
+    <button
+      type="button"
+      z-button
+      zColor="secondary"
+      zType="ghost"
+      zShape="circle"
+      (click)="close()"
+    >
       <i class="fas fa-times"></i>
     </button>
   </header>
@@ -14,11 +25,13 @@
     <div>
       <label class="label-form" for="name">Nombre</label>
       @if (current) {
-        <div class="rounded-xl border border-base-200 bg-base-200/30 px-3 py-2.5 text-sm text-base-content">
+        <div
+          class="rounded-xl border border-base-200 bg-base-200/30 px-3 py-2.5 text-sm text-base-content"
+        >
           {{ current.name }}
         </div>
       } @else {
-        <input z-input w-full id="name" formControlName="name" placeholder="Ej: Primer trimestre"  />
+        <input z-input w-full id="name" formControlName="name" placeholder="Ej: Primer trimestre" />
       }
     </div>
     @if (current) {
@@ -29,7 +42,8 @@
           formControlName="status"
           [options]="statusOptions"
           [searchable]="false"
-          placeholder="Seleccionar estado"></z-select-option>
+          placeholder="Seleccionar estado"
+        ></z-select-option>
       </div>
     }
     <div>
@@ -41,8 +55,27 @@
       <z-date-picker id="endDate" formControlName="endDate"></z-date-picker>
     </div>
   </div>
-  <footer class="mt-4 flex shrink-0 flex-col-reverse gap-2 border-t border-base-200 bg-background pt-4 sm:flex-row sm:justify-end">
-    <button type="button" z-button zColor="secondary" zType="outline" class="w-full sm:w-auto" (click)="close()">Cancelar</button>
-    <button type="submit" z-button zColor="primary" class="w-full sm:w-auto" [disabled]="form.invalid">Guardar</button>
+  <footer
+    class="mt-4 flex shrink-0 flex-col-reverse gap-2 border-t border-base-200 bg-background pt-4 sm:flex-row sm:justify-end"
+  >
+    <button
+      type="button"
+      z-button
+      zColor="secondary"
+      zType="outline"
+      class="w-full sm:w-auto"
+      (click)="close()"
+    >
+      Cancelar
+    </button>
+    <button
+      type="submit"
+      z-button
+      zColor="primary"
+      class="w-full sm:w-auto"
+      [disabled]="form.invalid"
+    >
+      Guardar
+    </button>
   </footer>
 </form>

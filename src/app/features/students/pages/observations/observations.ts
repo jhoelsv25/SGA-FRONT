@@ -1,19 +1,29 @@
 import { DialogModalService } from '@shared/widgets/dialog-modal';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 import { DataSource } from '@shared/widgets/data-source/data-source';
 import { HeaderDetail } from '@shared/widgets/header-detail/header-detail';
 import { ObservationApi } from '../../services/api/observation-api';
 import { StudentObservation } from '../../types/observation-types';
-import { OBSERVATION_HEADER_CONFIG, OBSERVATION_COLUMN, OBSERVATION_ACTIONS } from '../../config/observation.config';
+import {
+  OBSERVATION_HEADER_CONFIG,
+  OBSERVATION_COLUMN,
+  OBSERVATION_ACTIONS,
+} from '../../config/observation.config';
 import { ObservationForm } from '../../components/observation-form/observation-form';
 import { Toast } from '@core/services/toast';
 import { ActivatedRoute, Router } from '@angular/router';
 
-
 @Component({
   selector: 'sga-observations',
-  standalone: true,
+
   imports: [HeaderDetail, DataSource],
   templateUrl: './observations.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -56,9 +66,13 @@ export default class ObservationsPage implements OnInit {
       next: (res) => {
         const list = (res.data ?? []).map((obs) => {
           const o = obs as StudentObservation;
-          const student = o.student as { firstName?: string; lastName?: string; studentCode?: string } | undefined;
+          const student = o.student as
+            | { firstName?: string; lastName?: string; studentCode?: string }
+            | undefined;
           const studentName = student
-            ? `${student.firstName ?? ''} ${student.lastName ?? ''}`.trim() || student.studentCode || '-'
+            ? `${student.firstName ?? ''} ${student.lastName ?? ''}`.trim() ||
+              student.studentCode ||
+              '-'
             : '-';
           const teacher = o.teacher as { teacherCode?: string } | undefined;
           return {
@@ -75,7 +89,8 @@ export default class ObservationsPage implements OnInit {
           list.filter(
             (item) =>
               !this.studentContextId() ||
-              ((item.observation as StudentObservation).student as { id?: string } | undefined)?.id === this.studentContextId(),
+              ((item.observation as StudentObservation).student as { id?: string } | undefined)
+                ?.id === this.studentContextId(),
           ),
         );
         this.loadingSignal.set(false);

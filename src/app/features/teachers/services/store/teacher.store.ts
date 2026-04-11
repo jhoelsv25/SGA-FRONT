@@ -84,56 +84,56 @@ export const TeacherStore = signalStore(
         ),
       ),
 
-    create: (teacher: Partial<Teacher>) => {
-      patchState(store, { loading: true });
-      return api.create(teacher).pipe(
-        tap({
-          next: () => {
-            patchState(store, { loading: false });
-            reloadFromServer(store.filterParams());
-            toast.success('Docente creado correctamente');
-          },
-          error: (error) => {
-            patchState(store, { loading: false, error: error.message });
-            toast.error(error.message);
-          },
-        }),
-      );
-    },
+      create: (teacher: Partial<Teacher>) => {
+        patchState(store, { loading: true });
+        return api.create(teacher).pipe(
+          tap({
+            next: () => {
+              patchState(store, { loading: false });
+              reloadFromServer(store.filterParams());
+              toast.success('Docente creado correctamente');
+            },
+            error: (error) => {
+              patchState(store, { loading: false, error: error.message });
+              toast.error(error.message);
+            },
+          }),
+        );
+      },
 
-    update: (id: string, teacher: Partial<Teacher>) => {
-      patchState(store, { loading: true });
-      return api.update(id, teacher).pipe(
-        tap({
-          next: () => {
-            patchState(store, { loading: false });
-            reloadFromServer(store.filterParams());
-            toast.success('Docente actualizado correctamente');
-          },
-          error: (error) => {
-            patchState(store, { loading: false, error: error.message });
-            toast.error(error.message);
-          },
-        }),
-      );
-    },
+      update: (id: string, teacher: Partial<Teacher>) => {
+        patchState(store, { loading: true });
+        return api.update(id, teacher).pipe(
+          tap({
+            next: () => {
+              patchState(store, { loading: false });
+              reloadFromServer(store.filterParams());
+              toast.success('Docente actualizado correctamente');
+            },
+            error: (error) => {
+              patchState(store, { loading: false, error: error.message });
+              toast.error(error.message);
+            },
+          }),
+        );
+      },
 
-    delete: (id: string) => {
-      patchState(store, { loading: true });
-      return api.delete(id).pipe(
-        tap({
-          next: () => {
-            patchState(store, { loading: false });
-            reloadFromServer(store.filterParams());
-            toast.success('Docente eliminado correctamente');
-          },
-          error: (error) => {
-            patchState(store, { loading: false, error: error.message });
-            toast.error(error.message);
-          },
-        }),
-      );
-    },
+      delete: (id: string) => {
+        patchState(store, { loading: true });
+        return api.delete(id).pipe(
+          tap({
+            next: () => {
+              patchState(store, { loading: false });
+              reloadFromServer(store.filterParams());
+              toast.success('Docente eliminado correctamente');
+            },
+            error: (error) => {
+              patchState(store, { loading: false, error: error.message });
+              toast.error(error.message);
+            },
+          }),
+        );
+      },
     };
   }),
 );

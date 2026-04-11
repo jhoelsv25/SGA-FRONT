@@ -21,8 +21,14 @@ type Option = { value: TeacherScheduleComplianceStatus; label: string };
 
 @Component({
   selector: 'sga-teacher-schedule-monitoring-form',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ZardButtonComponent, ZardInputDirective, SelectOptionComponent],
+
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    ZardButtonComponent,
+    ZardInputDirective,
+    SelectOptionComponent,
+  ],
   templateUrl: './teacher-schedule-monitoring-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -67,7 +73,9 @@ export class TeacherScheduleMonitoringForm {
   readonly actualMinutes = computed(() => {
     return this.readIntervals().reduce((total, interval) => {
       if (!interval.startTime || !interval.endTime) return total;
-      return total + Math.max(0, this.toMinutes(interval.endTime) - this.toMinutes(interval.startTime));
+      return (
+        total + Math.max(0, this.toMinutes(interval.endTime) - this.toMinutes(interval.startTime))
+      );
     }, 0);
   });
 
@@ -92,8 +100,15 @@ export class TeacherScheduleMonitoringForm {
     const complianceStatus = this.form.controls.complianceStatus.value;
     const justification = (this.form.controls.justification.value ?? '').trim();
 
-    if (!actualStartTime || !actualEndTime || !complianceStatus || intervals.some(interval => !interval.startTime || !interval.endTime)) {
-      this.toast.error('Completa todos los tramos con hora de inicio y fin para registrar el bloque.');
+    if (
+      !actualStartTime ||
+      !actualEndTime ||
+      !complianceStatus ||
+      intervals.some((interval) => !interval.startTime || !interval.endTime)
+    ) {
+      this.toast.error(
+        'Completa todos los tramos con hora de inicio y fin para registrar el bloque.',
+      );
       return;
     }
 
@@ -132,7 +147,9 @@ export class TeacherScheduleMonitoringForm {
         },
         error: (error) => {
           this.form.enable();
-          this.toast.error(error?.error?.message ?? error?.message ?? 'No se pudo guardar el bloque');
+          this.toast.error(
+            error?.error?.message ?? error?.message ?? 'No se pudo guardar el bloque',
+          );
         },
       });
   }
@@ -187,7 +204,7 @@ export class TeacherScheduleMonitoringForm {
           },
         ];
 
-    return intervals.map(interval => this.createIntervalGroup(interval));
+    return intervals.map((interval) => this.createIntervalGroup(interval));
   }
 
   private createIntervalGroup(interval?: Partial<TeacherAttendanceInterval>) {
@@ -204,7 +221,7 @@ export class TeacherScheduleMonitoringForm {
 
   private readIntervals(): TeacherAttendanceInterval[] {
     return this.intervals.controls
-      .map(control => {
+      .map((control) => {
         const raw = control.getRawValue();
         return {
           startTime: this.normalizeTime(raw.startTime) ?? '',

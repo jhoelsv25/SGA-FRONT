@@ -1,7 +1,16 @@
 <form [formGroup]="form" class="grid gap-4" (ngSubmit)="submit()">
   <header class="flex items-center justify-between mb-4">
-    <h2 class="text-lg font-semibold">{{ current ? 'Editar observación' : 'Nueva observación' }}</h2>
-    <button type="button" z-button zColor="secondary" zType="ghost" zShape="circle" (click)="close()">
+    <h2 class="text-lg font-semibold">
+      {{ current ? 'Editar observación' : 'Nueva observación' }}
+    </h2>
+    <button
+      type="button"
+      z-button
+      zColor="secondary"
+      zType="ghost"
+      zShape="circle"
+      (click)="close()"
+    >
       <i class="fas fa-times"></i>
     </button>
   </header>
@@ -11,7 +20,8 @@
       <sga-student-select
         id="student"
         formControlName="student"
-        placeholder="Seleccionar estudiante"></sga-student-select>
+        placeholder="Seleccionar estudiante"
+      ></sga-student-select>
     </div>
     <div class="grid grid-cols-2 gap-4">
       <div>
@@ -19,11 +29,12 @@
         <sga-teacher-select
           id="teacher"
           formControlName="teacher"
-          placeholder="Seleccionar docente"></sga-teacher-select>
+          placeholder="Seleccionar docente"
+        ></sga-teacher-select>
       </div>
       <div>
         <label class="label-form" for="date">Fecha</label>
-        <input z-input w-full id="date" type="date" formControlName="date"  />
+        <input z-input w-full id="date" type="date" formControlName="date" />
       </div>
     </div>
     <div>
@@ -32,27 +43,37 @@
     </div>
     <div>
       <label class="label-form" for="observation">Observación</label>
-      <input z-input w-full id="observation" formControlName="observation" placeholder="Descripción de la observación"  />
+      <input
+        z-input
+        w-full
+        id="observation"
+        formControlName="observation"
+        placeholder="Descripción de la observación"
+      />
     </div>
     <div>
       <label class="label-form" for="followUp">Seguimiento</label>
-      <input z-input w-full id="followUp" formControlName="followUp" placeholder="Opcional"  />
+      <input z-input w-full id="followUp" formControlName="followUp" placeholder="Opcional" />
     </div>
     <div>
       <label class="label-form" for="referral">Derivación</label>
-      <input z-input w-full id="referral" formControlName="referral" placeholder="Opcional"  />
+      <input z-input w-full id="referral" formControlName="referral" placeholder="Opcional" />
     </div>
     <div class="rounded-2xl border border-base-200 bg-base-100/40 p-4">
       <z-checkbox formControlName="isConfidential" class="items-start gap-3">
         <span class="block">
           <span class="block text-sm font-bold text-base-content">Confidencial</span>
-          <span class="mt-1 block text-xs text-base-content/60">Oculta esta observación para que se trate como seguimiento reservado.</span>
+          <span class="mt-1 block text-xs text-base-content/60"
+            >Oculta esta observación para que se trate como seguimiento reservado.</span
+          >
         </span>
       </z-checkbox>
     </div>
   </div>
   <footer class="flex justify-end gap-2 mt-4">
-    <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">Cancelar</button>
+    <button type="button" z-button zColor="secondary" zType="outline" (click)="close()">
+      Cancelar
+    </button>
     <button type="submit" z-button zColor="primary" [disabled]="form.invalid">Guardar</button>
   </footer>
 </form>

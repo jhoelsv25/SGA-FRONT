@@ -11,8 +11,16 @@ import { PaymentGroup } from '../../types/payment-types';
 
 @Component({
   selector: 'sga-payment-group-form',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ZardButtonComponent, ZardInputDirective, SelectOptionComponent, GradeLevelSelect, SectionSelect],
+
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    ZardButtonComponent,
+    ZardInputDirective,
+    SelectOptionComponent,
+    GradeLevelSelect,
+    SectionSelect,
+  ],
   templateUrl: './payment-group-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -20,7 +28,9 @@ export class PaymentGroupForm {
   private readonly fb = inject(FormBuilder);
   private readonly api = inject(PaymentApi);
   private readonly ref = inject(ZardDialogRef);
-  private readonly data = inject(Z_MODAL_DATA, { optional: true }) as { group?: PaymentGroup } | null;
+  private readonly data = inject(Z_MODAL_DATA, { optional: true }) as {
+    group?: PaymentGroup;
+  } | null;
 
   readonly today = new Date().toISOString().slice(0, 10);
   readonly current = this.data?.group ?? null;

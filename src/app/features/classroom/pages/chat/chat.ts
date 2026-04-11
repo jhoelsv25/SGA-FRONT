@@ -1,4 +1,15 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, effect, ElementRef, inject, input, output, signal, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  ElementRef,
+  inject,
+  input,
+  output,
+  signal,
+  ViewChild,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ClassroomStore } from '../../services/store/classroom.store';
@@ -6,10 +17,9 @@ import { AuthStore } from '@auth/services/store/auth.store';
 import type { ChatMessage } from '../../types/classroom-types';
 import { ClassroomApi } from '../../services/classroom-api';
 
-
 @Component({
   selector: 'sga-classroom-chat',
-  standalone: true,
+
   imports: [CommonModule, FormsModule],
   templateUrl: './chat.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -89,7 +99,7 @@ export default class Chat {
       .split(' ')
       .filter(Boolean)
       .slice(0, 2)
-      .map(part => part[0]?.toUpperCase() ?? '')
+      .map((part) => part[0]?.toUpperCase() ?? '')
       .join('');
     return source || '?';
   }

@@ -21,7 +21,6 @@ type LocalSelectOption = { value: string | number; label: string };
 
 @Component({
   selector: 'sga-assessment-form',
-  standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -147,7 +146,9 @@ export class AssessmentForm implements OnInit {
 
   private refreshCompetencyOptions(): void {
     const selectedSectionCourseId = this.form.controls.sectionCourse.value;
-    const selectedSectionCourse = this.sectionCourses().find((item) => item.id === selectedSectionCourseId);
+    const selectedSectionCourse = this.sectionCourses().find(
+      (item) => item.id === selectedSectionCourseId,
+    );
     const courseId = selectedSectionCourse?.course?.id;
 
     const availableCompetencies = this.allCompetencies().filter((item) => {

@@ -5,4 +5,5 @@ export const COMMUNICATION_COLUMN: DataSourceColumn[] = [
   { key: 'type', label: 'Tipo', sortable: true },
   { key: 'status', label: 'Estado', sortable: true },
   { key: 'recipientCount', label: 'Destinatarios', type: 'number' },
-  { key: 'sentAt', label: 'Enviado', sortable: true, type: 'datetime' }];
+  { key: 'sentAt', label: 'Enviado', sortable: true, type: 'datetime' },
+];

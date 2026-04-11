@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AuthFacade } from '@auth/services/store/auth.acede';
 import {
@@ -27,7 +34,7 @@ type StudentHistoryItem = {
 
 @Component({
   selector: 'sga-classroom-grades',
-  standalone: true,
+
   imports: [
     ClassroomGradesFilters,
     ClassroomGradesHeader,
@@ -61,35 +68,36 @@ export default class Grades implements OnInit {
     const items = this.filteredRecords();
     return items.find((item) => item.id === selectedId) ?? items[0] ?? null;
   });
-  
+
   readonly profileType = computed(() => this.authFacade.getCurrentUser()?.profile?.type ?? 'user');
-  
+
   readonly pageTitle = computed(() => {
     const type = this.profileType();
     if (type === 'student') return 'Mis calificaciones';
     if (type === 'guardian') return 'Calificaciones de vinculados';
     return 'Rendimiento del aula';
   });
-  
+
   readonly pageDescription = computed(() => {
     const type = this.profileType();
     if (type === 'student') return 'Vista de tus evaluaciones y puntajes registrados.';
-    if (type === 'guardian') return 'Vista de evaluaciones y puntajes de los estudiantes vinculados.';
+    if (type === 'guardian')
+      return 'Vista de evaluaciones y puntajes de los estudiantes vinculados.';
     return 'Vista consolidada de evaluaciones registradas para este curso-seccion.';
   });
-  
+
   readonly canViewStudentDetail = computed(() => {
     const type = this.profileType();
     return type === 'teacher' || type === 'admin' || type === 'director';
   });
-  
+
   readonly filteredRecords = computed(() => {
     const term = this.search().trim().toLowerCase();
     const list = this.records();
     if (!term) return list;
     return list.filter((record) => record.name.toLowerCase().includes(term));
   });
-  
+
   readonly studentOptions = computed(() => {
     const map = new Map<string, { studentId: string; studentName: string; assessments: number }>();
 
@@ -106,15 +114,17 @@ export default class Grades implements OnInit {
       }
     }
 
-    return Array.from(map.values()).sort((left, right) => left.studentName.localeCompare(right.studentName));
+    return Array.from(map.values()).sort((left, right) =>
+      left.studentName.localeCompare(right.studentName),
+    );
   });
-  
+
   readonly selectedStudent = computed(() => {
     const studentId = this.selectedStudentId();
     const items = this.studentOptions();
     return items.find((item) => item.studentId === studentId) ?? items[0] ?? null;
   });
-  
+
   readonly selectedStudentHistory = computed(() => {
     const student = this.selectedStudent();
     if (!student) return [] as StudentHistoryItem[];
@@ -137,17 +147,25 @@ export default class Grades implements OnInit {
       })
       .filter((item): item is StudentHistoryItem => item !== null);
   });
-  
+
   readonly selectedStudentAverage = computed(() => {
     const history = this.selectedStudentHistory();
     if (!history.length) return 0;
-    const totalWeight = history.reduce((acc, item) => acc + Math.max(Number(item.weightPercentage || 0), 0), 0);
+    const totalWeight = history.reduce(
+      (acc, item) => acc + Math.max(Number(item.weightPercentage || 0), 0),
+      0,
+    );
     if (totalWeight <= 0) {
       return history.reduce((acc, item) => acc + item.score, 0) / history.length;
     }
-    return history.reduce((acc, item) => acc + item.score * Math.max(Number(item.weightPercentage || 0), 0), 0) / totalWeight;
+    return (
+      history.reduce(
+        (acc, item) => acc + item.score * Math.max(Number(item.weightPercentage || 0), 0),
+        0,
+      ) / totalWeight
+    );
   });
-  
+
   readonly selectedStudentCompletion = computed(() => {
     const history = this.selectedStudentHistory();
     const totalAssessments = this.summary().assessments;
@@ -156,7 +174,8 @@ export default class Grades implements OnInit {
   });
 
   ngOnInit(): void {
-    const id = this.store.selectedSectionId() ?? (this.route.parent?.snapshot?.paramMap?.get('id') ?? '');
+    const id =
+      this.store.selectedSectionId() ?? this.route.parent?.snapshot?.paramMap?.get('id') ?? '';
     if (id) this.loadGrades(id);
     else this.loading.set(false);
   }
@@ -165,7 +184,9 @@ export default class Grades implements OnInit {
     this.api.getGrades(sectionCourseId).subscribe({
       next: (response) => {
         this.records.set(response?.data ?? []);
-        this.summary.set(response?.summary ?? { assessments: 0, scores: 0, average: 0, averageLabel: undefined });
+        this.summary.set(
+          response?.summary ?? { assessments: 0, scores: 0, average: 0, averageLabel: undefined },
+        );
         this.selectedRecordId.set(response?.data?.[0]?.id ?? null);
         this.selectedStudentId.set(this.getDefaultStudentId(response?.data ?? []));
         this.loading.set(false);

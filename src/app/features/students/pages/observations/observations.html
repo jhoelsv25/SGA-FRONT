@@ -1,15 +1,25 @@
 <div class="p-6 max-w-7xl mx-auto">
   @if (studentContextId()) {
-    <div class="mb-4 flex items-center justify-between rounded-4xl border border-primary/15 bg-primary/5 px-5 py-4">
+    <div
+      class="mb-4 flex items-center justify-between rounded-4xl border border-primary/15 bg-primary/5 px-5 py-4"
+    >
       <div class="space-y-1">
-        <p class="text-xs font-bold uppercase tracking-widest text-primary/70">Contexto estudiante</p>
+        <p class="text-xs font-bold uppercase tracking-widest text-primary/70">
+          Contexto estudiante
+        </p>
         <p class="text-sm text-base-content/80">
           Mostrando observaciones de
-          <span class="font-semibold text-base-content">{{ studentContextName() || 'estudiante seleccionado' }}</span>
+          <span class="font-semibold text-base-content">{{
+            studentContextName() || 'estudiante seleccionado'
+          }}</span>
         </p>
       </div>
 
-      <button type="button" class="text-sm font-semibold text-primary transition hover:opacity-80" (click)="clearStudentContext()">
+      <button
+        type="button"
+        class="text-sm font-semibold text-primary transition hover:opacity-80"
+        (click)="clearStudentContext()"
+      >
         Ver todas
       </button>
     </div>
@@ -19,7 +29,7 @@
     [config]="headerConfig"
     [actions]="headerActions()"
     (action)="onHeaderAction($event)"
-   />
+  />
   <sga-data-source
     [data]="data()"
     [columns]="columns"
@@ -28,5 +38,5 @@
     [actions]="rowActions()"
     (actionClick)="onRowAction($event)"
     (pageChange)="onPageChange()"
-   />
+  />
 </div>

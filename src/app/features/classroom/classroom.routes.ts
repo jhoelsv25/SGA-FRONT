@@ -49,7 +49,7 @@ export default [
         path: '',
         redirectTo: 'timeline',
         pathMatch: 'full',
-      }
-    ]
-  }
+      },
+    ],
+  },
 ] as Routes;

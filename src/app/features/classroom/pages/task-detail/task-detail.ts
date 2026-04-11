@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -11,7 +19,7 @@ import { ClassroomStore } from '../../services/store/classroom.store';
 
 @Component({
   selector: 'sga-classroom-task-detail',
-  standalone: true,
+
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './task-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -59,7 +67,9 @@ export default class TaskDetail implements OnInit {
     fileUrl: '',
     fileName: '',
   });
-  public quizDraft = signal<Record<string, { selectedOptionIds: string[]; answerText: string }>>({});
+  public quizDraft = signal<Record<string, { selectedOptionIds: string[]; answerText: string }>>(
+    {},
+  );
   public commentDraft = signal('');
   public savingComment = signal(false);
   public editingCommentId = signal<string | null>(null);
@@ -67,24 +77,25 @@ export default class TaskDetail implements OnInit {
   public deletingCommentId = signal<string | null>(null);
 
   ngOnInit(): void {
-    const sectionId = this.store.selectedSectionId() ?? this.route.parent?.parent?.snapshot.paramMap.get('id') ?? '';
+    const sectionId =
+      this.store.selectedSectionId() ??
+      this.route.parent?.parent?.snapshot.paramMap.get('id') ??
+      '';
     const taskId = this.route.snapshot.paramMap.get('taskId') ?? '';
 
     if (sectionId && taskId) {
       this.sectionCourseId.set(sectionId);
       this.taskId.set(taskId);
-      this.socket.taskEvent$
-        .pipe(takeUntil(this.destroy$))
-        .subscribe((event) => {
-          if (event.action === 'deleted' && event.id === this.taskId()) {
-            this.task.set(null);
-            return;
-          }
+      this.socket.taskEvent$.pipe(takeUntil(this.destroy$)).subscribe((event) => {
+        if (event.action === 'deleted' && event.id === this.taskId()) {
+          this.task.set(null);
+          return;
+        }
 
-          if (event.action === 'updated' && event.task?.id === this.taskId()) {
-            this.task.set(event.task);
-          }
-        });
+        if (event.action === 'updated' && event.task?.id === this.taskId()) {
+          this.task.set(event.task);
+        }
+      });
       this.loadTask();
     }
   }
@@ -100,14 +111,14 @@ export default class TaskDetail implements OnInit {
     // Actually, ClassroomApi.getTasks returns an array, let's see if there's a specific one
     this.api.getTasks(this.sectionCourseId()).subscribe({
       next: (list) => {
-        const found = list.find(t => t.id === this.taskId());
+        const found = list.find((t) => t.id === this.taskId());
         this.task.set(found || null);
         this.loading.set(false);
       },
       error: () => {
         this.task.set(null);
         this.loading.set(false);
-      }
+      },
     });
   }
 
@@ -127,10 +138,13 @@ export default class TaskDetail implements OnInit {
     return this.quizDraft()[questionId] ?? { selectedOptionIds: [], answerText: '' };
   }
 
-  updateQuizAnswer(questionId: string, patch: { selectedOptionIds?: string[]; answerText?: string }) {
-    this.quizDraft.update(current => ({
+  updateQuizAnswer(
+    questionId: string,
+    patch: { selectedOptionIds?: string[]; answerText?: string },
+  ) {
+    this.quizDraft.update((current) => ({
       ...current,
-      [questionId]: { ...this.getQuizQuestionDraft(questionId), ...patch }
+      [questionId]: { ...this.getQuizQuestionDraft(questionId), ...patch },
     }));
   }
 
@@ -138,7 +152,7 @@ export default class TaskDetail implements OnInit {
     const current = this.getQuizQuestionDraft(questionId).selectedOptionIds;
     const next = multiple
       ? current.includes(optionId)
-        ? current.filter(id => id !== optionId)
+        ? current.filter((id) => id !== optionId)
         : [...current, optionId]
       : [optionId];
     this.updateQuizAnswer(questionId, { selectedOptionIds: next });
@@ -152,7 +166,11 @@ export default class TaskDetail implements OnInit {
 
     this.api.uploadFile(file).subscribe({
       next: (res) => {
-        this.submissionDraft.update(current => ({ ...current, fileUrl: res.url, fileName: res.name }));
+        this.submissionDraft.update((current) => ({
+          ...current,
+          fileUrl: res.url,
+          fileName: res.name,
+        }));
       },
       error: () => this.toast.error('No se pudo subir el archivo'),
     });
@@ -165,13 +183,17 @@ export default class TaskDetail implements OnInit {
     const sectionCourseId = this.sectionCourseId();
     const draft = this.submissionDraft();
     const isQuiz = this.isQuiz(currentTask);
-    
+
     const answers = (currentTask.questions ?? []).map((q) => {
       const draftQ = this.getQuizQuestionDraft(q.id);
-      return { questionId: q.id, selectedOptionIds: draftQ.selectedOptionIds, answerText: draftQ.answerText };
+      return {
+        questionId: q.id,
+        selectedOptionIds: draftQ.selectedOptionIds,
+        answerText: draftQ.answerText,
+      };
     });
 
-    if (isQuiz && !answers.some(a => a.selectedOptionIds.length || a.answerText.trim())) {
+    if (isQuiz && !answers.some((a) => a.selectedOptionIds.length || a.answerText.trim())) {
       this.toast.error('Responde al menos una pregunta del quiz');
       return;
     }
@@ -182,25 +204,31 @@ export default class TaskDetail implements OnInit {
     }
 
     this.submitting.set(true);
-    this.api.submitTask(sectionCourseId, currentTask.id, {
-      submissionText: isQuiz ? undefined : draft.submissionText || undefined,
-      linkUrl: isQuiz ? undefined : draft.linkUrl || undefined,
-      fileUrl: isQuiz ? undefined : draft.fileUrl || undefined,
-      fileName: isQuiz ? undefined : draft.fileName || undefined,
-      answers: isQuiz ? answers : undefined,
-    }).subscribe({
-      next: (result) => {
-        this.toast.success(result.score !== undefined ? `Quiz enviado. Puntaje: ${result.score}` : 'Entrega registrada');
-        this.submissionDraft.set({ submissionText: '', linkUrl: '', fileUrl: '', fileName: '' });
-        this.quizDraft.set({});
-        this.loadTask();
-        this.submitting.set(false);
-      },
-      error: () => {
-        this.toast.error('No se pudo registrar la entrega');
-        this.submitting.set(false);
-      },
-    });
+    this.api
+      .submitTask(sectionCourseId, currentTask.id, {
+        submissionText: isQuiz ? undefined : draft.submissionText || undefined,
+        linkUrl: isQuiz ? undefined : draft.linkUrl || undefined,
+        fileUrl: isQuiz ? undefined : draft.fileUrl || undefined,
+        fileName: isQuiz ? undefined : draft.fileName || undefined,
+        answers: isQuiz ? answers : undefined,
+      })
+      .subscribe({
+        next: (result) => {
+          this.toast.success(
+            result.score !== undefined
+              ? `Quiz enviado. Puntaje: ${result.score}`
+              : 'Entrega registrada',
+          );
+          this.submissionDraft.set({ submissionText: '', linkUrl: '', fileUrl: '', fileName: '' });
+          this.quizDraft.set({});
+          this.loadTask();
+          this.submitting.set(false);
+        },
+        error: () => {
+          this.toast.error('No se pudo registrar la entrega');
+          this.submitting.set(false);
+        },
+      });
   }
 
   // Review methods
@@ -209,9 +237,9 @@ export default class TaskDetail implements OnInit {
   }
 
   updateReviewDraft(submissionId: string, patch: Partial<{ score: string; feedback: string }>) {
-    this.reviewDrafts.update(current => ({
+    this.reviewDrafts.update((current) => ({
       ...current,
-      [submissionId]: { ...this.getReviewDraft(submissionId), ...patch }
+      [submissionId]: { ...this.getReviewDraft(submissionId), ...patch },
     }));
   }
 
@@ -224,20 +252,22 @@ export default class TaskDetail implements OnInit {
     }
 
     this.reviewingSubmissionId.set(submissionId);
-    this.api.reviewTaskSubmission(this.sectionCourseId(), this.taskId(), submissionId, {
-      score,
-      feedback: draft.feedback || undefined,
-    }).subscribe({
-      next: () => {
-        this.toast.success('Entrega calificada');
-        this.loadTask();
-        this.reviewingSubmissionId.set(null);
-      },
-      error: () => {
-        this.toast.error('No se pudo calificar la entrega');
-        this.reviewingSubmissionId.set(null);
-      },
-    });
+    this.api
+      .reviewTaskSubmission(this.sectionCourseId(), this.taskId(), submissionId, {
+        score,
+        feedback: draft.feedback || undefined,
+      })
+      .subscribe({
+        next: () => {
+          this.toast.success('Entrega calificada');
+          this.loadTask();
+          this.reviewingSubmissionId.set(null);
+        },
+        error: () => {
+          this.toast.error('No se pudo calificar la entrega');
+          this.reviewingSubmissionId.set(null);
+        },
+      });
   }
 
   // Comment methods
@@ -281,18 +311,20 @@ export default class TaskDetail implements OnInit {
     if (!content) return;
 
     this.savingComment.set(true);
-    this.api.updateTaskComment(this.sectionCourseId(), this.taskId(), commentId, content).subscribe({
-      next: () => {
-        this.cancelEditComment();
-        this.loadTask();
-        this.savingComment.set(false);
-        this.toast.success('Comentario actualizado');
-      },
-      error: () => {
-        this.savingComment.set(false);
-        this.toast.error('No se pudo actualizar el comentario');
-      },
-    });
+    this.api
+      .updateTaskComment(this.sectionCourseId(), this.taskId(), commentId, content)
+      .subscribe({
+        next: () => {
+          this.cancelEditComment();
+          this.loadTask();
+          this.savingComment.set(false);
+          this.toast.success('Comentario actualizado');
+        },
+        error: () => {
+          this.savingComment.set(false);
+          this.toast.error('No se pudo actualizar el comentario');
+        },
+      });
   }
 
   deleteComment(commentId: string) {

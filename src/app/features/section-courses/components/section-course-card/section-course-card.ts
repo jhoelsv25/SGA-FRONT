@@ -12,7 +12,7 @@ import { MODALITY_LABELS } from '../../config/form.constants';
 
 @Component({
   selector: 'sga-section-course-card',
-  standalone: true,
+
   imports: [
     CommonModule,
     ZardCardComponent,

@@ -1,27 +1,57 @@
 <div class="p-8 max-w-5xl mx-auto font-sans">
-  <header class="flex justify-between items-center mb-8 bg-white p-6 rounded-xl shadow-md border border-slate-100">
+  <header
+    class="flex justify-between items-center mb-8 bg-white p-6 rounded-xl shadow-md border border-slate-100"
+  >
     <h1 class="text-2xl font-bold text-slate-800 m-0">Registro de Asistencia</h1>
     <div class="flex gap-6">
       <div class="flex flex-col gap-2 min-w-40">
-        <label for="attendance-date-input" class="text-sm font-semibold text-slate-500">Fecha</label>
-        <input z-input w-full
+        <label for="attendance-date-input" class="text-sm font-semibold text-slate-500"
+          >Fecha</label
+        >
+        <input
+          z-input
+          w-full
           id="attendance-date-input"
           type="date"
           [ngModel]="attendanceDate()"
           (ngModelChange)="attendanceDate.set($event); onDateChange()"
-         />
+        />
       </div>
       <div class="flex flex-col gap-2 min-w-40 justify-end">
-        <label for="file-upload" class="cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg text-center text-sm transition-all h-10 flex items-center justify-center gap-2" [ngClass]="{'opacity-50 cursor-not-allowed': !selectedSectionCourse()}">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"  />
+        <label
+          for="file-upload"
+          class="cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg text-center text-sm transition-all h-10 flex items-center justify-center gap-2"
+          [ngClass]="{ 'opacity-50 cursor-not-allowed': !selectedSectionCourse() }"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+            />
           </svg>
           Importar Excel
         </label>
-        <input id="file-upload" type="file" accept=".xlsx, .xls, .csv" class="hidden" (change)="onFileUpload($event)" [disabled]="!selectedSectionCourse()">
+        <input
+          id="file-upload"
+          type="file"
+          accept=".xlsx, .xls, .csv"
+          class="hidden"
+          (change)="onFileUpload($event)"
+          [disabled]="!selectedSectionCourse()"
+        />
       </div>
       <div class="flex flex-col gap-2 min-w-56">
-        <label for="attendance-section-select" class="text-sm font-semibold text-slate-500">Curso / Sección</label>
+        <label for="attendance-section-select" class="text-sm font-semibold text-slate-500"
+          >Curso / Sección</label
+        >
         <sga-section-course-select
           [ngModel]="selectedSectionCourse() || null"
           (ngModelChange)="onSectionCourseChange($event)"
@@ -47,13 +77,13 @@
             <td class="p-4 text-slate-500 font-medium text-sm">{{ student.studentCode }}</td>
             <td class="p-4 text-slate-800 font-medium">{{ student.name }}</td>
             <td class="p-4">
-              <span 
+              <span
                 class="px-3 py-1 rounded-full text-xs font-bold capitalize inline-block"
                 [ngClass]="{
                   'bg-green-100 text-green-700': student.status === 'present',
                   'bg-yellow-100 text-yellow-700': student.status === 'late',
                   'bg-red-100 text-red-700': student.status === 'absent',
-                  'bg-blue-100 text-blue-700': student.status === 'excused'
+                  'bg-blue-100 text-blue-700': student.status === 'excused',
                 }"
               >
                 {{ student.status }}
@@ -61,22 +91,50 @@
             </td>
             <td class="p-4">
               <div class="flex gap-2">
-                <button 
-                  class="w-8 h-8 rounded-lg border border-slate-200 font-bold text-xs transition-all flex items-center justify-center" 
-                  [ngClass]="student.status === 'present' ? 'bg-green-500 text-white border-green-500' : 'bg-white text-slate-600 hover:bg-green-50 hover:border-green-500 hover:text-green-600'"
-                  (click)="updateStatus(student.id, 'present')">P</button>
-                <button 
-                  class="w-8 h-8 rounded-lg border border-slate-200 font-bold text-xs transition-all flex items-center justify-center" 
-                  [ngClass]="student.status === 'late' ? 'bg-yellow-500 text-white border-yellow-500' : 'bg-white text-slate-600 hover:bg-yellow-50 hover:border-yellow-500 hover:text-yellow-600'"
-                  (click)="updateStatus(student.id, 'late')">T</button>
-                <button 
-                  class="w-8 h-8 rounded-lg border border-slate-200 font-bold text-xs transition-all flex items-center justify-center" 
-                  [ngClass]="student.status === 'absent' ? 'bg-red-500 text-white border-red-500' : 'bg-white text-slate-600 hover:bg-red-50 hover:border-red-500 hover:text-red-600'"
-                  (click)="updateStatus(student.id, 'absent')">F</button>
-                <button 
-                  class="w-8 h-8 rounded-lg border border-slate-200 font-bold text-xs transition-all flex items-center justify-center" 
-                  [ngClass]="student.status === 'excused' ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-slate-600 hover:bg-blue-50 hover:border-blue-500 hover:text-blue-600'"
-                  (click)="updateStatus(student.id, 'excused')">J</button>
+                <button
+                  class="w-8 h-8 rounded-lg border border-slate-200 font-bold text-xs transition-all flex items-center justify-center"
+                  [ngClass]="
+                    student.status === 'present'
+                      ? 'bg-green-500 text-white border-green-500'
+                      : 'bg-white text-slate-600 hover:bg-green-50 hover:border-green-500 hover:text-green-600'
+                  "
+                  (click)="updateStatus(student.id, 'present')"
+                >
+                  P
+                </button>
+                <button
+                  class="w-8 h-8 rounded-lg border border-slate-200 font-bold text-xs transition-all flex items-center justify-center"
+                  [ngClass]="
+                    student.status === 'late'
+                      ? 'bg-yellow-500 text-white border-yellow-500'
+                      : 'bg-white text-slate-600 hover:bg-yellow-50 hover:border-yellow-500 hover:text-yellow-600'
+                  "
+                  (click)="updateStatus(student.id, 'late')"
+                >
+                  T
+                </button>
+                <button
+                  class="w-8 h-8 rounded-lg border border-slate-200 font-bold text-xs transition-all flex items-center justify-center"
+                  [ngClass]="
+                    student.status === 'absent'
+                      ? 'bg-red-500 text-white border-red-500'
+                      : 'bg-white text-slate-600 hover:bg-red-50 hover:border-red-500 hover:text-red-600'
+                  "
+                  (click)="updateStatus(student.id, 'absent')"
+                >
+                  F
+                </button>
+                <button
+                  class="w-8 h-8 rounded-lg border border-slate-200 font-bold text-xs transition-all flex items-center justify-center"
+                  [ngClass]="
+                    student.status === 'excused'
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-slate-600 hover:bg-blue-50 hover:border-blue-500 hover:text-blue-600'
+                  "
+                  (click)="updateStatus(student.id, 'excused')"
+                >
+                  J
+                </button>
               </div>
             </td>
           </tr>
@@ -86,15 +144,31 @@
   </div>
 
   <footer class="flex justify-end">
-    <button 
+    <button
       class="px-6 py-3 bg-blue-600 text-white rounded-lg font-bold shadow-lg hover:bg-blue-700 transition-all disabled:bg-slate-300 disabled:cursor-not-allowed disabled:shadow-none flex items-center gap-2"
-      (click)="saveAttendances()" 
+      (click)="saveAttendances()"
       [disabled]="!selectedSectionCourse() || store.loading()"
     >
       @if (store.loading()) {
-        <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        <svg
+          class="animate-spin h-5 w-5 text-white"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          ></circle>
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          ></path>
         </svg>
         Guardando...
       } @else {

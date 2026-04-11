@@ -8,7 +8,7 @@ import type { Communication } from '../../types/communication-types';
 
 @Component({
   selector: 'sga-communication-card',
-  standalone: true,
+
   imports: [
     CommonModule,
     ZardButtonComponent,

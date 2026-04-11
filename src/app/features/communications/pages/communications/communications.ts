@@ -1,5 +1,12 @@
 import { DialogModalService } from '@shared/widgets/dialog-modal';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { HeaderDetail } from '@shared/widgets/header-detail/header-detail';
 import { CommunicationStore } from '../../services/store/communication.store';
 import { Communication } from '../../types/communication-types';
@@ -10,7 +17,6 @@ import { ZardEmptyComponent } from '@/shared/components/empty';
 import { ZardSkeletonComponent } from '@/shared/components/skeleton';
 import { NotificationApi } from '@core/services/api/notification-api';
 import { HeaderConfig } from '@core/types/header-types';
-
 
 @Component({
   selector: 'sga-communications',
@@ -49,8 +55,12 @@ export default class CommunicationsPage implements OnInit {
         return this.store.headerConfig();
     }
   });
-  data = computed(() => (this.mode() === 'announcements' ? this.store.data() : this.notificationData()));
-  loading = computed(() => (this.mode() === 'announcements' ? this.store.loading() : this.notificationLoading()));
+  data = computed(() =>
+    this.mode() === 'announcements' ? this.store.data() : this.notificationData(),
+  );
+  loading = computed(() =>
+    this.mode() === 'announcements' ? this.store.loading() : this.notificationLoading(),
+  );
   headerActions = computed(() => {
     if (this.mode() === 'announcements') {
       return this.store.actions().filter((a) => a.typeAction === 'header');
@@ -59,7 +69,9 @@ export default class CommunicationsPage implements OnInit {
   });
   draftCount = computed(() => this.data().filter((item) => item.status === 'draft').length);
   scheduledCount = computed(() => this.data().filter((item) => item.status === 'scheduled').length);
-  sentCount = computed(() => this.data().filter((item) => ['sent', 'read'].includes(item.status)).length);
+  sentCount = computed(
+    () => this.data().filter((item) => ['sent', 'read'].includes(item.status)).length,
+  );
   failedCount = computed(() => this.data().filter((item) => item.status === 'failed').length);
   unreadCount = computed(() => this.data().filter((item) => item.status === 'unread').length);
   readCount = computed(() => this.data().filter((item) => item.status === 'read').length);

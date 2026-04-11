@@ -20,7 +20,9 @@ export class SessionApi {
   private http = inject(HttpClient);
   private baseUrl = `sessions`;
 
-  getAll(params: Record<string, string | number | boolean> = {}): Observable<{ data: Session[]; total: number }> {
+  getAll(
+    params: Record<string, string | number | boolean> = {},
+  ): Observable<{ data: Session[]; total: number }> {
     return this.http.get<{ data: Session[]; total: number }>(this.baseUrl, { params });
   }
 
@@ -28,7 +30,9 @@ export class SessionApi {
     userId: string,
     params: Record<string, string | number | boolean> = {},
   ): Observable<{ data: Session[]; total: number }> {
-    return this.http.get<{ data: Session[]; total: number }>(`${this.baseUrl}/user/${userId}`, { params });
+    return this.http.get<{ data: Session[]; total: number }>(`${this.baseUrl}/user/${userId}`, {
+      params,
+    });
   }
 
   getById(id: string): Observable<Session> {

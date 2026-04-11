@@ -3,7 +3,14 @@ import { SelectOptionComponent } from '@/shared/widgets/select-option/select-opt
 import { ZardSkeletonComponent } from '@/shared/components/skeleton';
 import { ZardEmptyComponent } from '@/shared/components/empty';
 import { DialogModalService } from '@shared/widgets/dialog-modal';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ActionConfig, ActionContext } from '@core/types/action-types';
 import { SectionStore } from '../../services/store/section.store';
@@ -25,11 +32,21 @@ const SHIFT_OPTIONS = [
   { value: 'evening', label: 'Noche' },
 ];
 
-
 @Component({
   selector: 'sga-sections',
-  standalone: true,
-  imports: [CommonModule, HeaderDetail, SectionCardComponent, ZardEmptyComponent, ZardSkeletonComponent, SelectOptionComponent, FormsModule, ZardInputDirective, ZardButtonComponent, ...ZardFormImports],
+
+  imports: [
+    CommonModule,
+    HeaderDetail,
+    SectionCardComponent,
+    ZardEmptyComponent,
+    ZardSkeletonComponent,
+    SelectOptionComponent,
+    FormsModule,
+    ZardInputDirective,
+    ZardButtonComponent,
+    ...ZardFormImports,
+  ],
   templateUrl: './sections.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -53,7 +70,9 @@ export default class SectionsPage implements OnInit {
   readonly headerConfig = computed(() => this.store.headerConfig());
 
   headerActions = computed(() =>
-    this.permissionStore.filterActions(this.store.actions().filter((a) => a.typeAction === 'header')),
+    this.permissionStore.filterActions(
+      this.store.actions().filter((a) => a.typeAction === 'header'),
+    ),
   );
 
   data = computed(() => this.store.data());
@@ -64,10 +83,11 @@ export default class SectionsPage implements OnInit {
     const shift = this.filterShift();
     const gradeId = this.gradeContextId();
     return list.filter((section) => {
-      const matchSearch = !search
-        || section.name?.toLowerCase().includes(search)
-        || section.tutor?.toLowerCase().includes(search)
-        || section.classroom?.toLowerCase().includes(search);
+      const matchSearch =
+        !search ||
+        section.name?.toLowerCase().includes(search) ||
+        section.tutor?.toLowerCase().includes(search) ||
+        section.classroom?.toLowerCase().includes(search);
       const matchShift = !shift || section.shift === shift;
       const sectionGradeId =
         typeof section.grade === 'object' ? section.grade?.id : section.gradeId;
@@ -94,10 +114,30 @@ export default class SectionsPage implements OnInit {
     }
 
     return [
-      { key: 'morning', label: 'Turno mañana', description: 'Secciones activas durante la jornada de la mañana', items: groups.morning.sort((a, b) => a.name.localeCompare(b.name)) },
-      { key: 'afternoon', label: 'Turno tarde', description: 'Secciones organizadas para la jornada de la tarde', items: groups.afternoon.sort((a, b) => a.name.localeCompare(b.name)) },
-      { key: 'evening', label: 'Turno noche', description: 'Secciones programadas para la noche', items: groups.evening.sort((a, b) => a.name.localeCompare(b.name)) },
-      { key: 'unknown', label: 'Sin turno definido', description: 'Secciones que todavía no tienen un turno claro asignado', items: groups.unknown.sort((a, b) => a.name.localeCompare(b.name)) },
+      {
+        key: 'morning',
+        label: 'Turno mañana',
+        description: 'Secciones activas durante la jornada de la mañana',
+        items: groups.morning.sort((a, b) => a.name.localeCompare(b.name)),
+      },
+      {
+        key: 'afternoon',
+        label: 'Turno tarde',
+        description: 'Secciones organizadas para la jornada de la tarde',
+        items: groups.afternoon.sort((a, b) => a.name.localeCompare(b.name)),
+      },
+      {
+        key: 'evening',
+        label: 'Turno noche',
+        description: 'Secciones programadas para la noche',
+        items: groups.evening.sort((a, b) => a.name.localeCompare(b.name)),
+      },
+      {
+        key: 'unknown',
+        label: 'Sin turno definido',
+        description: 'Secciones que todavía no tienen un turno claro asignado',
+        items: groups.unknown.sort((a, b) => a.name.localeCompare(b.name)),
+      },
     ].filter((group) => group.items.length > 0);
   });
 

@@ -1,7 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ChatCursorResponse, ChatInboxCursorResponse, ClassroomFeedItem, ChatMessage, FeedCursorResponse } from '../types/classroom-types';
+import {
+  ChatCursorResponse,
+  ChatInboxCursorResponse,
+  ClassroomFeedItem,
+  ChatMessage,
+  FeedCursorResponse,
+} from '../types/classroom-types';
 
 @Injectable({ providedIn: 'root' })
 export class ClassroomApi {
@@ -50,8 +56,15 @@ export class ClassroomApi {
     return this.http.post<{ id: string }>(`${this.baseUrl}/publish`, body);
   }
 
-  createComment(sectionCourseId: string, postId: string, content: string): Observable<ClassroomFeedItem> {
-    return this.http.post<ClassroomFeedItem>(`${this.baseUrl}/${sectionCourseId}/posts/${postId}/comments`, { content });
+  createComment(
+    sectionCourseId: string,
+    postId: string,
+    content: string,
+  ): Observable<ClassroomFeedItem> {
+    return this.http.post<ClassroomFeedItem>(
+      `${this.baseUrl}/${sectionCourseId}/posts/${postId}/comments`,
+      { content },
+    );
   }
 
   updatePost(
@@ -59,28 +72,44 @@ export class ClassroomApi {
     postId: string,
     data: { content?: string; attachmentUrl?: string | null },
   ): Observable<ClassroomFeedItem> {
-    return this.http.patch<ClassroomFeedItem>(`${this.baseUrl}/${sectionCourseId}/posts/${postId}`, data);
+    return this.http.patch<ClassroomFeedItem>(
+      `${this.baseUrl}/${sectionCourseId}/posts/${postId}`,
+      data,
+    );
   }
 
-  deletePost(sectionCourseId: string, postId: string): Observable<{ id: string; deleted: boolean }> {
-    return this.http.delete<{ id: string; deleted: boolean }>(`${this.baseUrl}/${sectionCourseId}/posts/${postId}`);
+  deletePost(
+    sectionCourseId: string,
+    postId: string,
+  ): Observable<{ id: string; deleted: boolean }> {
+    return this.http.delete<{ id: string; deleted: boolean }>(
+      `${this.baseUrl}/${sectionCourseId}/posts/${postId}`,
+    );
   }
 
-  updateComment(sectionCourseId: string, postId: string, commentId: string, content: string): Observable<ClassroomFeedItem> {
+  updateComment(
+    sectionCourseId: string,
+    postId: string,
+    commentId: string,
+    content: string,
+  ): Observable<ClassroomFeedItem> {
     return this.http.patch<ClassroomFeedItem>(
       `${this.baseUrl}/${sectionCourseId}/posts/${postId}/comments/${commentId}`,
       { content },
     );
   }
 
-  deleteComment(sectionCourseId: string, postId: string, commentId: string): Observable<ClassroomFeedItem> {
-    return this.http.delete<ClassroomFeedItem>(`${this.baseUrl}/${sectionCourseId}/posts/${postId}/comments/${commentId}`);
+  deleteComment(
+    sectionCourseId: string,
+    postId: string,
+    commentId: string,
+  ): Observable<ClassroomFeedItem> {
+    return this.http.delete<ClassroomFeedItem>(
+      `${this.baseUrl}/${sectionCourseId}/posts/${postId}/comments/${commentId}`,
+    );
   }
 
-  sendChatMessage(
-    sectionCourseId: string,
-    content: string
-  ): Observable<ChatMessage> {
+  sendChatMessage(sectionCourseId: string, content: string): Observable<ChatMessage> {
     return this.http.post<ChatMessage>(`${this.baseUrl}/chat/${sectionCourseId}`, { content });
   }
 
@@ -92,15 +121,21 @@ export class ClassroomApi {
     formData.append('file', file);
     if (options?.category) formData.append('category', options.category);
     if (options?.entityCode) formData.append('entityCode', options.entityCode);
-    if (options?.preserveName !== undefined) formData.append('preserveName', String(options.preserveName));
-    return this.http.post<{ url: string; name: string; storedName?: string; category?: string }>(`uploads`, formData);
+    if (options?.preserveName !== undefined)
+      formData.append('preserveName', String(options.preserveName));
+    return this.http.post<{ url: string; name: string; storedName?: string; category?: string }>(
+      `uploads`,
+      formData,
+    );
   }
 
   /** Profesores asignados al curso-sección. Backend puede exponer GET classroom/:sectionCourseId/teachers */
-  getTeachers(sectionCourseId: string): Observable<Array<{ id: string; firstName: string; lastName: string; email?: string }>> {
-    return this.http.get<Array<{ id: string; firstName: string; lastName: string; email?: string }>>(
-      `${this.baseUrl}/${sectionCourseId}/teachers`
-    );
+  getTeachers(
+    sectionCourseId: string,
+  ): Observable<Array<{ id: string; firstName: string; lastName: string; email?: string }>> {
+    return this.http.get<
+      Array<{ id: string; firstName: string; lastName: string; email?: string }>
+    >(`${this.baseUrl}/${sectionCourseId}/teachers`);
   }
 
   getPeople(sectionCourseId: string): Observable<ClassroomPeopleResponse> {
@@ -115,15 +150,25 @@ export class ClassroomApi {
   getTasksCursor(
     sectionCourseId: string,
     params?: { cursorDate?: string; cursorId?: string; limit?: number; search?: string },
-  ): Observable<{ data: ClassroomTask[]; nextCursor: { date: string; id: string } | null; hasNext: boolean }> {
-    return this.http.get<{ data: ClassroomTask[]; nextCursor: { date: string; id: string } | null; hasNext: boolean }>(
-      `${this.baseUrl}/${sectionCourseId}/tasks-cursor`,
-      { params },
-    );
+  ): Observable<{
+    data: ClassroomTask[];
+    nextCursor: { date: string; id: string } | null;
+    hasNext: boolean;
+  }> {
+    return this.http.get<{
+      data: ClassroomTask[];
+      nextCursor: { date: string; id: string } | null;
+      hasNext: boolean;
+    }>(`${this.baseUrl}/${sectionCourseId}/tasks-cursor`, { params });
   }
 
-  getTaskEditor(sectionCourseId: string, assignmentId: string): Observable<ClassroomTaskEditorPayload> {
-    return this.http.get<ClassroomTaskEditorPayload>(`${this.baseUrl}/${sectionCourseId}/tasks/${assignmentId}/editor`);
+  getTaskEditor(
+    sectionCourseId: string,
+    assignmentId: string,
+  ): Observable<ClassroomTaskEditorPayload> {
+    return this.http.get<ClassroomTaskEditorPayload>(
+      `${this.baseUrl}/${sectionCourseId}/tasks/${assignmentId}/editor`,
+    );
   }
 
   createTask(
@@ -174,15 +219,30 @@ export class ClassroomApi {
       }>;
     },
   ): Observable<ClassroomTaskEditorPayload> {
-    return this.http.patch<ClassroomTaskEditorPayload>(`${this.baseUrl}/${sectionCourseId}/tasks/${assignmentId}`, data);
+    return this.http.patch<ClassroomTaskEditorPayload>(
+      `${this.baseUrl}/${sectionCourseId}/tasks/${assignmentId}`,
+      data,
+    );
   }
 
-  deleteTask(sectionCourseId: string, assignmentId: string): Observable<{ id: string; deleted: boolean }> {
-    return this.http.delete<{ id: string; deleted: boolean }>(`${this.baseUrl}/${sectionCourseId}/tasks/${assignmentId}`);
+  deleteTask(
+    sectionCourseId: string,
+    assignmentId: string,
+  ): Observable<{ id: string; deleted: boolean }> {
+    return this.http.delete<{ id: string; deleted: boolean }>(
+      `${this.baseUrl}/${sectionCourseId}/tasks/${assignmentId}`,
+    );
   }
 
-  createTaskComment(sectionCourseId: string, assignmentId: string, content: string): Observable<ClassroomTask> {
-    return this.http.post<ClassroomTask>(`${this.baseUrl}/${sectionCourseId}/tasks/${assignmentId}/comments`, { content });
+  createTaskComment(
+    sectionCourseId: string,
+    assignmentId: string,
+    content: string,
+  ): Observable<ClassroomTask> {
+    return this.http.post<ClassroomTask>(
+      `${this.baseUrl}/${sectionCourseId}/tasks/${assignmentId}/comments`,
+      { content },
+    );
   }
 
   updateTaskComment(
@@ -197,8 +257,14 @@ export class ClassroomApi {
     );
   }
 
-  deleteTaskComment(sectionCourseId: string, assignmentId: string, commentId: string): Observable<ClassroomTask> {
-    return this.http.delete<ClassroomTask>(`${this.baseUrl}/${sectionCourseId}/tasks/${assignmentId}/comments/${commentId}`);
+  deleteTaskComment(
+    sectionCourseId: string,
+    assignmentId: string,
+    commentId: string,
+  ): Observable<ClassroomTask> {
+    return this.http.delete<ClassroomTask>(
+      `${this.baseUrl}/${sectionCourseId}/tasks/${assignmentId}/comments/${commentId}`,
+    );
   }
 
   submitTask(
@@ -215,11 +281,18 @@ export class ClassroomApi {
         answerText?: string;
       }>;
     },
-  ): Observable<{ id: string; status: ClassroomTask['status']; submittedAt: string; score?: number }> {
-    return this.http.post<{ id: string; status: ClassroomTask['status']; submittedAt: string; score?: number }>(
-      `${this.baseUrl}/${sectionCourseId}/tasks/${assignmentId}/submit`,
-      data,
-    );
+  ): Observable<{
+    id: string;
+    status: ClassroomTask['status'];
+    submittedAt: string;
+    score?: number;
+  }> {
+    return this.http.post<{
+      id: string;
+      status: ClassroomTask['status'];
+      submittedAt: string;
+      score?: number;
+    }>(`${this.baseUrl}/${sectionCourseId}/tasks/${assignmentId}/submit`, data);
   }
 
   reviewTaskSubmission(
@@ -228,7 +301,12 @@ export class ClassroomApi {
     submissionId: string,
     data: { score: number; feedback?: string },
   ): Observable<{ id: string; score: number; feedback?: string; status: ClassroomTask['status'] }> {
-    return this.http.patch<{ id: string; score: number; feedback?: string; status: ClassroomTask['status'] }>(
+    return this.http.patch<{
+      id: string;
+      score: number;
+      feedback?: string;
+      status: ClassroomTask['status'];
+    }>(
       `${this.baseUrl}/${sectionCourseId}/tasks/${assignmentId}/submissions/${submissionId}/review`,
       data,
     );

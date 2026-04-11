@@ -4,22 +4,38 @@
       <div class="flex items-center justify-between border-b border-base-200 pb-3">
         <h3 class="text-xs font-bold uppercase tracking-widest text-base-content/50">Filtros</h3>
         @if (hasActiveFilters()) {
-          <button type="button" class="text-xs font-semibold uppercase tracking-widest text-primary transition hover:opacity-80" (click)="clearFilters()">Limpiar</button>
+          <button
+            type="button"
+            class="text-xs font-semibold uppercase tracking-widest text-primary transition hover:opacity-80"
+            (click)="clearFilters()"
+          >
+            Limpiar
+          </button>
         }
       </div>
 
       <z-form-field>
         <label z-form-label>Buscar</label>
         <z-form-control>
-          <input z-input placeholder="Buscar áreas por nombre o código..." [ngModel]="searchTerm()" (ngModelChange)="onSearch($event)" />
+          <input
+            z-input
+            placeholder="Buscar áreas por nombre o código..."
+            [ngModel]="searchTerm()"
+            (ngModelChange)="onSearch($event)"
+          />
         </z-form-control>
       </z-form-field>
 
       <z-form-field>
         <label z-form-label>Tipo</label>
         <z-form-control>
-          <z-select-option [options]="typeOptions" [ngModel]="filterType()" [placeholder]="'Todos'"
-            [searchable]="false" (ngModelChange)="onFilterType($event)"></z-select-option>
+          <z-select-option
+            [options]="typeOptions"
+            [ngModel]="filterType()"
+            [placeholder]="'Todos'"
+            [searchable]="false"
+            (ngModelChange)="onFilterType($event)"
+          ></z-select-option>
         </z-form-control>
       </z-form-field>
     </div>
@@ -36,28 +52,36 @@
 
   <div class="grid grid-cols-1 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
     @if (loading() && !data().length) {
-    @for (i of skeletonItems; track i) {
-    <z-skeleton [class]="'h-[200px] w-full rounded-4xl border border-base-200'"></z-skeleton>
-    }
+      @for (i of skeletonItems; track i) {
+        <z-skeleton [class]="'h-[200px] w-full rounded-4xl border border-base-200'"></z-skeleton>
+      }
     } @else {
-    @for (group of groupedData(); track group.key) {
-     
+      @for (group of groupedData(); track group.key) {
         <div class="grid grid-cols-1 gap-6">
           @for (area of group.items; track area.id) {
-            <sga-subject-area-card [subjectArea]="area" (edit)="editSubjectArea(area)" (delete)="deleteSubjectArea(area)"
-              (viewCourses)="goToCourses(area)" />
+            <sga-subject-area-card
+              [subjectArea]="area"
+              (edit)="editSubjectArea(area)"
+              (delete)="deleteSubjectArea(area)"
+              (viewCourses)="goToCourses(area)"
+            />
           }
         </div>
-    } @empty {
-    <div class="col-span-full">
-      <z-empty zIcon="book-open" zTitle="Sin áreas curriculares"
-        zDescription="Aún no hay áreas curriculares. Crea troncal, electiva u opcional para organizar las materias.">
-        @if (canManageSubjectAreas()) {
-          <button z-button type="button" class="mt-4" (click)="createFromEmpty()">Crear área</button>
-        }
-      </z-empty>
-    </div>
-    }
+      } @empty {
+        <div class="col-span-full">
+          <z-empty
+            zIcon="book-open"
+            zTitle="Sin áreas curriculares"
+            zDescription="Aún no hay áreas curriculares. Crea troncal, electiva u opcional para organizar las materias."
+          >
+            @if (canManageSubjectAreas()) {
+              <button z-button type="button" class="mt-4" (click)="createFromEmpty()">
+                Crear área
+              </button>
+            }
+          </z-empty>
+        </div>
+      }
     }
   </div>
 </div>

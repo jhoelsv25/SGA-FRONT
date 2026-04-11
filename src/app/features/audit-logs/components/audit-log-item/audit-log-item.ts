@@ -7,7 +7,7 @@ import { AuditLog } from '@features/admin-services/api/audit-api';
 
 @Component({
   selector: 'sga-audit-log-item',
-  standalone: true,
+
   imports: [CommonModule, ZardIconComponent, ZardBadgeComponent, ZardCardComponent],
   templateUrl: './audit-log-item.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

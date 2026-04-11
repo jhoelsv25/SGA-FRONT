@@ -1,13 +1,6 @@
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardEmptyComponent } from '@/shared/components/empty';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  input,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PermissionStore } from '@features/admin-services/store/permission.store';
 import { Permission } from '@features/admin-services/api/permission-api';
@@ -23,13 +16,8 @@ interface ModuleGroup {
 
 @Component({
   selector: 'sga-permissions',
-  standalone: true,
-  imports: [
-    CommonModule,
-    ZardButtonComponent,
-    PermissionCardComponent,
-    ZardEmptyComponent,
-  ],
+
+  imports: [CommonModule, ZardButtonComponent, PermissionCardComponent, ZardEmptyComponent],
   templateUrl: './permissions.html',
   styles: [
     `

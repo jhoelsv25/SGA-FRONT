@@ -2,7 +2,11 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiParams, ApiEntityResponse, DataResponse } from '@core/types/pagination-types';
-import type { CreateEnrollmentDto, Enrollment, EnrollmentUpdateDto } from '../types/enrollment-types';
+import type {
+  CreateEnrollmentDto,
+  Enrollment,
+  EnrollmentUpdateDto,
+} from '../types/enrollment-types';
 
 @Injectable({ providedIn: 'root' })
 export class EnrollmentApi {
@@ -11,7 +15,7 @@ export class EnrollmentApi {
 
   getAll(params: ApiParams = {}): Observable<DataResponse<Enrollment>> {
     let httpParams = new HttpParams();
-    Object.keys(params).forEach(key => {
+    Object.keys(params).forEach((key) => {
       if (params[key]) httpParams = httpParams.set(key, params[key]);
     });
     return this.http.get<DataResponse<Enrollment>>(this.baseUrl, { params: httpParams });

@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardEmptyComponent } from '@/shared/components/empty';
@@ -11,8 +18,14 @@ import type { Assessment, AssessmentScore } from '../../types/assessment-types';
 
 @Component({
   selector: 'sga-assessment-detail',
-  standalone: true,
-  imports: [CommonModule, ZardButtonComponent, ZardIconComponent, ZardEmptyComponent, ZardSkeletonComponent],
+
+  imports: [
+    CommonModule,
+    ZardButtonComponent,
+    ZardIconComponent,
+    ZardEmptyComponent,
+    ZardSkeletonComponent,
+  ],
   templateUrl: './assessment-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -22,7 +35,9 @@ export default class AssessmentDetailPage implements OnInit {
   private readonly assessmentApi = inject(AssessmentApi);
   private readonly toast = inject(Toast);
 
-  readonly assessment = signal<Assessment | null>((history.state?.assessment as Assessment | undefined) ?? null);
+  readonly assessment = signal<Assessment | null>(
+    (history.state?.assessment as Assessment | undefined) ?? null,
+  );
   readonly scores = signal<AssessmentScore[]>([]);
   readonly loading = signal(true);
 

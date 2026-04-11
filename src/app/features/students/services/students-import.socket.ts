@@ -28,8 +28,12 @@ export class StudentsImportSocketService implements OnDestroy {
       withCredentials: true,
       auth: this.tokenManager.getToken() ? { token: this.tokenManager.getToken() } : undefined,
     });
-    this.socket.on('import:progress', (payload: ImportProgressPayload) => this.progress$.next(payload));
-    this.socket.on('import:complete', (payload: ImportProgressPayload) => this.complete$.next(payload));
+    this.socket.on('import:progress', (payload: ImportProgressPayload) =>
+      this.progress$.next(payload),
+    );
+    this.socket.on('import:complete', (payload: ImportProgressPayload) =>
+      this.complete$.next(payload),
+    );
   }
 
   disconnect(): void {

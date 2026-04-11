@@ -19,121 +19,169 @@
   </header>
   <div class="grid flex-1 grid-cols-1 gap-4 overflow-y-auto pr-1 md:grid-cols-2">
     <div class="col-span-full flex flex-col gap-1">
-      <label class="label-form text-base-content/70 font-medium text-sm" for="institution">Institución Educativa</label>
+      <label class="label-form text-base-content/70 font-medium text-sm" for="institution"
+        >Institución Educativa</label
+      >
       <sga-institution-select
         id="institution"
         formControlName="institution"
-        placeholder="Seleccionar institución"></sga-institution-select>
+        placeholder="Seleccionar institución"
+      ></sga-institution-select>
     </div>
     <div class="flex flex-col gap-1">
       <label class="label-form text-base-content/70 font-medium text-sm" for="year">Año</label>
-      <input z-input w-full
-        id="year"
-        type="number"
-        formControlName="year"
-        placeholder="Ej: 2025"
-       />
+      <input z-input w-full id="year" type="number" formControlName="year" placeholder="Ej: 2025" />
     </div>
     <div class="flex flex-col gap-1">
       <label class="label-form text-base-content/70 font-medium text-sm" for="name">Nombre</label>
-      <input z-input w-full id="name" type="text" formControlName="name" placeholder="Nombre del año académico"  />
+      <input
+        z-input
+        w-full
+        id="name"
+        type="text"
+        formControlName="name"
+        placeholder="Nombre del año académico"
+      />
     </div>
     <div class="flex flex-col gap-1">
-      <label class="label-form text-base-content/70 font-medium text-sm" for="startDate">Fecha de inicio</label>
+      <label class="label-form text-base-content/70 font-medium text-sm" for="startDate"
+        >Fecha de inicio</label
+      >
       <z-date-picker
         id="startDate"
         formControlName="startDate"
-        [placeholder]="'Seleccionar fecha de inicio'"></z-date-picker>
+        [placeholder]="'Seleccionar fecha de inicio'"
+      ></z-date-picker>
     </div>
     <div class="flex flex-col gap-1">
-      <label class="label-form text-base-content/70 font-medium text-sm" for="endDate">Fecha de fin</label>
+      <label class="label-form text-base-content/70 font-medium text-sm" for="endDate"
+        >Fecha de fin</label
+      >
       <z-date-picker
         id="endDate"
         formControlName="endDate"
-        [placeholder]="'Seleccionar fecha de fin'"></z-date-picker>
+        [placeholder]="'Seleccionar fecha de fin'"
+      ></z-date-picker>
     </div>
     <div class="flex flex-col gap-1">
-      <label class="label-form text-base-content/70 font-medium text-sm" for="modality">Modalidad</label>
+      <label class="label-form text-base-content/70 font-medium text-sm" for="modality"
+        >Modalidad</label
+      >
       <z-select-option
         id="modality"
         [options]="modalities"
         formControlName="modality"
-        placeholder="Seleccionar modalidad"></z-select-option>
+        placeholder="Seleccionar modalidad"
+      ></z-select-option>
     </div>
     <div class="flex flex-col gap-1">
-      <label class="label-form text-base-content/70 font-medium text-sm" for="gradingSystem">Sistema de calificación</label>
+      <label class="label-form text-base-content/70 font-medium text-sm" for="gradingSystem"
+        >Sistema de calificación</label
+      >
       <z-select-option
         id="gradingSystem"
         [options]="gradingSystems"
         formControlName="gradingSystem"
-        placeholder="Seleccionar sistema"></z-select-option>
+        placeholder="Seleccionar sistema"
+      ></z-select-option>
     </div>
     <div class="flex flex-col gap-1">
-      <label class="label-form text-base-content/70 font-medium text-sm" for="passingDate">Fecha de cierre de actas</label>
+      <label class="label-form text-base-content/70 font-medium text-sm" for="passingDate"
+        >Fecha de cierre de actas</label
+      >
       <z-date-picker
         id="passingDate"
         formControlName="passingDate"
-        [placeholder]="'Seleccionar fecha de cierre'"></z-date-picker>
+        [placeholder]="'Seleccionar fecha de cierre'"
+      ></z-date-picker>
     </div>
     <div class="flex flex-col gap-1">
-      <label class="label-form text-base-content/70 font-medium text-sm" for="passingGrade">{{ passingGradeLabel() }}</label>
-      <input z-input w-full
+      <label class="label-form text-base-content/70 font-medium text-sm" for="passingGrade">{{
+        passingGradeLabel()
+      }}</label>
+      <input
+        z-input
+        w-full
         id="passingGrade"
         type="text"
         formControlName="passingGrade"
         [placeholder]="passingGradePlaceholder()"
-       />
+      />
     </div>
     @if (showGradeScaleTable()) {
-    <div class="col-span-2 rounded-[1.5rem] border border-base-200 bg-base-100/60 p-4">
-      <div class="mb-4 flex items-center justify-between gap-3">
-        <div>
-          <p class="text-sm font-black text-base-content">Escala literal</p>
-          <p class="text-xs text-base-content/55">Define qué rango numérico corresponde a cada letra.</p>
+      <div class="col-span-2 rounded-[1.5rem] border border-base-200 bg-base-100/60 p-4">
+        <div class="mb-4 flex items-center justify-between gap-3">
+          <div>
+            <p class="text-sm font-black text-base-content">Escala literal</p>
+            <p class="text-xs text-base-content/55">
+              Define qué rango numérico corresponde a cada letra.
+            </p>
+          </div>
+          <button
+            type="button"
+            z-button
+            zColor="secondary"
+            zType="outline"
+            (click)="addGradeScale()"
+          >
+            Agregar fila
+          </button>
         </div>
-        <button type="button" z-button zColor="secondary" zType="outline" (click)="addGradeScale()">Agregar fila</button>
-      </div>
 
-      <div class="space-y-3">
-        @for (scale of gradeScales(); track $index) {
-        <div class="grid gap-3 rounded-[1rem] border border-base-200 bg-white p-3 md:grid-cols-[120px_1fr_1fr_auto]">
-          <input
-            z-input
-            [ngModel]="scale.label"
-            [ngModelOptions]="{ standalone: true }"
-            (ngModelChange)="updateGradeScale($index, { label: $event })"
-            placeholder="Ej: A"
-          />
-          <input
-            z-input
-            type="number"
-            [ngModel]="scale.minScore"
-            [ngModelOptions]="{ standalone: true }"
-            (ngModelChange)="updateGradeScale($index, { minScore: +$event })"
-            placeholder="Desde"
-          />
-          <input
-            z-input
-            type="number"
-            [ngModel]="scale.maxScore"
-            [ngModelOptions]="{ standalone: true }"
-            (ngModelChange)="updateGradeScale($index, { maxScore: +$event })"
-            placeholder="Hasta"
-          />
-          <button type="button" z-button zColor="secondary" zType="ghost" (click)="removeGradeScale($index)">Quitar</button>
+        <div class="space-y-3">
+          @for (scale of gradeScales(); track $index) {
+            <div
+              class="grid gap-3 rounded-[1rem] border border-base-200 bg-white p-3 md:grid-cols-[120px_1fr_1fr_auto]"
+            >
+              <input
+                z-input
+                [ngModel]="scale.label"
+                [ngModelOptions]="{ standalone: true }"
+                (ngModelChange)="updateGradeScale($index, { label: $event })"
+                placeholder="Ej: A"
+              />
+              <input
+                z-input
+                type="number"
+                [ngModel]="scale.minScore"
+                [ngModelOptions]="{ standalone: true }"
+                (ngModelChange)="updateGradeScale($index, { minScore: +$event })"
+                placeholder="Desde"
+              />
+              <input
+                z-input
+                type="number"
+                [ngModel]="scale.maxScore"
+                [ngModelOptions]="{ standalone: true }"
+                (ngModelChange)="updateGradeScale($index, { maxScore: +$event })"
+                placeholder="Hasta"
+              />
+              <button
+                type="button"
+                z-button
+                zColor="secondary"
+                zType="ghost"
+                (click)="removeGradeScale($index)"
+              >
+                Quitar
+              </button>
+            </div>
+          }
         </div>
-        }
       </div>
-    </div>
     }
     <div class="flex flex-col gap-1">
-      <label class="label-form text-base-content/70 font-medium text-sm" for="academicCalendarUrl">Calendario académico (URL)</label>
-      <input z-input w-full
+      <label class="label-form text-base-content/70 font-medium text-sm" for="academicCalendarUrl"
+        >Calendario académico (URL)</label
+      >
+      <input
+        z-input
+        w-full
         id="academicCalendarUrl"
         type="text"
         formControlName="academicCalendarUrl"
         placeholder="https://..."
-       />
+      />
     </div>
     <div class="flex flex-col gap-1">
       <label class="label-form text-base-content/70 font-medium text-sm" for="status">Estado</label>
@@ -141,33 +189,54 @@
         id="status"
         [options]="statuses"
         formControlName="status"
-        placeholder="Seleccionar estado"></z-select-option>
+        placeholder="Seleccionar estado"
+      ></z-select-option>
     </div>
     <div class="flex flex-col gap-1 col-span-2">
-      <label class="label-form text-base-content/70 font-medium text-sm" for="periodCount">Cantidad de períodos</label>
-      <input z-input w-full
+      <label class="label-form text-base-content/70 font-medium text-sm" for="periodCount"
+        >Cantidad de períodos</label
+      >
+      <input
+        z-input
+        w-full
         id="periodCount"
         type="number"
         min="0"
         max="10"
         formControlName="periodCount"
         placeholder="Ej: 4"
-       />
+      />
       <p class="text-xs text-base-content/55">
         @if (isEditing()) {
-          Solo se usa al crear el año académico. Luego puedes seguir gestionando períodos desde el detalle.
+          Solo se usa al crear el año académico. Luego puedes seguir gestionando períodos desde el
+          detalle.
         } @else {
           Si indicas una cantidad mayor a 0, se crearán automáticamente al guardar el año académico.
         }
       </p>
     </div>
   </div>
-  <footer class="mt-6 flex shrink-0 flex-col-reverse gap-2 border-t border-base-200 bg-background pt-4 sm:flex-row sm:items-center sm:justify-end">
-    <button type="button" z-button zColor="secondary" zType="outline" class="w-full sm:w-auto" (click)="onClose()">
+  <footer
+    class="mt-6 flex shrink-0 flex-col-reverse gap-2 border-t border-base-200 bg-background pt-4 sm:flex-row sm:items-center sm:justify-end"
+  >
+    <button
+      type="button"
+      z-button
+      zColor="secondary"
+      zType="outline"
+      class="w-full sm:w-auto"
+      (click)="onClose()"
+    >
       <i class="fas fa-times"></i>
       Cancelar
     </button>
-    <button type="submit" z-button zColor="primary" class="w-full sm:w-auto" [disabled]="form.invalid || saving()">
+    <button
+      type="submit"
+      z-button
+      zColor="primary"
+      class="w-full sm:w-auto"
+      [disabled]="form.invalid || saving()"
+    >
       <i class="fas fa-check"></i>
       {{ saving() ? 'Guardando...' : 'Guardar' }}
     </button>

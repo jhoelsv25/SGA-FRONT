@@ -19,8 +19,16 @@ import { SgaHasPermissionDirective } from '@/shared/core';
 
 @Component({
   selector: 'sga-assessments',
-  standalone: true,
-  imports: [CommonModule, ListToolbarComponent, ZardButtonComponent, AssessmentCardComponent, ZardEmptyComponent, ZardSkeletonComponent, SgaHasPermissionDirective],
+
+  imports: [
+    CommonModule,
+    ListToolbarComponent,
+    ZardButtonComponent,
+    AssessmentCardComponent,
+    ZardEmptyComponent,
+    ZardSkeletonComponent,
+    SgaHasPermissionDirective,
+  ],
   templateUrl: './assessments.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -235,7 +243,9 @@ export default class Assessments implements OnInit {
             this.onRefresh();
           },
           error: (error) => {
-            this.toast.error('Error al eliminar evaluación: ' + (error?.message || 'intenta nuevamente'));
+            this.toast.error(
+              'Error al eliminar evaluación: ' + (error?.message || 'intenta nuevamente'),
+            );
           },
         });
       },

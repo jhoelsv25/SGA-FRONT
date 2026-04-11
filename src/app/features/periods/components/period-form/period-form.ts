@@ -13,13 +13,19 @@ const STATUS_OPTIONS = [
   { value: PeriodStatus.PLANNED, label: 'Planificado' },
   { value: PeriodStatus.IN_PROGRESS, label: 'En curso' },
   { value: PeriodStatus.COMPLETED, label: 'Completado' },
-  { value: PeriodStatus.CANCELLED, label: 'Cancelado' }];
-
+  { value: PeriodStatus.CANCELLED, label: 'Cancelado' },
+];
 
 @Component({
   selector: 'sga-period-form',
-  standalone: true,
-  imports: [ReactiveFormsModule, ZardButtonComponent, ZardInputDirective, ZardDatePickerComponent, SelectOptionComponent],
+
+  imports: [
+    ReactiveFormsModule,
+    ZardButtonComponent,
+    ZardInputDirective,
+    ZardDatePickerComponent,
+    SelectOptionComponent,
+  ],
   templateUrl: './period-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -43,7 +49,9 @@ export class PeriodForm implements OnInit {
       name: [this.current?.name ?? '', [Validators.required]],
       startDate: [this.current?.startDate ?? null, [Validators.required]],
       endDate: [this.current?.endDate ?? null, [Validators.required]],
-      ...(this.current && { status: [this.current?.status ?? PeriodStatus.PLANNED, [Validators.required]] }),
+      ...(this.current && {
+        status: [this.current?.status ?? PeriodStatus.PLANNED, [Validators.required]],
+      }),
     });
   }
 

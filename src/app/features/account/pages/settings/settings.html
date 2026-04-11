@@ -1,0 +1,84 @@
+<div class="space-y-6 p-4 md:p-6">
+  <sga-settings-hero
+    [roleBadge]="roleBadge()"
+    [pills]="settingsHeroPills()"
+    [sections]="sections()"
+    [activeSection]="activeSection()"
+    (sectionChange)="activeSection.set($event)"
+  />
+
+  <div class="grid gap-6 xl:grid-cols-[240px_minmax(0,1fr)]">
+    <sga-settings-section-nav
+      [sections]="sections()"
+      [activeSection]="activeSection()"
+      (sectionChange)="activeSection.set($event)"
+    />
+
+    <div class="space-y-6">
+      @if (activeSection() === 'general') {
+        <sga-settings-general-section
+          [loading]="loadingUser()"
+          [generalRows]="generalRows()"
+          [roleRows]="roleSettingsRows()"
+        />
+      }
+
+      @if (activeSection() === 'appearance') {
+        <sga-settings-appearance-section
+          [currentTheme]="currentTheme()"
+          [themeOptions]="themeOptions()"
+          (themeChange)="setTheme($event)"
+        />
+      }
+
+      @if (activeSection() === 'notifications') {
+        <sga-settings-notifications-section
+          [notificationRows]="notificationRows()"
+          [preferences]="preferences()"
+          [preferenceStatus]="preferenceStatus()"
+          [showTeacherReminderConfig]="showTeacherReminderConfig()"
+          [showGlobalReminderConfig]="showGlobalReminderConfig()"
+          [liveClassReminderEnabled]="liveClassReminderEnabled()"
+          [liveClassReminderLeadMinutes]="liveClassReminderLeadMinutes()"
+          [globalLiveClassReminderEnabled]="globalLiveClassReminderEnabled()"
+          [globalLiveClassReminderLeadMinutes]="globalLiveClassReminderLeadMinutes()"
+          [liveClassReminderPresets]="liveClassReminderPresets"
+          [reminderLeadLabel]="reminderLeadLabel.bind(this)"
+          (preferenceToggle)="togglePreference($event)"
+          (liveReminderToggle)="toggleLiveClassReminder()"
+          (liveReminderLeadChange)="setLiveClassReminderLeadMinutes($event)"
+          (globalReminderToggle)="toggleGlobalLiveClassReminder()"
+          (globalReminderLeadChange)="setGlobalLiveClassReminderLeadMinutes($event)"
+        />
+      }
+
+      @if (activeSection() === 'email') {
+        <sga-settings-email-section
+          [emailRows]="emailRows()"
+          [loadingEmailLogs]="loadingEmailLogs()"
+          [userEmailLogs]="userEmailLogs()"
+          [formatDate]="formatDate.bind(this)"
+        />
+      }
+
+      @if (activeSection() === 'security') {
+        <sga-settings-security-section [securityRows]="securityRows()" />
+      }
+
+      @if (activeSection() === 'logs') {
+        <sga-settings-logs-section [loading]="loadingAudit()" [auditRows]="auditRows()" />
+      }
+
+      @if (activeSection() === 'sessions') {
+        <sga-settings-sessions-section
+          [sessionRows]="sessionRows()"
+          [loadingSessions]="loadingSessions()"
+          [userSessions]="userSessions()"
+          [isSessionActive]="isSessionActive.bind(this)"
+          [formatDate]="formatDate.bind(this)"
+          (revokeSession)="revokeSession($event)"
+        />
+      }
+    </div>
+  </div>
+</div>

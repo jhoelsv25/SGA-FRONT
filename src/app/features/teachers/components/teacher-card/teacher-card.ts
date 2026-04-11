@@ -9,7 +9,7 @@ import { SgaHasPermissionDirective } from '@/shared/core';
 
 @Component({
   selector: 'sga-teacher-card',
-  standalone: true,
+
   imports: [
     CommonModule,
     ZardButtonComponent,
@@ -35,7 +35,9 @@ export class TeacherCardComponent {
 
   readonly fullName = computed(() => {
     const person = this.getPerson();
-    return [person?.firstName, person?.lastName].filter(Boolean).join(' ').trim() || 'Docente sin nombre';
+    return (
+      [person?.firstName, person?.lastName].filter(Boolean).join(' ').trim() || 'Docente sin nombre'
+    );
   });
 
   readonly institutionName = computed(() => {
@@ -67,7 +69,13 @@ export class TeacherCardComponent {
     return map[this.teacher().employmentStatus] ?? this.teacher().employmentStatus;
   });
 
-  private getPerson(): { id: string; firstName?: string; lastName?: string; email?: string; phone?: string } | null {
+  private getPerson(): {
+    id: string;
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    phone?: string;
+  } | null {
     const person = this.teacher().person;
     return typeof person === 'object' ? person : null;
   }
