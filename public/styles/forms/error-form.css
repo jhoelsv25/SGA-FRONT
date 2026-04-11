@@ -44,7 +44,7 @@
 }
 
 .error-message::before {
-  content: "⚠ ";
+  content: '⚠ ';
   margin-right: 0.25rem;
 }
 
@@ -58,7 +58,7 @@
 }
 
 .success-message::before {
-  content: "✓ ";
+  content: '✓ ';
   margin-right: 0.25rem;
 }
 
@@ -72,7 +72,7 @@
 }
 
 .warning-message::before {
-  content: "⚡ ";
+  content: '⚡ ';
   margin-right: 0.25rem;
 }
 
@@ -85,7 +85,7 @@
 }
 
 .form-invalid::before {
-  content: "";
+  content: '';
   position: absolute;
   top: -2px;
   left: -2px;
@@ -98,7 +98,8 @@
 }
 
 @keyframes errorPulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.3;
   }
   50% {
@@ -200,7 +201,7 @@
 
 /* Required Field Indicators */
 .form-group.required .label-form::after {
-  content: " *";
+  content: ' *';
   color: #ef4444;
   font-weight: bold;
 }
@@ -211,10 +212,19 @@
 }
 
 @keyframes shake {
-  0%, 20%, 40%, 60%, 80%, 100% {
+  0%,
+  20%,
+  40%,
+  60%,
+  80%,
+  100% {
     transform: translateX(0);
   }
-  10%, 30%, 50%, 70%, 90% {
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
     transform: translateX(-5px);
   }
 }
@@ -243,7 +253,7 @@
 }
 
 .validation-tooltip::before {
-  content: "";
+  content: '';
   position: absolute;
   top: -5px;
   left: 1rem;
@@ -282,7 +292,7 @@
 }
 
 .error-list li::before {
-  content: "•";
+  content: '•';
   position: absolute;
   left: 0;
   color: #ef4444;
@@ -295,20 +305,20 @@
     border-color: #f87171;
     background-color: #450a0a;
   }
-  
+
   .form-group.has-error .label-form {
     color: #f87171;
   }
-  
+
   .error-message {
     color: #f87171;
   }
-  
+
   .form-invalid {
     border-color: #f87171;
     background-color: #450a0a;
   }
-  
+
   .form-alert-error {
     background-color: #450a0a;
     color: #f87171;
