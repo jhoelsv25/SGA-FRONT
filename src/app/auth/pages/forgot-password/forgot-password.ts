@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Logo } from '@shared/widgets/logo/logo';
-import { ForgotForm } from "@auth/components/forgot-form/forgot-form";
-
+import { ForgotForm } from '@auth/components/forgot-form/forgot-form';
 
 @Component({
   selector: 'sga-forgot-password',
@@ -9,4 +8,4 @@ import { ForgotForm } from "@auth/components/forgot-form/forgot-form";
   templateUrl: './forgot-password.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class ForgotPassword { }
+export default class ForgotPassword {}

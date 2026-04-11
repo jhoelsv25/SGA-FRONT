@@ -20,14 +20,15 @@
       <div
         class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm shrink-0"
       >
-        <z-icon zType="book-open" class="h-5 w-5"  />
+        <z-icon zType="book-open" class="h-5 w-5" />
       </div>
       <div
         class="flex flex-col leading-tight min-w-0 transition-opacity duration-200"
         [class.opacity-0]="isSidebarCollapsed()"
       >
         <span class="truncate text-base font-bold tracking-tight text-foreground">SISAE</span>
-        <span class="truncate text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground"
+        <span
+          class="truncate text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground"
           >Gestión Educativa</span
         >
       </div>
@@ -45,7 +46,7 @@
         zType="chevron-left"
         class="h-3 w-3 transition-transform duration-300"
         [class.rotate-180]="isSidebarCollapsed()"
-       />
+      />
     </button>
   </div>
 
@@ -56,7 +57,10 @@
           <label
             class="group flex h-11 items-center gap-2 rounded-xl border border-border bg-background px-3 shadow-sm transition-colors focus-within:border-primary/40 focus-within:ring-2 focus-within:ring-primary/10"
           >
-            <z-icon zType="search" class="h-3 w-3 text-muted-foreground transition-colors group-focus-within:text-primary"  />
+            <z-icon
+              zType="search"
+              class="h-3 w-3 text-muted-foreground transition-colors group-focus-within:text-primary"
+            />
             <input
               z-input
               type="text"
@@ -64,7 +68,7 @@
               placeholder="Buscar en menú..."
               [value]="sidebarSearch()"
               (input)="onSearchInput($event)"
-             />
+            />
             @if (sidebarSearch()) {
               <button
                 z-button
@@ -75,7 +79,7 @@
                 (click)="clearSearch()"
                 aria-label="Limpiar búsqueda"
               >
-                <z-icon zType="x" class="h-3 w-3"  />
+                <z-icon zType="x" class="h-3 w-3" />
               </button>
             }
           </label>
@@ -113,7 +117,7 @@
                   class="flex shrink-0 justify-center text-base transition-colors duration-200"
                   [zType]="item.icon"
                   [class.text-primary]="item.active"
-                 />
+                />
 
                 <span
                   class="overflow-hidden text-ellipsis whitespace-nowrap tracking-tight transition-all duration-200"
@@ -128,7 +132,7 @@
                     zType="chevron-down"
                     class="ml-auto shrink-0 h-3 w-3 text-muted-foreground transition-transform duration-200"
                     [class.rotate-180]="isSubmenuExpanded(item.id)"
-                   />
+                  />
                 }
 
                 @if (item.active && !isSidebarCollapsed()) {
@@ -140,14 +144,22 @@
 
               <ng-template #collapsedSubmenu>
                 @if (isSidebarCollapsed() && item.hasChildren) {
-                  <div class="min-w-[240px] rounded-2xl border border-border bg-popover p-2 text-popover-foreground shadow-2xl">
+                  <div
+                    class="min-w-[240px] rounded-2xl border border-border bg-popover p-2 text-popover-foreground shadow-2xl"
+                  >
                     <div class="mb-2 flex items-center gap-2 rounded-xl bg-muted/60 px-3 py-2">
-                      <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                        <z-icon class="text-sm" [zType]="item.icon"  />
+                      <div
+                        class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary"
+                      >
+                        <z-icon class="text-sm" [zType]="item.icon" />
                       </div>
                       <div class="min-w-0">
-                        <p class="truncate text-sm font-semibold text-foreground">{{ item.label }}</p>
-                        <p class="text-muted-foreground text-[10px] uppercase tracking-[0.16em]">Submódulos</p>
+                        <p class="truncate text-sm font-semibold text-foreground">
+                          {{ item.label }}
+                        </p>
+                        <p class="text-muted-foreground text-[10px] uppercase tracking-[0.16em]">
+                          Submódulos
+                        </p>
                       </div>
                     </div>
                     <ul class="space-y-1">
@@ -162,7 +174,9 @@
                             <span class="bg-primary/20 h-2 w-2 shrink-0 rounded-full"></span>
                             <span class="truncate">{{ child.label }}</span>
                             @if (child.active) {
-                              <span class="ml-auto rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
+                              <span
+                                class="ml-auto rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary"
+                              >
                                 Activo
                               </span>
                             }
@@ -175,7 +189,9 @@
               </ng-template>
 
               @if (item.hasChildren && !isSidebarCollapsed() && isSubmenuExpanded(item.id)) {
-                <ul class="mt-1.5 ml-4 space-y-1 border-l border-border/80 pl-4 animate-in slide-in-from-top-1 duration-200">
+                <ul
+                  class="mt-1.5 ml-4 space-y-1 border-l border-border/80 pl-4 animate-in slide-in-from-top-1 duration-200"
+                >
                   @for (child of item.children; track child.id) {
                     <li>
                       <button
@@ -186,7 +202,7 @@
                         [class.text-primary]="child.active"
                         [class.bg-primary/5]="child.active"
                       >
-                        <z-icon class="text-[10px] opacity-60" [zType]="child.icon"  />
+                        <z-icon class="text-[10px] opacity-60" [zType]="child.icon" />
                         {{ child.label }}
                       </button>
                     </li>
@@ -213,6 +229,7 @@
         [class.items-center]="isSidebarCollapsed()"
       >
         <sga-user-menu
+          [avatar]="getUserAvatar()"
           [name]="getUserDisplayName()"
           [role]="getUserRole()"
           [code]="currentUser()?.code || 'N/A'"
@@ -222,7 +239,7 @@
           [actions]="userMenuActions()"
           [isCollapsed]="isSidebarCollapsed()"
           (actionSelected)="onUserMenuAction($event)"
-         />
+        />
       </div>
     </div>
   </div>

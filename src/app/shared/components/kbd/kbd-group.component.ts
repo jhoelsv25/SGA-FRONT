@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, input, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  ViewEncapsulation,
+} from '@angular/core';
 
 import { type ClassValue } from 'clsx';
 
@@ -8,10 +14,8 @@ import { kbdGroupVariants } from './kbd.variants';
 
 @Component({
   selector: 'z-kbd-group, [z-kbd-group]',
-  standalone: true,
-  template: `
-    <ng-content />
-  `,
+
+  template: ` <ng-content /> `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   host: {

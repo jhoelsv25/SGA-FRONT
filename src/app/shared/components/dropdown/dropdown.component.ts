@@ -1,4 +1,9 @@
-import { Overlay, OverlayModule, OverlayPositionBuilder, type OverlayRef } from '@angular/cdk/overlay';
+import {
+  Overlay,
+  OverlayModule,
+  OverlayPositionBuilder,
+  type OverlayRef,
+} from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 import { isPlatformBrowser } from '@angular/common';
 import {
@@ -49,7 +54,9 @@ import { dropdownContentVariants } from './dropdown.variants';
         [class]="contentClasses()"
         role="menu"
         [attr.data-state]="'open'"
-        (keydown.{arrowdown,arrowup,enter,space,escape,home,end}.prevent)="onDropdownKeydown($event)"
+        (keydown.{arrowdown,arrowup,enter,space,escape,home,end}.prevent)="
+          onDropdownKeydown($event)
+        "
         tabindex="-1"
       >
         <ng-content />
@@ -87,7 +94,9 @@ export class ZardDropdownMenuComponent implements OnDestroy {
   readonly isOpen = signal(false);
   readonly focusedIndex = signal<number>(-1);
 
-  protected readonly contentClasses = computed(() => mergeClasses(dropdownContentVariants(), this.class()));
+  protected readonly contentClasses = computed(() =>
+    mergeClasses(dropdownContentVariants(), this.class()),
+  );
 
   ngOnDestroy() {
     this.destroyOverlay();
@@ -226,7 +235,7 @@ export class ZardDropdownMenuComponent implements OnDestroy {
     const dropdownElement = this.overlayRef.overlayElement;
     return Array.from(
       dropdownElement.querySelectorAll<HTMLElement>('z-dropdown-menu-item, [z-dropdown-menu-item]'),
-    ).filter(item => item.dataset['disabled'] === undefined);
+    ).filter((item) => item.dataset['disabled'] === undefined);
   }
 
   private navigateItems(direction: number, items: HTMLElement[]) {
@@ -283,7 +292,9 @@ export class ZardDropdownMenuComponent implements OnDestroy {
 
   private focusDropdown() {
     if (this.overlayRef?.hasAttached()) {
-      const dropdownElement = this.overlayRef.overlayElement.querySelector('[role="menu"]') as HTMLElement;
+      const dropdownElement = this.overlayRef.overlayElement.querySelector(
+        '[role="menu"]',
+      ) as HTMLElement;
       if (dropdownElement) {
         dropdownElement.focus();
       }

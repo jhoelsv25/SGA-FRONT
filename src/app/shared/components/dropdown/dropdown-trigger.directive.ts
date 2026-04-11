@@ -1,4 +1,12 @@
-import { computed, Directive, ElementRef, inject, input, type OnInit, ViewContainerRef } from '@angular/core';
+import {
+  computed,
+  Directive,
+  ElementRef,
+  inject,
+  input,
+  type OnInit,
+  ViewContainerRef,
+} from '@angular/core';
 
 import type { ZardDropdownMenuContentComponent } from './dropdown-menu-content.component';
 import { ZardDropdownService } from './dropdown.service';
@@ -25,7 +33,8 @@ export class ZardDropdownDirective implements OnInit {
   protected readonly dropdownService = inject(ZardDropdownService);
 
   protected readonly isThisDropdownOpen = computed(
-    () => this.dropdownService.isOpen() && this.dropdownService.getTriggerElement() === this.elementRef,
+    () =>
+      this.dropdownService.isOpen() && this.dropdownService.getTriggerElement() === this.elementRef,
   );
 
   readonly zDropdownMenu = input<ZardDropdownMenuContentComponent>();
@@ -68,7 +77,11 @@ export class ZardDropdownDirective implements OnInit {
 
     const menuContent = this.zDropdownMenu();
     if (menuContent) {
-      this.dropdownService.toggle(this.elementRef, menuContent.contentTemplate(), this.viewContainerRef);
+      this.dropdownService.toggle(
+        this.elementRef,
+        menuContent.contentTemplate(),
+        this.viewContainerRef,
+      );
     }
   }
 
@@ -79,7 +92,11 @@ export class ZardDropdownDirective implements OnInit {
 
     const menuContent = this.zDropdownMenu();
     if (menuContent && !this.dropdownService.isOpen()) {
-      this.dropdownService.toggle(this.elementRef, menuContent.contentTemplate(), this.viewContainerRef);
+      this.dropdownService.toggle(
+        this.elementRef,
+        menuContent.contentTemplate(),
+        this.viewContainerRef,
+      );
     }
   }
 

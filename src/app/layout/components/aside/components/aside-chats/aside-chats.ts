@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -13,14 +21,8 @@ import { LayoutStore } from '@core/stores/layout.store';
 
 @Component({
   selector: 'sga-aside-chats',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    ZardIconComponent,
-    ZardBadgeComponent,
-    ZardEmptyComponent,
-  ],
+
+  imports: [CommonModule, FormsModule, ZardIconComponent, ZardBadgeComponent, ZardEmptyComponent],
   template: `
     <div class="flex flex-col h-full bg-card/10 backdrop-blur-3xl overflow-hidden">
       <div class="p-6 border-b border-border/5 space-y-4">
@@ -28,7 +30,9 @@ import { LayoutStore } from '@core/stores/layout.store';
           <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
             Mensajes del aula
           </h3>
-          <div class="rounded-xl bg-primary/5 px-3 py-2 text-[9px] font-black uppercase tracking-widest text-primary">
+          <div
+            class="rounded-xl bg-primary/5 px-3 py-2 text-[9px] font-black uppercase tracking-widest text-primary"
+          >
             {{ chats().length }}
           </div>
         </div>
@@ -61,16 +65,18 @@ import { LayoutStore } from '@core/stores/layout.store';
             <div class="relative shrink-0">
               @if (chat.avatar) {
                 <div
-                  class="size-14 rounded-[1.25rem] bg-gradient-to-tr from-primary/10 to-primary/5 border border-primary/20 p-1 group-hover:scale-110 transition-transform duration-500 overflow-hidden"
+                  class="size-14 rounded-[1.25rem] bg-linear-to-tr from-primary/10 to-primary/5 border border-primary/20 p-1 group-hover:scale-110 transition-transform duration-500 overflow-hidden"
                 >
                   <img
                     [src]="chat.avatar"
                     [alt]="chat.name"
-                    class="w-full h-full object-cover rounded-[1rem] shadow-sm"
+                    class="w-full h-full object-cover rounded-2xl shadow-sm"
                   />
                 </div>
               } @else {
-                <div class="size-14 rounded-[1.25rem] bg-gradient-to-tr from-primary/10 to-primary/5 border border-primary/20 flex items-center justify-center text-sm font-black uppercase text-primary group-hover:scale-110 transition-transform duration-500">
+                <div
+                  class="size-14 rounded-[1.25rem] bg-linear-to-tr from-primary/10 to-primary/5 border border-primary/20 flex items-center justify-center text-sm font-black uppercase text-primary group-hover:scale-110 transition-transform duration-500"
+                >
                   {{ initials(chat) }}
                 </div>
               }
@@ -83,7 +89,9 @@ import { LayoutStore } from '@core/stores/layout.store';
                 >
                   {{ chat.name }}
                 </h4>
-                <span class="text-[8px] font-bold text-muted-foreground opacity-40 uppercase tracking-tighter">
+                <span
+                  class="text-[8px] font-bold text-muted-foreground opacity-40 uppercase tracking-tighter"
+                >
                   {{ displayTime(chat.time) }}
                 </span>
               </div>
@@ -97,7 +105,7 @@ import { LayoutStore } from '@core/stores/layout.store';
                 </p>
                 @if (chat.unreadCount) {
                   <z-badge
-                    class="rounded-full bg-primary text-primary-foreground min-w-[18px] h-[18px] flex items-center justify-center text-[9px] font-bold ring-2 ring-primary/20"
+                    class="rounded-full bg-primary text-primary-foreground min-w-4.5 h-4.5 flex items-center justify-center text-[9px] font-bold ring-2 ring-primary/20"
                   >
                     {{ chat.unreadCount }}
                   </z-badge>
@@ -164,7 +172,11 @@ export class AsideChats implements OnInit, OnDestroy {
     if (!term) return this.chats();
 
     return this.chats().filter((chat) =>
-      [chat.name, chat.lastMessage].some((value) => String(value ?? '').toLowerCase().includes(term)),
+      [chat.name, chat.lastMessage].some((value) =>
+        String(value ?? '')
+          .toLowerCase()
+          .includes(term),
+      ),
     );
   });
 
@@ -239,9 +251,7 @@ export class AsideChats implements OnInit, OnDestroy {
   openChat(chat: ChatInboxItem): void {
     this.chats.update((items) =>
       items.map((item) =>
-        item.id === chat.id
-          ? { ...item, unread: false, unreadCount: 0 }
-          : item,
+        item.id === chat.id ? { ...item, unread: false, unreadCount: 0 } : item,
       ),
     );
     this.router.navigateByUrl(chat.route);

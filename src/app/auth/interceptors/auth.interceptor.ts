@@ -7,13 +7,13 @@ let isRefreshing = false;
 const refreshTokenSubject = new BehaviorSubject<boolean | null>(null);
 
 function shouldSkipRefresh(url: string): boolean {
-
   const skipPaths = [
     'auth/login',
     'auth/refresh-token',
     'auth/logout',
     'auth/forgot-password',
-    'auth/reset-password'];
+    'auth/reset-password',
+  ];
   return skipPaths.some((path) => url.includes(path));
 }
 
@@ -40,7 +40,9 @@ function handle401Error(
     return refreshTokenSubject.pipe(
       filter((result) => result !== null),
       take(1),
-      switchMap((result) => result ? next(request) : throwError(() => new Error('Refresh token failed'))),
+      switchMap((result) =>
+        result ? next(request) : throwError(() => new Error('Refresh token failed')),
+      ),
     );
   }
 

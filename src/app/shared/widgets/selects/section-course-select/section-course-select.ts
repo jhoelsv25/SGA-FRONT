@@ -1,5 +1,18 @@
 import { ZardSelectComponent, ZardSelectItemComponent } from '@/shared/components/select';
-import { ChangeDetectionStrategy, Component, computed, ElementRef, forwardRef, HostListener, inject, input, output, signal, viewChild, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  ElementRef,
+  forwardRef,
+  HostListener,
+  inject,
+  input,
+  output,
+  signal,
+  viewChild,
+  OnInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { SectionCourseApi } from '@features/section-courses/services/section-course-api';
@@ -32,11 +45,16 @@ function getSectionCourseSubtitle(sc: SectionCourse): string {
   return parts.join(' · ') || '—';
 }
 
-
 @Component({
   selector: 'sga-section-course-select',
-  standalone: true,
-  imports: [CommonModule, FormsModule, ZardSelectComponent, ZardSelectItemComponent, ZardInputDirective],
+
+  imports: [
+    CommonModule,
+    FormsModule,
+    ZardSelectComponent,
+    ZardSelectItemComponent,
+    ZardInputDirective,
+  ],
   templateUrl: './section-course-select.html',
   providers: [
     { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => SectionCourseSelect), multi: true },
@@ -72,7 +90,9 @@ export class SectionCourseSelect implements ControlValueAccessor, OnInit {
     const term = this.searchTerm().toLowerCase().trim();
     const allowed = this.allowedValues();
     const allowedSet = allowed?.length ? new Set(allowed) : null;
-    const list = allowedSet ? this.allItems().filter((sc) => allowedSet.has(sc.id)) : this.allItems();
+    const list = allowedSet
+      ? this.allItems().filter((sc) => allowedSet.has(sc.id))
+      : this.allItems();
     if (!term) return list;
     return list.filter(
       (sc) =>

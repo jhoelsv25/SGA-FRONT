@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class GeolocationService {
   public currentPosition = signal<GeolocationPosition | null>(null);
@@ -57,14 +57,14 @@ export class GeolocationService {
 
   public calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
     const R = 6371e3; // Earth radius in meters
-    const φ1 = lat1 * Math.PI / 180;
-    const φ2 = lat2 * Math.PI / 180;
-    const Δφ = (lat2 - lat1) * Math.PI / 180;
-    const Δλ = (lon2 - lon1) * Math.PI / 180;
+    const φ1 = (lat1 * Math.PI) / 180;
+    const φ2 = (lat2 * Math.PI) / 180;
+    const Δφ = ((lat2 - lat1) * Math.PI) / 180;
+    const Δλ = ((lon2 - lon1) * Math.PI) / 180;
 
-    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-              Math.cos(φ1) * Math.cos(φ2) *
-              Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const a =
+      Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+      Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
     return R * c; // in meters
@@ -73,14 +73,14 @@ export class GeolocationService {
   public getGeofenceStatus(targetLat: number, targetLon: number, radius: number): boolean {
     const pos = this.currentPosition();
     if (!pos) return true; // Assume true if no position to not block user, or should it be false?
-    
+
     const distance = this.calculateDistance(
-      pos.coords.latitude, 
-      pos.coords.longitude, 
-      targetLat, 
-      targetLon
+      pos.coords.latitude,
+      pos.coords.longitude,
+      targetLat,
+      targetLon,
     );
-    
+
     return distance <= radius;
   }
 
@@ -89,7 +89,7 @@ export class GeolocationService {
     return {
       latitude: pos?.coords.latitude,
       longitude: pos?.coords.longitude,
-      timestamp: pos?.timestamp
+      timestamp: pos?.timestamp,
     };
   }
 
@@ -130,10 +130,14 @@ export class GeolocationService {
 
   private getFriendlyErrorMessage(code: number): string {
     switch (code) {
-      case 1: return 'Permiso de ubicación denegado.';
-      case 2: return 'Ubicación no disponible. El sistema no pudo fijar una posición confiable todavía.';
-      case 3: return 'Tiempo de espera agotado al obtener ubicación.';
-      default: return 'Error desconocido de geolocalización.';
+      case 1:
+        return 'Permiso de ubicación denegado.';
+      case 2:
+        return 'Ubicación no disponible. El sistema no pudo fijar una posición confiable todavía.';
+      case 3:
+        return 'Tiempo de espera agotado al obtener ubicación.';
+      default:
+        return 'Error desconocido de geolocalización.';
     }
   }
 
@@ -145,10 +149,13 @@ export class GeolocationService {
     }
 
     this.errorKind.set(
-      err.code === 1 ? 'permission' :
-      err.code === 2 ? 'unavailable' :
-      err.code === 3 ? 'timeout' :
-      'unknown',
+      err.code === 1
+        ? 'permission'
+        : err.code === 2
+          ? 'unavailable'
+          : err.code === 3
+            ? 'timeout'
+            : 'unknown',
     );
     this.error.set(this.getFriendlyErrorMessage(err.code));
   }

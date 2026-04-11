@@ -26,7 +26,6 @@ import {
 } from '@angular/cdk/portal';
 import { ZardButtonComponent } from '@/shared/components/button';
 
-
 import type { ClassValue } from 'clsx';
 
 import { ZardIdDirective } from '@/shared/core';
@@ -108,7 +107,9 @@ export class ZardAlertDialogComponent<T> extends BasePortalOutlet {
   private readonly host = inject(ElementRef<HTMLElement>);
   protected readonly config = inject(ZardAlertDialogOptions<T>);
 
-  protected readonly classes = computed(() => mergeClasses(alertDialogVariants(), this.config.zCustomClasses));
+  protected readonly classes = computed(() =>
+    mergeClasses(alertDialogVariants(), this.config.zCustomClasses),
+  );
 
   protected readonly titleId = computed(() => {
     const baseId = this.alertDialogId()?.id();
@@ -139,14 +140,18 @@ export class ZardAlertDialogComponent<T> extends BasePortalOutlet {
 
   attachComponentPortal<T>(portal: ComponentPortal<T>): ComponentRef<T> {
     if (this.portalOutlet()?.hasAttached()) {
-      throw new Error('Attempting to attach alert dialog content after content is already attached');
+      throw new Error(
+        'Attempting to attach alert dialog content after content is already attached',
+      );
     }
     return this.portalOutlet()?.attachComponentPortal(portal);
   }
 
   attachTemplatePortal<C>(portal: TemplatePortal<C>): EmbeddedViewRef<C> {
     if (this.portalOutlet()?.hasAttached()) {
-      throw new Error('Attempting to attach alert dialog content after content is already attached');
+      throw new Error(
+        'Attempting to attach alert dialog content after content is already attached',
+      );
     }
 
     return this.portalOutlet()?.attachTemplatePortal(portal);

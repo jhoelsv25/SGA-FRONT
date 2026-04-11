@@ -13,7 +13,12 @@ import type { SafeUrl } from '@angular/platform-browser';
 
 import { mergeClasses } from '@/shared/utils/merge-classes';
 
-import { avatarVariants, imageVariants, type ZardAvatarVariants, type ZardImageVariants } from './avatar.variants';
+import {
+  avatarVariants,
+  imageVariants,
+  type ZardAvatarVariants,
+  type ZardImageVariants,
+} from './avatar.variants';
 
 export type ZardAvatarStatus = 'online' | 'offline' | 'doNotDisturb' | 'away';
 
@@ -153,7 +158,9 @@ export class ZardAvatarComponent {
     return typeof size === 'number' ? `${size}px` : null;
   });
 
-  protected readonly imgClasses = computed(() => mergeClasses(imageVariants({ zShape: this.zShape() })));
+  protected readonly imgClasses = computed(() =>
+    mergeClasses(imageVariants({ zShape: this.zShape() })),
+  );
 
   protected onImageLoad(): void {
     this.imageLoaded.set(true);

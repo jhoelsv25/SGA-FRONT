@@ -6,11 +6,15 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 import { FormsModule } from '@angular/forms';
 import { FilterField } from '@core/types/filter-types';
 
-
-
 @Component({
   selector: 'sga-filter-dialog',
-  imports: [CommonModule, FormsModule, SelectOptionComponent, ZardDatePickerComponent, ZardButtonComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    SelectOptionComponent,
+    ZardDatePickerComponent,
+    ZardButtonComponent,
+  ],
   templateUrl: './filter-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

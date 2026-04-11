@@ -1,16 +1,19 @@
 import { cva, type VariantProps } from 'class-variance-authority';
 
-export const resizableVariants = cva('flex size-full data-[layout=vertical]:flex-col overflow-hidden', {
-  variants: {
-    zLayout: {
-      horizontal: '',
-      vertical: '',
+export const resizableVariants = cva(
+  'flex size-full data-[layout=vertical]:flex-col overflow-hidden',
+  {
+    variants: {
+      zLayout: {
+        horizontal: '',
+        vertical: '',
+      },
+    },
+    defaultVariants: {
+      zLayout: 'horizontal',
     },
   },
-  defaultVariants: {
-    zLayout: 'horizontal',
-  },
-});
+);
 
 export const resizablePanelVariants = cva('relative overflow-hidden shrink-0 h-full', {
   variants: {
@@ -61,4 +64,6 @@ export const resizableHandleIndicatorVariants = cva(
   },
 );
 
-export type ZardResizableLayoutVariants = NonNullable<VariantProps<typeof resizableVariants>['zLayout']>;
+export type ZardResizableLayoutVariants = NonNullable<
+  VariantProps<typeof resizableVariants>['zLayout']
+>;

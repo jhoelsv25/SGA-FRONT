@@ -101,7 +101,8 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         route: '/organization/schedules',
         permissions: crud('schedule'),
         visibility: Visibility.PUBLIC,
-      }],
+      },
+    ],
   },
 
   // ============================================
@@ -147,7 +148,8 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         route: '/students/observations',
         permissions: crud('observation'),
         visibility: Visibility.PUBLIC,
-      }],
+      },
+    ],
   },
 
   // ============================================
@@ -194,7 +196,8 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
           'teacher-attendance:export',
         ],
         visibility: Visibility.PUBLIC,
-      }],
+      },
+    ],
   },
 
   // ============================================
@@ -242,7 +245,8 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         route: '/attendance/reports',
         permissions: ['attendance:view'],
         visibility: Visibility.PUBLIC,
-      }],
+      },
+    ],
   },
 
   // ============================================
@@ -287,7 +291,8 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         route: '/assessments/grades',
         permissions: crud('grade'),
         visibility: Visibility.PUBLIC,
-      }],
+      },
+    ],
   },
 
   // ============================================
@@ -317,7 +322,8 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         route: '/behavior/reports',
         permissions: ['behavior:view'],
         visibility: Visibility.PUBLIC,
-      }],
+      },
+    ],
   },
 
   // ============================================
@@ -369,7 +375,8 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         route: '/payments/history',
         permissions: ['payment:view'],
         visibility: Visibility.PUBLIC,
-      }],
+      },
+    ],
   },
 
   // ============================================
@@ -408,7 +415,8 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         route: '/communications/email-logs',
         permissions: ['email-log:view'],
         visibility: Visibility.PUBLIC,
-      }],
+      },
+    ],
   },
 
   // ============================================
@@ -454,7 +462,8 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         route: '/reports/financial',
         permissions: crud('report'),
         visibility: Visibility.PUBLIC,
-      }],
+      },
+    ],
   },
 
   // ============================================
@@ -516,5 +525,7 @@ export const MENU_MODULES_MOCK: MenuItem[] = [
         route: '/administration/audit-logs',
         permissions: ['audit-log:view', 'audit_log:view'],
         visibility: Visibility.PUBLIC,
-      }],
-  }];
+      },
+    ],
+  },
+];

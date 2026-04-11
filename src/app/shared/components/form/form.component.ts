@@ -99,5 +99,7 @@ export class ZardFormMessageComponent {
   readonly class = input<ClassValue>('');
   readonly zType = input<ZardFormMessageTypeVariants>('default');
 
-  protected readonly classes = computed(() => mergeClasses(formMessageVariants({ zType: this.zType() }), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(formMessageVariants({ zType: this.zType() }), this.class()),
+  );
 }

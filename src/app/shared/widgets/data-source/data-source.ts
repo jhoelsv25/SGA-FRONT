@@ -3,7 +3,21 @@ import { ZardInputDirective } from '@/shared/components/input';
 import { ZardEmptyComponent } from '@/shared/components/empty';
 import { ZardPaginationComponent } from '@/shared/components/pagination';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal, OnInit, OnDestroy, ContentChildren, QueryList, TemplateRef, Directive } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  output,
+  signal,
+  OnInit,
+  OnDestroy,
+  ContentChildren,
+  QueryList,
+  TemplateRef,
+  Directive,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { PermissionCheckStore } from '@core/stores/permission-check.store';
@@ -17,24 +31,38 @@ import { ActionConfig, ActionContext } from '@core/types/action-types';
 import { CellFormatter } from '@core/services/cell-formated';
 import { CursorPagination } from '@core/types/pagination-types';
 import { ZardCheckboxComponent } from '@/shared/components/checkbox';
-import { DropdownItem, DropdownOptionComponent } from '@/shared/widgets/dropdown-option/dropdown-option';
+import {
+  DropdownItem,
+  DropdownOptionComponent,
+} from '@/shared/widgets/dropdown-option/dropdown-option';
 
-import { getActionMenuItemClasses, getColumnClasses, getRowClasses } from '@/shared/utils/data-source';
+import {
+  getActionMenuItemClasses,
+  getColumnClasses,
+  getRowClasses,
+} from '@/shared/utils/data-source';
 
 @Directive({
   selector: '[sgaTemplate]',
-  standalone: true,
 })
 export class SgaTemplate {
   name = input.required<string>({ alias: 'sgaTemplate' });
   public templateRef = inject(TemplateRef<unknown>);
 }
 
-
 @Component({
   selector: 'sga-data-source',
-  standalone: true,
-  imports: [CommonModule, FormsModule, ZardPaginationComponent, ZardCheckboxComponent, ZardButtonComponent, ZardEmptyComponent, ZardInputDirective, DropdownOptionComponent],
+
+  imports: [
+    CommonModule,
+    FormsModule,
+    ZardPaginationComponent,
+    ZardCheckboxComponent,
+    ZardButtonComponent,
+    ZardEmptyComponent,
+    ZardInputDirective,
+    DropdownOptionComponent,
+  ],
   templateUrl: './data-source.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -362,7 +390,7 @@ export class DataSource implements OnInit, OnDestroy {
     const val = this.editValue();
     const colDef = this.columns().find((c) => c.key === col.key);
     if (colDef?.onSave) {
-      const out = col.type === 'number' ? (Number(val) || 0) : val;
+      const out = col.type === 'number' ? Number(val) || 0 : val;
       colDef.onSave(out, row, col.key);
     }
     this.editingCell.set(null);
@@ -434,7 +462,8 @@ export class DataSource implements OnInit, OnDestroy {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getArrayDisplay(item: unknown, col: DataSourceColumn): string {
     return typeof item === 'object'
-      ? ((item as Record<string, unknown>)[col.arrayDisplayKey ?? 'label'] ?? JSON.stringify(item)) as string
+      ? (((item as Record<string, unknown>)[col.arrayDisplayKey ?? 'label'] ??
+          JSON.stringify(item)) as string)
       : String(item);
   }
 

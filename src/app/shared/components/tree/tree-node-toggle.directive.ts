@@ -23,7 +23,9 @@ export class ZardTreeNodeToggleDirective {
 
   readonly isExpanded = computed(() => this.treeService.isExpanded(this.nodeKey()));
 
-  protected readonly classes = computed(() => mergeClasses(treeNodeToggleVariants({ isExpanded: this.isExpanded() })));
+  protected readonly classes = computed(() =>
+    mergeClasses(treeNodeToggleVariants({ isExpanded: this.isExpanded() })),
+  );
 
   onClick(event: Event) {
     event.stopPropagation();

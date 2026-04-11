@@ -1,15 +1,31 @@
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardInputDirective } from '@/shared/components/input';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, HostListener, inject, OnDestroy, OnInit, signal, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  HostListener,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  input,
+} from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { AuthFacade } from '@auth/services/store/auth.acede';
 import { Module } from '@auth/types/auth-type';
+import { AvatarVersionService } from '@core/services/avatar-version.service';
 import { LayoutStore } from '@core/stores/layout.store';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { ZardIconComponent, type ZardIcon } from '@shared/components/icon';
 import { ZardPopoverDirective } from '@shared/components/popover/popover.component';
-import { UserMenu, UserMenuAction, UserMenuDetail, UserMenuStat } from '@shared/widgets/user-menu/user-menu';
+import {
+  UserMenu,
+  UserMenuAction,
+  UserMenuDetail,
+  UserMenuStat,
+} from '@shared/widgets/user-menu/user-menu';
 import type { CurrentUserProfile } from '@auth/types/auth-type';
 
 export interface MenuItem {
@@ -79,11 +95,18 @@ const LEGACY_SIDEBAR_ICONS: Record<string, ZardIcon> = {
   'fa-file-search': 'search',
 };
 
-
 @Component({
   selector: 'sga-sidebar',
-  standalone: true,
-  imports: [CommonModule, RouterModule, UserMenu, ZardButtonComponent, ZardIconComponent, ZardInputDirective, ZardPopoverDirective],
+
+  imports: [
+    CommonModule,
+    RouterModule,
+    UserMenu,
+    ZardButtonComponent,
+    ZardIconComponent,
+    ZardInputDirective,
+    ZardPopoverDirective,
+  ],
   templateUrl: './sidebar.html',
   styleUrls: ['./sidebar.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -91,6 +114,7 @@ const LEGACY_SIDEBAR_ICONS: Record<string, ZardIcon> = {
 export class Sidebar implements OnInit, OnDestroy {
   public authFacade = inject(AuthFacade); // Public for template access
   public layout = inject(LayoutStore); // Public for template access
+  private avatarVersion = inject(AvatarVersionService);
   private router = inject(Router);
   private destroy$ = new Subject<void>();
 
@@ -255,12 +279,27 @@ export class Sidebar implements OnInit, OnDestroy {
 
   private filterByRoleProfile(items: MenuItem[]): MenuItem[] {
     const roleType = this.resolveProfileType();
-    if (roleType === 'superadmin' || roleType === 'admin' || roleType === 'director' || roleType === 'subdirector' || roleType === 'ugel') {
+    if (
+      roleType === 'superadmin' ||
+      roleType === 'admin' ||
+      roleType === 'director' ||
+      roleType === 'subdirector' ||
+      roleType === 'ugel'
+    ) {
       return items;
     }
 
     const allowedTopLevelByRole: Record<string, Set<string>> = {
-      teacher: new Set(['dashboard', 'students', 'attendance', 'assessments', 'behavior', 'virtual-classroom', 'communications', 'reports']),
+      teacher: new Set([
+        'dashboard',
+        'students',
+        'attendance',
+        'assessments',
+        'behavior',
+        'virtual-classroom',
+        'communications',
+        'reports',
+      ]),
       student: new Set(['dashboard', 'virtual-classroom', 'communications', 'payments', 'reports']),
       guardian: new Set(['dashboard', 'students', 'communications', 'payments', 'reports']),
       guest: new Set(['dashboard']),
@@ -271,8 +310,8 @@ export class Sidebar implements OnInit, OnDestroy {
     if (!allowed) return items;
 
     return items
-      .filter(item => allowed.has(item.id) || item.active)
-      .map(item => ({
+      .filter((item) => allowed.has(item.id) || item.active)
+      .map((item) => ({
         ...item,
         children: this.filterRoleChildren(item, roleType),
       }));
@@ -308,7 +347,7 @@ export class Sidebar implements OnInit, OnDestroy {
 
     const allowed = allowByRoleAndParent[roleType]?.[item.id];
     if (!allowed) return children;
-    return children.filter(child => allowed.has(child.id) || child.active);
+    return children.filter((child) => allowed.has(child.id) || child.active);
   }
 
   private resolveProfileType(): NonNullable<CurrentUserProfile['type']> {
@@ -320,7 +359,12 @@ export class Sidebar implements OnInit, OnDestroy {
     if (roleName.includes('admin')) return 'admin';
     if (roleName.includes('director')) return 'director';
     if (roleName.includes('docente') || roleName.includes('teacher')) return 'teacher';
-    if (roleName.includes('estudiante') || roleName.includes('student') || roleName.includes('alumno')) return 'student';
+    if (
+      roleName.includes('estudiante') ||
+      roleName.includes('student') ||
+      roleName.includes('alumno')
+    )
+      return 'student';
     if (roleName.includes('apoderado') || roleName.includes('guardian')) return 'guardian';
     return 'user';
   }
@@ -363,7 +407,9 @@ export class Sidebar implements OnInit, OnDestroy {
       }
     } else if (item.route) {
       const [path, queryString] = item.route.split('?');
-      const queryParams = queryString ? Object.fromEntries(new URLSearchParams(queryString).entries()) : undefined;
+      const queryParams = queryString
+        ? Object.fromEntries(new URLSearchParams(queryString).entries())
+        : undefined;
       this.router.navigate([path], { queryParams });
       this.closeMobileSidebar();
     }
@@ -404,8 +450,12 @@ export class Sidebar implements OnInit, OnDestroy {
     if (!itemRoute) return false;
     const normalizedItemRoute = itemRoute.split('?')[0];
     const normalizedCurrentRoute = currentRoute.split('?')[0];
-    if (normalizedItemRoute === '/' || normalizedItemRoute === '') return normalizedCurrentRoute === '/';
-    return normalizedCurrentRoute === normalizedItemRoute || normalizedCurrentRoute.startsWith(`${normalizedItemRoute}/`);
+    if (normalizedItemRoute === '/' || normalizedItemRoute === '')
+      return normalizedCurrentRoute === '/';
+    return (
+      normalizedCurrentRoute === normalizedItemRoute ||
+      normalizedCurrentRoute.startsWith(`${normalizedItemRoute}/`)
+    );
   }
 
   private checkMobileDevice(): void {
@@ -462,6 +512,17 @@ export class Sidebar implements OnInit, OnDestroy {
     return user.role.name || 'Usuario';
   }
 
+  getUserAvatar(): string | null {
+    const user = this.currentUser();
+    if (user?.profilePicture) {
+      return this.avatarVersion.withVersion(user.profilePicture);
+    }
+    if (user?.person?.photoUrl) {
+      return this.avatarVersion.withVersion(user.person.photoUrl);
+    }
+    return null;
+  }
+
   userMenuDetails = computed<UserMenuDetail[]>(() => {
     const user = this.currentUser();
     const modules = this.modules() ?? [];
@@ -496,7 +557,8 @@ export class Sidebar implements OnInit, OnDestroy {
         label: 'Módulos',
         value: `${modules.length} habilitados`,
         icon: 'fa-solid fa-grid-2',
-      }];
+      },
+    ];
 
     if (profile?.institution) {
       details.push({
@@ -513,7 +575,8 @@ export class Sidebar implements OnInit, OnDestroy {
         ['teachingLevel', 'Nivel', 'fa-solid fa-layer-group'],
         ['studentType', 'Tipo', 'fa-solid fa-user-graduate'],
         ['relationship', 'Relación', 'fa-solid fa-people-roof'],
-        ['occupation', 'Ocupación', 'fa-solid fa-briefcase']];
+        ['occupation', 'Ocupación', 'fa-solid fa-briefcase'],
+      ];
 
       for (const [key, label, icon] of extraDetailEntries) {
         const value = detailMap[key];
@@ -578,34 +641,39 @@ export class Sidebar implements OnInit, OnDestroy {
       return [
         { label: 'Módulos', value: modulesCount },
         { label: 'Usuarios', value: stats?.students ?? 0 },
-        { label: 'Prom.', value: stats?.average ?? 'N/A' }];
+        { label: 'Prom.', value: stats?.average ?? 'N/A' },
+      ];
     }
 
     if (roleKey.includes('director')) {
       return [
         { label: 'Cursos', value: stats?.courses ?? 0 },
         { label: 'Alumnos', value: stats?.students ?? 0 },
-        { label: 'Prom.', value: stats?.average ?? '0.0' }];
+        { label: 'Prom.', value: stats?.average ?? '0.0' },
+      ];
     }
 
     if (roleKey.includes('docente') || roleKey.includes('teacher')) {
       return [
         { label: 'Cursos', value: stats?.courses ?? 0 },
         { label: 'Alumnos', value: stats?.students ?? 0 },
-        { label: 'Prom.', value: stats?.average ?? '0.0' }];
+        { label: 'Prom.', value: stats?.average ?? '0.0' },
+      ];
     }
 
     if (roleKey.includes('student') || roleKey.includes('alumno')) {
       return [
         { label: 'Cursos', value: stats?.courses ?? 0 },
         { label: 'Asist.', value: stats?.students ?? 0 },
-        { label: 'Prom.', value: stats?.average ?? '0.0' }];
+        { label: 'Prom.', value: stats?.average ?? '0.0' },
+      ];
     }
 
     return [
       { label: 'Módulos', value: modulesCount },
       { label: 'Cursos', value: stats?.courses ?? 0 },
-      { label: 'Prom.', value: stats?.average ?? '0.0' }];
+      { label: 'Prom.', value: stats?.average ?? '0.0' },
+    ];
   });
 
   private getRoleScopedMenuActions(): UserMenuAction[] {
@@ -613,11 +681,7 @@ export class Sidebar implements OnInit, OnDestroy {
     const theme = this.layout.theme();
     const themeAction: UserMenuAction = {
       label:
-        theme === 'light'
-          ? 'Tema Claro'
-          : theme === 'dark'
-            ? 'Tema Oscuro'
-            : 'Tema del Sistema',
+        theme === 'light' ? 'Tema Claro' : theme === 'dark' ? 'Tema Oscuro' : 'Tema del Sistema',
       icon: 'theme-' + theme,
       type: 'theme',
     };

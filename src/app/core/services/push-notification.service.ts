@@ -27,39 +27,44 @@ export class PushNotificationService {
     }
 
     // Primero obtenemos la llave pública del servidor
-    this.http.get<{ publicKey: string }>(`${this.API_URL}/public-key`).pipe(
-      switchMap(({ publicKey }) => {
-        return this.swPush.requestSubscription({
-          serverPublicKey: publicKey,
-        });
-      }),
-      switchMap((subscription) => {
-        // Enviamos la suscripción al backend
-        return this.http.post(`${this.API_URL}/subscriptions`, subscription);
-      }),
-      tap(() => {
-        console.log('Suscripción a notificaciones push exitosa');
-      }),
-      catchError((error) => {
-        console.error('Error suscribiendo a notificaciones push', error);
-        return of(null);
-      })
-    ).subscribe();
+    this.http
+      .get<{ publicKey: string }>(`${this.API_URL}/public-key`)
+      .pipe(
+        switchMap(({ publicKey }) => {
+          return this.swPush.requestSubscription({
+            serverPublicKey: publicKey,
+          });
+        }),
+        switchMap((subscription) => {
+          // Enviamos la suscripción al backend
+          return this.http.post(`${this.API_URL}/subscriptions`, subscription);
+        }),
+        tap(() => {
+          console.log('Suscripción a notificaciones push exitosa');
+        }),
+        catchError((error) => {
+          console.error('Error suscribiendo a notificaciones push', error);
+          return of(null);
+        }),
+      )
+      .subscribe();
   }
 
   /**
    * Elimina la suscripción del usuario
    */
   unsubscribe() {
-    this.swPush.subscription.pipe(
-      switchMap(sub => {
-        if (!sub) return of(null);
-        return this.http.delete(`${this.API_URL}/subscriptions`, {
-          params: { endpoint: sub.endpoint }
-        }).pipe(
-          switchMap(() => this.swPush.unsubscribe())
-        );
-      })
-    ).subscribe();
+    this.swPush.subscription
+      .pipe(
+        switchMap((sub) => {
+          if (!sub) return of(null);
+          return this.http
+            .delete(`${this.API_URL}/subscriptions`, {
+              params: { endpoint: sub.endpoint },
+            })
+            .pipe(switchMap(() => this.swPush.unsubscribe()));
+        }),
+      )
+      .subscribe();
   }
 }

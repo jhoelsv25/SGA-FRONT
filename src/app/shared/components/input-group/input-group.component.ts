@@ -38,7 +38,11 @@ import { ZardIconComponent } from '@/shared/components/icon/icon.component';
     <ng-container zardId="input-group" #z="zardId">
       @let addonBefore = zAddonBefore();
       @if (addonBefore) {
-        <div [class]="addonBeforeClasses()" [id]="addonBeforeId()" [attr.aria-disabled]="zDisabled() || zLoading()">
+        <div
+          [class]="addonBeforeClasses()"
+          [id]="addonBeforeId()"
+          [attr.aria-disabled]="zDisabled() || zLoading()"
+        >
           <ng-container *zStringTemplateOutlet="addonBefore">{{ addonBefore }}</ng-container>
         </div>
       }
@@ -53,7 +57,11 @@ import { ZardIconComponent } from '@/shared/components/icon/icon.component';
 
       @let addonAfter = zAddonAfter();
       @if (addonAfter) {
-        <div [class]="addonAfterClasses()" [id]="addonAfterId()" [attr.aria-disabled]="zDisabled() || zLoading()">
+        <div
+          [class]="addonAfterClasses()"
+          [id]="addonAfterId()"
+          [attr.aria-disabled]="zDisabled() || zLoading()"
+        >
           <ng-container *zStringTemplateOutlet="addonAfter">{{ addonAfter }}</ng-container>
         </div>
       }
@@ -82,8 +90,12 @@ export class ZardInputGroupComponent {
   private readonly contentInput = contentChild<ZardInputDirective>(ZardInputDirective);
   private readonly uniqueId = viewChild<ZardIdDirective>('z');
 
-  protected readonly addonBeforeId = computed(() => `${this.uniqueId()?.id() ?? 'input-group'}-addon-before`);
-  protected readonly addonAfterId = computed(() => `${this.uniqueId()?.id() ?? 'input-group'}-addon-after`);
+  protected readonly addonBeforeId = computed(
+    () => `${this.uniqueId()?.id() ?? 'input-group'}-addon-before`,
+  );
+  protected readonly addonAfterId = computed(
+    () => `${this.uniqueId()?.id() ?? 'input-group'}-addon-after`,
+  );
   protected readonly isAddonBeforeTemplate = computed(() => isTemplateRef(this.zAddonBefore()));
   protected readonly classes = computed(() =>
     mergeClasses(

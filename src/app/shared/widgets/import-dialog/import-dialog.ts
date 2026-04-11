@@ -13,15 +13,18 @@ export interface ImportDialogData {
   /** Valida una fila; devuelve mensaje de error o null si es válida. */
   validateRow?: (row: Record<string, unknown>, index: number) => string | null;
   /** Llama al backend para importar; devuelve created y opcionalmente errors. */
-  importRows: (rows: Record<string, unknown>[]) => import('rxjs').Observable<{ created: number; errors?: { row: number; message: string }[] }>;
+  importRows: (
+    rows: Record<string, unknown>[],
+  ) => import('rxjs').Observable<{ created: number; errors?: { row: number; message: string }[] }>;
   /** Opcional: importar enviando el archivo Excel directo al backend. */
-  importFile?: (file: File) => import('rxjs').Observable<{ created: number; errors?: { row: number; message: string }[] }>;
+  importFile?: (
+    file: File,
+  ) => import('rxjs').Observable<{ created: number; errors?: { row: number; message: string }[] }>;
 }
-
 
 @Component({
   selector: 'sga-import-dialog',
-  standalone: true,
+
   imports: [CommonModule, ZardButtonComponent],
   templateUrl: './import-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -4,9 +4,7 @@
   "cli": {
     "packageManager": "npm",
     "analytics": "2a4b830e-3b0f-48d1-a277-7cf83b009c85",
-    "schematicCollections": [
-      "@angular-eslint/schematics"
-    ]
+    "schematicCollections": ["@angular-eslint/schematics"]
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -34,7 +32,10 @@
               "src/manifest.webmanifest"
             ],
             "serviceWorker": "src/ngsw-config.json",
-            "styles": ["node_modules/@fortawesome/fontawesome-free/css/all.min.css", "src/styles.css"]
+            "styles": [
+              "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
+              "src/styles.css"
+            ]
           },
           "configurations": {
             "production": {
@@ -82,10 +83,7 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "src/**/*.ts",
-              "src/**/*.html"
-            ]
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
           }
         }
       }

@@ -16,7 +16,11 @@ import type { ClassValue } from 'clsx';
 import { ZardIdDirective } from '@/shared/core';
 import { mergeClasses, noopFn } from '@/shared/utils/merge-classes';
 
-import { switchVariants, type ZardSwitchSizeVariants, type ZardSwitchTypeVariants } from './switch.variants';
+import {
+  switchVariants,
+  type ZardSwitchSizeVariants,
+  type ZardSwitchTypeVariants,
+} from './switch.variants';
 
 type OnTouchedType = () => void;
 type OnChangeType = (value: boolean) => void;
@@ -97,7 +101,7 @@ export class ZardSwitchComponent implements ControlValueAccessor {
       return;
     }
 
-    this.zChecked.update(checked => !checked);
+    this.zChecked.update((checked) => !checked);
     this.onTouched();
     this.onChange(this.zChecked());
   }

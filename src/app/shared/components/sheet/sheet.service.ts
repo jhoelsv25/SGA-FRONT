@@ -1,7 +1,14 @@
 import { type ComponentType, Overlay, OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal, TemplatePortal } from '@angular/cdk/portal';
 import { isPlatformBrowser } from '@angular/common';
-import { inject, Injectable, InjectionToken, Injector, PLATFORM_ID, TemplateRef } from '@angular/core';
+import {
+  inject,
+  Injectable,
+  InjectionToken,
+  Injector,
+  PLATFORM_ID,
+  TemplateRef,
+} from '@angular/core';
 
 import { ZardSheetRef } from './sheet-ref';
 import { ZardSheetComponent, ZardSheetOptions } from './sheet.component';
@@ -31,7 +38,12 @@ export class ZardSheetService {
 
     const sheetContainer = this.attachSheetContainer<T, U>(overlayRef, config);
 
-    const sheetRef = this.attachSheetContent<T, U>(componentOrTemplateRef, sheetContainer, overlayRef, config);
+    const sheetRef = this.attachSheetContent<T, U>(
+      componentOrTemplateRef,
+      sheetContainer,
+      overlayRef,
+      config,
+    );
     sheetContainer.sheetRef = sheetRef;
 
     return sheetRef;

@@ -6,7 +6,6 @@ type PermissionMode = 'any' | 'all';
 
 @Directive({
   selector: '[sgaDisableIfNoPermission]',
-  standalone: true,
 })
 export class SgaDisableIfNoPermissionDirective {
   private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);

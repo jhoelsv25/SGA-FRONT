@@ -1,4 +1,7 @@
-import { ZardButtonTypeVariants, ZardButtonSizeVariants } from '@/shared/components/button/button.variants';
+import {
+  ZardButtonTypeVariants,
+  ZardButtonSizeVariants,
+} from '@/shared/components/button/button.variants';
 
 export type DialogPosition = 'center' | 'top-center' | 'bottom-center' | 'left' | 'right';
 

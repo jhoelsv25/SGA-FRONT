@@ -6,7 +6,6 @@ type PermissionMode = 'any' | 'all';
 
 @Directive({
   selector: '[sgaHasPermission]',
-  standalone: true,
 })
 export class SgaHasPermissionDirective {
   private readonly templateRef = inject(TemplateRef<unknown>);

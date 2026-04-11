@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UrlParamsService {
   private router = inject(Router);
@@ -33,12 +33,12 @@ export class UrlParamsService {
    */
   setParam(key: string, value: string | null | undefined): void {
     const queryParams: Record<string, string | null> = {};
-    queryParams[key] = (value === '' || value === undefined) ? null : value;
+    queryParams[key] = value === '' || value === undefined ? null : value;
 
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams,
-      queryParamsHandling: 'merge'
+      queryParamsHandling: 'merge',
     });
   }
 
@@ -49,13 +49,13 @@ export class UrlParamsService {
   setParams(params: Record<string, string | null | undefined>): void {
     const cleanedParams: Record<string, string | null> = {};
     for (const [key, value] of Object.entries(params)) {
-      cleanedParams[key] = (value === '' || value === undefined) ? null : value;
+      cleanedParams[key] = value === '' || value === undefined ? null : value;
     }
 
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: cleanedParams,
-      queryParamsHandling: 'merge'
+      queryParamsHandling: 'merge',
     });
   }
 
@@ -65,7 +65,7 @@ export class UrlParamsService {
   clearParams(): void {
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: {}
+      queryParams: {},
     });
   }
 }

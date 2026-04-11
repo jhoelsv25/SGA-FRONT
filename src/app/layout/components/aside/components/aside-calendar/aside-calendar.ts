@@ -9,7 +9,7 @@ import { ZardEmptyComponent } from '@/shared/components/empty';
 
 @Component({
   selector: 'sga-aside-calendar',
-  standalone: true,
+
   imports: [CommonModule, ZardIconComponent, ZardButtonComponent, ZardEmptyComponent],
   template: `
     <div class="flex flex-col h-full bg-card/10 backdrop-blur-xl">
@@ -36,7 +36,7 @@ import { ZardEmptyComponent } from '@/shared/components/empty';
               </p>
               <div class="flex items-center gap-1.5 mt-1 justify-end">
                 <z-icon zType="calendar" class="size-3 text-primary" />
-                <span class="text-[8px] font-black uppercase tracking-[0.1em] text-primary/60"
+                <span class="text-[8px] font-black uppercase tracking-widest text-primary/60"
                   >Académico</span
                 >
               </div>
@@ -159,7 +159,15 @@ export class AsideCalendar implements OnInit {
   private readonly router = inject(Router);
   private readonly layout = inject(LayoutStore);
   public now = new Date();
-  private readonly dayMap = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
+  private readonly dayMap = [
+    'sunday',
+    'monday',
+    'tuesday',
+    'wednesday',
+    'thursday',
+    'friday',
+    'saturday',
+  ] as const;
   readonly todaySchedules = computed(() => {
     const todayKey = this.dayMap[this.now.getDay()];
     return this.store

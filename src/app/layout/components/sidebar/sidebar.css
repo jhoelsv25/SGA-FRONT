@@ -8,7 +8,10 @@
 }
 
 /* Transitions */
-.sidebar, .nav-label, .nav-link, .submenu-wrapper {
+.sidebar,
+.nav-label,
+.nav-link,
+.submenu-wrapper {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -85,7 +88,7 @@
     bottom: 0;
     transform: translateX(-100%);
     width: 18rem;
-    box-shadow: 20px 0 50px -10px rgba(0,0,0,0.1);
+    box-shadow: 20px 0 50px -10px rgba(0, 0, 0, 0.1);
   }
 
   .sidebar.mobile-open {

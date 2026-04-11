@@ -1,5 +1,14 @@
 import { ZardSelectComponent, ZardSelectItemComponent } from '@/shared/components/select';
-import { ChangeDetectionStrategy, Component, forwardRef, inject, input, model, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  forwardRef,
+  inject,
+  input,
+  model,
+  output,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { PeriodApi } from '@features/periods/services/period-api';
@@ -11,19 +20,32 @@ function getLabel(item: Period): string {
 }
 
 function getInitials(item: Period): string {
-  return (item.name || `P${item.periodNumber ?? item.order ?? ''}` || item.id).slice(0, 2).toUpperCase();
+  return (item.name || `P${item.periodNumber ?? item.order ?? ''}` || item.id)
+    .slice(0, 2)
+    .toUpperCase();
 }
 
 function getSubtitle(item: Period): string {
-  return [item.type, item.yearAcademic?.name, item.status].filter(Boolean).join(' · ') || 'Período académico';
+  return (
+    [item.type, item.yearAcademic?.name, item.status].filter(Boolean).join(' · ') ||
+    'Período académico'
+  );
 }
 
 @Component({
   selector: 'sga-period-select',
-  standalone: true,
-  imports: [CommonModule, FormsModule, ZardSelectComponent, ZardSelectItemComponent, ZardInputDirective],
+
+  imports: [
+    CommonModule,
+    FormsModule,
+    ZardSelectComponent,
+    ZardSelectItemComponent,
+    ZardInputDirective,
+  ],
   templateUrl: './period-select.html',
-  providers: [{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => PeriodSelect), multi: true }],
+  providers: [
+    { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => PeriodSelect), multi: true },
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PeriodSelect implements ControlValueAccessor {
@@ -63,7 +85,9 @@ export class PeriodSelect implements ControlValueAccessor {
       next: (item) => {
         this.selectedItem.set(item ?? null);
         if (item) {
-          this.items.update((items) => (items.some((current) => current.id === item.id) ? items : [item, ...items]));
+          this.items.update((items) =>
+            items.some((current) => current.id === item.id) ? items : [item, ...items],
+          );
         }
       },
     });
@@ -102,7 +126,14 @@ export class PeriodSelect implements ControlValueAccessor {
     const term = this.searchTerm().trim().toLowerCase();
     if (!term) return this.items();
     return this.items().filter((item) =>
-      [item.name, item.type, item.status, item.yearAcademic?.name, String(item.periodNumber ?? ''), String(item.order ?? '')]
+      [
+        item.name,
+        item.type,
+        item.status,
+        item.yearAcademic?.name,
+        String(item.periodNumber ?? ''),
+        String(item.order ?? ''),
+      ]
         .filter(Boolean)
         .join(' ')
         .toLowerCase()

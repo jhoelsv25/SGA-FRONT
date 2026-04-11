@@ -1,4 +1,14 @@
-import { Component, input, output, model, forwardRef, ChangeDetectionStrategy, effect, computed, signal } from '@angular/core';
+import {
+  Component,
+  input,
+  output,
+  model,
+  forwardRef,
+  ChangeDetectionStrategy,
+  effect,
+  computed,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
 import { ZardSelectComponent } from '@/shared/components/select/select.component';
@@ -20,8 +30,14 @@ export interface SelectOption {
 
 @Component({
   selector: 'z-select-option',
-  standalone: true,
-  imports: [CommonModule, FormsModule, ZardSelectComponent, ZardSelectItemComponent, ZardInputDirective],
+
+  imports: [
+    CommonModule,
+    FormsModule,
+    ZardSelectComponent,
+    ZardSelectItemComponent,
+    ZardInputDirective,
+  ],
   template: `
     <z-select
       [zPlaceholder]="placeholder()"
@@ -33,22 +49,28 @@ export interface SelectOption {
       [class]="customClass()"
     >
       @if (searchable()) {
-      <div class="sticky top-0 z-10 border-b border-border/50 bg-popover p-2">
-        <input
-          z-input
-          [ngModel]="searchTerm()"
-          (ngModelChange)="onSearch($event)"
-          placeholder="Buscar..."
-          class="w-full"
-        />
-      </div>
+        <div class="sticky top-0 z-10 border-b border-border/50 bg-popover p-2">
+          <input
+            z-input
+            [ngModel]="searchTerm()"
+            (ngModelChange)="onSearch($event)"
+            placeholder="Buscar..."
+            class="w-full"
+          />
+        </div>
       }
       @for (option of filteredOptions(); track option.value) {
         <z-select-item [zValue]="String(option.value)" [zDisabled]="option.disabled">
           <div class="flex min-w-0 items-center gap-3 py-0.5">
-            <div class="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-primary/10 text-[11px] font-semibold uppercase tracking-[0.22em] text-primary">
+            <div
+              class="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-primary/10 text-[11px] font-semibold uppercase tracking-[0.22em] text-primary"
+            >
               @if (option.avatarUrl) {
-                <img [src]="option.avatarUrl" [alt]="option.label" class="h-full w-full object-cover" />
+                <img
+                  [src]="option.avatarUrl"
+                  [alt]="option.label"
+                  class="h-full w-full object-cover"
+                />
               } @else {
                 {{ getAvatarFallback(option) }}
               }
@@ -60,7 +82,9 @@ export interface SelectOption {
                   {{ option.label }}
                 </span>
                 @if (option.badge) {
-                  <span class="shrink-0 rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                  <span
+                    class="shrink-0 rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground"
+                  >
                     {{ option.badge }}
                   </span>
                 }
@@ -82,7 +106,9 @@ export interface SelectOption {
             </div>
 
             @if (option.code) {
-              <span class="shrink-0 rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
+              <span
+                class="shrink-0 rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary"
+              >
                 {{ option.code }}
               </span>
             }
@@ -90,14 +116,10 @@ export interface SelectOption {
         </z-select-item>
       }
       @if (!filteredOptions().length && !loadingMore()) {
-        <z-select-item zValue="__empty__" [zDisabled]="true">
-          Sin resultados
-        </z-select-item>
+        <z-select-item zValue="__empty__" [zDisabled]="true"> Sin resultados </z-select-item>
       }
       @if (loadingMore()) {
-        <z-select-item zValue="__loading__" [zDisabled]="true">
-          Cargando más...
-        </z-select-item>
+        <z-select-item zValue="__loading__" [zDisabled]="true"> Cargando más... </z-select-item>
       }
     </z-select>
   `,
@@ -118,12 +140,12 @@ export class SelectOptionComponent implements ControlValueAccessor {
   readonly customClass = input<string>('');
   readonly canLoadMore = input<boolean>(false);
   readonly loadingMore = input<boolean>(false);
-  
+
   // Legacy compatibility inputs/outputs
   readonly value = input<any>(null);
   readonly valueChange = output<any>();
   readonly loadMore = output<void>();
-  
+
   zValue = model<any>('');
   searchTerm = signal('');
   filteredOptions = computed(() => {
@@ -184,13 +206,15 @@ export class SelectOptionComponent implements ControlValueAccessor {
       return option.avatarFallback.trim().slice(0, 2).toUpperCase();
     }
 
-    return option.label
-      .split(/\s+/)
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((part) => part[0])
-      .join('')
-      .toUpperCase() || 'NA';
+    return (
+      option.label
+        .split(/\s+/)
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((part) => part[0])
+        .join('')
+        .toUpperCase() || 'NA'
+    );
   }
 
   private matchesSearch(option: SelectOption, term: string): boolean {

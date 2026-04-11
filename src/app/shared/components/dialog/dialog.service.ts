@@ -43,7 +43,12 @@ export class ZardDialogService {
     }
 
     const dialogContainer = this.attachDialogContainer<T, U>(overlayRef, config);
-    const dialogRef = this.attachDialogContent<T, U>(componentOrTemplateRef, dialogContainer, overlayRef, config);
+    const dialogRef = this.attachDialogContent<T, U>(
+      componentOrTemplateRef,
+      dialogContainer,
+      overlayRef,
+      config,
+    );
 
     dialogContainer.dialogRef = dialogRef;
 

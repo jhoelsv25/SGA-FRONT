@@ -1,10 +1,22 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy, OnInit, signal, effect } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  effect,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { NotificationSocketService } from '@core/services/notification-socket.service';
 import { TeacherAttendanceApi } from '@features/teachers/services/api/teacher-attendance-api';
-import { TeacherLiveSessionItem, TeacherDailyAttendance } from '@features/teachers/types/teacher-attendance-types';
+import {
+  TeacherLiveSessionItem,
+  TeacherDailyAttendance,
+} from '@features/teachers/types/teacher-attendance-types';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardIconComponent } from '@shared/components/icon';
 import { ZardPopoverComponent, ZardPopoverDirective } from '@/shared/components/popover';
@@ -14,7 +26,7 @@ import { Institution } from '@features/institution/types/institution-types';
 
 @Component({
   selector: 'sga-teacher-live-class-popover',
-  standalone: true,
+
   imports: [
     CommonModule,
     ZardButtonComponent,
@@ -62,9 +74,10 @@ export class TeacherLiveClassPopoverComponent implements OnInit, OnDestroy {
       } else if ((!isLive || !isOut) && startTime !== null) {
         // Recuperó rango o terminó la clase
         const durationMs = Date.now() - startTime;
-        if (durationMs > 10000) { // Solo si duró más de 10 segundos para evitar rebotes
+        if (durationMs > 10000) {
+          // Solo si duró más de 10 segundos para evitar rebotes
           const minutes = Math.round(durationMs / 60000);
-          this.accumulatedDowntime.update(total => total + (minutes || 1));
+          this.accumulatedDowntime.update((total) => total + (minutes || 1));
         }
         this.outOfRangeStartTime.set(null);
       }
@@ -79,7 +92,7 @@ export class TeacherLiveClassPopoverComponent implements OnInit, OnDestroy {
       pos.coords.latitude,
       pos.coords.longitude,
       Number(inst.latitude),
-      Number(inst.longitude)
+      Number(inst.longitude),
     );
   });
 
@@ -113,12 +126,14 @@ export class TeacherLiveClassPopoverComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.load();
     this.notificationSocket.connect();
-    this.liveSessionSubscription = this.notificationSocket.teacherLiveSession$.subscribe((payload) => {
-      this.currentSession.set(payload.current);
-      this.upcomingSession.set(payload.upcoming);
-      this.loading.set(false);
-      this.checkGeoTracking();
-    });
+    this.liveSessionSubscription = this.notificationSocket.teacherLiveSession$.subscribe(
+      (payload) => {
+        this.currentSession.set(payload.current);
+        this.upcomingSession.set(payload.upcoming);
+        this.loading.set(false);
+        this.checkGeoTracking();
+      },
+    );
     this.loadDailyStatus();
     this.loadInstitution();
   }
@@ -185,13 +200,18 @@ export class TeacherLiveClassPopoverComponent implements OnInit, OnDestroy {
   label(): string {
     const session = this.session();
     if (!session) return 'Sin clase próxima';
-    if (session.state === 'ongoing') return session.endsInMinutes > 0 ? `Quedan ${session.endsInMinutes} min` : 'Cierre pendiente';
+    if (session.state === 'ongoing')
+      return session.endsInMinutes > 0 ? `Quedan ${session.endsInMinutes} min` : 'Cierre pendiente';
     if (session.state === 'ready') return 'Disponible para iniciar';
     if (session.state === 'upcoming') {
       if (session.actionEnabled) {
-        return session.startsInMinutes <= 0 ? 'Puedes iniciar ahora' : `Puedes iniciar, faltan ${session.startsInMinutes} min`;
+        return session.startsInMinutes <= 0
+          ? 'Puedes iniciar ahora'
+          : `Puedes iniciar, faltan ${session.startsInMinutes} min`;
       }
-      return session.startsInMinutes <= 0 ? 'Empieza ahora' : `Empieza en ${session.startsInMinutes} min`;
+      return session.startsInMinutes <= 0
+        ? 'Empieza ahora'
+        : `Empieza en ${session.startsInMinutes} min`;
     }
     if (session.state === 'missed') return 'Clase no iniciada';
     return 'Clase finalizada';
@@ -211,7 +231,7 @@ export class TeacherLiveClassPopoverComponent implements OnInit, OnDestroy {
     const spatialContext = {
       latitude: this.geoService.currentPosition()?.coords.latitude,
       longitude: this.geoService.currentPosition()?.coords.longitude,
-      isWithinGeofence: !this.isOutOfRange()
+      isWithinGeofence: !this.isOutOfRange(),
     };
 
     this.api.startTeacherLiveSession(session.scheduleId, spatialContext).subscribe({
@@ -231,7 +251,7 @@ export class TeacherLiveClassPopoverComponent implements OnInit, OnDestroy {
     const spatialContext = {
       latitude: this.geoService.currentPosition()?.coords.latitude,
       longitude: this.geoService.currentPosition()?.coords.longitude,
-      isWithinGeofence: !this.isOutOfRange()
+      isWithinGeofence: !this.isOutOfRange(),
     };
 
     const downtime = this.accumulatedDowntime();
@@ -256,7 +276,7 @@ export class TeacherLiveClassPopoverComponent implements OnInit, OnDestroy {
     const spatialContext = {
       latitude: this.geoService.currentPosition()?.coords.latitude,
       longitude: this.geoService.currentPosition()?.coords.longitude,
-      isWithinGeofence: !this.isOutOfRange()
+      isWithinGeofence: !this.isOutOfRange(),
     };
     this.api.markDailyClockIn(spatialContext).subscribe({
       next: () => {
@@ -272,7 +292,7 @@ export class TeacherLiveClassPopoverComponent implements OnInit, OnDestroy {
     const spatialContext = {
       latitude: this.geoService.currentPosition()?.coords.latitude,
       longitude: this.geoService.currentPosition()?.coords.longitude,
-      isWithinGeofence: !this.isOutOfRange()
+      isWithinGeofence: !this.isOutOfRange(),
     };
     this.api.markDailyClockOut(spatialContext).subscribe({
       next: () => {

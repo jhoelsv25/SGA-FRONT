@@ -138,11 +138,13 @@ export class ExcelService {
   }
 
   private normalizeHeader(h: string): string {
-    return h
-      .normalize('NFD')
-      .replace(/\p{Diacritic}/gu, '')
-      .toLowerCase()
-      .replace(/\s+/g, '_')
-      .replace(/[^a-z0-9_]/g, '') || 'col';
+    return (
+      h
+        .normalize('NFD')
+        .replace(/\p{Diacritic}/gu, '')
+        .toLowerCase()
+        .replace(/\s+/g, '_')
+        .replace(/[^a-z0-9_]/g, '') || 'col'
+    );
   }
 }

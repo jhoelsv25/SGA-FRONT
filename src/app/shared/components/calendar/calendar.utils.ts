@@ -85,7 +85,7 @@ export function generateCalendarDays(config: CalendarDayConfig): CalendarDay[] {
     if (mode === 'single') {
       isSelected = selectedDates.length > 0 && isSameDay(date, selectedDates[0]);
     } else if (mode === 'multiple') {
-      isSelected = selectedDates.some(d => isSameDay(date, d));
+      isSelected = selectedDates.some((d) => isSameDay(date, d));
     } else if (mode === 'range') {
       if (rangeStart && isSameDay(date, rangeStart)) {
         isRangeStart = true;

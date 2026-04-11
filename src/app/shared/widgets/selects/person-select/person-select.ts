@@ -1,6 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { ZardSelectComponent, ZardSelectItemComponent } from '@/shared/components/select';
-import { ChangeDetectionStrategy, Component, effect, forwardRef, inject, input, model, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  forwardRef,
+  inject,
+  input,
+  model,
+  output,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Subject } from 'rxjs';
@@ -17,7 +27,12 @@ type PersonOption = {
 };
 
 function getLabel(item: PersonOption): string {
-  return `${item.firstName ?? ''} ${item.lastName ?? ''}`.trim() || item.email || item.documentNumber || item.id;
+  return (
+    `${item.firstName ?? ''} ${item.lastName ?? ''}`.trim() ||
+    item.email ||
+    item.documentNumber ||
+    item.id
+  );
 }
 
 function getInitials(item: PersonOption): string {
@@ -38,10 +53,18 @@ function getSubtitle(item: PersonOption): string {
 
 @Component({
   selector: 'sga-person-select',
-  standalone: true,
-  imports: [CommonModule, FormsModule, ZardSelectComponent, ZardSelectItemComponent, ZardInputDirective],
+
+  imports: [
+    CommonModule,
+    FormsModule,
+    ZardSelectComponent,
+    ZardSelectItemComponent,
+    ZardInputDirective,
+  ],
   templateUrl: './person-select.html',
-  providers: [{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => PersonSelect), multi: true }],
+  providers: [
+    { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => PersonSelect), multi: true },
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PersonSelect implements ControlValueAccessor {
@@ -102,7 +125,9 @@ export class PersonSelect implements ControlValueAccessor {
         const item = response.data ?? null;
         this.selectedItem.set(item);
         if (item) {
-          this.items.update((items) => (items.some((current) => current.id === item.id) ? items : [item, ...items]));
+          this.items.update((items) =>
+            items.some((current) => current.id === item.id) ? items : [item, ...items],
+          );
         }
       },
     });
@@ -161,26 +186,28 @@ export class PersonSelect implements ControlValueAccessor {
     }
 
     const page = reset ? 1 : this.page();
-    this.http.get<{ data?: PersonOption[]; total?: number }>('persons', {
-      params: {
-        page,
-        size: 20,
-        ...(this.searchTerm() ? { search: this.searchTerm() } : {}),
-      } as any,
-    }).subscribe({
-      next: (response) => {
-        const incoming = response.data ?? [];
-        const nextItems = reset ? incoming : [...this.items(), ...incoming];
-        this.items.set(nextItems);
-        this.hasMore.set(nextItems.length < (response.total ?? nextItems.length));
-        if (reset) this.page.set(1);
-        this.loading.set(false);
-        this.loadingMore.set(false);
-      },
-      error: () => {
-        this.loading.set(false);
-        this.loadingMore.set(false);
-      },
-    });
+    this.http
+      .get<{ data?: PersonOption[]; total?: number }>('persons', {
+        params: {
+          page,
+          size: 20,
+          ...(this.searchTerm() ? { search: this.searchTerm() } : {}),
+        } as any,
+      })
+      .subscribe({
+        next: (response) => {
+          const incoming = response.data ?? [];
+          const nextItems = reset ? incoming : [...this.items(), ...incoming];
+          this.items.set(nextItems);
+          this.hasMore.set(nextItems.length < (response.total ?? nextItems.length));
+          if (reset) this.page.set(1);
+          this.loading.set(false);
+          this.loadingMore.set(false);
+        },
+        error: () => {
+          this.loading.set(false);
+          this.loadingMore.set(false);
+        },
+      });
   }
 }

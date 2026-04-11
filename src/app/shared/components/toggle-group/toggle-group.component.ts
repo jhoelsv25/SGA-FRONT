@@ -32,7 +32,7 @@ type OnChangeType = (value: string | string[]) => void;
 @Component({
   selector: 'z-toggle-group',
   imports: [ZardIconComponent],
-  standalone: true,
+
   template: `
     <div [class]="classes()" role="group" [attr.data-orientation]="'horizontal'">
       @for (item of items(); track item.value; let i = $index) {
@@ -169,7 +169,7 @@ export class ZardToggleGroupComponent implements ControlValueAccessor {
     } else {
       const currentArray = Array.isArray(currentValue) ? currentValue : [];
       if (currentArray.includes(item.value)) {
-        newValue = currentArray.filter(v => v !== item.value);
+        newValue = currentArray.filter((v) => v !== item.value);
       } else {
         newValue = [...currentArray, item.value];
       }

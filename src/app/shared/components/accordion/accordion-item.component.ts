@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, input, signal, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  signal,
+  ViewEncapsulation,
+} from '@angular/core';
 
 import type { ClassValue } from 'clsx';
 
@@ -61,15 +68,19 @@ export class ZardAccordionItemComponent {
   accordion!: ZardAccordionComponent;
   readonly isOpen = signal(false);
 
-  protected readonly itemClasses = computed(() => mergeClasses(accordionItemVariants(), this.class()));
+  protected readonly itemClasses = computed(() =>
+    mergeClasses(accordionItemVariants(), this.class()),
+  );
   protected readonly triggerClasses = computed(() => mergeClasses(accordionTriggerVariants()));
-  protected readonly contentClasses = computed(() => mergeClasses(accordionContentVariants({ isOpen: this.isOpen() })));
+  protected readonly contentClasses = computed(() =>
+    mergeClasses(accordionContentVariants({ isOpen: this.isOpen() })),
+  );
 
   toggle(): void {
     if (this.accordion) {
       this.accordion.toggleItem(this);
     } else {
-      this.isOpen.update(v => !v);
+      this.isOpen.update((v) => !v);
     }
   }
 }

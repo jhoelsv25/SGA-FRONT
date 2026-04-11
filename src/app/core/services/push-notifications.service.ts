@@ -44,7 +44,9 @@ export class PushNotificationsService {
     if (!this.hydrated()) return false;
     if (this.dismissed()) return false;
     const state = this.state();
-    return state === 'default' || state === 'denied' || (state === 'granted' && !this.isSubscribed());
+    return (
+      state === 'default' || state === 'denied' || (state === 'granted' && !this.isSubscribed())
+    );
   });
 
   constructor() {
@@ -191,6 +193,6 @@ export class PushNotificationsService {
     const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
     const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
     const rawData = window.atob(base64);
-    return Uint8Array.from([...rawData].map(char => char.charCodeAt(0)));
+    return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
   }
 }

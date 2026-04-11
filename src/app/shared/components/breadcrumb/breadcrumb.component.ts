@@ -30,9 +30,7 @@ import { mergeClasses } from '@/shared/utils/merge-classes';
 @Component({
   selector: 'z-breadcrumb-ellipsis, [z-breadcrumb-ellipsis]',
   imports: [ZardIconComponent],
-  template: `
-    <z-icon zType="ellipsis" />
-  `,
+  template: ` <z-icon zType="ellipsis" /> `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   host: {
@@ -73,7 +71,12 @@ export class ZardBreadcrumbEllipsisComponent {
     </li>
 
     @if (!isLast()) {
-      <li aria-hidden="true" role="presentation" [class]="separatorClasses()" (click)="$event.stopPropagation()">
+      <li
+        aria-hidden="true"
+        role="presentation"
+        [class]="separatorClasses()"
+        (click)="$event.stopPropagation()"
+      >
         @if (isTemplate(separator())) {
           <ng-container *zStringTemplateOutlet="separator()" />
         } @else if (separator()) {
@@ -123,7 +126,9 @@ export class ZardBreadcrumbItemComponent {
   readonly class = input<ClassValue>('');
 
   protected readonly separator = computed(() => this.breadcrumbComponent.zSeparator());
-  protected readonly isLast = computed<boolean>(() => this === this.breadcrumbComponent.items().at(-1));
+  protected readonly isLast = computed<boolean>(
+    () => this === this.breadcrumbComponent.items().at(-1),
+  );
   protected readonly isEllipsis = computed<boolean>(() => this.content() !== undefined);
 
   protected readonly classes = computed(() => mergeClasses(breadcrumbItemVariants(), this.class()));

@@ -1,5 +1,15 @@
 import { ZardSelectComponent, ZardSelectItemComponent } from '@/shared/components/select';
-import { ChangeDetectionStrategy, Component, computed, forwardRef, inject, input, model, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  forwardRef,
+  inject,
+  input,
+  model,
+  output,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { InstitutionApi } from '@features/admin-services/api/institution-api';
@@ -15,15 +25,27 @@ function getInitials(item: Institution): string {
 }
 
 function getSubtitle(item: Institution): string {
-  return [item.district, item.province, item.department].filter(Boolean).join(' · ') || item.address || 'Institución';
+  return (
+    [item.district, item.province, item.department].filter(Boolean).join(' · ') ||
+    item.address ||
+    'Institución'
+  );
 }
 
 @Component({
   selector: 'sga-institution-select',
-  standalone: true,
-  imports: [CommonModule, FormsModule, ZardSelectComponent, ZardSelectItemComponent, ZardInputDirective],
+
+  imports: [
+    CommonModule,
+    FormsModule,
+    ZardSelectComponent,
+    ZardSelectItemComponent,
+    ZardInputDirective,
+  ],
   templateUrl: './institution-select.html',
-  providers: [{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => InstitutionSelect), multi: true }],
+  providers: [
+    { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => InstitutionSelect), multi: true },
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InstitutionSelect implements ControlValueAccessor {
@@ -75,7 +97,9 @@ export class InstitutionSelect implements ControlValueAccessor {
       next: (item) => {
         this.selectedItem.set(item ?? null);
         if (item) {
-          this.items.update((items) => (items.some((current) => current.id === item.id) ? items : [item, ...items]));
+          this.items.update((items) =>
+            items.some((current) => current.id === item.id) ? items : [item, ...items],
+          );
         }
       },
     });

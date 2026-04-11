@@ -1,7 +1,9 @@
 <div class="flex flex-col gap-4">
   <div class="rounded-[1.75rem] border border-border/70 bg-background/80 px-4 py-3 shadow-sm">
     <div class="flex items-center gap-3">
-      <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+      <div
+        class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary"
+      >
         <z-icon zType="search" class="h-5 w-5" />
       </div>
       <div class="flex-1">
@@ -15,7 +17,9 @@
           class="h-12 border-0 bg-transparent px-0 text-sm shadow-none focus-visible:ring-0"
         />
       </div>
-      <div class="hidden rounded-xl border border-border bg-card px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-muted-foreground sm:block">
+      <div
+        class="hidden rounded-xl border border-border bg-card px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-muted-foreground sm:block"
+      >
         Esc
       </div>
     </div>
@@ -23,12 +27,18 @@
 
   <div class="rounded-[1.75rem] border border-border/70 bg-card/90 p-3 shadow-sm">
     <div class="mb-2 flex items-center justify-between px-2">
-      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Resultados</p>
-      <p class="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground/70">Top 12</p>
+      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+        Resultados
+      </p>
+      <p class="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground/70">
+        Top 12
+      </p>
     </div>
 
     @if (loading()) {
-      <div class="rounded-[1.5rem] border border-dashed border-border bg-background/40 px-5 py-8 text-center">
+      <div
+        class="rounded-3xl border border-dashed border-border bg-background/40 px-5 py-8 text-center"
+      >
         <p class="text-sm font-semibold text-foreground">Buscando...</p>
         <p class="mt-2 text-xs text-muted-foreground">Consultando datos reales de la plataforma.</p>
       </div>
@@ -37,27 +47,37 @@
         @for (entry of results(); track entry.id + entry.route) {
           <button
             type="button"
-            class="flex items-center gap-3 rounded-[1.5rem] border border-transparent bg-background/50 px-4 py-3 text-left transition-all duration-200 hover:border-primary/20 hover:bg-primary/5"
+            class="flex items-center gap-3 rounded-3xl border border-transparent bg-background/50 px-4 py-3 text-left transition-all duration-200 hover:border-primary/20 hover:bg-primary/5"
             (click)="choose(entry)"
           >
-            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <div
+              class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"
+            >
               <z-icon zType="arrow-right" class="h-4 w-4" />
             </div>
             <div class="min-w-0 flex-1">
               <div class="flex items-start justify-between gap-3">
                 <div class="min-w-0 flex-1">
-                  <p class="truncate text-sm font-black tracking-tight text-foreground">{{ entry.title }}</p>
-                  <p class="mt-1 line-clamp-1 text-xs text-muted-foreground">{{ entry.subtitle }}</p>
+                  <p class="truncate text-sm font-black tracking-tight text-foreground">
+                    {{ entry.title }}
+                  </p>
+                  <p class="mt-1 line-clamp-1 text-xs text-muted-foreground">
+                    {{ entry.subtitle }}
+                  </p>
                 </div>
 
-                <div class="hidden shrink-0 rounded-full border border-border bg-background px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-muted-foreground sm:block">
+                <div
+                  class="hidden shrink-0 rounded-full border border-border bg-background px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-muted-foreground sm:block"
+                >
                   {{ typeLabel(entry.type) }}
                 </div>
               </div>
             </div>
 
             <div class="hidden shrink-0 items-center sm:flex">
-              <span class="rounded-xl bg-primary px-3 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-primary-foreground">
+              <span
+                class="rounded-xl bg-primary px-3 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-primary-foreground"
+              >
                 Ir
               </span>
             </div>
@@ -65,7 +85,9 @@
         }
       </div>
     } @else {
-      <div class="rounded-[1.5rem] border border-dashed border-border bg-background/40 px-5 py-8 text-center">
+      <div
+        class="rounded-3xl border border-dashed border-border bg-background/40 px-5 py-8 text-center"
+      >
         <p class="text-sm font-semibold text-foreground">Sin resultados</p>
         <p class="mt-2 text-xs text-muted-foreground">{{ emptyMessage() }}</p>
       </div>

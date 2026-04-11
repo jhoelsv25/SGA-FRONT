@@ -1,5 +1,5 @@
 import { Component, ElementRef, HostListener, inject, input, output, signal } from '@angular/core';
-import { ZardIconComponent, type ZardIcon } from "@/shared/components/icon";
+import { ZardIconComponent, type ZardIcon } from '@/shared/components/icon';
 
 const LEGACY_ICON_ALIASES: Record<string, ZardIcon> = {
   'fas fa-user': 'user',
@@ -37,11 +37,10 @@ export interface UserMenuStat {
   value: string | number;
 }
 
-
 @Component({
   selector: 'sga-user-menu',
   templateUrl: './user-menu.html',
-  standalone: true,
+
   imports: [ZardIconComponent],
 })
 export class UserMenu {
@@ -75,7 +74,6 @@ export class UserMenu {
     if (!icon) return 'circle';
     return LEGACY_ICON_ALIASES[icon] ?? (icon as ZardIcon);
   }
-
 
   toggleMenu() {
     this.open.update((o) => !o);

@@ -27,7 +27,9 @@ export const containerProgressBarVariants = cva('w-full transition-all', {
     zShape: 'default',
   },
 });
-export type ZardProgressBarSizeVariants = NonNullable<VariantProps<typeof containerProgressBarVariants>['zSize']>;
+export type ZardProgressBarSizeVariants = NonNullable<
+  VariantProps<typeof containerProgressBarVariants>['zSize']
+>;
 
 export const progressBarVariants = cva('h-full transition-all', {
   variants: {
@@ -49,5 +51,9 @@ export const progressBarVariants = cva('h-full transition-all', {
     zShape: 'default',
   },
 });
-export type ZardProgressBarTypeVariants = NonNullable<VariantProps<typeof progressBarVariants>['zType']>;
-export type ZardProgressBarShapeVariants = NonNullable<VariantProps<typeof progressBarVariants>['zShape']>;
+export type ZardProgressBarTypeVariants = NonNullable<
+  VariantProps<typeof progressBarVariants>['zType']
+>;
+export type ZardProgressBarShapeVariants = NonNullable<
+  VariantProps<typeof progressBarVariants>['zShape']
+>;

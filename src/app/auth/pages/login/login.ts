@@ -1,8 +1,6 @@
-
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { LoginForm } from '@auth/components/login-form/login-form';
 import { Logo } from '@shared/widgets/logo/logo';
-
 
 @Component({
   selector: 'sga-login',
@@ -10,4 +8,4 @@ import { Logo } from '@shared/widgets/logo/logo';
   templateUrl: './login.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class Login { }
+export default class Login {}

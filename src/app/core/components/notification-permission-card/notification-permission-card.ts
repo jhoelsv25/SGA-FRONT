@@ -6,14 +6,15 @@ import { ZardIconComponent } from '@/shared/components/icon';
 
 @Component({
   selector: 'sga-notification-permission-card',
-  standalone: true,
   imports: [CommonModule, ZardButtonComponent, ZardIconComponent],
   template: `
     @if (push.shouldShowCard()) {
       <section
-        class="fixed bottom-5 right-5 z-[80] w-[min(92vw,24rem)] overflow-hidden rounded-[2rem] border border-border/40 bg-white/95 shadow-[0_22px_55px_rgba(15,23,42,0.18)] backdrop-blur-xl dark:bg-neutral-950/95"
+        class="fixed bottom-5 right-5 z-80 w-[min(92vw,24rem)] overflow-hidden rounded-4xl border border-border/40 bg-white/95 shadow-[0_22px_55px_rgba(15,23,42,0.18)] backdrop-blur-xl dark:bg-neutral-950/95"
       >
-        <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(185,28,28,0.12),transparent_45%),radial-gradient(circle_at_bottom_left,rgba(34,197,94,0.12),transparent_40%)]"></div>
+        <div
+          class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(185,28,28,0.12),transparent_45%),radial-gradient(circle_at_bottom_left,rgba(34,197,94,0.12),transparent_40%)]"
+        ></div>
         <div class="relative p-5">
           <div class="flex items-start gap-4">
             <div
@@ -43,13 +44,17 @@ import { ZardIconComponent } from '@/shared/components/icon';
             </button>
           </div>
 
-          <div class="mt-4 flex items-center gap-2 rounded-2xl bg-base-100/80 px-4 py-3 text-xs text-muted-foreground">
+          <div
+            class="mt-4 flex items-center gap-2 rounded-2xl bg-base-100/80 px-4 py-3 text-xs text-muted-foreground"
+          >
             <z-icon [zType]="helperIcon()" class="size-4 shrink-0 text-primary" />
             <span>{{ helperText() }}</span>
           </div>
 
           <div class="mt-5 flex flex-wrap gap-3">
-            @if (push.state() === 'default' || (push.state() === 'granted' && !push.isSubscribed())) {
+            @if (
+              push.state() === 'default' || (push.state() === 'granted' && !push.isSubscribed())
+            ) {
               <button
                 z-button
                 zType="default"

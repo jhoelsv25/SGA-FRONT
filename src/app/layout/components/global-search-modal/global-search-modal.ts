@@ -1,5 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { GlobalSearchApi, GlobalSearchItem } from '@core/services/api/global-search-api';
@@ -13,7 +21,7 @@ type SearchDialogData = {
 
 @Component({
   selector: 'sga-global-search-modal',
-  standalone: true,
+
   imports: [CommonModule, FormsModule, ZardInputDirective, ZardIconComponent],
   templateUrl: './global-search-modal.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

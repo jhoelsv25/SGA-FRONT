@@ -21,7 +21,10 @@ import { type ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angu
 import type { ClassValue } from 'clsx';
 
 import { ZardButtonComponent, type ZardButtonTypeVariants } from '@/shared/components/button';
-import { comboboxVariants, type ZardComboboxWidthVariants } from '@/shared/components/combobox/combobox.variants';
+import {
+  comboboxVariants,
+  type ZardComboboxWidthVariants,
+} from '@/shared/components/combobox/combobox.variants';
 import {
   ZardCommandComponent,
   ZardCommandEmptyComponent,
@@ -178,7 +181,8 @@ export interface ZardComboboxGroup {
     '[class]': 'classes()',
     '(document:keydown.escape)': 'onDocumentKeyDown($event)',
     '(keydown.escape.prevent-with-stop)': 'onKeyDownEscape()',
-    '(keydown.{arrowdown,arrowup,enter,home,end,pageup,pagedown,space}.prevent)': 'onKeyDown($event)',
+    '(keydown.{arrowdown,arrowup,enter,home,end,pageup,pagedown,space}.prevent)':
+      'onKeyDown($event)',
     '(keydown.tab)': 'onKeyDown($event)',
   },
   exportAs: 'zCombobox',
@@ -223,7 +227,8 @@ export class ZardComboboxComponent implements ControlValueAccessor {
   protected readonly buttonClasses = computed(() => 'w-full justify-between');
 
   protected readonly popoverClasses = computed(() => {
-    const widthClass = this.zWidth() === 'full' ? 'w-full' : comboboxVariants({ zWidth: this.zWidth() });
+    const widthClass =
+      this.zWidth() === 'full' ? 'w-full' : comboboxVariants({ zWidth: this.zWidth() });
     return `${widthClass} p-0`;
   });
 
@@ -238,7 +243,7 @@ export class ZardComboboxComponent implements ControlValueAccessor {
     // Search in groups first
     if (this.groups().length) {
       for (const group of this.groups()) {
-        const option = group.options.find(opt => opt.value === currentValue);
+        const option = group.options.find((opt) => opt.value === currentValue);
         if (option) {
           return option.label;
         }
@@ -246,7 +251,7 @@ export class ZardComboboxComponent implements ControlValueAccessor {
     }
 
     // Then search in flat options
-    const option = this.options().find(opt => opt.value === currentValue);
+    const option = this.options().find((opt) => opt.value === currentValue);
     return option?.label ?? null;
   });
 
@@ -295,13 +300,13 @@ export class ZardComboboxComponent implements ControlValueAccessor {
 
       if (this.groups().length > 0) {
         for (const group of this.groups()) {
-          selectedOption = group.options.find(opt => opt.value === newValue);
+          selectedOption = group.options.find((opt) => opt.value === newValue);
           if (selectedOption) {
             break;
           }
         }
       } else {
-        selectedOption = this.options().find(opt => opt.value === newValue);
+        selectedOption = this.options().find((opt) => opt.value === newValue);
       }
 
       if (selectedOption) {

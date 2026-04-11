@@ -66,7 +66,8 @@ type OnChangeType = (value: boolean) => void;
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   host: {
-    '[class]': "(disabled() ? 'cursor-not-allowed' : 'cursor-pointer') + ' flex items-center gap-2'",
+    '[class]':
+      "(disabled() ? 'cursor-not-allowed' : 'cursor-pointer') + ' flex items-center gap-2'",
     '[attr.aria-disabled]': 'disabled()',
   },
   exportAs: 'zCheckbox',
@@ -91,11 +92,16 @@ export class ZardCheckboxComponent implements ControlValueAccessor {
   private onTouched: OnTouchedType = noopFn;
 
   protected readonly classes = computed(() =>
-    mergeClasses(checkboxVariants({ zType: this.zType(), zSize: this.zSize(), zShape: this.zShape() }), this.class()),
+    mergeClasses(
+      checkboxVariants({ zType: this.zType(), zSize: this.zSize(), zShape: this.zShape() }),
+      this.class(),
+    ),
   );
 
   readonly disabledByForm = signal(false);
-  protected readonly labelClasses = computed(() => mergeClasses(checkboxLabelVariants({ zSize: this.zSize() })));
+  protected readonly labelClasses = computed(() =>
+    mergeClasses(checkboxLabelVariants({ zSize: this.zSize() })),
+  );
   protected readonly disabled = computed(() => this.zDisabled() || this.disabledByForm());
   readonly checked = signal(false);
 
@@ -124,7 +130,7 @@ export class ZardCheckboxComponent implements ControlValueAccessor {
       return;
     }
 
-    this.checked.update(v => !v);
+    this.checked.update((v) => !v);
     this.onChange(this.checked());
     this.checkChange.emit(this.checked());
   }

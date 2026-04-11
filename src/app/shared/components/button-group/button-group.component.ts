@@ -23,9 +23,7 @@ import { type ZardDividerVariants } from '@/shared/components/divider/divider.va
 
 @Component({
   selector: 'z-button-group',
-  template: `
-    <ng-content />
-  `,
+  template: ` <ng-content /> `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   host: {
@@ -53,7 +51,12 @@ export class ZardButtonGroupComponent {
   selector: 'z-button-group-divider',
   imports: [ZardDividerComponent],
   template: `
-    <z-divider [class]="classes()" zSpacing="none" aria-hidden="true" [zOrientation]="orientation()" />
+    <z-divider
+      [class]="classes()"
+      zSpacing="none"
+      aria-hidden="true"
+      [zOrientation]="orientation()"
+    />
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
@@ -99,5 +102,7 @@ export class ZardButtonGroupDividerComponent {
 export class ZardButtonGroupTextDirective {
   readonly class = input<ClassValue>('');
 
-  protected readonly classes = computed(() => mergeClasses(buttonGroupTextVariants(), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(buttonGroupTextVariants(), this.class()),
+  );
 }

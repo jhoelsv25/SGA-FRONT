@@ -1,5 +1,18 @@
 import { ZardSelectComponent, ZardSelectItemComponent } from '@/shared/components/select';
-import { ChangeDetectionStrategy, Component, ElementRef, forwardRef, HostListener, inject, input, OnDestroy, OnInit, output, signal, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  forwardRef,
+  HostListener,
+  inject,
+  input,
+  OnDestroy,
+  OnInit,
+  output,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Subject } from 'rxjs';
@@ -37,8 +50,14 @@ function getPhoto(t: Teacher): string | null {
 
 @Component({
   selector: 'sga-teacher-select',
-  standalone: true,
-  imports: [CommonModule, FormsModule, ZardSelectComponent, ZardSelectItemComponent, ZardInputDirective],
+
+  imports: [
+    CommonModule,
+    FormsModule,
+    ZardSelectComponent,
+    ZardSelectItemComponent,
+    ZardInputDirective,
+  ],
   templateUrl: './teacher-select.html',
   providers: [
     { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => TeacherSelect), multi: true },
@@ -144,7 +163,6 @@ export class TeacherSelect implements OnInit, OnDestroy, ControlValueAccessor {
     if (this.allItems().length === 0) this.loadItems(1);
   }
 
-  
   onZardSelectionChange(val: string | string[]) {
     const id = Array.isArray(val) ? val[0] : val;
     if (!id) {

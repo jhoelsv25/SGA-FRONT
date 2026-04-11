@@ -1,5 +1,18 @@
 import { ZardSelectComponent, ZardSelectItemComponent } from '@/shared/components/select';
-import { ChangeDetectionStrategy, Component, computed, ElementRef, forwardRef, HostListener, inject, input, output, signal, viewChild, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  ElementRef,
+  forwardRef,
+  HostListener,
+  inject,
+  input,
+  output,
+  signal,
+  viewChild,
+  OnInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { SectionApi } from '@features/sections/services/api/section-api';
@@ -21,11 +34,16 @@ function getInitials(s: Section): string {
   return (s.name ?? s.id).slice(0, 2).toUpperCase();
 }
 
-
 @Component({
   selector: 'sga-section-select',
-  standalone: true,
-  imports: [CommonModule, FormsModule, ZardSelectComponent, ZardSelectItemComponent, ZardInputDirective],
+
+  imports: [
+    CommonModule,
+    FormsModule,
+    ZardSelectComponent,
+    ZardSelectItemComponent,
+    ZardInputDirective,
+  ],
   templateUrl: './section-select.html',
   providers: [
     { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => SectionSelect), multi: true },
@@ -114,7 +132,6 @@ export class SectionSelect implements ControlValueAccessor, OnInit {
     this.loadItems();
   }
 
-  
   onZardSelectionChange(val: string | string[]) {
     const id = Array.isArray(val) ? val[0] : val;
     if (!id) {

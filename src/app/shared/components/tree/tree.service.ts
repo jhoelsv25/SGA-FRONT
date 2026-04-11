@@ -54,7 +54,7 @@ export class ZardTreeService<T = any> {
   }
 
   expand(key: string) {
-    this.expandedKeys.update(keys => {
+    this.expandedKeys.update((keys) => {
       const next = new Set(keys);
       next.add(key);
       return next;
@@ -62,7 +62,7 @@ export class ZardTreeService<T = any> {
   }
 
   collapse(key: string) {
-    this.expandedKeys.update(keys => {
+    this.expandedKeys.update((keys) => {
       const next = new Set(keys);
       next.delete(key);
       return next;
@@ -97,7 +97,7 @@ export class ZardTreeService<T = any> {
     if (mode === 'single') {
       this.selectedKeys.set(new Set([key]));
     } else {
-      this.selectedKeys.update(keys => {
+      this.selectedKeys.update((keys) => {
         const next = new Set(keys);
         if (next.has(key)) {
           next.delete(key);
@@ -110,7 +110,7 @@ export class ZardTreeService<T = any> {
   }
 
   deselect(key: string) {
-    this.selectedKeys.update(keys => {
+    this.selectedKeys.update((keys) => {
       const next = new Set(keys);
       next.delete(key);
       return next;
@@ -156,12 +156,12 @@ export class ZardTreeService<T = any> {
   }
 
   private checkNode(node: TreeNode<T>) {
-    this.checkedKeys.update(keys => {
+    this.checkedKeys.update((keys) => {
       const next = new Set(keys);
       next.add(node.key);
       return next;
     });
-    this.indeterminateKeys.update(keys => {
+    this.indeterminateKeys.update((keys) => {
       const next = new Set(keys);
       next.delete(node.key);
       return next;
@@ -176,12 +176,12 @@ export class ZardTreeService<T = any> {
   }
 
   private uncheckNode(node: TreeNode<T>) {
-    this.checkedKeys.update(keys => {
+    this.checkedKeys.update((keys) => {
       const next = new Set(keys);
       next.delete(node.key);
       return next;
     });
-    this.indeterminateKeys.update(keys => {
+    this.indeterminateKeys.update((keys) => {
       const next = new Set(keys);
       next.delete(node.key);
       return next;
@@ -204,20 +204,20 @@ export class ZardTreeService<T = any> {
         return checked.has(node.key) ? 'checked' : 'unchecked';
       }
 
-      const childStates = node.children.filter(c => !c.disabled).map(c => computeState(c));
+      const childStates = node.children.filter((c) => !c.disabled).map((c) => computeState(c));
 
-      const allChecked = childStates.length > 0 && childStates.every(s => s === 'checked');
-      const someChecked = childStates.some(s => s === 'checked' || s === 'indeterminate');
+      const allChecked = childStates.length > 0 && childStates.every((s) => s === 'checked');
+      const someChecked = childStates.some((s) => s === 'checked' || s === 'indeterminate');
 
       if (allChecked) {
-        this.checkedKeys.update(keys => {
+        this.checkedKeys.update((keys) => {
           const next = new Set(keys);
           next.add(node.key);
           return next;
         });
         return 'checked';
       } else if (someChecked) {
-        this.checkedKeys.update(keys => {
+        this.checkedKeys.update((keys) => {
           const next = new Set(keys);
           next.delete(node.key);
           return next;
@@ -225,7 +225,7 @@ export class ZardTreeService<T = any> {
         nextIndeterminate.add(node.key);
         return 'indeterminate';
       } else {
-        this.checkedKeys.update(keys => {
+        this.checkedKeys.update((keys) => {
           const next = new Set(keys);
           next.delete(node.key);
           return next;

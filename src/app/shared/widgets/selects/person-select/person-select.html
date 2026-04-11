@@ -20,7 +20,9 @@
   @for (item of items(); track item.id) {
     <z-select-item [zValue]="item.id">
       <div class="flex min-w-0 items-center gap-3 py-0.5">
-        <div class="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-primary/10 text-[11px] font-semibold uppercase tracking-[0.22em] text-primary">
+        <div
+          class="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-primary/10 text-[11px] font-semibold uppercase tracking-[0.22em] text-primary"
+        >
           @if (item.photoUrl) {
             <img [src]="item.photoUrl" [alt]="getLabel(item)" class="h-full w-full object-cover" />
           } @else {
@@ -28,11 +30,17 @@
           }
         </div>
         <div class="min-w-0 flex-1">
-          <span data-select-label class="block truncate text-sm font-semibold">{{ getLabel(item) }}</span>
-          <span class="mt-0.5 block truncate text-xs text-muted-foreground">{{ getSubtitle(item) }}</span>
+          <span data-select-label class="block truncate text-sm font-semibold">{{
+            getLabel(item)
+          }}</span>
+          <span class="mt-0.5 block truncate text-xs text-muted-foreground">{{
+            getSubtitle(item)
+          }}</span>
         </div>
         @if (item.documentNumber) {
-          <span class="shrink-0 rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
+          <span
+            class="shrink-0 rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary"
+          >
             {{ item.documentNumber }}
           </span>
         }

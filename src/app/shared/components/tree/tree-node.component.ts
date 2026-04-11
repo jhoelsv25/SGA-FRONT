@@ -13,7 +13,6 @@ import { FormsModule } from '@angular/forms';
 
 import type { ClassValue } from 'clsx';
 
-
 import { ZardIconComponent } from '@/shared/components/icon';
 import { mergeClasses } from '@/shared/utils/merge-classes';
 
@@ -56,7 +55,9 @@ import {
           <z-checkbox
             [ngModel]="checkState() === 'checked'"
             [zDisabled]="node().disabled ?? false"
-            [attr.aria-checked]="checkState() === 'indeterminate' ? 'mixed' : checkState() === 'checked'"
+            [attr.aria-checked]="
+              checkState() === 'indeterminate' ? 'mixed' : checkState() === 'checked'
+            "
             (checkChange)="onCheckChange()"
           />
         </span>
@@ -73,7 +74,10 @@ import {
         (keydown.enter.stop)="onContentClick()"
       >
         @if (nodeTemplate(); as tmpl) {
-          <ng-container [ngTemplateOutlet]="tmpl" [ngTemplateOutletContext]="{ $implicit: node(), level: level() }" />
+          <ng-container
+            [ngTemplateOutlet]="tmpl"
+            [ngTemplateOutletContext]="{ $implicit: node(), level: level() }"
+          />
         } @else {
           @if (node().icon) {
             <z-icon [zType]="$any(node().icon)" class="size-4 shrink-0" />
@@ -95,7 +99,9 @@ import {
               [checkable]="checkable()"
               [nodeTemplate]="nodeTemplate()"
               role="treeitem"
-              [attr.aria-expanded]="child.children?.length ? treeService.isExpanded(child.key) : null"
+              [attr.aria-expanded]="
+                child.children?.length ? treeService.isExpanded(child.key) : null
+              "
               [attr.aria-level]="level() + 2"
               [attr.aria-setsize]="node().children!.length"
               [attr.aria-posinset]="i + 1"

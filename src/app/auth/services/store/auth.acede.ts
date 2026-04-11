@@ -38,13 +38,16 @@ export class AuthFacade {
 
   /** LOGOUT */
   logout(): void {
-    this.authApi.logout().pipe(
-      catchError(() => of(void 0)),
-      tap(() => {
-        this.store.logout();
-        this.router.navigate(['/auth/login']);
-      }),
-    ).subscribe();
+    this.authApi
+      .logout()
+      .pipe(
+        catchError(() => of(void 0)),
+        tap(() => {
+          this.store.logout();
+          this.router.navigate(['/auth/login']);
+        }),
+      )
+      .subscribe();
   }
 
   /** INITIALIZE → también lo traduzco a boolean */

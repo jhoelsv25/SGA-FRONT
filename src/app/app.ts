@@ -9,7 +9,7 @@ import { PushNotificationsService } from '@core/services/push-notifications.serv
 
 @Component({
   selector: 'sga-root',
-  standalone: true,
+
   imports: [
     RouterOutlet,
     ZardToastComponent,

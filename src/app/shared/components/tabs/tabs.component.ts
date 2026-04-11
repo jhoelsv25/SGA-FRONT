@@ -220,7 +220,7 @@ export class ZardTabGroupComponent implements AfterViewInit {
       // Re-observe whenever #tabNav reference changes (e.g., when placement toggles)
       let observedEl: HTMLElement | null = null;
       const tabNavEl$ = toObservable(this.tabsContainer).pipe(
-        map(ref => ref.nativeElement as HTMLElement),
+        map((ref) => ref.nativeElement as HTMLElement),
         distinctUntilChanged(),
       );
 
@@ -232,7 +232,7 @@ export class ZardTabGroupComponent implements AfterViewInit {
 
         const resizeObserver = new ResizeObserver(() => this.setScrollState());
 
-        tabNavEl$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(el => {
+        tabNavEl$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((el) => {
           if (observedEl) {
             resizeObserver.unobserve(observedEl);
           }
@@ -259,7 +259,10 @@ export class ZardTabGroupComponent implements AfterViewInit {
   private hasScroll(): boolean {
     const navElement: HTMLElement = this.tabsContainer().nativeElement;
     if (this.zShowArrow()) {
-      return navElement.scrollWidth > navElement.clientWidth || navElement.scrollHeight > navElement.clientHeight;
+      return (
+        navElement.scrollWidth > navElement.clientWidth ||
+        navElement.scrollHeight > navElement.clientHeight
+      );
     }
     return false;
   }
@@ -296,7 +299,9 @@ export class ZardTabGroupComponent implements AfterViewInit {
   });
 
   protected readonly navGridClasses = computed(() => {
-    const gridLayout = this.isHorizontal() ? 'grid-cols-[25px_1fr_25px]' : 'grid-rows-[25px_1fr_25px]';
+    const gridLayout = this.isHorizontal()
+      ? 'grid-cols-[25px_1fr_25px]'
+      : 'grid-rows-[25px_1fr_25px]';
     if (this.showArrow()) {
       return twMerge(clsx('grid', gridLayout));
     }
@@ -308,7 +313,10 @@ export class ZardTabGroupComponent implements AfterViewInit {
   );
 
   protected readonly navClasses = computed(() =>
-    tabNavVariants({ zPosition: this.zTabsPosition(), zAlignTabs: this.showArrow() ? 'start' : this.zAlignTabs() }),
+    tabNavVariants({
+      zPosition: this.zTabsPosition(),
+      zAlignTabs: this.showArrow() ? 'start' : this.zAlignTabs(),
+    }),
   );
 
   protected readonly buttonClassesSignal = computed(() => {

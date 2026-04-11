@@ -13,20 +13,22 @@ export interface DropdownItem {
 
 @Component({
   selector: 'z-dropdown',
-  standalone: true,
+
   imports: [CommonModule, ZardDropdownMenuComponent, ZardDropdownMenuItemComponent],
   template: `
     <z-dropdown-menu [align]="align()">
       <div dropdown-trigger>
-        <ng-content select="[sga-dropdown-trigger], [z-dropdown-trigger], [dropdown-trigger], [dropdown-trigger-content]"></ng-content>
+        <ng-content
+          select="[sga-dropdown-trigger], [z-dropdown-trigger], [dropdown-trigger], [dropdown-trigger-content]"
+        ></ng-content>
       </div>
-      
+
       <div class="p-1">
         @for (item of items(); track $index) {
           @if (item.separator) {
             <div class="h-px bg-base-300 my-1 mx-[-0.25rem]"></div>
           } @else {
-            <z-dropdown-menu-item 
+            <z-dropdown-menu-item
               (click)="!item.disabled && item.action && item.action()"
               [attr.data-disabled]="item.disabled ? '' : null"
               class="flex items-center gap-2"

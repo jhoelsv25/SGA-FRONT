@@ -16,9 +16,7 @@ import { mergeClasses } from '@/shared/utils/merge-classes';
 
 @Component({
   selector: 'z-accordion',
-  template: `
-    <ng-content />
-  `,
+  template: ` <ng-content /> `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   host: {
@@ -80,7 +78,7 @@ export class ZardAccordionComponent implements AfterContentInit {
       return;
     }
 
-    selectedItem.isOpen.update(v => !v);
+    selectedItem.isOpen.update((v) => !v);
   }
 
   private countOpenItems(): number {

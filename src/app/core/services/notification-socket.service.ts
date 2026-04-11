@@ -59,13 +59,10 @@ export class NotificationSocketService implements OnDestroy {
       this.notification$.next(notification);
     });
 
-    this.socket.on(
-      'teacher-live-session:update',
-      (payload: TeacherLiveSessionResponse['data']) => {
-        console.info('[NotificationSocketService] teacher-live-session:update');
-        this.teacherLiveSession$.next(payload);
-      },
-    );
+    this.socket.on('teacher-live-session:update', (payload: TeacherLiveSessionResponse['data']) => {
+      console.info('[NotificationSocketService] teacher-live-session:update');
+      this.teacherLiveSession$.next(payload);
+    });
 
     this.socket.on(
       'teacher-live-overview:update',

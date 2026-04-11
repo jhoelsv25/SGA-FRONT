@@ -17,7 +17,11 @@ import type { ClassValue } from 'clsx';
 
 import { mergeClasses } from '@/shared/utils/merge-classes';
 
-import { segmentedItemVariants, segmentedVariants, type ZardSegmentedVariants } from './segmented.variants';
+import {
+  segmentedItemVariants,
+  segmentedVariants,
+  type ZardSegmentedVariants,
+} from './segmented.variants';
 
 export interface SegmentedOption {
   value: string;
@@ -26,10 +30,8 @@ export interface SegmentedOption {
 }
 @Component({
   selector: 'z-segmented-item',
-  standalone: true,
-  template: `
-    <ng-content />
-  `,
+
+  template: ` <ng-content /> `,
   encapsulation: ViewEncapsulation.None,
 })
 export class ZardSegmentedItemComponent {
@@ -40,7 +42,7 @@ export class ZardSegmentedItemComponent {
 
 @Component({
   selector: 'z-segmented',
-  standalone: true,
+
   template: `
     <div [class]="classes()" role="tablist" [attr.aria-label]="zAriaLabel()">
       @for (option of zOptions(); track option.value) {
@@ -121,7 +123,9 @@ export class ZardSegmentedComponent implements ControlValueAccessor, OnInit {
     }
   }
 
-  protected readonly classes = computed(() => mergeClasses(segmentedVariants({ zSize: this.zSize() }), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(segmentedVariants({ zSize: this.zSize() }), this.class()),
+  );
 
   protected readonly wrapperClasses = computed(() => 'inline-block');
 
@@ -141,8 +145,8 @@ export class ZardSegmentedComponent implements ControlValueAccessor, OnInit {
       return;
     }
 
-    const option = this.zOptions().find(opt => opt.value === value);
-    const item = this.items().find(item => item.value() === value);
+    const option = this.zOptions().find((opt) => opt.value === value);
+    const item = this.items().find((item) => item.value() === value);
 
     if (option?.disabled || item?.disabled()) {
       return;

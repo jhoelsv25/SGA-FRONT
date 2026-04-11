@@ -1,6 +1,15 @@
 import { MediaMatcher } from '@angular/cdk/layout';
 import { isPlatformBrowser, DOCUMENT } from '@angular/common';
-import { afterNextRender, DestroyRef, Injectable, PLATFORM_ID, computed, inject, signal, effect } from '@angular/core';
+import {
+  afterNextRender,
+  DestroyRef,
+  Injectable,
+  PLATFORM_ID,
+  computed,
+  inject,
+  signal,
+  effect,
+} from '@angular/core';
 
 export enum EDarkModes {
   LIGHT = 'light',
@@ -165,7 +174,9 @@ export class ZardDarkMode {
       return false;
     }
 
-    return currentTheme === EDarkModes.DARK || (currentTheme === EDarkModes.SYSTEM && this.systemDark());
+    return (
+      currentTheme === EDarkModes.DARK || (currentTheme === EDarkModes.SYSTEM && this.systemDark())
+    );
   }
 
   private handleSystemChanges(addListener = true): void {

@@ -1,5 +1,14 @@
 import { ZardSelectComponent, ZardSelectItemComponent } from '@/shared/components/select';
-import { ChangeDetectionStrategy, Component, computed, forwardRef, inject, input, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  forwardRef,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { ZardInputDirective } from '@/shared/components/input';
@@ -15,21 +24,27 @@ function getInitials(item: Assessment): string {
 }
 
 function getSubtitle(item: Assessment): string {
-  return [
-    item.sectionCourse?.course?.name,
-    item.period?.name,
-    item.competency?.name,
-  ]
-    .filter(Boolean)
-    .join(' · ') || 'Evaluación académica';
+  return (
+    [item.sectionCourse?.course?.name, item.period?.name, item.competency?.name]
+      .filter(Boolean)
+      .join(' · ') || 'Evaluación académica'
+  );
 }
 
 @Component({
   selector: 'sga-assessment-select',
-  standalone: true,
-  imports: [CommonModule, FormsModule, ZardSelectComponent, ZardSelectItemComponent, ZardInputDirective],
+
+  imports: [
+    CommonModule,
+    FormsModule,
+    ZardSelectComponent,
+    ZardSelectItemComponent,
+    ZardInputDirective,
+  ],
   templateUrl: './assessment-select.html',
-  providers: [{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => AssessmentSelect), multi: true }],
+  providers: [
+    { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => AssessmentSelect), multi: true },
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AssessmentSelect implements ControlValueAccessor {
@@ -94,7 +109,9 @@ export class AssessmentSelect implements ControlValueAccessor {
       next: (item) => {
         this.selectedItem.set(item ?? null);
         if (item) {
-          this.items.update((items) => (items.some((current) => current.id === item.id) ? items : [item, ...items]));
+          this.items.update((items) =>
+            items.some((current) => current.id === item.id) ? items : [item, ...items],
+          );
         }
       },
     });

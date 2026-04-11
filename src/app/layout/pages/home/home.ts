@@ -11,7 +11,7 @@ import GlobalSearchModalComponent from '@/layout/components/global-search-modal/
 
 @Component({
   selector: 'sga-home',
-  standalone: true,
+
   imports: [CommonModule, Sidebar, Header, Aside, RouterOutlet],
   templateUrl: './home.html',
   styleUrls: ['./home.css'],

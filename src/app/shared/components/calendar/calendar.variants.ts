@@ -12,11 +12,15 @@ export const calendarNavButtonVariants = cva(
 
 export const calendarWeekdaysVariants = cva('flex');
 
-export const calendarWeekdayVariants = cva('text-muted-foreground font-normal text-center text-[0.8rem] w-8');
+export const calendarWeekdayVariants = cva(
+  'text-muted-foreground font-normal text-center text-[0.8rem] w-8',
+);
 
 export const calendarWeekVariants = cva('flex w-full mt-2');
 
-export const calendarDayVariants = cva('p-0 relative focus-within:relative focus-within:z-20 flex mt-1 size-8 text-sm');
+export const calendarDayVariants = cva(
+  'p-0 relative focus-within:relative focus-within:z-20 flex mt-1 size-8 text-sm',
+);
 
 export const calendarDayButtonVariants = cva(
   'p-0 font-normal flex items-center justify-center whitespace-nowrap rounded-md ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground size-full text-sm',

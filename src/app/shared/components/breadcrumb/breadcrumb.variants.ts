@@ -12,7 +12,9 @@ export const breadcrumbVariants = cva('w-full', {
     zSize: 'md',
   },
 });
-export type ZardBreadcrumbSizeVariants = NonNullable<VariantProps<typeof breadcrumbVariants>['zSize']>;
+export type ZardBreadcrumbSizeVariants = NonNullable<
+  VariantProps<typeof breadcrumbVariants>['zSize']
+>;
 
 export const breadcrumbListVariants = cva(
   'text-muted-foreground flex flex-wrap items-center gap-1.5 wrap-break-word sm:gap-2.5',
@@ -34,8 +36,12 @@ export const breadcrumbListVariants = cva(
     },
   },
 );
-export type ZardBreadcrumbAlignVariants = NonNullable<VariantProps<typeof breadcrumbListVariants>['zAlign']>;
-export type ZardBreadcrumbWrapVariants = NonNullable<VariantProps<typeof breadcrumbListVariants>['zWrap']>;
+export type ZardBreadcrumbAlignVariants = NonNullable<
+  VariantProps<typeof breadcrumbListVariants>['zAlign']
+>;
+export type ZardBreadcrumbWrapVariants = NonNullable<
+  VariantProps<typeof breadcrumbListVariants>['zWrap']
+>;
 
 export const breadcrumbItemVariants = cva(
   'inline-flex items-center gap-1.5 transition-colors cursor-pointer hover:text-foreground last:text-foreground last:font-normal last:pointer-events-none',

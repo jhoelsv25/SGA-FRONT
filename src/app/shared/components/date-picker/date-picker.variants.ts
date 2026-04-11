@@ -20,4 +20,6 @@ export const datePickerVariants = cva('', {
   },
 });
 
-export type ZardDatePickerSizeVariants = NonNullable<VariantProps<typeof datePickerVariants>['zSize']>;
+export type ZardDatePickerSizeVariants = NonNullable<
+  VariantProps<typeof datePickerVariants>['zSize']
+>;

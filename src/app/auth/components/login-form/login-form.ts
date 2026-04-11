@@ -7,10 +7,16 @@ import { AuthFacade } from '@auth/services/store/auth.acede';
 import { ZardCheckboxComponent } from '@/shared/components/checkbox';
 import { ZardIconComponent } from '@shared/components/icon';
 
-
 @Component({
   selector: 'sga-login-form',
-  imports: [ReactiveFormsModule, RouterLinkWithHref, ZardButtonComponent, ZardInputDirective, ZardCheckboxComponent, ZardIconComponent],
+  imports: [
+    ReactiveFormsModule,
+    RouterLinkWithHref,
+    ZardButtonComponent,
+    ZardInputDirective,
+    ZardCheckboxComponent,
+    ZardIconComponent,
+  ],
   templateUrl: './login-form.html',
 })
 export class LoginForm {

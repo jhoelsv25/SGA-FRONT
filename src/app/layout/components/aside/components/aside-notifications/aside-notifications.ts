@@ -9,7 +9,7 @@ import { ZardEmptyComponent } from '@/shared/components/empty';
 
 @Component({
   selector: 'sga-aside-notifications',
-  standalone: true,
+
   imports: [CommonModule, ZardIconComponent, ZardButtonComponent, ZardEmptyComponent],
   template: `
     <div class="flex h-full min-h-0 flex-col bg-card/10 backdrop-blur-xl">
@@ -90,10 +90,14 @@ import { ZardEmptyComponent } from '@/shared/components/empty';
                 <div class="flex flex-wrap items-center gap-2 text-[10px]">
                   <span class="font-bold text-foreground/80">{{ senderName(notification) }}</span>
                   <span class="text-muted-foreground/45">•</span>
-                  <span class="rounded-full border border-primary/15 bg-primary/6 px-2 py-0.5 font-semibold text-primary/80">
+                  <span
+                    class="rounded-full border border-primary/15 bg-primary/6 px-2 py-0.5 font-semibold text-primary/80"
+                  >
                     {{ senderRole(notification) }}
                   </span>
-                  <span class="rounded-full border border-primary/15 bg-primary/6 px-2 py-0.5 font-semibold text-primary/80">
+                  <span
+                    class="rounded-full border border-primary/15 bg-primary/6 px-2 py-0.5 font-semibold text-primary/80"
+                  >
                     {{ priorityLabel(notification.priority) }}
                   </span>
                 </div>

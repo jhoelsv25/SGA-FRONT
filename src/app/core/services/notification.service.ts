@@ -25,9 +25,7 @@ export class NotificationService {
   }
 
   markAsRead(id: string): void {
-    this._list.update((list) =>
-      list.map((n) => (n.id === id ? { ...n, read: true } : n)),
-    );
+    this._list.update((list) => list.map((n) => (n.id === id ? { ...n, read: true } : n)));
     this.hasUnread.set(this._list().some((n) => !n.read));
   }
 

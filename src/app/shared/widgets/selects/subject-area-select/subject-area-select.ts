@@ -1,5 +1,18 @@
 import { ZardSelectComponent, ZardSelectItemComponent } from '@/shared/components/select';
-import { ChangeDetectionStrategy, Component, computed, ElementRef, forwardRef, HostListener, inject, input, output, signal, viewChild, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  ElementRef,
+  forwardRef,
+  HostListener,
+  inject,
+  input,
+  output,
+  signal,
+  viewChild,
+  OnInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { SubjectAreaApi } from '@features/subject-areas/services/subject-area-api';
@@ -18,11 +31,16 @@ function getSubjectAreaSubtitle(s: SubjectArea): string {
   return s.description || 'Área curricular';
 }
 
-
 @Component({
   selector: 'sga-subject-area-select',
-  standalone: true,
-  imports: [CommonModule, FormsModule, ZardSelectComponent, ZardSelectItemComponent, ZardInputDirective],
+
+  imports: [
+    CommonModule,
+    FormsModule,
+    ZardSelectComponent,
+    ZardSelectItemComponent,
+    ZardInputDirective,
+  ],
   templateUrl: './subject-area-select.html',
   providers: [
     { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => SubjectAreaSelect), multi: true },

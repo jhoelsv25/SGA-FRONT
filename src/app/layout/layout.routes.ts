@@ -37,7 +37,7 @@ export default [
       },
       {
         path: 'access-control',
-        loadComponent: () => import('@features/attendance/pages/general-attendance/general-attendance'),
+        loadChildren: () => import('@features/access-control/access-control.routes'),
         title: 'Control de Accesos',
       },
       {
@@ -88,22 +88,29 @@ export default [
       },
       {
         path: 'account/profile',
-        loadComponent: () => import('../features/account/pages/profile/profile').then((m) => m.default),
+        loadComponent: () =>
+          import('../features/account/pages/profile/profile').then((m) => m.default),
         title: 'Mi Perfil',
       },
       {
         path: 'account/settings',
-        loadComponent: () => import('../features/account/pages/settings/settings').then((m) => m.default),
+        loadComponent: () =>
+          import('../features/account/pages/settings/settings').then((m) => m.default),
         title: 'Configuración',
       },
       {
         path: 'account/change-password',
-        loadComponent: () => import('../features/account/pages/change-password/change-password').then((m) => m.default),
+        loadComponent: () =>
+          import('../features/account/pages/change-password/change-password').then(
+            (m) => m.default,
+          ),
         title: 'Cambiar contraseña',
       },
       {
         path: '',
         pathMatch: 'full',
         redirectTo: 'dashboard',
-      }],
-  }] as Routes;
+      },
+    ],
+  },
+] as Routes;

@@ -1,4 +1,8 @@
-import { CdkFixedSizeVirtualScroll, CdkVirtualForOf, CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
+import {
+  CdkFixedSizeVirtualScroll,
+  CdkVirtualForOf,
+  CdkVirtualScrollViewport,
+} from '@angular/cdk/scrolling';
 import {
   booleanAttribute,
   ChangeDetectionStrategy,
@@ -26,7 +30,12 @@ import { treeVariants } from './tree.variants';
 
 @Component({
   selector: 'z-tree',
-  imports: [ZardTreeNodeComponent, CdkVirtualScrollViewport, CdkFixedSizeVirtualScroll, CdkVirtualForOf],
+  imports: [
+    ZardTreeNodeComponent,
+    CdkVirtualScrollViewport,
+    CdkFixedSizeVirtualScroll,
+    CdkVirtualForOf,
+  ],
   template: `
     @if (zVirtualScroll()) {
       <cdk-virtual-scroll-viewport [itemSize]="zVirtualItemSize()" class="size-full">
@@ -39,7 +48,9 @@ import { treeVariants } from './tree.variants';
           [checkable]="zCheckable()"
           [nodeTemplate]="customNodeTemplate() ?? null"
           role="treeitem"
-          [attr.aria-expanded]="flatNode.expandable ? treeService.isExpanded(flatNode.node.key) : null"
+          [attr.aria-expanded]="
+            flatNode.expandable ? treeService.isExpanded(flatNode.node.key) : null
+          "
           [attr.aria-level]="flatNode.level + 1"
           [attr.aria-selected]="zSelectable() ? treeService.isSelected(flatNode.node.key) : null"
           [attr.aria-disabled]="flatNode.node.disabled || null"
@@ -94,7 +105,8 @@ export class ZardTreeComponent<T = any> {
   readonly zSelectionChange = output<TreeNode<T>[]>();
   readonly zCheckChange = output<TreeNode<T>[]>();
 
-  readonly customNodeTemplate = contentChild<TemplateRef<TreeNodeTemplateContext<T>>>('nodeTemplate');
+  readonly customNodeTemplate =
+    contentChild<TemplateRef<TreeNodeTemplateContext<T>>>('nodeTemplate');
 
   protected readonly classes = computed(() => mergeClasses(treeVariants(), this.class()));
 
@@ -234,7 +246,9 @@ export class ZardTreeComponent<T = any> {
   }
 
   private focusDomNode(key: string) {
-    const el = (this.elementRef.nativeElement as HTMLElement).querySelector<HTMLElement>(`[data-key="${key}"]`);
+    const el = (this.elementRef.nativeElement as HTMLElement).querySelector<HTMLElement>(
+      `[data-key="${key}"]`,
+    );
     el?.focus();
   }
 }

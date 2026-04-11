@@ -10,7 +10,7 @@ export class DialogConfirmService {
   private readonly alertDialog = inject(ZardAlertDialogService);
 
   open(options: DialogTypeOptions): Promise<string | boolean | undefined> {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       this.alertDialog.confirm({
         zTitle: options.title,
         zDescription: options.message,

@@ -12,7 +12,12 @@ import {
 } from '@angular/core';
 
 import type { ClassValue } from 'clsx';
-import type { EmblaCarouselType, EmblaEventType, EmblaOptionsType, EmblaPluginType } from 'embla-carousel';
+import type {
+  EmblaCarouselType,
+  EmblaEventType,
+  EmblaOptionsType,
+  EmblaPluginType,
+} from 'embla-carousel';
 import { EmblaCarouselDirective } from 'embla-carousel-angular';
 
 import { ZardButtonComponent } from '@/shared/components/button';

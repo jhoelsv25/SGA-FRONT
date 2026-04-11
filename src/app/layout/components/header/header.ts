@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthFacade } from '@auth/services/store/auth.acede';
+import { AvatarVersionService } from '@core/services/avatar-version.service';
 import { LayoutStore } from '@core/stores/layout.store';
 import { NotificationStore } from '@core/stores/notification.store';
 import { ZardIconComponent } from '@shared/components/icon';
@@ -24,7 +25,7 @@ import { TeacherLiveClassPopoverComponent } from './components/teacher-live-clas
 
 @Component({
   selector: 'sga-header',
-  standalone: true,
+
   imports: [
     CommonModule,
     RouterModule,
@@ -40,6 +41,7 @@ export class Header implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   private layout = inject(LayoutStore);
   private authFacade = inject(AuthFacade);
+  private avatarVersion = inject(AvatarVersionService);
   private router = inject(Router);
   public notificationStore = inject(NotificationStore);
   private outsideClickHandler = this.handleOutsideClick.bind(this);
@@ -123,7 +125,12 @@ export class Header implements OnInit, OnDestroy {
     if (roleName.includes('admin')) return 'admin';
     if (roleName.includes('director')) return 'director';
     if (roleName.includes('docente') || roleName.includes('teacher')) return 'teacher';
-    if (roleName.includes('estudiante') || roleName.includes('student') || roleName.includes('alumno')) return 'student';
+    if (
+      roleName.includes('estudiante') ||
+      roleName.includes('student') ||
+      roleName.includes('alumno')
+    )
+      return 'student';
     if (roleName.includes('apoderado') || roleName.includes('guardian')) return 'guardian';
     return 'user';
   }
@@ -221,11 +228,11 @@ export class Header implements OnInit, OnDestroy {
   public getUserAvatar(): string {
     const user = this.currentUser();
     if (user?.profilePicture) {
-      return user.profilePicture;
+      return this.avatarVersion.withVersion(user.profilePicture) || user.profilePicture;
     }
 
     if (user?.person?.photoUrl) {
-      return user.person.photoUrl;
+      return this.avatarVersion.withVersion(user.person.photoUrl) || user.person.photoUrl;
     }
 
     return '/logo.jpeg';
@@ -273,17 +280,12 @@ export class Header implements OnInit, OnDestroy {
   goPaymentsPending = () => this.router.navigateByUrl('/payments/pending');
   goStudents = () => this.router.navigateByUrl('/students/list');
 
-
   public userMenuActions = computed<UserMenuAction[]>(() => {
     const roleType = this.resolveProfileType();
     const theme = this.currentTheme();
     const themeAction: UserMenuAction = {
       label:
-        theme === 'light'
-          ? 'Tema Claro'
-          : theme === 'dark'
-            ? 'Tema Oscuro'
-            : 'Tema del Sistema',
+        theme === 'light' ? 'Tema Claro' : theme === 'dark' ? 'Tema Oscuro' : 'Tema del Sistema',
       icon: 'theme-' + theme,
       type: 'theme',
     };

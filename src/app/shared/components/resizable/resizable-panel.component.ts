@@ -16,10 +16,8 @@ import { mergeClasses } from '@/shared/utils/merge-classes';
 
 @Component({
   selector: 'z-resizable-panel',
-  standalone: true,
-  template: `
-    <ng-content />
-  `,
+
+  template: ` <ng-content /> `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   host: {

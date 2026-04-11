@@ -35,7 +35,8 @@ import { mergeClasses } from '@/shared/utils/merge-classes';
     '[attr.aria-disabled]': 'zDisabled()',
     '(mousedown)': 'handleMouseDown($event)',
     '(touchstart)': 'handleTouchStart($event)',
-    '(keydown.{arrowleft,arrowright,arrowup,arrowdown,home,end,enter,space}.prevent)': 'handleKeyDown($event)',
+    '(keydown.{arrowleft,arrowright,arrowup,arrowdown,home,end,enter,space}.prevent)':
+      'handleKeyDown($event)',
   },
   exportAs: 'zResizableHandle',
 })
@@ -59,7 +60,9 @@ export class ZardResizableHandleComponent {
     ),
   );
 
-  protected readonly handleClasses = computed(() => resizableHandleIndicatorVariants({ zLayout: this.layout() }));
+  protected readonly handleClasses = computed(() =>
+    resizableHandleIndicatorVariants({ zLayout: this.layout() }),
+  );
 
   handleMouseDown(event: MouseEvent): void {
     if (this.zDisabled() || !this.resizable) {
@@ -118,7 +121,9 @@ export class ZardResizableHandleComponent {
       case 'Enter':
       case ' ':
         if (panels[handleIndex]?.zCollapsible() || panels[handleIndex + 1]?.zCollapsible()) {
-          const collapsibleIndex = panels[handleIndex]?.zCollapsible() ? handleIndex : handleIndex + 1;
+          const collapsibleIndex = panels[handleIndex]?.zCollapsible()
+            ? handleIndex
+            : handleIndex + 1;
           this.resizable.collapsePanel(collapsibleIndex);
         }
         break;

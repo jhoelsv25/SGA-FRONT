@@ -40,9 +40,14 @@ type OnChangeType = (value: number) => void;
 @Component({
   selector: 'z-slider-track',
   imports: [],
-  standalone: true,
+
   template: `
-    <span #track data-slot="slider-track" [attr.data-orientation]="orientation()" [class]="classes()">
+    <span
+      #track
+      data-slot="slider-track"
+      [attr.data-orientation]="orientation()"
+      [class]="classes()"
+    >
       <ng-content />
     </span>
   `,
@@ -71,7 +76,7 @@ export class ZSliderTrackComponent {
 @Component({
   selector: 'z-slider-range',
   imports: [],
-  standalone: true,
+
   template: `
     <span
       data-slot="slider-range"
@@ -100,7 +105,7 @@ export class ZSliderRangeComponent {
 @Component({
   selector: 'z-slider-thumb',
   imports: [],
-  standalone: true,
+
   template: `
     <span
       #thumb
@@ -118,8 +123,10 @@ export class ZSliderRangeComponent {
   encapsulation: ViewEncapsulation.None,
   host: {
     '[class]': 'orientationClasses()',
-    '[style.left]': 'orientation() === "horizontal" ? "calc(" + percent() + "% + " + offset() + "px)" : null',
-    '[style.bottom]': 'orientation() === "vertical" ? "calc(" + percent() + "% + " + offset() + "px)" : null',
+    '[style.left]':
+      'orientation() === "horizontal" ? "calc(" + percent() + "% + " + offset() + "px)" : null',
+    '[style.bottom]':
+      'orientation() === "vertical" ? "calc(" + percent() + "% + " + offset() + "px)" : null',
   },
 })
 export class ZSliderThumbComponent {
@@ -151,7 +158,7 @@ export class ZSliderThumbComponent {
 @Component({
   selector: 'z-slider',
   imports: [ZSliderTrackComponent, ZSliderRangeComponent, ZSliderThumbComponent],
-  standalone: true,
+
   template: `
     <span
       data-slot="slider"
@@ -192,7 +199,9 @@ export class ZSliderThumbComponent {
   },
   exportAs: 'zSlider',
 })
-export class ZardSliderComponent implements ControlValueAccessor, AfterViewInit, OnChanges, OnDestroy {
+export class ZardSliderComponent
+  implements ControlValueAccessor, AfterViewInit, OnChanges, OnDestroy
+{
   readonly zMin = input(0, { transform: numberAttribute });
   readonly zMax = input(100, { transform: numberAttribute });
   readonly zDefault = input(0, { transform: numberAttribute });
@@ -246,7 +255,7 @@ export class ZardSliderComponent implements ControlValueAccessor, AfterViewInit,
   ngAfterViewInit() {
     const pointerDown$ = fromEvent<PointerEvent>(this.elementRef.nativeElement, 'pointerdown').pipe(
       filter(() => !this.disabled()),
-      tap(event => {
+      tap((event) => {
         const target = event.target as HTMLElement;
         const isThumb = this.thumbRef().nativeElement.contains(target);
         const isTrack = this.trackRef().nativeElement.contains(target);
@@ -271,7 +280,7 @@ export class ZardSliderComponent implements ControlValueAccessor, AfterViewInit,
         switchMap(() =>
           pointerMove$.pipe(
             takeUntil(pointerUp$),
-            map(event => {
+            map((event) => {
               const coord = this.zOrientation() === 'vertical' ? event.clientY : event.clientX;
               return this.calculatePercentage(coord);
             }),
@@ -279,7 +288,7 @@ export class ZardSliderComponent implements ControlValueAccessor, AfterViewInit,
         ),
         takeUntil(this.destroy$),
       )
-      .subscribe(percentage => {
+      .subscribe((percentage) => {
         if (this.disabled()) {
           return;
         }

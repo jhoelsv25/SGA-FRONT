@@ -8,12 +8,12 @@ import { ZardIconComponent, type ZardIcon } from '@/shared/components/icon';
 
 @Component({
   selector: 'sga-realtime-notification-stack',
-  standalone: true,
+
   imports: [CommonModule, DatePipe, ZardButtonComponent, ZardIconComponent],
   template: `
     @if (store.liveCards().length) {
       <section
-        class="live-stack pointer-events-none fixed right-5 top-22 z-[75] flex max-h-[calc(100vh-7rem)] w-[min(92vw,28rem)] flex-col gap-3 overflow-y-auto pr-2"
+        class="live-stack pointer-events-none fixed right-5 top-22 z-75 flex max-h-[calc(100vh-7rem)] w-[min(92vw,28rem)] flex-col gap-3 overflow-y-auto pr-2"
       >
         @if (store.liveOverflowCount() > 0) {
           <article
@@ -29,7 +29,10 @@ import { ZardIconComponent, type ZardIcon } from '@/shared/components/icon';
                     Más actividad
                   </p>
                   <p class="mt-1 text-sm font-semibold">
-                    {{ store.liveOverflowCount() }} notificación{{ store.liveOverflowCount() === 1 ? '' : 'es' }} más en cola
+                    {{ store.liveOverflowCount() }} notificación{{
+                      store.liveOverflowCount() === 1 ? '' : 'es'
+                    }}
+                    más en cola
                   </p>
                 </div>
               </div>
@@ -49,7 +52,7 @@ import { ZardIconComponent, type ZardIcon } from '@/shared/components/icon';
 
         @for (notification of store.liveCards(); track notification.id; let index = $index) {
           <article
-            class="notification-card pointer-events-auto relative overflow-hidden rounded-[2rem] border bg-white/94 backdrop-blur-xl transition-all duration-300 dark:bg-neutral-950/94"
+            class="notification-card pointer-events-auto relative overflow-hidden rounded-4xl border bg-white/94 backdrop-blur-xl transition-all duration-300 dark:bg-neutral-950/94"
             [class.ring-1]="index === 0"
             [class.scale-[0.985]]="index === 1"
             [class.scale-[0.97]]="index >= 2"
@@ -60,18 +63,17 @@ import { ZardIconComponent, type ZardIcon } from '@/shared/components/icon';
             (mouseenter)="store.pauseLiveCard(notification.id)"
             (mouseleave)="store.resumeLiveCard(notification.id)"
           >
-            <div
-              class="absolute inset-0 opacity-90"
-              [ngClass]="cardAuraClass()"
-            ></div>
+            <div class="absolute inset-0 opacity-90" [ngClass]="cardAuraClass()"></div>
+
+            <div class="absolute inset-x-0 top-0 h-1.5" [ngClass]="accentBarClass()"></div>
 
             <div
-              class="absolute inset-x-0 top-0 h-1.5"
-              [ngClass]="accentBarClass()"
-            ></div>
-
-            <div class="absolute inset-x-5 bottom-0 h-1.5 overflow-hidden rounded-full bg-black/5 dark:bg-white/8">
-              <div class="notification-progress h-full rounded-full" [ngClass]="accentBarClass()"></div>
+              class="absolute inset-x-5 bottom-0 h-1.5 overflow-hidden rounded-full bg-black/5 dark:bg-white/8"
+            >
+              <div
+                class="notification-progress h-full rounded-full"
+                [ngClass]="accentBarClass()"
+              ></div>
             </div>
 
             <div class="relative p-5 pb-6">
@@ -104,7 +106,10 @@ import { ZardIconComponent, type ZardIcon } from '@/shared/components/icon';
 
                 <div class="min-w-0 flex-1">
                   <div class="flex items-center justify-between gap-3">
-                    <p class="truncate text-[10px] font-black uppercase tracking-[0.24em]" [ngClass]="kickerClass(notification)">
+                    <p
+                      class="truncate text-[10px] font-black uppercase tracking-[0.24em]"
+                      [ngClass]="kickerClass(notification)"
+                    >
                       {{ kickerLabel(notification) }}
                     </p>
                     <span class="shrink-0 text-[10px] font-semibold text-muted-foreground/80">
@@ -117,11 +122,15 @@ import { ZardIconComponent, type ZardIcon } from '@/shared/components/icon';
                       {{ senderName(notification) }}
                     </span>
                     <span class="text-muted-foreground/45">•</span>
-                    <span class="rounded-full bg-base-100/80 px-2 py-0.5 font-semibold text-muted-foreground">
+                    <span
+                      class="rounded-full bg-base-100/80 px-2 py-0.5 font-semibold text-muted-foreground"
+                    >
                       {{ senderRole(notification) }}
                     </span>
                   </div>
-                  <h3 class="mt-2 line-clamp-2 text-[1.02rem] font-black leading-6 tracking-tight text-foreground">
+                  <h3
+                    class="mt-2 line-clamp-2 text-[1.02rem] font-black leading-6 tracking-tight text-foreground"
+                  >
                     {{ notification.title }}
                   </h3>
                   <p class="mt-2 line-clamp-4 text-[0.93rem] leading-6 text-muted-foreground">
@@ -141,10 +150,14 @@ import { ZardIconComponent, type ZardIcon } from '@/shared/components/icon';
 
               <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
                 <div class="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                  <span class="rounded-full border border-primary/15 bg-primary/6 px-2.5 py-1 font-semibold text-primary/80">
+                  <span
+                    class="rounded-full border border-primary/15 bg-primary/6 px-2.5 py-1 font-semibold text-primary/80"
+                  >
                     {{ priorityLabel(notification.priority) }}
                   </span>
-                  <span class="rounded-full border border-primary/15 bg-primary/6 px-2.5 py-1 font-semibold text-primary/80">
+                  <span
+                    class="rounded-full border border-primary/15 bg-primary/6 px-2.5 py-1 font-semibold text-primary/80"
+                  >
                     {{ typeLabel(notification.type) }}
                   </span>
                 </div>
@@ -159,12 +172,7 @@ import { ZardIconComponent, type ZardIcon } from '@/shared/components/icon';
                     Omitir
                   </button>
 
-                  <button
-                    z-button
-                    zType="default"
-                    zSize="sm"
-                    (click)="open(notification)"
-                  >
+                  <button z-button zType="default" zSize="sm" (click)="open(notification)">
                     <z-icon zType="arrow-right" class="mr-2 size-4" />
                     Ver
                   </button>
@@ -258,7 +266,7 @@ export class RealtimeNotificationStackComponent {
       .split(/\s+/)
       .filter(Boolean)
       .slice(0, 2)
-      .map(part => part[0]?.toUpperCase() ?? '')
+      .map((part) => part[0]?.toUpperCase() ?? '')
       .join('');
   }
 

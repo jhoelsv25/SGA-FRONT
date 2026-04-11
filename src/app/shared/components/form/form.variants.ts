@@ -29,4 +29,6 @@ export const formMessageVariants = cva('text-sm', {
   },
 });
 
-export type ZardFormMessageTypeVariants = NonNullable<VariantProps<typeof formMessageVariants>['zType']>;
+export type ZardFormMessageTypeVariants = NonNullable<
+  VariantProps<typeof formMessageVariants>['zType']
+>;

@@ -1,5 +1,15 @@
 import { ZardSelectComponent, ZardSelectItemComponent } from '@/shared/components/select';
-import { ChangeDetectionStrategy, Component, effect, forwardRef, inject, input, model, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  forwardRef,
+  inject,
+  input,
+  model,
+  output,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Subject } from 'rxjs';
@@ -9,7 +19,11 @@ import type { Student } from '@features/students/types/student-types';
 import { ZardInputDirective } from '@/shared/components/input';
 
 function getLabel(student: Student): string {
-  return `${student.firstName ?? ''} ${student.lastName ?? ''}`.trim() || student.studentCode || student.id;
+  return (
+    `${student.firstName ?? ''} ${student.lastName ?? ''}`.trim() ||
+    student.studentCode ||
+    student.id
+  );
 }
 
 function getInitials(student: Student): string {
@@ -32,8 +46,14 @@ function getSubtitle(student: Student): string {
 
 @Component({
   selector: 'sga-student-select',
-  standalone: true,
-  imports: [CommonModule, FormsModule, ZardSelectComponent, ZardSelectItemComponent, ZardInputDirective],
+
+  imports: [
+    CommonModule,
+    FormsModule,
+    ZardSelectComponent,
+    ZardSelectItemComponent,
+    ZardInputDirective,
+  ],
   templateUrl: './student-select.html',
   providers: [
     { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => StudentSelect), multi: true },
@@ -102,7 +122,9 @@ export class StudentSelect implements ControlValueAccessor {
         const student = response.data ?? null;
         if (!student) return;
         this.selectedItem.set(student);
-        this.items.update((items) => (items.some((item) => item.id === student.id) ? items : [student, ...items]));
+        this.items.update((items) =>
+          items.some((item) => item.id === student.id) ? items : [student, ...items],
+        );
       },
     });
   }
@@ -161,22 +183,24 @@ export class StudentSelect implements ControlValueAccessor {
     }
 
     const currentPage = reset ? 1 : this.page();
-    this.api.getAll({ page: currentPage, size: 20, search: this.searchTerm() || undefined }).subscribe({
-      next: (response) => {
-        const incoming = response.data ?? [];
-        const nextItems = reset ? incoming : [...this.items(), ...incoming];
-        this.items.set(nextItems);
-        this.hasMore.set(nextItems.length < (response.total ?? nextItems.length));
-        if (reset) {
-          this.page.set(1);
-        }
-        this.loading.set(false);
-        this.loadingMore.set(false);
-      },
-      error: () => {
-        this.loading.set(false);
-        this.loadingMore.set(false);
-      },
-    });
+    this.api
+      .getAll({ page: currentPage, size: 20, search: this.searchTerm() || undefined })
+      .subscribe({
+        next: (response) => {
+          const incoming = response.data ?? [];
+          const nextItems = reset ? incoming : [...this.items(), ...incoming];
+          this.items.set(nextItems);
+          this.hasMore.set(nextItems.length < (response.total ?? nextItems.length));
+          if (reset) {
+            this.page.set(1);
+          }
+          this.loading.set(false);
+          this.loadingMore.set(false);
+        },
+        error: () => {
+          this.loading.set(false);
+          this.loadingMore.set(false);
+        },
+      });
   }
 }

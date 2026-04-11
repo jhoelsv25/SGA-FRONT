@@ -1,4 +1,8 @@
-import { ZardButtonTypeVariants, ZardButtonSizeVariants, ZardButtonShapeVariants } from '@/shared/components/button/button.variants';
+import {
+  ZardButtonTypeVariants,
+  ZardButtonSizeVariants,
+  ZardButtonShapeVariants,
+} from '@/shared/components/button/button.variants';
 
 export interface ActionContext<T = unknown> {
   row?: T;

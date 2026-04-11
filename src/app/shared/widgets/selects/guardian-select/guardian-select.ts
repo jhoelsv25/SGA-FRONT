@@ -1,5 +1,14 @@
 import { ZardSelectComponent, ZardSelectItemComponent } from '@/shared/components/select';
-import { ChangeDetectionStrategy, Component, forwardRef, inject, input, model, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  forwardRef,
+  inject,
+  input,
+  model,
+  output,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { GuardianApi } from '@features/students/services/api/guardian-api';
@@ -24,15 +33,26 @@ function getInitials(item: Guardian): string {
 }
 
 function getSubtitle(item: Guardian): string {
-  return [item.relationship, item.occupation, item.person?.email].filter(Boolean).join(' · ') || 'Apoderado';
+  return (
+    [item.relationship, item.occupation, item.person?.email].filter(Boolean).join(' · ') ||
+    'Apoderado'
+  );
 }
 
 @Component({
   selector: 'sga-guardian-select',
-  standalone: true,
-  imports: [CommonModule, FormsModule, ZardSelectComponent, ZardSelectItemComponent, ZardInputDirective],
+
+  imports: [
+    CommonModule,
+    FormsModule,
+    ZardSelectComponent,
+    ZardSelectItemComponent,
+    ZardInputDirective,
+  ],
   templateUrl: './guardian-select.html',
-  providers: [{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => GuardianSelect), multi: true }],
+  providers: [
+    { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => GuardianSelect), multi: true },
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GuardianSelect implements ControlValueAccessor {
@@ -72,7 +92,9 @@ export class GuardianSelect implements ControlValueAccessor {
       next: (item) => {
         this.selectedItem.set(item ?? null);
         if (item) {
-          this.items.update((items) => (items.some((current) => current.id === item.id) ? items : [item, ...items]));
+          this.items.update((items) =>
+            items.some((current) => current.id === item.id) ? items : [item, ...items],
+          );
         }
       },
     });
@@ -111,7 +133,13 @@ export class GuardianSelect implements ControlValueAccessor {
     const term = this.searchTerm().trim().toLowerCase();
     if (!term) return this.items();
     return this.items().filter((item) =>
-      [item.person?.firstName, item.person?.lastName, item.person?.email, item.relationship, item.occupation]
+      [
+        item.person?.firstName,
+        item.person?.lastName,
+        item.person?.email,
+        item.relationship,
+        item.occupation,
+      ]
         .filter(Boolean)
         .join(' ')
         .toLowerCase()

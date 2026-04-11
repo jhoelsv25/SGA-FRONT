@@ -65,5 +65,9 @@ export const carouselNextButtonVariants = cva('absolute size-8 rounded-full', {
   },
 });
 
-export type ZardCarouselOrientationVariants = NonNullable<VariantProps<typeof carouselVariants>['zOrientation']>;
-export type ZardCarouselControlsVariants = NonNullable<VariantProps<typeof carouselVariants>['zControls']>;
+export type ZardCarouselOrientationVariants = NonNullable<
+  VariantProps<typeof carouselVariants>['zOrientation']
+>;
+export type ZardCarouselControlsVariants = NonNullable<
+  VariantProps<typeof carouselVariants>['zControls']
+>;

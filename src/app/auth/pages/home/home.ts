@@ -3,12 +3,10 @@ import { RouterOutlet } from '@angular/router';
 import { Information } from '@auth/components/information/information';
 import { CopyRight } from '@shared/widgets/copy-righ/copy-righ';
 
-
 @Component({
   selector: 'sga-home',
   imports: [RouterOutlet, Information, CopyRight],
   templateUrl: './home.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class Home {
-}
+export default class Home {}

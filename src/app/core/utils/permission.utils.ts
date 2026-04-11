@@ -49,7 +49,12 @@ export function expandPermissionAliases(permission: string): string[] {
         });
       } else if (WRITE_ACTIONS.has(action)) {
         variants.forEach((variant) => {
-          aliases.push(`${variant}:${action}`, `${action}_${variant}`, `manage_${variant}`, `${variant}:manage`);
+          aliases.push(
+            `${variant}:${action}`,
+            `${action}_${variant}`,
+            `manage_${variant}`,
+            `${variant}:manage`,
+          );
         });
       }
     }

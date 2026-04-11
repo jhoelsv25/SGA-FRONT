@@ -6,4 +6,3 @@ export type HeaderConfig = {
   showActions?: boolean;
   showSelection?: boolean;
 };
-

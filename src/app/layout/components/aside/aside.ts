@@ -18,7 +18,7 @@ import { AsideChats } from './components/aside-chats/aside-chats';
 
 @Component({
   selector: 'sga-aside',
-  standalone: true,
+
   imports: [
     ZardIconComponent,
     ZardButtonComponent,

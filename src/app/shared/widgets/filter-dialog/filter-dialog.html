@@ -72,7 +72,7 @@
                     [placeholder]="field.placeholder || 'Ingrese texto...'"
                     [value]="currentFilters()[field.key] || ''"
                     (input)="onFilterChange(field.key, $any($event.target).value)"
-                   />
+                  />
                 }
 
                 @case ('number') {
@@ -88,7 +88,7 @@
                         $any($event.target).value !== '' ? +$any($event.target).value : null
                       )
                     "
-                   />
+                  />
                 }
 
                 @case ('date') {
@@ -96,7 +96,7 @@
                     [placeholder]="field.placeholder || 'Seleccionar fecha...'"
                     [value]="$any(currentFilters()[field.key]) || null"
                     (valueChange)="onFilterChange(field.key, $event)"
-                    ></z-date-picker>
+                  ></z-date-picker>
                 }
 
                 @case ('date-range') {
@@ -104,7 +104,7 @@
                     [placeholder]="field.placeholder || 'Seleccionar rango...'"
                     [value]="$any(currentFilters()[field.key]) || null"
                     (valueChange)="onFilterChange(field.key, $event)"
-                    ></z-date-picker>
+                  ></z-date-picker>
                 }
 
                 @case ('boolean') {
@@ -135,7 +135,7 @@
                     [value]="currentFilters()[field.key] ?? (field.multiple ? [] : null)"
                     (valueChange)="onFilterChange(field.key, $event)"
                     [placeholder]="field.placeholder || 'Seleccionar...'"
-                    ></z-select-option>
+                  ></z-select-option>
                 }
               }
             </div>

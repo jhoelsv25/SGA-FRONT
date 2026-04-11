@@ -7,10 +7,15 @@ import { RouterLinkWithHref } from '@angular/router';
 import { format } from 'date-fns';
 import { AuthApi } from '@auth/services/api/auth-api';
 
-
 @Component({
   selector: 'sga-forgot-form',
-  imports: [RouterLinkWithHref, ReactiveFormsModule, ZardButtonComponent, ZardInputDirective, ZardDatePickerComponent],
+  imports: [
+    RouterLinkWithHref,
+    ReactiveFormsModule,
+    ZardButtonComponent,
+    ZardInputDirective,
+    ZardDatePickerComponent,
+  ],
   templateUrl: './forgot-form.html',
 })
 export class ForgotForm {
@@ -43,7 +48,9 @@ export class ForgotForm {
 
     this.authApi.forgotPassword(username ?? '', birthdateStr).subscribe({
       next: () => {
-        this.successMessage.set('Solicitud enviada. Revisa el flujo definido por tu institucion para continuar con la recuperacion.');
+        this.successMessage.set(
+          'Solicitud enviada. Revisa el flujo definido por tu institucion para continuar con la recuperacion.',
+        );
         this.loading.set(false);
       },
       error: () => {

@@ -70,7 +70,11 @@ export class AuthApi {
     });
   }
 
-  getCurrentUserSessions(userId: string, limit = 6, activeOnly = false): Observable<AccountSessionResponse> {
+  getCurrentUserSessions(
+    userId: string,
+    limit = 6,
+    activeOnly = false,
+  ): Observable<AccountSessionResponse> {
     return this.http.get<AccountSessionResponse>(`sessions/user/${userId}`, {
       params: {
         limit,
@@ -89,7 +93,10 @@ export class AuthApi {
     return this.http.get<AccountUserPreferences>(`user-preferences/${userId}`);
   }
 
-  updateUserPreferences(userId: string, preferences: Record<string, any>): Observable<AccountUserPreferences> {
+  updateUserPreferences(
+    userId: string,
+    preferences: Record<string, any>,
+  ): Observable<AccountUserPreferences> {
     return this.http.patch<AccountUserPreferences>(`user-preferences/${userId}`, { preferences });
   }
 
@@ -97,7 +104,10 @@ export class AuthApi {
     return this.http.get<{ data: AccountSystemSetting }>(`system-settings/${key}`);
   }
 
-  updateSystemSetting(key: string, value: Record<string, any>): Observable<{ data: AccountSystemSetting }> {
+  updateSystemSetting(
+    key: string,
+    value: Record<string, any>,
+  ): Observable<{ data: AccountSystemSetting }> {
     return this.http.patch<{ data: AccountSystemSetting }>(`system-settings/${key}`, { value });
   }
 

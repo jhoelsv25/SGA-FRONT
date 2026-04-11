@@ -19,7 +19,10 @@ import {
 import type { ClassValue } from 'clsx';
 
 import { ZardResizablePanelComponent } from '@/shared/components/resizable/resizable-panel.component';
-import { resizableVariants, type ZardResizableLayoutVariants } from '@/shared/components/resizable/resizable.variants';
+import {
+  resizableVariants,
+  type ZardResizableLayoutVariants,
+} from '@/shared/components/resizable/resizable.variants';
 import { mergeClasses } from '@/shared/utils/merge-classes';
 
 export interface ZardResizeEvent {
@@ -29,9 +32,7 @@ export interface ZardResizeEvent {
 
 @Component({
   selector: 'z-resizable, [z-resizable]',
-  template: `
-    <ng-content />
-  `,
+  template: ` <ng-content /> `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   host: {
@@ -103,7 +104,7 @@ export class ZardResizableComponent implements AfterContentInit, OnDestroy {
     }
 
     const containerSize = this.getContainerSize();
-    const sizes = panels.map(panel => {
+    const sizes = panels.map((panel) => {
       const defaultSize = panel.zDefaultSize();
       if (defaultSize !== undefined) {
         return this.convertToPercentage(defaultSize, containerSize);
@@ -271,7 +272,10 @@ export class ZardResizableComponent implements AfterContentInit, OnDestroy {
 
     if (isCollapsed) {
       const containerSize = this.getContainerSize();
-      const defaultSize = this.convertToPercentage(panel.zDefaultSize() ?? 100 / panels.length, containerSize);
+      const defaultSize = this.convertToPercentage(
+        panel.zDefaultSize() ?? 100 / panels.length,
+        containerSize,
+      );
 
       sizes[index] = defaultSize;
 

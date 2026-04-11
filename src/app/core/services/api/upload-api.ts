@@ -24,7 +24,8 @@ export class UploadApi {
     formData.append('file', file);
     if (payload?.category) formData.append('category', payload.category);
     if (payload?.entityCode) formData.append('entityCode', payload.entityCode);
-    if (payload?.preserveName !== undefined) formData.append('preserveName', String(payload.preserveName));
+    if (payload?.preserveName !== undefined)
+      formData.append('preserveName', String(payload.preserveName));
     return this.http.post<UploadResponse>('uploads', formData);
   }
 }

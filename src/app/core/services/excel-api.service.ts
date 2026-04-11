@@ -20,9 +20,13 @@ export class ExcelApi {
     data: Record<string, unknown>[],
     config?: ExcelConfig,
   ): Observable<Blob> {
-    return this.http.post(`${this.baseUrl}/generate`, { columns, data, ...config }, {
-      responseType: 'blob',
-    });
+    return this.http.post(
+      `${this.baseUrl}/generate`,
+      { columns, data, ...config },
+      {
+        responseType: 'blob',
+      },
+    );
   }
 
   /** Genera plantilla con headers + fila ejemplo opcional. Retorna Blob. */
@@ -31,8 +35,12 @@ export class ExcelApi {
     exampleRow?: Record<string, unknown>,
     config?: ExcelConfig,
   ): Observable<Blob> {
-    return this.http.post(`${this.baseUrl}/template`, { columns, exampleRow, ...config }, {
-      responseType: 'blob',
-    });
+    return this.http.post(
+      `${this.baseUrl}/template`,
+      { columns, exampleRow, ...config },
+      {
+        responseType: 'blob',
+      },
+    );
   }
 }

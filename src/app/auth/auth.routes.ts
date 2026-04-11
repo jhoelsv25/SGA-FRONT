@@ -1,6 +1,3 @@
-
-
-
 import { Routes } from '@angular/router';
 import { publicGuard } from '@auth/guards/public.guard';
 
@@ -27,7 +24,9 @@ const route: Routes = [
         path: '',
         redirectTo: 'login',
         pathMatch: 'full',
-      }],
-  }];
+      },
+    ],
+  },
+];
 
 export default route;

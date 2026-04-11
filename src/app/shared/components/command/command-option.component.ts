@@ -40,7 +40,11 @@ import { mergeClasses } from '@/shared/utils/merge-classes';
         (mouseenter)="onMouseEnter()"
       >
         @if (zIcon()) {
-          <div z-icon [zType]="zIcon()!" class="mr-2 flex shrink-0 items-center justify-center"></div>
+          <div
+            z-icon
+            [zType]="zIcon()!"
+            class="mr-2 flex shrink-0 items-center justify-center"
+          ></div>
         }
         <span class="flex-1">{{ zLabel() }}</span>
         @if (zShortcut()) {
@@ -98,7 +102,7 @@ export class ZardCommandOptionComponent {
   });
 
   constructor() {
-    effect(onCleanup => {
+    effect((onCleanup) => {
       const cmd = this.parentCommand();
       const grp = this.commandGroup();
 

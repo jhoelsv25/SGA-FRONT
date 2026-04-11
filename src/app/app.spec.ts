@@ -6,7 +6,14 @@ describe('App', () => {
   beforeEach(async () => {
     if (typeof window !== 'undefined' && !window.matchMedia) {
       (window as unknown as { matchMedia: unknown }).matchMedia = () =>
-        ({ matches: false, addListener: () => {}, removeListener: () => {}, addEventListener: () => {}, removeEventListener: () => {}, dispatchEvent: () => true } as unknown as MediaQueryList);
+        ({
+          matches: false,
+          addListener: () => {},
+          removeListener: () => {},
+          addEventListener: () => {},
+          removeEventListener: () => {},
+          dispatchEvent: () => true,
+        }) as unknown as MediaQueryList;
     }
     await TestBed.configureTestingModule({
       imports: [App],

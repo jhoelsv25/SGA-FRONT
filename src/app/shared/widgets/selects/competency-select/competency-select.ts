@@ -1,5 +1,14 @@
 import { ZardSelectComponent, ZardSelectItemComponent } from '@/shared/components/select';
-import { ChangeDetectionStrategy, Component, forwardRef, inject, input, model, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  forwardRef,
+  inject,
+  input,
+  model,
+  output,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { CompetencyApi } from '@features/competencies/services/competency-api';
@@ -15,15 +24,27 @@ function getInitials(item: Competency): string {
 }
 
 function getSubtitle(item: Competency): string {
-  return [item.course?.name, item.expectedAchievement].filter(Boolean).join(' · ') || item.description || 'Competencia';
+  return (
+    [item.course?.name, item.expectedAchievement].filter(Boolean).join(' · ') ||
+    item.description ||
+    'Competencia'
+  );
 }
 
 @Component({
   selector: 'sga-competency-select',
-  standalone: true,
-  imports: [CommonModule, FormsModule, ZardSelectComponent, ZardSelectItemComponent, ZardInputDirective],
+
+  imports: [
+    CommonModule,
+    FormsModule,
+    ZardSelectComponent,
+    ZardSelectItemComponent,
+    ZardInputDirective,
+  ],
   templateUrl: './competency-select.html',
-  providers: [{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => CompetencySelect), multi: true }],
+  providers: [
+    { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => CompetencySelect), multi: true },
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CompetencySelect implements ControlValueAccessor {
@@ -64,7 +85,9 @@ export class CompetencySelect implements ControlValueAccessor {
       next: (item) => {
         this.selectedItem.set(item ?? null);
         if (item) {
-          this.items.update((items) => (items.some((current) => current.id === item.id) ? items : [item, ...items]));
+          this.items.update((items) =>
+            items.some((current) => current.id === item.id) ? items : [item, ...items],
+          );
         }
       },
     });
@@ -101,7 +124,9 @@ export class CompetencySelect implements ControlValueAccessor {
 
   filteredItems() {
     const courseId = this.courseId();
-    const base = courseId ? this.items().filter((item) => item.course?.id === courseId) : this.items();
+    const base = courseId
+      ? this.items().filter((item) => item.course?.id === courseId)
+      : this.items();
     const term = this.searchTerm().trim().toLowerCase();
     if (!term) return base;
     return base.filter((item) =>
